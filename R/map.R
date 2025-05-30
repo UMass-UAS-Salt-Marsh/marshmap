@@ -9,6 +9,7 @@
 #'    database if it exists. Otherwise, constructs a name. If no path is supplied, `the$predicteddir`
 #'    for the current site is used.
 #' @param batch If TRUE, spawn a batch run on Unity; otherwise run locally
+#' @importFrom slurmcollie launch
 #' @export
 
 
@@ -45,6 +46,7 @@ map <- function(fit, site = the$site, clip = NULL, result = NULL, batch = FALSE)
    if(batch) {                                                                         # if it's a batch run on Unity,
       print('spawning the run on Unity')
       
+      launch('do_map') #################################### this is a stub
       # spawn batch run
       
       # we'll collect job stats later when the job is done with sweep
