@@ -26,9 +26,9 @@ Imports:
     paletteer,
     rasterPrep,
     peakRAM,
-    batchtools,
-    fs,
-    hms
+    slurmcollie
+Remotes:
+    UMass-UAS-Salt-Marsh/slurmcollie
 Suggests: 
     ranger
 Encoding: UTF-8
