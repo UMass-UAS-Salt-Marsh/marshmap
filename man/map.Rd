@@ -4,7 +4,14 @@
 \alias{map}
 \title{Build a geoTIFF map of predictions for specified model fit}
 \usage{
-map(fit, site = the$site, clip = NULL, result = NULL, batch = FALSE)
+map(
+  fit,
+  site = the$site,
+  clip = NULL,
+  result = NULL,
+  local = FALSE,
+  comment = paste0("Map")
+)
 }
 \arguments{
 \item{fit}{Model ID, fit filename, or fit object - figure it out)}
@@ -17,7 +24,9 @@ map(fit, site = the$site, clip = NULL, result = NULL, batch = FALSE)
 database if it exists. Otherwise, constructs a name. If no path is supplied, \code{the$predicteddir}
 for the current site is used.}
 
-\item{batch}{If TRUE, spawn a batch run on Unity; otherwise run locally}
+\item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
+
+\item{comment}{Optional run comment}
 }
 \description{
 Console command to launch a prediction run via \code{do_map}, typically in a batch job on Unity.

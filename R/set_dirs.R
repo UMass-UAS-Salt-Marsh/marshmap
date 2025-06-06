@@ -10,7 +10,7 @@ set_dirs <- function() {
    
    
    for(i in c('models', 'data', 'gis', 'flights', 'field', 'shapefiles', 'samples', 'predicted', 'cache', 'logs', 'databases'))          # set directory name defaults
-      the$dirs[[paste0(i, 'dir')]] <- ifelse(is.null(the$dirs[[i]]), i, the$dirs[[i]])
+      the$dirs[[i]] <- ifelse(is.null(the$dirs[[i]]), i, the$dirs[[i]])
    
    the$modelsdir <- file.path(the$basedir, the$dirs$model)                                            # models
    the$datadir <- file.path(the$basedir, the$dirs$data, '<site>')                                     # data/<site>/

@@ -91,6 +91,7 @@
 #' @importFrom lubridate as.duration interval
 #' @importFrom pkgcond suppress_warnings
 #' @importFrom tools file_path_sans_ext
+#' @importFrom googledrive drive_auth
 #' @export
 
 
@@ -121,6 +122,9 @@
       !dir.exists(the$cachedir))                                                    #    make sure cache directory exists if needed
       dir.create(the$cachedir, recursive = TRUE)
    
+   if(the$gather$sourcedrive == 'googledrive')                                      #    authorize Google Drive if need be   ************ need to get email from yaml if this works *****************
+      drive_auth(email = 'bcompton@umass.edu')
+   
    
    msg('', lf)
    msg('-----', lf)
@@ -131,6 +135,7 @@
    msg(paste0('pattern = ', pattern), lf)
    if(check)
       msg('check = TRUE, so printing but not processing files', lf)
+
    
    for(i in 1:dim(sites)[1]) {                                                      # for each site,
       msg(paste0('Site ', sites$site[i]), lf)

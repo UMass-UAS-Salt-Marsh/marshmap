@@ -46,6 +46,12 @@
 #' PRACTICE**: don't change the standards in `standards.txt`; if you must change them, clear the 
 #' flights/ directory and rerun.
 #'
+#' If you're reading from the Google Drive or SFTP, you'll need a cache. Best to put this on the 
+#' Unity **scratch drive**. Create it with `ws_allocate cache 30` in the Unity shell. You can extend
+#' the scratch drive (up to 5 times) with `ws_extend cache 30`. When you're done with it, be polite
+#' and release it with `ws_release cache`. You'll need to point to the cache in `~/pars.yml`, under 
+#' `scratchdir:`.
+#'
 #' Note that initial runs with Google Drive in a session open the browser for authentication or wait
 #' for input from the console, so don't run blindly when using the Google Drive
 #' 
@@ -87,20 +93,25 @@
 #' @param field If TRUE, download and process the field transects if they don't already exist. 
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
+#' @param comment Optional slurmcollie comment
+#' @importFrom slurmcollie launch
 #' @export
 
 
 'gather' <- function(site = NULL, pattern = '', 
-                     update = TRUE, check = FALSE, field = FALSE, local = FALSE) {
+                     update = TRUE, check = FALSE, field = FALSE, local = FALSE, comment = NULL) {
    
    
    resources <- list(ncpus = 2,
-                     memory = 64,
+                     memory = 2, #64,
                      walltime = '20:00:00'
    )
    
-   launch('do_gather', moreargs = list(site = site, pattern = pattern, update = update, check = check, 
-                                       field = field), local = local, resources = resources)
-  
-      
+   if(is.null(comment))
+      comment <- paste0('gather ', paste(site, collapse = ', '))
+   
+   launch('do_gather', reps = site, repname = 'site', moreargs = list(pattern = pattern, update = update, check = check, 
+                                       field = field), local = local, resources = resources, comment = comment)
+   
+   
 }
