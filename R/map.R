@@ -8,12 +8,13 @@
 #' @param result Optional result filename or path and filename. If not provided, uses name from 
 #'    database if it exists. Otherwise, constructs a name. If no path is supplied, `the$predicteddir`
 #'    for the current site is used.
-#' @param batch If TRUE, spawn a batch run on Unity; otherwise run locally
+#' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
+#' @param comment Optional run comment
 #' @importFrom slurmcollie launch
 #' @export
 
 
-map <- function(fit, site = the$site, clip = NULL, result = NULL, batch = FALSE) {
+map <- function(fit, site = the$site, clip = NULL, result = NULL, local = FALSE, comment = paste0('Map')) {
    
    
    if(!is.list(fit)) {                                                                 # if fit isn't a list (thus a fit object),
@@ -43,15 +44,5 @@ map <- function(fit, site = the$site, clip = NULL, result = NULL, batch = FALSE)
    source <- resolve_dir(the$flightsdir, site)
    runinfo <- paste0(result, '.RDS')
    
-   if(batch) {                                                                         # if it's a batch run on Unity,
-      print('spawning the run on Unity')
-      
-      launch('do_map') #################################### this is a stub
-      # spawn batch run
-      
-      # we'll collect job stats later when the job is done with sweep
-      # Run info file returns some stats; I get others from https://github.com/birdflow-science/BirdFlowPipeline/blob/main/R/get_job_efficiency.R  
-   }
-   else                                                                                # else, it's a local run right now
-      do_map(fit, sourcedir = source, result = result, runinfo = runinfo, clip = clip)
+   launch('do_map', moreargs = list(sourcedir = source, result = result, runinfo = runinfo, clip = clip), local = local, finish = 'map_finish')
 }
