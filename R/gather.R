@@ -93,8 +93,14 @@
 'gather' <- function(site = NULL, pattern = '', 
                      update = TRUE, check = FALSE, field = FALSE, local = FALSE) {
    
+   
+   resources <- list(ncpus = 2,
+                     memory = 64,
+                     walltime = '20:00:00'
+   )
+   
    launch('do_gather', moreargs = list(site = site, pattern = pattern, update = update, check = check, 
-                                       field = field), local = local)
+                                       field = field), local = local, resources = resources)
   
       
 }
