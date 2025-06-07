@@ -34,65 +34,10 @@ cache or process anything}
 The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
 }
 \description{
-Clip to site boundary, resample and align to standard resolution. Data will be copied from various source
-locations (orthophotos, DEMs, canopy height models). Robust to crashes and interruptions: cached
-datasets that are fully downloaded will be used over re-downloading, and processed rasters won't be
-re-processed unless \code{update = TRUE} or \code{replace = TRUE}.
+Clip to site boundary, resample and align to standard resolution. This is an internal function,
+called by gather.
 }
 \details{
-Additional parameters, set in the \code{gather} block in \code{pars.yml} (see \code{\link[=init]{init()}}):
-\itemize{
-\item \code{sourcedrive} one of \code{local}, \code{google}, \code{sftp}
-\itemize{
-\item \code{local} - read source from local drive
-\item \code{google} - get source data from currently connected Google Drive (login via browser on first connection)
-and cache it locally. Must set \code{cachedir} option.
-\item \code{sftp} - get source data from SFTP site. Must set \code{sftp} and \code{cachedir} options.
-}
-\item \code{sourcedir} directory with source rasters, generally on Google Drive or SFTP site
-\item \code{subdirs} subdirectories to search, ending with slash. Default = orthos, DEMs, and canopy height models (okay
-to include empty or nonexistent directories). Use \verb{<site>} in subdirectories that include a site name, e.g.,
-\verb{<site> Share/Photogrammetry DEMs}. WARNING: paths on the Google Drive are case-sensitive!
-\item \code{transects} directory with field transect shapefile
-\item \code{exclude} list of geoTIFFs to exclude, for whatever reasons. Note that files beginning with \code{bad} are also
-excluded
-\item \code{sftp} \verb{list(url = <address of site>, user = <credentials>)}. Credentials are either \code{username:password} or
-\verb{*filename} with \code{username:password}. Make sure
-to include credential files in \code{.gitignore} and \code{.Rbuildignore} so it doesn't end up out in the world!
-}
-
-Source data:
-\itemize{
-\item geoTIFFs for each site
-\item \code{sites} file, table of site abbreviation, site name, footprint shapefile, raster standard, and transect
-shapefile.
-}
-
-Results:
-\itemize{
-\item flights/geoTIFFs, clipped, resampled, and aligned. \emph{\strong{Make sure you've closed ArcGIS/QGIS projects that
-point to these before running!}}
-\item models/gather_data.log
-}
-
-All source data are expected to be in \code{EPSG:4326}. Non-conforming rasters will be reprojected.
-
-\code{sites.txt} must include the name of the footprint shapefile for each site, a field transect
-shapefile, and a standard geoTIFF for each site. The footprint is used for clipping and must be
-present. The transect contains ground truth data, and must be present if \code{field = TRUE}. The
-standard must be present. It is used as the standard for grain and alignment; all rasters will be
-resampled to match. Standards MUST be in the standard projection, \code{EPSG:4326}. Best to use a Mica
-orthophoto, with 8 cm resolution.
-
-Note that adding to an existing stack using a different standard will lead to sorrow. \strong{BEST
-PRACTICE}: don't change the standards in \code{standards.txt}; if you must change them, clear the
-flights/ directory and rerun.
-
-Note that initial runs with Google Drive in a session open the browser for authentication or wait
-for input from the console, so don't run blindly when using the Google Drive
-
-Remember that some SFTP servers require connection via VPN
-
 \emph{\strong{Hanging issues for SFTP}}
 \itemize{
 \item SFTP implementations behave differently so I'll have to revise once the NAS is up and running.
@@ -101,21 +46,5 @@ Remember that some SFTP servers require connection via VPN
 
 \strong{When running on Unity}, request 20 GB. It's been using just under 16 GB, and will fail quietly
 at the default of 8 GB.
-
-Example runs:
-
-Complete for all sites:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{  `gather()`
-}\if{html}{\out{</div>}}
-
-Run for one site, June only:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{  `gather(site = 'oth', pattern = 'Jun')`
-}\if{html}{\out{</div>}}
-
-Run for 2 sites, low tide only:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{  `gather(site = c('oth', 'wes'), pattern = '_low_')`
-}\if{html}{\out{</div>}}
 }
+\keyword{internal}

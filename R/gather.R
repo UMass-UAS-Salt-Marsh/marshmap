@@ -57,11 +57,6 @@
 #' 
 #' Remember that some SFTP servers require connection via VPN
 #' 
-#' ***Hanging issues for SFTP***
-#' 
-#'   - SFTP implementations behave differently so I'll have to revise once the NAS is up and running.
-#'   - Windows dates are a mess for DST. Hopefully Linux won't be.
-#'   
 #' **When running on Unity**, request 20 GB. It's been using just under 16 GB, and will fail quietly
 #' at the default of 8 GB.
 #' 
@@ -103,7 +98,7 @@
    
    
    resources <- list(ncpus = 2,
-                     memory = 2, #64,
+                     memory = 20,
                      walltime = '20:00:00'
    )
    

@@ -105,12 +105,6 @@ for input from the console, so don't run blindly when using the Google Drive
 
 Remember that some SFTP servers require connection via VPN
 
-\emph{\strong{Hanging issues for SFTP}}
-\itemize{
-\item SFTP implementations behave differently so I'll have to revise once the NAS is up and running.
-\item Windows dates are a mess for DST. Hopefully Linux won't be.
-}
-
 \strong{When running on Unity}, request 20 GB. It's been using just under 16 GB, and will fail quietly
 at the default of 8 GB.
 
