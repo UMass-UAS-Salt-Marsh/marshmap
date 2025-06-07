@@ -4,7 +4,12 @@
 library(terra)
 x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho.tif')
 
-subst(x[[1]] == 65535, NA)
+writeRaster(x, '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho_test.tif', datatype = 'INT2U', 
+                        NAflag = 65535, overwrite = TRUE)
+x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho_test.tif')
+
+
+x <- subst(x, from = 65535, to = NA)
 
 
 swir <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/08Sep22_OTH_High_SWIR_Ortho.tif')

@@ -130,8 +130,8 @@
       
       
       dumb_warning <- 'Sum of Photometric type-related color channels'              #    we don't want to hear about this!
-      pkgcond::suppress_warnings(standard <- rast(get_file(file.path(dir, sites$standard[i]), 
-                                                           gd, logfile = lf)), 
+      pkgcond::suppress_warnings(standard <- get_rast(file.path(dir, sites$standard[i]), 
+                                                           gd, logfile = lf), 
                                  pattern = dumb_warning, class = 'warning')
       msg(paste0('   Processing ', length(files), ' geoTIFFs...'), lf)
       
@@ -178,7 +178,7 @@
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
                            datatype = datatype(standard)[1], 
-                           NAflag = 2 ^ (pixel_bytes(standard) * 8) - 1)
+                           NAflag = get_NAflag(standard))
             
             shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
             for(f in shps)
@@ -199,7 +199,7 @@
          msg(paste0('      processing ', j), lf)
          
          if(tryCatch({                                                              #    read the raster, skipping bad ones
-            suppressWarnings(g <- rast(get_file(j, gd, logfile = lf)))
+            suppressWarnings(g <- get_rast(j, gd, logfile = lf))
             FALSE
          }, 
          error = function(cond) {
@@ -222,7 +222,7 @@
                mask(footprint) |>
                writeRaster(file.path(rd, basename(j)), overwrite = TRUE, 
                            datatype = datatype(g)[1], 
-                           NAflag = 2 ^ (pixel_bytes(g) * 8) - 1)
+                           NAflag = get_NAflag(g))
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
