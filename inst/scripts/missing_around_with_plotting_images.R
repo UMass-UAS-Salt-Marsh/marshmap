@@ -3,14 +3,27 @@
 
 library(terra)
 x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho.tif')
+plotRGB(x, 3, 2, 1, stretch = 'lin')
 
-writeRaster(x, '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho_test.tif', datatype = 'INT2U', 
-                        NAflag = 65535, overwrite = TRUE)
-x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho_test.tif')
+# the upshot: this works pretty well. Not wicked fast, but usable
+# upscaling with aggregate takes forever, so not worth it
+# stretch is needed to prevent the color intensity error
+# image matches that in ArcGIS well enough
 
 
-x <- subst(x, from = 65535, to = NA)
+### cropping for a zoomed inset
+sf = 0.05                                                # size factor
+range <- (ext(x)[c(2, 4)] - ext(x)[c(1, 3)])
+center <- ext(x)[c(1, 3)] + range * 0.5
+ce <- c((center - range * sf), (center + range * sf))[c(1, 3, 2, 4)]
+y <- crop(x, ce)
 
+plotRGB(y, 3, 2, 1, stretch = 'lin')
+
+
+
+
+######## junk from here down
 
 swir <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/08Sep22_OTH_High_SWIR_Ortho.tif')
 
@@ -39,7 +52,7 @@ plotRGB(y, 1, 2, 3, stretch = 'hist')
 
 # aggregate to upscale
 x2 <- x
-x2[x2 == 65535] <- NA
+#x2[x2 == 65535] <- NA
 y <- aggregate(x, fact = 10, fun = mean, na.rm = TRUE)
 plotRGB(y, stretch = 'hist')
 y2 <- stretch(y, minq = 0.25, maxq = 0.75)
