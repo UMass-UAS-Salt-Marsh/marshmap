@@ -177,7 +177,7 @@
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                           datatype = datatype(standard), 
+                           datatype = datatype(standard)[1], 
                            NAflag = 2 ^ (pixel_bytes(standard) * 8) - 1)
             
             shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
@@ -221,7 +221,7 @@
                crop(footprint) |>
                mask(footprint) |>
                writeRaster(file.path(rd, basename(j)), overwrite = TRUE, 
-                           datatype = datatype(g), 
+                           datatype = datatype(g)[1], 
                            NAflag = 2 ^ (pixel_bytes(g) * 8) - 1)
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
