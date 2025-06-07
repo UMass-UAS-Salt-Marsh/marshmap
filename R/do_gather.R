@@ -34,7 +34,7 @@
 
 
 'do_gather' <- function(site = NULL, pattern = '', 
-                     update = TRUE, check = FALSE, field = FALSE) {
+                        update = TRUE, check = FALSE, field = FALSE) {
    
    
    lf <- file.path(the$modelsdir, 'gather.log')                                     # set up logging
@@ -73,7 +73,7 @@
    msg(paste0('pattern = ', pattern), lf)
    if(check)
       msg('check = TRUE, so printing but not processing files', lf)
-
+   
    
    for(i in 1:dim(sites)[1]) {                                                      # for each site,
       msg(paste0('Site ', sites$site[i]), lf)
@@ -130,9 +130,9 @@
       
       
       dumb_warning <- 'Sum of Photometric type-related color channels'              #    we don't want to hear about this!
-      pkgcond::suppress_warnings(standard <- get_rast(file.path(dir, sites$standard[i]), 
-                                                           gd, logfile = lf), 
-                                 pattern = dumb_warning, class = 'warning')
+      suppress_warnings(standard <- get_rast(file.path(dir, sites$standard[i]), 
+                                             gd, logfile = lf), 
+                        pattern = dumb_warning, class = 'warning')
       msg(paste0('   Processing ', length(files), ' geoTIFFs...'), lf)
       
       

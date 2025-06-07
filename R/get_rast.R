@@ -23,7 +23,7 @@
 get_rast <- function(name, gd, logfile) {
    
    
-   x <- get_file(name, gd, logfile)
+   x <- rast(get_file(name, gd, logfile))
    if(is.na(NAflag(x))) {                                   # if NAflag isn't set,
       na <- assessType(datatype(x)[1])$noDataValue          #    set it based on data type
       x <- subst(x, from = na, to = NA)
