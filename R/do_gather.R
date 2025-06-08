@@ -33,7 +33,7 @@
 #' @keywords internal
 
 
-'do_gather' <- function(site = NULL, pattern = '', 
+do_gather <- function(site = NULL, pattern = '', 
                         update = TRUE, check = FALSE, field = FALSE) {
    
    
@@ -60,8 +60,8 @@
       !dir.exists(the$cachedir))                                                    #    make sure cache directory exists if needed
       dir.create(the$cachedir, recursive = TRUE)
    
-   if(the$gather$sourcedrive == 'googledrive')                                      #    authorize Google Drive if need be   ************ need to get email from yaml if this works *****************
-      drive_auth(email = 'bcompton@umass.edu')
+   if(the$gather$sourcedrive == 'google')                                           #    authorize Google Drive if need be
+      drive_auth(email = the$useremail)
    
    
    msg('', lf)

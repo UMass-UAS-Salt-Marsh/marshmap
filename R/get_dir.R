@@ -31,7 +31,7 @@
 #' @export
 
 
-'get_dir' <- function(path, sourcedrive = 'local', logfile, sftp) {
+get_dir <- function(path, sourcedrive = 'local', logfile, sftp) {
    
    
    path <- gsub('/+', '/', paste0(path, '/'))         # clean up for Google Drive (dir must end in a slash; no doubled slashes)

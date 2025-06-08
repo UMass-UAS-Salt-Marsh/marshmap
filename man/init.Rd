@@ -13,12 +13,13 @@ Reads user-set parameters for package saltmarsh.
 User parameters are set in two distinct locations:
 \enumerate{
 \item The initialization file, in the user's home directory, \verb{~/saltmarsh.yml}.
-This file should contain four lines:
+This file should contain five lines:
 
 \verb{basedir: c:/Work/etc/saltmarsh} \cr
 \code{parsdir: pars} \cr
 \code{parsfile: pars.yml} \cr
-\verb{scratchdir: c:/Work/etc/saltmarsh/data/scratch}
+\verb{scratchdir: c:/Work/etc/saltmarsh/data/scratch} \cr
+\code{useremail: name@org}
 
 a. \code{basedir} points to the base directory
 
@@ -29,6 +30,11 @@ c. \code{parsfile} points to the main parameter file. It should be \code{pars.ym
 
 d. \code{scratchdir} points to the scratch drive, where the \code{cache} directory will be located.
 See notes on caching, below.
+
+e. \code{useremail} is your email, used for Google Drive authorization. There's no need to
+include this if you aren't using the Google Drive. You'll need to run \code{gather()} in
+local mode once to authorize on the web; your credentials will then be stored in your
+user directory.
 \item Everything else, in \verb{<basedir>/<parsdir>}. The primary parameter file is
 \code{pars.yml}, which points to other parameters (such as \code{sites.txt}).
 }

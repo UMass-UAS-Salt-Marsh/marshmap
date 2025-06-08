@@ -93,7 +93,7 @@
 #' @export
 
 
-'gather' <- function(site = NULL, pattern = '', 
+gather <- function(site = NULL, pattern = '', 
                      update = TRUE, check = FALSE, field = FALSE, local = FALSE, comment = NULL) {
    
    
