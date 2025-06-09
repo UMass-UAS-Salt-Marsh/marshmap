@@ -7,3 +7,4 @@
 
 
 the <- new.env(parent = emptyenv())
+library(slurmcollie)

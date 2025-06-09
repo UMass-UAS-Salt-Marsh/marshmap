@@ -2,6 +2,8 @@
 #' 
 #' @param rast A SpatRaster object
 #' @returns The existing or assigned NAflag
+#' @importFrom terra datatype NAflag
+#' @importFrom rasterPrep assessType
 #' @keywords internal
 
 

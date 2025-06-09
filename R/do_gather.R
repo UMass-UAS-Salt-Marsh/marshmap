@@ -24,7 +24,7 @@
 #'    cache or process anything
 #' @param field If TRUE, download and process the field transects if they don't already exist. 
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
-#' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect
+#' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
 #' @importFrom sf st_read 
 #' @importFrom lubridate as.duration interval
 #' @importFrom pkgcond suppress_warnings

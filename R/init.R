@@ -100,5 +100,5 @@ init <- function() {
    
    set_dirs()                                                                         # and create all full paths
    
-   packageStartupMessage('User parameters initialized\n')
+   packageStartupMessage('saltmarsh parameters initialized\n')
 }

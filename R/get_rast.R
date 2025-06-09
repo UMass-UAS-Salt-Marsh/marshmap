@@ -16,6 +16,7 @@
 #' - `cachedir` - local cache directory
 #' @param logfile Log file, for reporting missing directories (which don't throw an error)
 #' @returns path to file on local drive
+#' @importFrom terra datatype NAflag
 #' @importFrom rasterPrep assessType
 #' @keywords internal
 
