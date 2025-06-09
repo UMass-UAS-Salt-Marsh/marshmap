@@ -123,9 +123,13 @@ do_gather <- function(site = NULL, pattern = '',
       
       
       dumb_warning <- 'Sum of Photometric type-related color channels'              #    we don't want to hear about this!
-      suppress_warnings(standard <- get_rast(file.path(dir, sites$standard[i]), 
+      suppress_warnings(r <- get_rast(file.path(dir, sites$standard[i]), 
                                              gd, logfile = lf), 
                         pattern = dumb_warning, class = 'warning')
+      standard <- r$rast
+      type <- r$type
+      missing <- r$missing
+      
       msg(paste0('   Processing ', length(files), ' geoTIFFs...'), lf)
       
       
@@ -170,8 +174,7 @@ do_gather <- function(site = NULL, pattern = '',
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                           datatype = datatype(standard, bylyr = FALSE), 
-                           NAflag = get_NAflag(standard))
+                           datatype = type, NAflag = missing)
             
             shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
             for(f in shps)
@@ -192,7 +195,10 @@ do_gather <- function(site = NULL, pattern = '',
          msg(paste0('      processing ', j), lf)
          
          if(tryCatch({                                                              #    read the raster, skipping bad ones
-            suppressWarnings(g <- get_rast(j, gd, logfile = lf))
+            suppressWarnings(r <- get_rast(j, gd, logfile = lf))
+            g <- r$rast
+            type <- r$type
+            missing <- r$missing
             FALSE
          }, 
          error = function(cond) {
@@ -201,10 +207,6 @@ do_gather <- function(site = NULL, pattern = '',
             TRUE
          }))
             next
-         
-         
-         type <- datatype(g, , bylyr = FALSE)                                       #   get datatype and NA value, as they'll be lost if we reproject
-         missing <- getNAflag(g)
          
          
          if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {

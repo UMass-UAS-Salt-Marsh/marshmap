@@ -11,6 +11,7 @@ gather(
   check = FALSE,
   field = FALSE,
   local = FALSE,
+  trap = TRUE,
   comment = NULL
 )
 }

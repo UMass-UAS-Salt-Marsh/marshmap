@@ -11,7 +11,6 @@
 #'    `parsdir: pars` \cr
 #'    `parsfile: pars.yml` \cr
 #'    `scratchdir: c:/Work/etc/saltmarsh/data/scratch` \cr
-#'    `useremail: name@org`
 #' 
 #'    a. `basedir` points to the base directory
 #'    
@@ -22,11 +21,6 @@
 #'    
 #'    d. `scratchdir` points to the scratch drive, where the `cache` directory will be located. 
 #'        See notes on caching, below.
-#'        
-#'    e. `useremail` is your email, used for Google Drive authorization. There's no need to 
-#'       include this if you aren't using the Google Drive. You'll need to run `gather()` in
-#'       local mode once to authorize on the web; your credentials will then be stored in your 
-#'       user directory.
 #' 
 #' 2. Everything else, in `<basedir>/<parsdir>`. The primary parameter file is 
 #' `pars.yml`, which points to other parameters (such as `sites.txt`).

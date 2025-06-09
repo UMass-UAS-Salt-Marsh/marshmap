@@ -9,3 +9,11 @@ devtools::install_github('UMass-UAS-Salt-Marsh/salt-marsh-mapping')
 devtools::install_github('UMassCDS/slurmcollie')
 ```
 
+## Authorize Google Drive
+
+If you'll be getting data from the Google Drive with `gather`, you'll need get an 
+authorization token. This needs to be done only once for each user. 
+
+```
+set_up_google_drive()
+```

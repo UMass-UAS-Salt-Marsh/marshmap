@@ -15,7 +15,10 @@
 #' - `sftp` - list(url, user)
 #' - `cachedir` - local cache directory
 #' @param logfile Log file, for reporting missing directories (which don't throw an error)
-#' @returns path to file on local drive
+#' @returns list of:
+#'    \item{rast}{raster object}
+#'    \item{type}{data type of the object}
+#'    \item{missing}{NA value of the object}
 #' @importFrom terra datatype NAflag
 #' @importFrom rasterPrep assessType
 #' @keywords internal
@@ -25,10 +28,14 @@ get_rast <- function(name, gd, logfile) {
    
    
    x <- rast(get_file(name, gd, logfile))
-   if(is.na(NAflag(x))) {                                   # if NAflag isn't set,
-      na <- assessType(datatype(x, bylyr = FALSE))$noDataValue          #    set it based on data type
-      x <- subst(x, from = na, to = NA, NAflag = na, datatype = datatype(x, bylyr = FALSE))
+   type <- datatype(x, bylyr = FALSE)                                   # get datatype
+   missing <- get_NAflag(x)                                             # get NAflag if there is one
+   
+   if(is.na(missing)) {                                                 # if NAflag isn't set,
+      missing <- assessType(datatype(x, bylyr = FALSE))$noDataValue     #    set it based on data type
+      x <- subst(x, from = na, to = NA, NAflag = missing, 
+                 datatype = datatype(x, bylyr = FALSE))                 #    and replace missing values with NA
    }
    
-   x
+   list(rast = x, type = type, missing = missing)
 }

@@ -20,7 +20,10 @@ get_rast(name, gd, logfile)
 \item{logfile}{Log file, for reporting missing directories (which don't throw an error)}
 }
 \value{
-path to file on local drive
+list of:
+\item{rast}{raster object}
+\item{type}{data type of the object}
+\item{missing}{NA value of the object}
 }
 \description{
 The image geoTIFFs for the Salt Marsh project don't have NAflag set, leading

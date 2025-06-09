@@ -94,7 +94,7 @@
 
 
 gather <- function(site = NULL, pattern = '', 
-                     update = TRUE, check = FALSE, field = FALSE, local = FALSE, comment = NULL) {
+                     update = TRUE, check = FALSE, field = FALSE, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    resources <- list(ncpus = 2,
@@ -106,7 +106,7 @@ gather <- function(site = NULL, pattern = '',
       comment <- paste0('gather ', paste(site, collapse = ', '))
    
    launch('do_gather', reps = site, repname = 'site', moreargs = list(pattern = pattern, update = update, check = check, 
-                                       field = field), local = local, resources = resources, comment = comment)
+                                       field = field), local = local, trap = trap, resources = resources, comment = comment)
    
    
 }
