@@ -34,7 +34,7 @@
 
 
 do_gather <- function(site = NULL, pattern = '', 
-                        update = TRUE, check = FALSE, field = FALSE) {
+                      update = TRUE, check = FALSE, field = FALSE) {
    
    
    lf <- file.path(the$modelsdir, 'gather.log')                                     # set up logging
@@ -61,16 +61,9 @@ do_gather <- function(site = NULL, pattern = '',
       dir.create(the$cachedir, recursive = TRUE)
    
    if(the$gather$sourcedrive == 'google')                                           #    authorize Google Drive if need be
-      drive_auth(email = the$useremail)
+      drive_auth(token = readRDS('~/.google_auth/google_drive_token.RDS'))
    
    
-   msg('', lf)
-   msg('-----', lf)
-   msg('', lf)
-   msg(paste0('gather running for ', dim(sites)[1], ' sites...'), lf)
-   msg(paste0('sourcedrive = ', the$gather$sourcedrive), lf)
-   msg(paste0('site = ', paste(site, collapse = ', ')), lf)
-   msg(paste0('pattern = ', pattern), lf)
    if(check)
       msg('check = TRUE, so printing but not processing files', lf)
    

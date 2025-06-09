@@ -98,7 +98,7 @@ gather <- function(site = NULL, pattern = '',
    
    
    resources <- list(ncpus = 2,
-                     memory = 20,
+                     memory = 100,
                      walltime = '20:00:00'
    )
    
