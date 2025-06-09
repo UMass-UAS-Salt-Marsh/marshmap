@@ -170,7 +170,7 @@ do_gather <- function(site = NULL, pattern = '',
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                           datatype = datatype(standard)[1], 
+                           datatype = datatype(standard, bylyr = FALSE), 
                            NAflag = get_NAflag(standard))
             
             shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
@@ -202,6 +202,11 @@ do_gather <- function(site = NULL, pattern = '',
          }))
             next
          
+         
+         type <- datatype(g, , bylyr = FALSE)                                       #   get datatype and NA value, as they'll be lost if we reproject
+         missing <- getNAflag(g)
+         
+         
          if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
             msg(paste0('         !!! Reprojecting ', g), lf)
             g <- project(g, 'epsg:4326')
@@ -214,8 +219,8 @@ do_gather <- function(site = NULL, pattern = '',
                crop(footprint) |>
                mask(footprint) |>
                writeRaster(file.path(rd, basename(j)), overwrite = TRUE, 
-                           datatype = datatype(g)[1], 
-                           NAflag = get_NAflag(g))
+                           datatype = type, 
+                           NAflag = missing)
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }

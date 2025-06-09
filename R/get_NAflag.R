@@ -12,7 +12,7 @@ get_NAflag <- function(rast) {
    
    z <- NAflag(rast)
    if(is.na(z))
-      z <- assessType(datatype(rast)[1])$noDataValue
+      z <- assessType(datatype(rast, bylyr = FALSE))$noDataValue
    
    z
 }
