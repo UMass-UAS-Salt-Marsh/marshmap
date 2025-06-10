@@ -97,7 +97,7 @@ gather <- function(site = NULL, pattern = '',
                      update = TRUE, check = FALSE, field = FALSE, local = FALSE, trap = TRUE, comment = NULL) {
    
    
-   resources <- list(ncpus = 2,
+   resources <- list(ncpus = 1,                       # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
                      memory = 100,
                      walltime = '20:00:00'
    )

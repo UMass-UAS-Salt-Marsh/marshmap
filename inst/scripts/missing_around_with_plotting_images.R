@@ -5,6 +5,14 @@ library(terra)
 x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho.tif')
 plotRGB(x, 3, 2, 1, stretch = 'lin')
 
+
+# for single-band images like SWIR and DEM:
+x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/red/gis/flights/a16Jun22_RR_High_SWIR_Ortho.tif')
+plot(x, col = map.pal('bcyr'), legend = FALSE)
+
+x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/red/gis/flights/26May2022_RED_Low_HesaiRGB_DEM.tif')
+plot(x, col = map.pal('bcyr'), legend = FALSE)
+
 # the upshot: this works pretty well. Not wicked fast, but usable
 # upscaling with aggregate takes forever, so not worth it
 # stretch is needed to prevent the color intensity error

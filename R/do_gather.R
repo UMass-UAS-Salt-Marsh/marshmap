@@ -209,6 +209,13 @@ do_gather <- function(site = NULL, pattern = '',
             next
          
          
+         if(length(grep('SWIR', j)) == 1)                                           #    if image is SWIR (shortwave infrared),
+            g <- g[[1]]                                                             #       it's 3 redundant bands, so just take first one
+         
+         if(length(grep('^\\d', j)) == 1)                                           #    if 1st character of filename is a digit,
+            j <- paste0('x', j)                                                     #       add 'x' to the beginning so we don't run into trouble later
+         
+         
          if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
             msg(paste0('         !!! Reprojecting ', g), lf)
             g <- project(g, 'epsg:4326')
