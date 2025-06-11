@@ -108,7 +108,8 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       pr <- progressor(along = xvars)
       for(xv in xvars) {                                                            # for each predictor variable,
          pr()
-         x <- rast(file.path(fl, xv))
+         x <- rast(file.path(fl, xv))                                               #    read it and save in result matrix
+         names(x)[grep('Band_', names(x))] <- paste0(xv, '_', 1:length(names(x)))   #    rename Band_1 to <layer>_1 (e.g., OTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif)
          z[, names(x)] <- x[sel]
       }
       
