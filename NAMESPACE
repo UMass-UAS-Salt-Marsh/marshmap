@@ -2,6 +2,7 @@
 
 export(aucs)
 export(check_files)
+export(derive)
 export(do_map)
 export(finish_map)
 export(fit)

@@ -74,7 +74,9 @@
 #' 
 #'       `gather(site = c('oth', 'wes'), pattern = '_low_')`
 #' 
-#' @param site One or more site names, using 3 letter abbreviation. Default = all sites.
+#' @param site One or more site names, using 3 letter abbreviation. Default = all sites. If running 
+#'    in batch mode, each named site will be run in a separate job, though the default (`site = NULL`)
+#'    will run all sites in the same job.
 #' @param pattern Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only 
 #'        files ending in `.tif` are included in any case.
 #' Examples: 
@@ -88,6 +90,9 @@
 #' @param field If TRUE, download and process the field transects if they don't already exist. 
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
+#' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
+#'   for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
+#'   no effect if local = FALSE.
 #' @param comment Optional slurmcollie comment
 #' @importFrom slurmcollie launch
 #' @export

@@ -16,7 +16,9 @@ gather(
 )
 }
 \arguments{
-\item{site}{One or more site names, using 3 letter abbreviation. Default = all sites.}
+\item{site}{One or more site names, using 3 letter abbreviation. Default = all sites. If running
+in batch mode, each named site will be run in a separate job, though the default (\code{site = NULL})
+will run all sites in the same job.}
 
 \item{pattern}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
 files ending in \code{.tif} are included in any case.
@@ -37,6 +39,10 @@ cache or process anything}
 The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
+
+\item{trap}{If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
+for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
+no effect if local = FALSE.}
 
 \item{comment}{Optional slurmcollie comment}
 }

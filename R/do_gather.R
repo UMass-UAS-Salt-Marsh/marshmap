@@ -228,8 +228,7 @@ do_gather <- function(site = NULL, pattern = '',
                crop(footprint) |>
                mask(footprint) |>
                writeRaster(file.path(rd, basename(j)), overwrite = TRUE, 
-                           datatype = type, 
-                           NAflag = missing)
+                           datatype = type, NAflag = missing)
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
