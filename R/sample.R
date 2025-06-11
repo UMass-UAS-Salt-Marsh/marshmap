@@ -96,7 +96,8 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
          field <- subst(field, from = classes, to = classes, others = NA)           # select classes in transect
       
       fl <- resolve_dir(the$flightsdir, tolower(sites$site))
-      xvars <- list.files(fl, pattern = '.tif$')
+      xvars <- list.files(fl, pattern = '.tif$')                                    # just want TIFFs
+      xvars <- xvars[grep(pattern, xvars)]                                          # and match supplied pattern
       msg(paste0('Sampling ', length(xvars), ' variables'), lf)
       
       sel <- !is.na(field)                                                          # cells with field samples
@@ -108,17 +109,12 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       pr <- progressor(along = xvars)
       for(xv in xvars) {                                                            # for each predictor variable,
          pr()
-         x <- rast(file.path(fl, xv))                                               #    read it and save in result matrix
+         x <- rast(file.path(fl, xv))                                               #    get the raster
          names(x)[grep('Band_', names(x))] <- paste0(xv, '_', 1:length(names(x)))   #    rename Band_1 to <layer>_1 (e.g., OTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif)
-         z[, names(x)] <- x[sel]
+         z[, names(x)] <- x[sel]                                                    #    sample selected values
       }
       
       names(z) <- sub('^(\\d)', 'X\\1', names(z))                                   # add an X to the start of names that begin with a digit
-      
-      t <- data.frame(apply(z, MARGIN = 2, FUN = as.vector))                        # fix crazy shit with one-column matrices ending up in data frame. I don't understand what happened.
-      names(t) <- names(z)
-      z <- t
-      
       z <- round(z, 2)                                                              # round to 2 digits, which seems like plenty
       
       
@@ -137,7 +133,7 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       
       z <- group_by(z, subclass) |>
          slice_sample(n = target_n) |>                                              #    take minimum subclass n for every class
-         data.frame(z)                                                              #    and cure tidyverse infection
+         data.frame()                                                               #    and cure tidyverse infection
    }
    
    if(!is.null(d))                                                                  #    if sampling by mean distance,
