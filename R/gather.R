@@ -74,9 +74,8 @@
 #' 
 #'       `gather(site = c('oth', 'wes'), pattern = '_low_')`
 #' 
-#' @param site One or more site names, using 3 letter abbreviation. Default = all sites. If running 
-#'    in batch mode, each named site will be run in a separate job, though the default (`site = NULL`)
-#'    will run all sites in the same job.
+#' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
+#'    in batch mode, each named site will be run in a separate job.
 #' @param pattern Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only 
 #'        files ending in `.tif` are included in any case.
 #' Examples: 
@@ -98,8 +97,13 @@
 #' @export
 
 
-gather <- function(site = NULL, pattern = '', 
+gather <- function(site, pattern = '', 
                      update = TRUE, check = FALSE, field = FALSE, local = FALSE, trap = TRUE, comment = NULL) {
+   
+   
+   if(site == 'all')                                  # if all sites,
+      x <- read_pars_table('sites') 
+   
    
    
    resources <- list(ncpus = 1,                       # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
