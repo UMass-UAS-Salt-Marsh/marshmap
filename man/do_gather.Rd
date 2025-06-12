@@ -4,16 +4,10 @@
 \alias{do_gather}
 \title{Collect raster data for each site}
 \usage{
-do_gather(
-  site = NULL,
-  pattern = "",
-  update = TRUE,
-  check = FALSE,
-  field = FALSE
-)
+do_gather(site, pattern = "", update = TRUE, check = FALSE, field = FALSE)
 }
 \arguments{
-\item{site}{One or more site names, using 3 letter abbreviation. Default = all sites.}
+\item{site}{site, using 3 letter abbreviation}
 
 \item{pattern}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
 files ending in \code{.tif} are included in any case.

@@ -11,7 +11,7 @@
 #' **When running on Unity**, request 20 GB. It's been using just under 16 GB, and will fail quietly
 #' at the default of 8 GB.
 #' 
-#' @param site One or more site names, using 3 letter abbreviation. Default = all sites.
+#' @param site site, using 3 letter abbreviation
 #' @param pattern Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only 
 #'        files ending in `.tif` are included in any case.
 #' Examples: 
@@ -33,7 +33,7 @@
 #' @keywords internal
 
 
-do_gather <- function(site = NULL, pattern = '', 
+do_gather <- function(site, pattern = '', 
                       update = TRUE, check = FALSE, field = FALSE) {
    
    
@@ -41,11 +41,9 @@ do_gather <- function(site = NULL, pattern = '',
    start <- Sys.time()
    count <- NULL
    count$tiff <- count$transect <- 0
+   
    allsites <- read_pars_table('sites')                                             # site names from abbreviations to paths
-   if(is.null(site))
-      site <- allsites$site
-   else
-      sites <- allsites[match(tolower(site), tolower(allsites$site)), ]
+   sites <- allsites[match(tolower(site), tolower(allsites$site)), ]
    
    if(!the$gather$sourcedrive %in% c('local', 'google', 'sftp'))                    # make source sourcedrive is good
       stop('sourcedrive must be one of local, google, or sftp')

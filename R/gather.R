@@ -55,16 +55,15 @@
 #' Note that initial runs with Google Drive in a session open the browser for authentication or wait
 #' for input from the console, so don't run blindly when using the Google Drive
 #' 
-#' Remember that some SFTP servers require connection via VPN
+#' At the end of a run, the log file will be copied to the flights directory.
 #' 
-#' **When running on Unity**, request 20 GB. It's been using just under 16 GB, and will fail quietly
-#' at the default of 8 GB.
+#' Remember that some SFTP servers require connection via VPN
 #' 
 #' Example runs:
 #' 
 #'    Complete for all sites:
 #' 
-#'       `gather()`
+#'       `gather('all')`
 #'       
 #'    Run for one site, June only:
 #'    
@@ -98,24 +97,25 @@
 
 
 gather <- function(site, pattern = '', 
-                     update = TRUE, check = FALSE, field = FALSE, local = FALSE, trap = TRUE, comment = NULL) {
+                   update = TRUE, check = FALSE, field = FALSE, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    if(site == 'all')                                  # if all sites,
-      x <- read_pars_table('sites') 
-   
+      site <- (read_pars_table('sites'))$site         #    get list of all of them so we can split across reps in batch mode
    
    
    resources <- list(ncpus = 1,                       # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
-                     memory = 100,
+                     memory = 128,                    # but I've seen runs use 100 GB
                      walltime = '20:00:00'
    )
    
    if(is.null(comment))
-      comment <- paste0('gather ', paste(site, collapse = ', '))
+      comment <- paste0('gather ', site)
    
-   launch('do_gather', reps = site, repname = 'site', moreargs = list(pattern = pattern, update = update, check = check, 
-                                       field = field), local = local, trap = trap, resources = resources, comment = comment)
+   launch('do_gather', reps = site, repname = 'site', 
+          moreargs = list(pattern = pattern, update = update, check = check, field = field), 
+          finish = 'gather_finish',
+          local = local, trap = trap, resources = resources, comment = comment)
    
    
 }

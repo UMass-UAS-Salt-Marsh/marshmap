@@ -5,7 +5,7 @@
 \title{Collect raster data for each site}
 \usage{
 gather(
-  site = NULL,
+  site,
   pattern = "",
   update = TRUE,
   check = FALSE,
@@ -16,9 +16,8 @@ gather(
 )
 }
 \arguments{
-\item{site}{One or more site names, using 3 letter abbreviation. Default = all sites. If running
-in batch mode, each named site will be run in a separate job, though the default (\code{site = NULL})
-will run all sites in the same job.}
+\item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.
+in batch mode, each named site will be run in a separate job.}
 
 \item{pattern}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
 files ending in \code{.tif} are included in any case.
@@ -110,16 +109,15 @@ and release it with \verb{ws_release cache}. You'll need to point to the cache i
 Note that initial runs with Google Drive in a session open the browser for authentication or wait
 for input from the console, so don't run blindly when using the Google Drive
 
-Remember that some SFTP servers require connection via VPN
+At the end of a run, the log file will be copied to the flights directory.
 
-\strong{When running on Unity}, request 20 GB. It's been using just under 16 GB, and will fail quietly
-at the default of 8 GB.
+Remember that some SFTP servers require connection via VPN
 
 Example runs:
 
 Complete for all sites:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{  `gather()`
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  `gather('all')`
 }\if{html}{\out{</div>}}
 
 Run for one site, June only:
