@@ -6,6 +6,7 @@ UMass UAS Salt Marsh Project salt marsh land cover mapping
 ```
 # install.packages("devtools")
 devtools::install_github('UMass-UAS-Salt-Marsh/salt-marsh-mapping')
+devtools::install_github('bwcompton/batchtools', ref = 'bwcompton-robust-sbatch')         # while waiting for pull request
 devtools::install_github('UMassCDS/slurmcollie')
 ```
 

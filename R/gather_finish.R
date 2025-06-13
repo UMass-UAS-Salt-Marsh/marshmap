@@ -12,8 +12,11 @@ gather_finish <- function(jobid, status) {
    
    site <- slu$jdb$rep[match(jobid, slu$jdb$jobid)]
    date <- stamp('2025-06-25_02-25', quiet = TRUE)
+   path <- resolve_dir(the$flightsdir, site)
+   if(!dir.exists(path))
+      dir.create(path, recursive = TRUE, showWarnings = FALSE)
    t <- file.copy(logfile(jobid)$done, 
-                  file.path(resolve_dir(the$flightsdir, site), 
+                  file.path(path, 
                             paste0('gather_', date(now(tz = 'America/New_York')), '.log')),
                   overwrite = TRUE)
 }
