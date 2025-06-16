@@ -8,7 +8,7 @@ derive(
   site,
   pattern1 = "",
   pattern2 = NULL,
-  metrics = c("NDVI", "NDWI", "NDRE"),
+  metrics = c("NDVI", "NDWIg", "NDRE"),
   window = 3,
   local = FALSE,
   trap = TRUE,
@@ -66,8 +66,13 @@ calculated for each layer specified by \code{pattern1}. Results will be named \v
 For bivariate metrics, speicfy matched pairs of layers with \code{pattern1} and \code{pattern2}. It's
 best to specify complete names (you can use vectors for each) so the layers are paired properly.
 If you're crazy enough to use patterns here, scrutinize the result names carefully.
-Results will be named \verb{<layer1>_<layer2>__metric}. At the moment, \code{delta} is the only bivariate
-metric.
+Results will be named \verb{<layer1>_<layer2>__metric}. At the moment, \code{NDWIswir} and \code{delta} are the
+only bivariate metrics.
+
+Note that all normalized difference (NDxx) metrics require five-band Mica data.
+
+Note that derived metrics get two underscores in their names, e.g., \verb{<layer>__NDVI}. This is
+used to distinguish primary from derived data.
 
 This fits in the workflow after \code{gather} and before \code{sample}.
 }

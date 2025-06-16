@@ -24,7 +24,7 @@
 #' }
 #' @param window Window size for NDVI_mean and NDVI_std, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
-#' @importFrom terra rast writeRaster
+#' @importFrom terra rast focal writeRaster
 #' @importFrom rasterPrep assessType
 #' @importFrom tools file_path_sans_ext
 #' @keywords internal
@@ -103,10 +103,10 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
                    z <- (x[[mica$green]] - x[[mica$nir]]) / (x[[mica$green]] + x[[mica$nir]])
                 },
                 NDVI_mean = {
-                   z <- focal(ndvi, w = window, fun = 'mean')
+                   z <- focal(ndvi, w = window, fun = 'mean', na.policy = 'omit', na.rm = TRUE)
                 },
                 NDVI_std = {
-                   z <- focal(ndvi, w = window, fun = 'sd')
+                   z <- focal(ndvi, w = window, fun = 'sd', na.policy = 'omit', na.rm = TRUE)
                 },
                 NDWIswir = {
                    z <- (x[[mica$nir]] - y[[1]]) / (x[[mica$nir]] + y[[1]])
