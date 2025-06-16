@@ -11,8 +11,13 @@
 #' For bivariate metrics, speicfy matched pairs of layers with `pattern1` and `pattern2`. It's
 #' best to specify complete names (you can use vectors for each) so the layers are paired properly.
 #' If you're crazy enough to use patterns here, scrutinize the result names carefully.
-#' Results will be named `<layer1>_<layer2>__metric`. At the moment, `delta` is the only bivariate
-#' metric. 
+#' Results will be named `<layer1>_<layer2>__metric`. At the moment, `NDWIswir` and `delta` are the 
+#' only bivariate metrics.
+#' 
+#' Note that all normalized difference (NDxx) metrics require five-band Mica data.
+#' 
+#' Note that derived metrics get two underscores in their names, e.g., `<layer>__NDVI`. This is 
+#' used to distinguish primary from derived data.
 #' 
 #' This fits in the workflow after `gather` and before `sample`.
 #' 
@@ -51,7 +56,7 @@
 # Note: I have a list of 14 indices in an email from Steve Fickas, 5 May 2025
 
 
-derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'NDWI', 'NDRE'),
+derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'NDWIg', 'NDRE'),
                    window = 3, local = FALSE, trap = TRUE, comment = NULL) {
    
    

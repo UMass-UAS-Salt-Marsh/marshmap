@@ -86,10 +86,15 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          else
             result <- paste0(one[i], '__', metrics[j])
          
+         
+         if(any(metrics %in% c('NDVI', 'NDVI_mean', 'NDVI_std')))                         # if we're doing any of the NDVI metrics,
+            ndvi <- (x[[mica$nir]] - x[[mica$red]]) / (x[[mica$nir]] + x[[mica$red]])     #    calculate NDVI now
+         
+         
          message('Calculating metric ', metrics[j], ' for ', one[i], ifelse(!is.null(pattern2), paste0(' and ', two[i]), ''), '...')
          switch(metrics[j],
                 NDVI = {
-                   z <- (x[[mica$nir]] - x[[mica$red]]) / (x[[mica$nir]] + x[[mica$red]])
+                   z <- ndvi
                 },
                 NDRE = {
                    z <- (x[[mica$nir]] - x[[mica$re]]) / (x[[mica$nir]] + x[[mica$re]])
@@ -97,17 +102,22 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
                 NDWIg = {
                    z <- (x[[mica$green]] - x[[mica$nir]]) / (x[[mica$green]] + x[[mica$nir]])
                 },
-                NDVI_mean = {},
-                NDVI_std = {},
-                NDWIswir = {},
-                delta = {}
+                NDVI_mean = {
+                   z <- focal(ndvi, w = window, fun = 'mean')
+                },
+                NDVI_std = {
+                   z <- focal(ndvi, w = window, fun = 'sd')
+                },
+                NDWIswir = {
+                   z <- (x[[mica$nir]] - y[[1]]) / (x[[mica$nir]] + y[[1]])
+                },
+                delta = {
+                   z <- x - y
+                }
          )
          
-         if(metrics[j] %in% c('delta'))                                                   # delta will be signed integer; others floating point
-            type <- 'INT2S'
-         else
-            type <- 'FLT4S'                       
          
+         type <- 'FLT4S'                       
          missing <- assessType(type)$noDataValue
          
          writeRaster(z, file.path(path, paste0(result, '.tif')), overwrite = TRUE, 
