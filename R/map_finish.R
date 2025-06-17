@@ -5,7 +5,7 @@
 #' @export
 
 
-finish_map <- function(jobid, status) {
+map_finish <- function(jobid, status) {
    
    
    message('Finishing map run with jobid ', jobid, ' and status "', status, '"...')

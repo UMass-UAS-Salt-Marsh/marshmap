@@ -103,6 +103,7 @@ gather <- function(site, pattern = '',
    if(site == 'all')                                  # if all sites,
       site <- (read_pars_table('sites'))$site         #    get list of all of them so we can split across reps in batch mode
    
+   site <- tolower(site)
    
    resources <- list(ncpus = 1,                       # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
                      memory = 115,                    # but I've seen runs use 100 GB

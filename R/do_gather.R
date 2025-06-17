@@ -44,6 +44,7 @@ do_gather <- function(site, pattern = '',
    
    allsites <- read_pars_table('sites')                                             # site names from abbreviations to paths
    sites <- allsites[match(tolower(site), tolower(allsites$site)), ]
+   sites$site <- tolower(sites$site)
    
    if(!the$gather$sourcedrive %in% c('local', 'google', 'sftp'))                    # make source sourcedrive is good
       stop('sourcedrive must be one of local, google, or sftp')
