@@ -60,9 +60,9 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
                    window = 3, local = FALSE, trap = TRUE, comment = NULL) {
    
    
-   resources <- list(ncpus = 1,
-                     memory = 100,
-                     walltime = '20:00:00'
+   resources <- list(ncpus = 1,                    # I'm seeing up to 17 GB, less than 3 min
+                     memory = 32,
+                     walltime = '00:10:00'
    )
    
    if(is.null(comment))
