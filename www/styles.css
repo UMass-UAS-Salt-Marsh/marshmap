@@ -1,0 +1,28 @@
+/* www/styles.css */
+
+html, body, .container-fluid, .row.fullheight, .col-fullheight {
+  height: 100%;
+  min-height: 0;
+}
+
+.center-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;   /* makes shrinking possible in flexbox! */
+}
+
+.center-inset {
+  flex: 1 1 50%;
+  min-height: 0;      /* allows content to shrink, not overflow */
+  max-height: 50vh;   /* prevents from being too tall */
+  overflow: hidden;   /* prevents plot spill */
+  margin-bottom: 1em;
+  /* You can also use padding if you want spacing inside div */
+}
+
+.shiny-plot-output {
+  height: 100% !important;
+  width: 100% !important;
+  object-fit: contain;
+}
