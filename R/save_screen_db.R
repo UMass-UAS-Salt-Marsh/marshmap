@@ -1,0 +1,13 @@
+#' Saves the screening database
+#' 
+#' @param db Database table
+#' @param db_name Path and name of database file
+#' @keywords internal
+
+
+save_screen_db <- function(db, db_name) {
+   
+   
+   write.table(db, db_name, sep = '\t', quote = FALSE, row.names = FALSE, na = '')
+   
+}
