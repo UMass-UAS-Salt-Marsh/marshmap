@@ -1,5 +1,8 @@
 #' When there's no info for a site, disable controls and blank out info
 #' 
+#' @param input Shiny input object
+#' @param output Shiny output object
+#' @param session Shiny session object
 #' @import shiny
 #' @importFrom shinyjs disable
 #' @keywords internal

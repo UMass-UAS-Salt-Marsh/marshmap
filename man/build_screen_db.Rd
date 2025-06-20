@@ -12,11 +12,11 @@ build_screen_db(site)
 \value{
 A list of
 \item{db}{Site database table}
-\item{db_name}{Path and name of database table
+\item{db_name}{Path and name of database table}
 }
 \description{
 Reads any existing screen_\if{html}{\out{<site>}}.txt from flights directory for site,
 builds it or updates it for new or deleted files, saves the new version,
 and returns the path/name and table.
 }
-\keyword{insternal}
+\keyword{internal}

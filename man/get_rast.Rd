@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_rast.R
 \name{get_rast}
 \alias{get_rast}
-\title{A wrapper for rast(get_file) that sets missing values to NA}
+\title{A wrapper for \code{rast(get_file)} that sets missing values to NA}
 \usage{
 get_rast(name, gd, logfile)
 }
@@ -26,9 +26,9 @@ list of:
 \item{missing}{NA value of the object}
 }
 \description{
-The image geoTIFFs for the Salt Marsh project don't have NAflag set, leading
+The image geoTIFFs for the Salt Marsh project don't have \code{NAflag} set, leading
 to trouble downstream. This function reads a raster from the Google Drive,
-SFTP, or local drive, and if NAflag isn't set, comes up with an NAflag based
+SFTP, or local drive, and if \code{NAflag} isn't set, comes up with an \code{NAflag} based
 on the data type of the raster, (most commonly in our use, 255 for unsigned
 bytes and 65535 for unsigned 32-bit integers) and sets these values to NA.
 }

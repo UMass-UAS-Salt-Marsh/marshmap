@@ -6,6 +6,13 @@
 \usage{
 screen_filter(input, output, session)
 }
+\arguments{
+\item{input}{Shiny input object}
+
+\item{output}{Shiny output object}
+
+\item{session}{Shiny session object}
+}
 \description{
 Filter/refilter images
 }

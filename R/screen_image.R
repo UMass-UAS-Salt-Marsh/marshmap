@@ -1,5 +1,8 @@
 #' Display the current image plus info
 #' 
+#' @param input Shiny input object
+#' @param output Shiny output object
+#' @param session Shiny session object
 #' @import shiny
 #' @importFrom shinyjs enable disable
 #' @keywords internal

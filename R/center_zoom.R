@@ -1,6 +1,6 @@
-#' Produce a zoomed crop into the center of a terra object
+#' Produce a zoomed crop into the center of a `terra` object
 #' 
-#' @param x A terra object
+#' @param x A `terra` object
 #' @param factor Proportion of image to include
 #' @importFrom terra ext crop
 #' @keywords internal

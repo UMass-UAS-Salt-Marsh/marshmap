@@ -7,8 +7,8 @@
 #' @param site Site abbreviation
 #' @returns A list of
 #'    \item{db}{Site database table}
-#'    \item{db_name}{Path and name of database table
-#' @keywords insternal
+#'    \item{db_name}{Path and name of database table}
+#' @keywords internal
 
 
 build_screen_db <- function(site) {

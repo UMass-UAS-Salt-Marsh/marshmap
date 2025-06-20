@@ -11,7 +11,7 @@
 #' ```
 #' 
 #' If you write code that needs to access the Google Drive, you'll need to call the
-#' following once pre R session. `saltmarsh` takes care of this--it's only necessary
+#' following once per R session. `saltmarsh` takes care of this--it's only necessary
 #' for separate code.
 #' 
 #' ```

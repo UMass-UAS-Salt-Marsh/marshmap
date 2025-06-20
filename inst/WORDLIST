@@ -24,3 +24,10 @@ vectorize
 vectorized
 GiB
 slurmcollie
+SWIR
+NDVI
+NDRE
+NIR
+unrecovered
+waterbodies
+refilter

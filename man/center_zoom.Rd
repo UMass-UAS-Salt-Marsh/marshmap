@@ -2,16 +2,16 @@
 % Please edit documentation in R/center_zoom.R
 \name{center_zoom}
 \alias{center_zoom}
-\title{Produce a zoomed crop into the center of a terra object}
+\title{Produce a zoomed crop into the center of a \code{terra} object}
 \usage{
 center_zoom(x, factor)
 }
 \arguments{
-\item{x}{A terra object}
+\item{x}{A \code{terra} object}
 
 \item{factor}{Proportion of image to include}
 }
 \description{
-Produce a zoomed crop into the center of a terra object
+Produce a zoomed crop into the center of a \code{terra} object
 }
 \keyword{internal}

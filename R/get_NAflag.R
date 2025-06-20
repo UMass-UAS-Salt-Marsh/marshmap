@@ -1,8 +1,8 @@
-#' Returns the NAflag for a SpatRaster, making one up if it's not defined
+#' Returns the `NAflag` for a `SpatRaster`, making one up if it's not defined
 #' 
-#' @param rast A SpatRaster object
-#' @returns The existing or assigned NAflag
-#' @importFrom terra datatype NAflag
+#' @param rast A `SpatRaster` object
+#' @returns The existing or assigned `NAflag`
+#' @importFrom terra datatype `NAflag`
 #' @importFrom rasterPrep assessType
 #' @keywords internal
 

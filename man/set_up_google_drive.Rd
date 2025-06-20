@@ -18,7 +18,7 @@ Once this is done, you can verify access with
 }\if{html}{\out{</div>}}
 
 If you write code that needs to access the Google Drive, you'll need to call the
-following once pre R session. \code{saltmarsh} takes care of this--it's only necessary
+following once per R session. \code{saltmarsh} takes care of this--it's only necessary
 for separate code.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{googledrive::drive_auth(token = readRDS('~/.google_auth/google_drive_token.RDS'))

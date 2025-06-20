@@ -1,8 +1,8 @@
-#' A wrapper for rast(get_file) that sets missing values to NA
+#' A wrapper for `rast(get_file)` that sets missing values to NA
 #' 
-#' The image geoTIFFs for the Salt Marsh project don't have NAflag set, leading
+#' The image geoTIFFs for the Salt Marsh project don't have `NAflag` set, leading
 #' to trouble downstream. This function reads a raster from the Google Drive,
-#' SFTP, or local drive, and if NAflag isn't set, comes up with an NAflag based
+#' SFTP, or local drive, and if `NAflag` isn't set, comes up with an `NAflag` based
 #' on the data type of the raster, (most commonly in our use, 255 for unsigned
 #' bytes and 65535 for unsigned 32-bit integers) and sets these values to NA.
 #' 

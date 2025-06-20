@@ -2,17 +2,17 @@
 % Please edit documentation in R/get_NAflag.R
 \name{get_NAflag}
 \alias{get_NAflag}
-\title{Returns the NAflag for a SpatRaster, making one up if it's not defined}
+\title{Returns the \code{NAflag} for a \code{SpatRaster}, making one up if it's not defined}
 \usage{
 get_NAflag(rast)
 }
 \arguments{
-\item{rast}{A SpatRaster object}
+\item{rast}{A \code{SpatRaster} object}
 }
 \value{
-The existing or assigned NAflag
+The existing or assigned \code{NAflag}
 }
 \description{
-Returns the NAflag for a SpatRaster, making one up if it's not defined
+Returns the \code{NAflag} for a \code{SpatRaster}, making one up if it's not defined
 }
 \keyword{internal}

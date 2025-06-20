@@ -17,7 +17,7 @@ For now, this returns months. Eventually, it will return our defined flight seas
 }
 \details{
 Robust to wildly haphazard file and date formats (e.g., 18Jun2025, 18June25); does
-a pretty good job of hunting down the date from the filename. Dates must be in dmy
+a pretty good job of hunting down the date from the filename. Dates must be in \code{dmy}
 format, followed by an underscore. For file names with two dates, finds the first.
 }
 \keyword{internal}
