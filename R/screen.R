@@ -19,9 +19,16 @@ screen <- function() {
     # User interface ---------------------
     ui <- fluidPage(
         
-        #  theme = bs_theme(bootswatch = 'cosmo', version = 5),                                   # version defense. Use version_default() to update
+        theme = bs_theme(bootswatch = 'cerulean', version = 5),                                   # version defense. Use version_default() to update
         
         includeCSS('www/styles.css'),
+        
+#         tags$style(HTML("
+# .selectize-dropdown {
+#   position: relative !important;
+# }
+# ")),
+        
         div(class = 'container-fluid',
             add_busy_spinner(spin = 'fading-circle', position = 'bottom-right', onstart = FALSE, timeout = 500),
             
@@ -50,43 +57,45 @@ screen <- function() {
                        
                        titlePanel('Salt marsh imagery screener'),
                        
-                       selectInput('site', label = 'Site', choices = sites$site),
-                       
-                       textOutput('site_info'),
-                       
-                       br(),
-                       
-                       textOutput('image_name'),
-                       textOutput('bands'),
-                       textOutput('coverage'),
-                       
-                       br(),
-                       
-                       sliderTextInput('score', 'Image score',
-                                       choices = c('unscored', 'rejected', 'poor', 'fair', 'good', 'excellent')),
-                       
-                       textAreaInput('comment', 'Comments', value = '',                                             #******** set value = db$input
-                                     width = '100%', rows = 6, placeholder = 'Optional comment'),
-                       
-                       span(
-                           actionButton('first', '<<'),
-                           actionButton('previous', '<'),
-                           actionButton('next', '>'),
-                           actionButton('last', '>>')
+                       card(
+                           selectInput('site', label = HTML('<h5 style="display: inline-block;">Site</h5>'), choices = sites$site, selectize = FALSE),
+                           
+                           materialSwitch(inputId = 'revisit', label = 'Revisit images', value = FALSE, 
+                                          status = 'default'),
+                           textInput('filter', HTML('<h6 style="display: inline-block;">Image filter</h6>'), value = '',
+                                     width = '50%', placeholder = 'regex'),
+                           
+                           textOutput('site_info')
                        ),
                        
-                       br(),
-                       actionButton('inset', 'Show insets'),
+                       card(
+                           HTML('<h5 style="display: inline-block;">Image</h5>'),
+                           
+                           textOutput('image_name'),
+                           textOutput('image_info'),
+                           
+                           sliderTextInput('score', HTML('<h6 style="display: inline-block;">Image score</h6>'),
+                                           choices = c('unscored', 'rejected', 'poor', 'fair', 'good', 'excellent')),
+                           
+                           textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',                                             #******** set value = db$input
+                                         width = '100%', rows = 3, placeholder = 'Optional comment'),
+                           actionButton('inset', 'Show insets', width = '110px')
+                       ),
                        
-                       br(),
-                       br(),
-                       br(),
-                       br(),
-                       actionButton('exit', 'Exit')
-                       
-
-                       
-
+                       card(
+                           HTML('<h5 style="display: inline-block;">Navigate</h5>'),
+                           
+                           span(
+                               actionButton('first', '<<'),
+                               actionButton('previous', '<'),
+                               actionButton('next', '>'),
+                               actionButton('last', '>>'),
+                               
+                               hr(),
+                               
+                               actionButton('exit', 'Exit')
+                           ),
+                       ),
                 )
             )
         )
@@ -128,10 +137,10 @@ screen <- function() {
             
             session$userData$full <- rast(file.path(session$userData$dir, session$userData$tiffs[1]))
             bands <- nlyr(session$userData$full)
-            output$bands <- renderText(paste0(bands, ' band', ifelse(bands > 1, 's', '')))
-            
             coverage <- 82   # ******************************************** pull % coverage from db or calculate and save it
-            output$coverage <- renderText(paste0(coverage, '% coverage'))
+            
+            image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), ' | ', coverage, '% coverage')
+            output$image_info <- renderText(image_info)
             
             output$inset1 <- NULL
             output$inset2 <- NULL
@@ -147,6 +156,9 @@ screen <- function() {
             output$inset2 <- screen_plot('inset2', input, output, session = getDefaultReactiveDomain())
             
         })
+        
+        
+        
         
         
         
