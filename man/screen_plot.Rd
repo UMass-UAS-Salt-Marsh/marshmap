@@ -4,7 +4,7 @@
 \alias{screen_plot}
 \title{Display plots for screen}
 \usage{
-screen_plot(extent, input, output, session)
+screen_plot(extent, bands, input, output, session)
 }
 \arguments{
 \item{extent}{Which plot to show, one of \code{full}, \code{inset1}, or \code{inset2}}

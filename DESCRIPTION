@@ -26,7 +26,12 @@ Imports:
     paletteer,
     rasterPrep,
     peakRAM,
-    slurmcollie
+    slurmcollie,
+    shiny, 
+    shinyjs,
+    bslib,
+    shinybusy,
+    shinyWidgets
 Remotes:
     UMass-UAS-Salt-Marsh/slurmcollie
 Suggests: 

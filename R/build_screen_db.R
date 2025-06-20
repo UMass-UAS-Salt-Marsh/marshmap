@@ -30,6 +30,10 @@ build_screen_db <- function(site) {
    
    site <- tolower(site)
    dir <- resolve_dir(the$flightsdir, site)
+   
+   if(!dir.exists(dir))                                                 # if there's no flights dir, just return NULL
+      return(NULL)
+   
    db_name <- file.path(dir, paste0('screen_', site, '.txt'))
    
    
@@ -54,7 +58,7 @@ build_screen_db <- function(site) {
    x <- grep('.tif', x, value = TRUE)                                   # only want TIFFs
    x <- grep('__', x, invert = TRUE, value = TRUE)                      # and no derived variables
    
-   db$deleted[!db$name %in% x] <- TRUE                                  # flag deleted files
+   db$deleted <- !db$name %in% x                                        # flag deleted files
    
    
    missing <- x[!x %in% db$name]
@@ -67,8 +71,11 @@ build_screen_db <- function(site) {
       db$sensor[i] <- find_targets(sensors, missing)
       db$tide[i] <- find_targets(tides, missing)
       db$season[i] <- seasons(missing)
+      db$quality[i] <- 0                                                # quality starts with 0 = not scored
       db$comment[i] <- ''
    }
+   
+   db$quality[is.na(db$quality)] <- 0              # ********** temporary, until I've visited all sites 
    
    save_screen_db(db, db_name)
    

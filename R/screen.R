@@ -15,19 +15,16 @@ screen <- function() {
     sites <- (read_pars_table('sites'))
     sites$footprint <- basename(sites$footprint)
     
+    score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'excellent')
+    
+    
     
     # User interface ---------------------
     ui <- fluidPage(
         
         theme = bs_theme(bootswatch = 'cerulean', version = 5),                                   # version defense. Use version_default() to update
-        
         includeCSS('www/styles.css'),
-        
-#         tags$style(HTML("
-# .selectize-dropdown {
-#   position: relative !important;
-# }
-# ")),
+        useShinyjs(),
         
         div(class = 'container-fluid',
             add_busy_spinner(spin = 'fading-circle', position = 'bottom-right', onstart = FALSE, timeout = 500),
@@ -58,12 +55,8 @@ screen <- function() {
                        titlePanel('Salt marsh imagery screener'),
                        
                        card(
-                           selectInput('site', label = HTML('<h5 style="display: inline-block;">Site</h5>'), choices = sites$site, selectize = FALSE),
-                           
-                           materialSwitch(inputId = 'revisit', label = 'Revisit images', value = FALSE, 
-                                          status = 'default'),
-                           textInput('filter', HTML('<h6 style="display: inline-block;">Image filter</h6>'), value = '',
-                                     width = '50%', placeholder = 'regex'),
+                           selectInput('site', label = HTML('<h5 style="display: inline-block;">Site</h5>'), 
+                                       choices = sites$site, selectize = FALSE),
                            
                            textOutput('site_info')
                        ),
@@ -75,20 +68,30 @@ screen <- function() {
                            textOutput('image_info'),
                            
                            sliderTextInput('score', HTML('<h6 style="display: inline-block;">Image score</h6>'),
-                                           choices = c('unscored', 'rejected', 'poor', 'fair', 'good', 'excellent')),
+                                           choices = score_choices, force_edges = TRUE),
                            
-                           textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',                                             #******** set value = db$input
-                                         width = '100%', rows = 3, placeholder = 'Optional comment'),
+                           textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',
+                                         width = '100%', rows = 3),
                            actionButton('inset', 'Show insets', width = '110px')
                        ),
                        
                        card(
                            HTML('<h5 style="display: inline-block;">Navigate</h5>'),
                            
+                           textOutput('image_no'),
+                           
                            span(
+                               materialSwitch(inputId = 'revisit', label = 'Revisit images', value = FALSE, 
+                                              status = 'default'),
+                               
+                               textInput('filter', HTML('<h6 style="display: inline-block;">Image filter</h6>'), value = '',
+                                         width = '50%', placeholder = 'regex'),
+                               
+                               hr(),                               
+                               
                                actionButton('first', '<<'),
                                actionButton('previous', '<'),
-                               actionButton('next', '>'),
+                               actionButton('next_', '>'),
                                actionButton('last', '>>'),
                                
                                hr(),
@@ -111,59 +114,101 @@ screen <- function() {
         
         observeEvent(input$site, {                                                                          # --- picked a site                                                         
             session$userData$dir <- resolve_dir(the$flightsdir, input$site)
-            
             screen <- build_screen_db(input$site)
-            session$userData$db <- screen$db
-            session$userData$db_name <- screen$db_name
             
-            lays <- nrow(session$userData$db)
-            scored <- sum(session$userData$db$qualty > 0)
-            pct <- round(scored / lays * 100, 0)
-            info <- paste0(' - ', scored, ' scored of ', lays, ' (', pct, '%)')
-            
-            output$site_info <- renderText(paste0(sites$site_name[sites$site == input$site], info))
-            
-            
-            session$userData$index <- 1                   # ***** unless there are no images for site
-            output$image_name <- renderText(session$userData$db$name[session$userData$index])
-            
-            
-            footfile <- file.path(resolve_dir(the$shapefilesdir, input$site), 
-                                  sites$footprint[sites$site == input$site])
-            session$userData$footprint <- st_read(footfile, quiet = TRUE)    
-            
-            session$userData$tiffs <- grep('.tif$', list.files(session$userData$dir), value = TRUE)
-            session$userData$tiffs <- grep('Mica_Ortho', session$userData$tiffs, value = TRUE)
-            
-            session$userData$full <- rast(file.path(session$userData$dir, session$userData$tiffs[1]))
-            bands <- nlyr(session$userData$full)
-            coverage <- 82   # ******************************************** pull % coverage from db or calculate and save it
-            
-            image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), ' | ', coverage, '% coverage')
-            output$image_info <- renderText(image_info)
-            
-            output$inset1 <- NULL
-            output$inset2 <- NULL
-            output$full <- screen_plot('full', input, output, session = getDefaultReactiveDomain())
-            
+            if(is.null(screen)) {
+                output$site_info <- renderText(paste0('There is no flights directory for ', 
+                                                      sites$site_name[sites$site == input$site]))
+                screen_no_site(input, output, session)
+            }
+            else
+            {
+                session$userData$db <- screen$db                                                                #    Get the database for this site
+                session$userData$db_name <- screen$db_name
+                
+                lays <- nrow(session$userData$db) - sum(session$userData$db$deleted)                            #    Site info
+                scored <- sum(session$userData$db$quality > 0)
+                pct <- round(scored / lays * 100, 0)
+                if(lays == 0)
+                    info <- paste0(' has no images')
+                else
+                    info <- paste0(' - ', scored, ' scored of ', lays, ' (', pct, '%)')
+                output$site_info <- renderText(paste0(sites$site_name[sites$site == input$site], info))
+                
+                
+                footfile <- file.path(resolve_dir(the$shapefilesdir, input$site), 
+                                      sites$footprint[sites$site == input$site])
+                session$userData$footprint <- st_read(footfile, quiet = TRUE)                                   #    get site footprint
+                
+                screen_filter(input, output, session)                                                           #    initial filtering
+                session$userData$index <- 1                                                                     #    start with first image for site
+                screen_image(score_choices, input, output, session = getDefaultReactiveDomain())                #    display the first image
+            }
         })
+        
+        
+        observeEvent(input$score, {                                                                         # --- image score
+            session$userData$db$quality[session$userData$sel[session$userData$index]] <- 
+                match(input$score, score_choices) - 1
+        })
+        
+        
+        observeEvent(input$comment, {                                                                       # --- image comment
+            session$userData$db$comment[session$userData$sel[session$userData$index]] <- 
+                input$comment
+        })
+        
         
         observeEvent(input$inset, {                                                                         # --- requested inset
+            bands <- nlyr(session$userData$full)
+            
             session$userData$inset1 <- center_zoom(session$userData$full, 0.1)
-            output$inset1 <- screen_plot('inset1', input, output, session = getDefaultReactiveDomain())
+            output$inset1 <- screen_plot('inset1', bands, input, output, session = getDefaultReactiveDomain())
             
             session$userData$inset2 <- center_zoom(session$userData$full, 0.01)
-            output$inset2 <- screen_plot('inset2', input, output, session = getDefaultReactiveDomain())
-            
+            output$inset2 <- screen_plot('inset2', bands, input, output, session = getDefaultReactiveDomain())
         })
         
         
+        observeEvent(input$revisit, {
+            screen_filter(input, output, session)                                                           #    refilter
+            session$userData$index <- 1                                                                     #    could bother to look for the one we were on
+            screen_image(score_choices, input, output, session = getDefaultReactiveDomain())                #    display the first image
+        })
         
         
+        observeEvent(input$filter, {
+            screen_filter(input, output, session)                                                           #    refilter
+            session$userData$index <- 1
+            screen_image(score_choices, input, output, session = getDefaultReactiveDomain())                #    display the first image
+        })
         
         
+        observeEvent(input$first, {                                                                         # --- First image
+            session$userData$index <- 1
+            screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
+        })
         
-        observeEvent(input$exit, {
+        
+        observeEvent(input$previous, {                                                                      # --- Previous image
+            session$userData$index <- max(session$userData$index - 1, 1)
+            screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
+        })
+        
+        
+        observeEvent(input$next_, {                                                                         # --- Next image
+            session$userData$index <- min(session$userData$index + 1, length(session$userData$sel))
+            screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
+        })
+        
+        
+        observeEvent(input$last, {                                                                         # --- Last image
+            session$userData$index <- length(session$userData$sel)
+            screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
+        })
+        
+        
+        observeEvent(input$exit, {                                                                         # --- Exit
             save_screen_db(session$userData$db, session$userData$db_name)
             message('Screening database saved')
             stopApp()
