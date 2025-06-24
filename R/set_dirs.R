@@ -9,16 +9,15 @@
 set_dirs <- function() {
    
    
-   for(i in c('models', 'data', 'gis', 'flights', 'field', 'shapefiles', 'samples', 'predicted', 'cache', 'logs', 'databases'))          # set directory name defaults
+   for(i in c('models', 'data', 'flights', 'field', 'shapefiles', 'samples', 'predicted', 'cache', 'logs', 'databases'))          # set directory name defaults
       the$dirs[[i]] <- ifelse(is.null(the$dirs[[i]]), i, the$dirs[[i]])
    
    the$modelsdir <- file.path(the$basedir, the$dirs$model)                                            # models
    the$datadir <- file.path(the$basedir, the$dirs$data, '<site>')                                     # data/<site>/
-   the$gisdir <- file.path(the$datadir, the$dirs$gis)                                                 # data/<site>/gis/
-   the$flightsdir <- file.path(the$gisdir, the$dirs$flights)                                          # data/<site>/gis/flights/
-   the$fielddir <- file.path(the$gisdir, the$dirs$field)                                              # data/<site>/gis/field/
-   the$shapefilesdir <- file.path(the$gisdir, the$dirs$shapefiles)                                    # data/<site>/gis/shapefiles/
-   the$predicteddir <- file.path(the$gisdir, the$dirs$predicted)                                      # data/<site>/gis/predicted/
+   the$flightsdir <- file.path(the$datadir, the$dirs$flights)                                         # data/<site>/flights/
+   the$fielddir <- file.path(the$datadir, the$dirs$field)                                             # data/<site>/field/
+   the$shapefilesdir <- file.path(the$datadir, the$dirs$shapefiles)                                   # data/<site>/shapefiles/
+   the$predicteddir <- file.path(the$datadir, the$dirs$predicted)                                     # data/<site>/predicted/
    the$samplesdir <- file.path(the$datadir, the$dirs$samples)                                         # data/<site>/samples/
    
    the$logdir <- file.path(the$basedir, the$dirs$logs)                                                # job logs directory                          **** am I using this outside of slurmcollie?

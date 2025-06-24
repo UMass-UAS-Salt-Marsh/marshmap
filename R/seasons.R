@@ -12,7 +12,7 @@
 #' @keywords internal
 
 # Example call:
-#    seasons(grep('.tif', list.files('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights'), value = TRUE))
+#    seasons(grep('.tif', list.files('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/flights'), value = TRUE))
 
 
 

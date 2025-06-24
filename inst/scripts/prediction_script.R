@@ -35,12 +35,12 @@ if(FALSE) {
    
    
    
-   path <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights'
-   rpath <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/predicted'
+   path <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/flights'
+   rpath <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/predicted'
    
    
-   path <- 'C:/Work/etc/saltmarsh/data/oth/gis/flights'                                                        ############## for testing
-   rpath <- 'C:/Work/etc/saltmarsh/data/oth/gis/predicted'
+   path <- 'C:/Work/etc/saltmarsh/data/oth/flights'                                                        ############## for testing
+   rpath <- 'C:/Work/etc/saltmarsh/data/oth/predicted'
    
    
    

@@ -34,7 +34,7 @@ modelsdir <- 'C:/Work/etc/saltmarsh/models/'
 model <- 'fit_oth_2025-Apr-29_15-19'                              # better model: all vars for 2018-2021 (this one includes data for AUC)
 model_fit <- readRDS(file.path(modelsdir, paste0(model, '.RDS')))
 
-predictdir <- 'c:/Work/etc/saltmarsh/data/oth/gis/predicted'
+predictdir <- 'c:/Work/etc/saltmarsh/data/oth/predicted'
 # predicted <- 'predicted'                                        # orig
 predict <- 'predict_oth_2025-Apr-28_13-54_recolor'
 prediction <- terra::rast(file.path(predictdir, paste0(predict, '.tif')))

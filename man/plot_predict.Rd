@@ -5,7 +5,7 @@
 \title{Read a predict grid and plot it nicely}
 \usage{
 plot_predict(
-  tiff = "C:/Work/etc/saltmarsh/data/oth/gis/predicted/predict_oth_2025-Apr-28_13-54.tif",
+  tiff = "C:/Work/etc/saltmarsh/data/oth/predicted/predict_oth_2025-Apr-28_13-54.tif",
   pal = "ggsci::category20b_d3"
 )
 }

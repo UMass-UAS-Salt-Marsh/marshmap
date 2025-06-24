@@ -42,7 +42,7 @@
 #' all parameters. It is automatically run upon loading the package, and may be 
 #' rerun by the user if parameter files are changed.
 #' 
-#' You can change standard directory names (`data`, `models`, `gis`, `flights`, `field`, 
+#' You can change standard directory names (`data`, `models`, `flights`, `field`, 
 #' `shapefiles`, `samples`, `predicted`, and `cache`) by setting each within a `dirs:` block in `pars.yml`.
 #' Directories default to standard names, which is usually what you want.
 #' 

@@ -2,15 +2,15 @@
 
 
 library(terra)
-x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/02Aug19_OTH_Low_Mica_Ortho.tif')
+x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/flights/02Aug19_OTH_Low_Mica_Ortho.tif')
 plotRGB(x, 3, 2, 1, stretch = 'lin')
 
 
 # for single-band images like SWIR and DEM:
-x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/red/gis/flights/a16Jun22_RR_High_SWIR_Ortho.tif')
+x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/red/flights/a16Jun22_RR_High_SWIR_Ortho.tif')
 plot(x, col = map.pal('bcyr'), legend = FALSE)
 
-x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/red/gis/flights/26May2022_RED_Low_HesaiRGB_DEM.tif')
+x <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/red/flights/26May2022_RED_Low_HesaiRGB_DEM.tif')
 plot(x, col = map.pal('bcyr'), legend = FALSE)
 
 # the upshot: this works pretty well. Not wicked fast, but usable
@@ -33,7 +33,7 @@ plotRGB(y, 3, 2, 1, stretch = 'lin')
 
 ######## junk from here down
 
-swir <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/gis/flights/08Sep22_OTH_High_SWIR_Ortho.tif')
+swir <- rast('/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/flights/08Sep22_OTH_High_SWIR_Ortho.tif')
 
 scr <- rast('/scratch/workspace/bcompton_umass_edu-cache/cache/26May22_RR_Low_Mica_Ortho.tif')
 
