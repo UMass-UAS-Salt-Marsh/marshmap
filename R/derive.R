@@ -11,7 +11,7 @@
 #' For bivariate metrics, specify matched pairs of layers with `pattern1` and `pattern2`. It's
 #' best to specify complete names (you can use vectors for each) so the layers are paired properly.
 #' If you're crazy enough to use patterns here, scrutinize the result names carefully.
-#' Results will be named `<layer1>_<layer2>__metric`. At the moment, `NDWIswir` and `delta` are the 
+#' Results will be named `<layer1>__<layer2>__metric`. At the moment, `NDWIswir` and `delta` are the 
 #' only bivariate metrics.
 #' 
 #' Note that all normalized difference (`NDxx`) metrics require five-band Mica data.

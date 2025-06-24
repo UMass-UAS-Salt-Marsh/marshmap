@@ -6,9 +6,16 @@
 #' a pretty good job of hunting down the date from the filename. Dates must be in `dmy`
 #' format, followed by an underscore. For file names with two dates, finds the first.
 #' 
+#' File names must include at least a month and year to get a season, so 
+#' `xOTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif` will return an NA for season. Such 
+#' errors may be fixed by editing `screen_<site>.txt`.
+#' 
 #' @param files Vector of imagery file names
-#' @returns Vector of seasons corresponding to files
-#' @importFrom lubridate ymd
+#' @returns named list of:
+#'    \item {date}{vector of dates in yyyy-mm-dd format}
+#'    \year {year}{vector of years, 4 digit integers}
+#'    \item {season}{vector of seasons}
+#' @importFrom lubridate ymd year %within%
 #' @keywords internal
 
 # Example call:
@@ -34,7 +41,19 @@ seasons <- function(files) {
    y <- as.numeric(gsub('[^0-9]', '', from_list(strsplit(from_list(dy, 2), '_'), 1)))  # and year
    y <- ifelse(y < 2000, y + 2000, y)
    
-   dates <- ymd(paste(y, m, d, sep = '-'), quiet = TRUE)
+   dates <- ymd(paste(y, m, d, sep = '-'), quiet = TRUE)                               # dates
+   nd <- is.na(dates)
+   dates[nd] <- ymd(paste(y[nd], m[nd], 15, sep = '-'), quiet = TRUE)                  # recover dates with year and month, set day to 15th
    
-   m                                                                                   # for now, just return month *****************
+   
+   seasons <- read_pars_table('seasons')
+   
+   z <- rep(NA, length(dates))                                                         # get seasons
+   for(i in seq_along(dates)) 
+      if(!is.na(dates[i]))
+         z[i] <- seasons$season[dates[i] %within% interval(paste0(year(dates[i]), '-', seasons$start), 
+                                                           paste0(year(dates[i]), '-', seasons$end))]
+   
+   
+   list(date = dates, year = y, season = z)
 }

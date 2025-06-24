@@ -13,7 +13,7 @@
 
 screen <- function() {
     
-    sites <- (read_pars_table('sites'))
+    sites <- read_pars_table('sites')
     sites$footprint <- basename(sites$footprint)
     
     score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'excellent')
@@ -128,7 +128,7 @@ screen <- function() {
                 session$userData$db_name <- screen$db_name
                 
                 lays <- nrow(session$userData$db) - sum(session$userData$db$deleted)                            #    Site info
-                scored <- sum(session$userData$db$quality > 0)
+                scored <- sum(session$userData$db$score > 0)
                 pct <- round(scored / lays * 100, 0)
                 if(lays == 0)
                     info <- paste0(' has no images')
@@ -149,7 +149,7 @@ screen <- function() {
         
         
         observeEvent(input$score, {                                                                         # --- image score
-            session$userData$db$quality[session$userData$sel[session$userData$index]] <- 
+            session$userData$db$score[session$userData$sel[session$userData$index]] <- 
                 match(input$score, score_choices) - 1
         })
         

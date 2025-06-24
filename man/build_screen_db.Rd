@@ -4,10 +4,16 @@
 \alias{build_screen_db}
 \title{Read and update or build a screening database for a site}
 \usage{
-build_screen_db(site)
+build_screen_db(site, refresh = FALSE, really = FALSE)
 }
 \arguments{
 \item{site}{Site abbreviation}
+
+\item{refresh}{Recreated database from scratch. \strong{Warning:} this will
+destroy your existing database, including all assigned scores and
+comments. Requres also supplying \code{really = TRUE}.}
+
+\item{really}{If TRUE, allows refresh to recreate the database}
 }
 \value{
 A list of
@@ -17,6 +23,7 @@ A list of
 \description{
 Reads any existing screen_\if{html}{\out{<site>}}.txt from flights directory for site,
 builds it or updates it for new or deleted files, saves the new version,
-and returns the path/name and table.
+and returns the path/name and table. Finds classes from \code{pars.yml} as
+case-insensitive underscore-separated words (after applying name fixes).
 }
 \keyword{internal}

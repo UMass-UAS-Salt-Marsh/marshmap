@@ -45,6 +45,7 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
    )
    
    
+   # When adding new metrics, they also need to be added to derive: in pars.yml
    if(!all(b <- metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVI_mean', 'NDVI_std', 'NDWIswir', 'delta')))
       stop('Unknown metrics: ', metrics[!b])
    
@@ -81,7 +82,7 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          
          if(!is.null(pattern2)) {                                                         # if bivariate,
             y <- rast(file.path(path, paste0(two[i], '.tif')))                            #    get 2nd raster
-            result <- paste0(one[i], '_', two[i], '__', metrics[j])
+            result <- paste0(one[i], '__', two[i], '__', metrics[j])
          }
          else
             result <- paste0(one[i], '__', metrics[j])

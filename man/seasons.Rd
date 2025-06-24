@@ -10,7 +10,10 @@ seasons(files)
 \item{files}{Vector of imagery file names}
 }
 \value{
-Vector of seasons corresponding to files
+named list of:
+\item {date}{vector of dates in yyyy-mm-dd format}
+\year {year}{vector of years, 4 digit integers}
+\item {season}{vector of seasons}
 }
 \description{
 For now, this returns months. Eventually, it will return our defined flight seasons.
@@ -19,5 +22,9 @@ For now, this returns months. Eventually, it will return our defined flight seas
 Robust to wildly haphazard file and date formats (e.g., 18Jun2025, 18June25); does
 a pretty good job of hunting down the date from the filename. Dates must be in \code{dmy}
 format, followed by an underscore. For file names with two dates, finds the first.
+
+File names must include at least a month and year to get a season, so
+\code{xOTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif} will return an NA for season. Such
+errors may be fixed by editing \verb{screen_<site>.txt}.
 }
 \keyword{internal}

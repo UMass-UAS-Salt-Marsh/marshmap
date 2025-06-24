@@ -66,7 +66,7 @@ calculated for each layer specified by \code{pattern1}. Results will be named \v
 For bivariate metrics, specify matched pairs of layers with \code{pattern1} and \code{pattern2}. It's
 best to specify complete names (you can use vectors for each) so the layers are paired properly.
 If you're crazy enough to use patterns here, scrutinize the result names carefully.
-Results will be named \verb{<layer1>_<layer2>__metric}. At the moment, \code{NDWIswir} and \code{delta} are the
+Results will be named \verb{<layer1>__<layer2>__metric}. At the moment, \code{NDWIswir} and \code{delta} are the
 only bivariate metrics.
 
 Note that all normalized difference (\code{NDxx}) metrics require five-band Mica data.

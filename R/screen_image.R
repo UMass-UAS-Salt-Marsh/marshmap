@@ -20,18 +20,26 @@ screen_image <- function(score_choices, input, output, session) {
       
       output$image_no <- renderText(paste0(session$userData$index, ' of ', length(session$userData$sel)))
       
-      output$image_name <- renderText(session$userData$db$name[session$userData$sel[session$userData$index]])
+      row <- session$userData$sel[session$userData$index]
+      
+      output$image_name <- renderText(session$userData$db$name[row])
       
       updateSliderTextInput(inputId = 'score', 
-                            selected = score_choices[session$userData$db$quality[session$userData$sel[session$userData$index]] + 1])
+                            selected = score_choices[session$userData$db$score[row] + 1])
       updateTextInput(inputId = 'comment', 
-                      value = session$userData$db$comment[session$userData$sel[session$userData$index]])
+                      value = session$userData$db$comment[row])
       
-      session$userData$full <- rast(file.path(session$userData$dir, session$userData$db$name[session$userData$sel[session$userData$index]]))
+      session$userData$full <- rast(file.path(session$userData$dir, session$userData$db$name[row]))
       bands <- nlyr(session$userData$full)
-      
+      fi <- c(session$userData$db$type[row], 
+              session$userData$db$sensor[row], 
+              session$userData$db$season[row], 
+              session$userData$db$year[row], 
+              session$userData$db$tide[row], 
+              session$userData$db$tidemod[row])
+      fi <- fi[!is.na(fi)]
    
-      image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''))
+      image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), ' | ', paste(fi, collapse = ' '))
       output$image_info <- renderText(image_info)
       
       output$inset1 <- NULL

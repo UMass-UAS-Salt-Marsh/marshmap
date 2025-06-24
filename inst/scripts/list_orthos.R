@@ -1,4 +1,5 @@
 # a quick-and-dirty to get standards
+# *** This is just from orthophotos/, not DEMs nor CHMs!
 # 10 Jun 2025
 
 print_oneperline <- function(x)                                            # helper function to print one line per line with nice line numbers
