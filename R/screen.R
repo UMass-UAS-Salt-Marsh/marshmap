@@ -3,6 +3,7 @@
 #' @import shiny
 #' @import bslib
 #' @importFrom shinybusy add_busy_spinner
+#' @importFrom shinyjs useShinyjs
 #' @import shinyWidgets
 #' @importFrom terra rast nlyr
 #' @export

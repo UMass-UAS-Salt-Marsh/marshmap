@@ -33,7 +33,7 @@ get_rast <- function(name, gd, logfile) {
    
    if(is.na(missing)) {                                                 # if NAflag isn't set,
       missing <- assessType(datatype(x, bylyr = FALSE))$noDataValue     #    set it based on data type
-      x <- subst(x, from = na, to = NA, NAflag = missing, 
+      x <- subst(x, from = missing, to = NA, NAflag = missing, 
                  datatype = datatype(x, bylyr = FALSE))                 #    and replace missing values with NA
    }
    

@@ -4,6 +4,7 @@
 #' 
 #' @param jobid Job ids to finish for
 #' @param status Job status
+#' @importFrom slurmcollie logfile slu
 #' @keywords internal
 
 
@@ -17,6 +18,6 @@ gather_finish <- function(jobid, status) {
       dir.create(path, recursive = TRUE, showWarnings = FALSE)
    t <- file.copy(logfile(jobid)$done, 
                   file.path(path, 
-                            paste0('gather_', date(now(tz = 'America/New_York')), '.log')),
+                            paste0('gather_', date(now(tzone = 'America/New_York')), '.log')),
                   overwrite = TRUE)
 }
