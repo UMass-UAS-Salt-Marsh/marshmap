@@ -11,7 +11,7 @@ build_screen_db(site, refresh = FALSE, really = FALSE)
 
 \item{refresh}{Recreated database from scratch. \strong{Warning:} this will
 destroy your existing database, including all assigned scores and
-comments. Requres also supplying \code{really = TRUE}.}
+comments. Requires also supplying \code{really = TRUE}.}
 
 \item{really}{If TRUE, allows refresh to recreate the database}
 }

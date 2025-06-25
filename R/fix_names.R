@@ -5,8 +5,8 @@
 #' names prior to building the orthophoto database so seasons, sensors, etc. can be 
 #' extracted without trouble. The file names are *not* changed on the disk.
 #' 
-#' Set name reassignments in pars.yaml. Reassignments are case-sensitive (filenames
-#' are not case-sensitive in general, but we want to keep reassgnments narrow). Any
+#' Set name reassignments in `pars.yaml`. Reassignments are case-sensitive (filenames
+#' are not case-sensitive in general, but we want to keep reassignments narrow). Any
 #' part of the name that matches will be changed, so take care. Reassignments look 
 #' like this, with the substring to replace on the left, and the new substring on the 
 #' right:

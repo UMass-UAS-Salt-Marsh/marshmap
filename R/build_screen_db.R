@@ -8,7 +8,7 @@
 #' @param site Site abbreviation
 #' @param refresh Recreated database from scratch. **Warning:** this will
 #'    destroy your existing database, including all assigned scores and 
-#'    comments. Requres also supplying `really = TRUE`.
+#'    comments. Requires also supplying `really = TRUE`.
 #' @param really If TRUE, allows refresh to recreate the database
 #' @returns A list of
 #'    \item{db}{Site database table}

@@ -11,9 +11,9 @@ seasons(files)
 }
 \value{
 named list of:
-\item {date}{vector of dates in yyyy-mm-dd format}
-\year {year}{vector of years, 4 digit integers}
-\item {season}{vector of seasons}
+\item{date}{vector of dates in \code{yyyy-mm-dd} format}
+\item{year}{vector of years, 4 digit integers}
+\item{season}{vector of seasons}
 }
 \description{
 For now, this returns months. Eventually, it will return our defined flight seasons.
