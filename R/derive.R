@@ -47,19 +47,21 @@
 #' }
 #' @param window Window size for mean, std, NDVImean, and NDVIstd, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
+#' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#' #'    over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'   for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
 #'   no effect if local = FALSE.
 #' @param comment Optional slurmcollie comment
-#' @importFrom slurmcollie launch
+#' @importFrom slurmcollie launch get_resources
 #' @export
 
 # Note: I have a list of 14 indices in an email from Steve Fickas, 5 May 2025
 
 
 derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'NDWIg', 'NDRE'),
-                   window = 3, local = FALSE, trap = TRUE, comment = NULL) {
+                   window = 3, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    sites <- read_pars_table('sites')
@@ -67,10 +69,12 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
       stop('Non-existent sites: ', site[m])
    
    
-   resources <- list(ncpus = 1,                    # I'm seeing up to 17 GB, less than 3 min
-                     memory = 32,
-                     walltime = '00:10:00'
-   )
+   resources <- get_resources(resources, list(
+      ncpus = 1,                                               # I'm seeing up to 17 GB, less than 3 min
+      memory = 32,
+      walltime = '00:10:00'
+   ))
+   
    
    if(is.null(comment))
       comment <- paste0('derive ', paste(site, collapse = ', '), '(', paste(metrics, collapse = ', '), ')')

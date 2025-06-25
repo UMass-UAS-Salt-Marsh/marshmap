@@ -10,6 +10,7 @@ derive(
   pattern2 = NULL,
   metrics = c("NDVI", "NDWIg", "NDRE"),
   window = 3,
+  resources = NULL,
   local = FALSE,
   trap = TRUE,
   comment = NULL
@@ -46,6 +47,9 @@ difference between late-season and early-season DEMs to represent vegetation can
 
 \item{window}{Window size for mean, std, NDVImean, and NDVIstd, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.}
+
+\item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#'    over the function's defaults.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 

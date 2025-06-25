@@ -87,17 +87,20 @@
 #'    cache or process anything
 #' @param field If TRUE, download and process the field transects if they don't already exist. 
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
+#' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#' #'    over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'   for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
 #'   no effect if local = FALSE.
 #' @param comment Optional slurmcollie comment
-#' @importFrom slurmcollie launch
+#' @importFrom slurmcollie launch get_resources
 #' @export
 
 
 gather <- function(site, pattern = '', 
-                   update = TRUE, check = FALSE, field = FALSE, local = FALSE, trap = TRUE, comment = NULL) {
+                   update = TRUE, check = FALSE, field = FALSE, resources = NULL, local = FALSE, 
+                   trap = TRUE, comment = NULL) {
    
    
    if(site == 'all')                                  # if all sites,
@@ -105,10 +108,17 @@ gather <- function(site, pattern = '',
    
    site <- tolower(site)
    
-   resources <- list(ncpus = 1,                       # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
-                     memory = 150,                    # an OTH run blew out at 115 GB
-                     walltime = '10:00:00'
-   )
+   res <- resources
+   resources <- get_resources(resources, list(
+      ncpus = 1,                                      # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
+      memory = 150,                                   # an OTH run blew out at 115 GB
+      walltime = '10:00:00'
+   ))
+   
+   if(!is.null(res)) {
+      both <- c(res, resources)
+      both[unique(names(both))]
+   }
    
    if(is.null(comment))
       comment <- paste0('gather ', site)
@@ -117,6 +127,4 @@ gather <- function(site, pattern = '',
           moreargs = list(pattern = pattern, update = update, check = check, field = field), 
           finish = 'gather_finish',
           local = local, trap = trap, resources = resources, comment = comment)
-   
-   
 }

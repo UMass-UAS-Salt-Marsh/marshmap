@@ -30,7 +30,7 @@
 #' @importFrom pkgcond suppress_warnings
 #' @importFrom tools file_path_sans_ext
 #' @importFrom googledrive drive_auth
-#' @keywords internal
+#' @export
 
 
 do_gather <- function(site, pattern = '', 

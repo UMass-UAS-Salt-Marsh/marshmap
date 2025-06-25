@@ -10,6 +10,7 @@ gather(
   update = TRUE,
   check = FALSE,
   field = FALSE,
+  resources = NULL,
   local = FALSE,
   trap = TRUE,
   comment = NULL
@@ -36,6 +37,9 @@ cache or process anything}
 
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
 The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
+
+\item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#'    over the function's defaults.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 

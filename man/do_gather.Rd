@@ -41,4 +41,3 @@ called by gather.
 \strong{When running on Unity}, request 20 GB. It's been using just under 16 GB, and will fail quietly
 at the default of 8 GB.
 }
-\keyword{internal}
