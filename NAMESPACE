@@ -3,6 +3,7 @@
 export(aucs)
 export(check_files)
 export(derive)
+export(do_derive)
 export(do_map)
 export(fit)
 export(fix_names)

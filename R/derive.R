@@ -34,6 +34,8 @@
 #'       primarily helps distinguish waterbodies}
 #'    \item{NDRE}{Normalized difference red edge index, `(NIR - RE) / (NIR + RE)`, an index of the
 #'       amount of chlorophyll in a plant}
+#'    \item{mean}{mean of each band in a window, size defined by `window`}
+#'    \item{std}{standard deviation of each band in a window, size defined by `window`}
 #'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
 #'    \item{NDVIstd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
@@ -43,7 +45,7 @@
 #'    \item{delta}{The difference between `pattern1` and `pattern2`, may be useful for taking a 
 #'    difference between late-season and early-season DEMs to represent vegetation canopy height}
 #' }
-#' @param window Window size for NDVI_mean and NDVI_std, in cells; windows are square, so just specify
+#' @param window Window size for mean, std, NDVImean, and NDVIstd, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
@@ -60,6 +62,11 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
                    window = 3, local = FALSE, trap = TRUE, comment = NULL) {
    
    
+   sites <- read_pars_table('sites')
+   if(any(m <- !site %in% sites$site))
+      stop('Non-existent sites: ', site[m])
+   
+   
    resources <- list(ncpus = 1,                    # I'm seeing up to 17 GB, less than 3 min
                      memory = 32,
                      walltime = '00:10:00'
@@ -69,7 +76,7 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
       comment <- paste0('derive ', paste(site, collapse = ', '), '(', paste(metrics, collapse = ', '), ')')
    
    launch('do_derive', reps = site, repname = 'site', 
-          moreargs = list(pattern = pattern1, pattern2 = pattern2, metrics = metrics),
+          moreargs = list(pattern = pattern1, pattern2 = pattern2, metrics = metrics, window = window),
           local = local, trap = trap, resources = resources, comment = comment)
    
 }

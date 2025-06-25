@@ -72,7 +72,7 @@ screen <- function() {
                                               status = 'default'),
                                
                                textInput('filter', HTML('<h6 style="display: inline-block;">Image filter</h6>'), value = '',
-                                         width = '50%', placeholder = 'regex'),
+                                         width = '100%', placeholder = 'regex'),
                                
                                hr(),                               
                                

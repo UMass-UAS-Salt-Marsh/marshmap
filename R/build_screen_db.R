@@ -24,9 +24,17 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
       names <- fix_names(names)                                         #    clean up naming errors
       names <- gsub('-', '_', names)                                    #    treat modifiers are separate names here
       z <- rep(NA, length(names))
+      
       for(j in targets) {
-         p <- paste0('^x', j, '_|_', j, '_|_', j, '.tif')
-         z[grep(p, names, ignore.case = TRUE)] <- j                     #       find targets as underscore-separated words
+         if(j == 'window'){                                             #       matching window is a special case
+            matches <- grep('_w[0-9]*', names)
+            z[matches] <- gsub('.*(w[0-9]*).*', '\\1', names[matches])
+         }
+         else
+         {
+            p <- paste0('^x', j, '_|_', j, '_|_', j, '.tif')
+            z[grep(p, names, ignore.case = TRUE)] <- j                  #       find targets as underscore-separated words
+         }
       }
       z
    }
@@ -52,6 +60,7 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
          type = character(),
          sensor = character(),
          derive = character(),
+         window = character(),
          tide = character(),
          tidemod = character(),
          date = ymd(),
@@ -83,6 +92,7 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
       db$type[deriv] <- 'derived'                                       #    derived variables get type = 'derived' no matter what sensor was used
       db$sensor[i] <- find_targets(the$category$sensor, y)
       db$derive[i] <- find_targets(the$category$derive, y)
+      db$window[i] <- find_targets(the$category$window, y)
       db$tide[i] <- find_targets(the$category$tide, y)
       db$tidemod[i] <- find_targets(the$category$tidemod, y)
       s <- seasons(y)
@@ -103,6 +113,6 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
    
    
    save_screen_db(db, db_name)
-
+   
    invisible(list(db = db, db_name = db_name))
 }

@@ -18,20 +18,19 @@ named site will be run in a separate job.}
 
 \item{pattern1}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
 files ending in \code{.tif} are included in any case. \code{pattern1} may alternatively be a vector
-of layer names (or patterns if you want to get tricky). See details.}
+of layer names (or patterns if you want to get tricky).}
 
 \item{pattern2}{A second pattern or vector of layer names, used for bivariate metrics. See details.}
 
 \item{metrics}{A list of metrics to apply. Univariate metrics include:
 \describe{
-\item{NDVI}{Normalized difference vegetation index, \verb{(NIR - red) / (NIR + red)``, an index of biomass\} \\item\{NDWIg\}\{Normalized difference water index (green), }(green - NIR) / (green + NIR)\verb{, primarily helps distinguish waterbodies\} \\item\{NDRE\}\{Normalized difference red edge index, }(NIR - RE) / (NIR + RE)\verb{, an index of the amount of chlorophyll in a plant\} \\item\{NDVImean\}\{mean of NDVI in a window, size defined by }window\verb{\} \\item\{NDVIstd\}\{standard deviation of NDVI in a window, size defined by }window\verb{\} Bivariate metrics include: \\item\{NDWIswir\}\{Normalized difference water index (SWIR), }(NIR - SWIR) / (NIR + SWIR)\verb{, an index of water content in leaves; requires a Mica layer for }pattern1\verb{, and a matched SWIR layer for }pattern2\verb{\} \\item\{delta\}\{The difference between }pattern1\code{and}pattern2`, may be useful for taking a
+\item{NDVI}{Normalized difference vegetation index, \verb{(NIR - red) / (NIR + red)``, an index of biomass\} \\item\{NDWIg\}\{Normalized difference water index (green), }(green - NIR) / (green + NIR)\verb{, primarily helps distinguish waterbodies\} \\item\{NDRE\}\{Normalized difference red edge index, }(NIR - RE) / (NIR + RE)\verb{, an index of the amount of chlorophyll in a plant\} \\item\{NDVImean\}\{mean of NDVI in a window, size defined by }window\verb{\} \\item\{NDVIstd\}\{standard deviation of NDVI in a window, size defined by }window\verb{\} \\item\{mean\}\{mean of each band in a window, size defined by }window\verb{\} \\item\{std\}\{standard deviation of each band in a window, size defined by }window\verb{\} Bivariate metrics include: \\item\{NDWIswir\}\{Normalized difference water index (SWIR), }(NIR - SWIR) / (NIR + SWIR)\verb{, an index of water content in leaves; requires a Mica layer for }pattern1\verb{, and a matched SWIR layer for }pattern2\verb{\} \\item\{delta\}\{The d
 difference between late-season and early-season DEMs to represent vegetation canopy height}
 }}
 
-\item{window}{Window size for NDVI_mean and NDVI_std, in cells; windows are square, so just specify
+\item{window}{Window size for mean, std, NDVImean, and NDVIstd, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.}
 }
 \description{
 Create derived variables such as NDVI and NDRE
 }
-\keyword{internal}
