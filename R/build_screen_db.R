@@ -22,6 +22,7 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
    
    find_targets <- function(targets, names) {                           # find targets as substrings in names
       names <- fix_names(names)                                         #    clean up naming errors
+      names <- gsub('-', '_', names)                                    #    treat modifiers are separate names here
       z <- rep(NA, length(names))
       for(j in targets) {
          p <- paste0('^x', j, '_|_', j, '_|_', j, '.tif')

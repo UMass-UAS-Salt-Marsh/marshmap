@@ -34,8 +34,8 @@
 #'       primarily helps distinguish waterbodies}
 #'    \item{NDRE}{Normalized difference red edge index, `(NIR - RE) / (NIR + RE)`, an index of the
 #'       amount of chlorophyll in a plant}
-#'    \item{NDVI_mean}{mean of NDVI in a window, size defined by `window`}
-#'    \item{NDVI_std}{standard deviation of NDVI in a window, size defined by `window`}
+#'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
+#'    \item{NDVIstd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
 #'    \item{NDWIswir}{Normalized difference water index (SWIR), `(NIR - SWIR) / (NIR + SWIR)`,
 #'       an index of water content in leaves; requires a Mica layer for `pattern1`, and a matched

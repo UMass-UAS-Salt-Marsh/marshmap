@@ -53,27 +53,13 @@ screen <- function() {
                 
                 column(3, class = 'col-fullheight',
                        
-                       titlePanel('Salt marsh imagery screener'),
+                       titlePanel(HTML('<H3>Imagery screener</H3>')),
                        
                        card(
                            selectInput('site', label = HTML('<h5 style="display: inline-block;">Site</h5>'), 
                                        choices = sites$site, selectize = FALSE),
                            
                            textOutput('site_info')
-                       ),
-                       
-                       card(
-                           HTML('<h5 style="display: inline-block;">Image</h5>'),
-                           
-                           textOutput('image_name'),
-                           textOutput('image_info'),
-                           
-                           sliderTextInput('score', HTML('<h6 style="display: inline-block;">Image score</h6>'),
-                                           choices = score_choices, force_edges = TRUE),
-                           
-                           textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',
-                                         width = '100%', rows = 3),
-                           actionButton('inset', 'Show insets', width = '110px')
                        ),
                        
                        card(
@@ -93,13 +79,27 @@ screen <- function() {
                                actionButton('first', '<<'),
                                actionButton('previous', '<'),
                                actionButton('next_', '>'),
-                               actionButton('last', '>>'),
-                               
-                               hr(),
-                               
-                               actionButton('exit', 'Exit')
+                               actionButton('last', '>>')
                            ),
                        ),
+                       
+                       card(
+                           HTML('<h5 style="display: inline-block;">Image</h5>'),
+                           
+                           textOutput('image_name'),
+                           uiOutput('image_info'),
+                           
+                           sliderTextInput('score', HTML('<h6 style="display: inline-block;">Image score</h6>'),
+                                           choices = score_choices, force_edges = TRUE),
+                           
+                           textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',
+                                         width = '100%', rows = 3),
+                           actionButton('inset', 'Show zooms', width = '115px')
+                       ),
+                       
+                       card(
+                        actionButton('exit', 'Exit', width = '60px')
+                       )
                 )
             )
         )
@@ -161,13 +161,14 @@ screen <- function() {
         
         
         observeEvent(input$inset, {                                                                         # --- requested inset
+            sensor <- session$userData$db$sensor[session$userData$sel[session$userData$index]]
             bands <- nlyr(session$userData$full)
             
             session$userData$inset1 <- center_zoom(session$userData$full, 0.1)
-            output$inset1 <- screen_plot('inset1', bands, input, output, session = getDefaultReactiveDomain())
+            output$inset1 <- screen_plot('inset1', sensor, bands, input, output, session = getDefaultReactiveDomain())
             
             session$userData$inset2 <- center_zoom(session$userData$full, 0.01)
-            output$inset2 <- screen_plot('inset2', bands, input, output, session = getDefaultReactiveDomain())
+            output$inset2 <- screen_plot('inset2', sensor, bands, input, output, session = getDefaultReactiveDomain())
         })
         
         

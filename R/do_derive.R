@@ -13,8 +13,8 @@
 #'       primarily helps distinguish waterbodies}
 #'    \item{NDRE}{Normalized difference red edge index, `(NIR - RE) / (NIR + RE)`, an index of the
 #'       amount of chlorophyll in a plant}
-#'    \item{NDVI_mean}{mean of NDVI in a window, size defined by `window`}
-#'    \item{NDVI_std}{standard deviation of NDVI in a window, size defined by `window`}
+#'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
+#'    \item{NDVIstd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
 #'    \item{NDWIswir}{Normalized difference water index (SWIR), `(NIR - SWIR) / (NIR + SWIR)`,
 #'       an index of water content in leaves; requires a Mica layer for `pattern1`, and a matched
@@ -46,7 +46,7 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
    
    
    # When adding new metrics, they also need to be added to derive: in pars.yml
-   if(!all(b <- metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVI_mean', 'NDVI_std', 'NDWIswir', 'delta')))
+   if(!all(b <- metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVImean', 'NDVIstd', 'NDWIswir', 'delta')))
       stop('Unknown metrics: ', metrics[!b])
    
    
@@ -88,7 +88,7 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
             result <- paste0(one[i], '__', metrics[j])
          
          
-         if(any(metrics %in% c('NDVI', 'NDVI_mean', 'NDVI_std')))                         # if we're doing any of the NDVI metrics,
+         if(any(metrics %in% c('NDVI', 'NDVImean', 'NDVIstd')))                         # if we're doing any of the NDVI metrics,
             ndvi <- (x[[mica$nir]] - x[[mica$red]]) / (x[[mica$nir]] + x[[mica$red]])     #    calculate NDVI now
          
          
@@ -103,10 +103,10 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
                 NDWIg = {
                    z <- (x[[mica$green]] - x[[mica$nir]]) / (x[[mica$green]] + x[[mica$nir]])
                 },
-                NDVI_mean = {
+                NDVImean = {
                    z <- focal(ndvi, w = window, fun = 'mean', na.policy = 'omit', na.rm = TRUE)
                 },
-                NDVI_std = {
+                NDVIstd = {
                    z <- focal(ndvi, w = window, fun = 'sd', na.policy = 'omit', na.rm = TRUE)
                 },
                 NDWIswir = {

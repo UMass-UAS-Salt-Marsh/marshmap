@@ -32,8 +32,8 @@ of layer names (or patterns if you want to get tricky). See details.}
 primarily helps distinguish waterbodies}
 \item{NDRE}{Normalized difference red edge index, \code{(NIR - RE) / (NIR + RE)}, an index of the
 amount of chlorophyll in a plant}
-\item{NDVI_mean}{mean of NDVI in a window, size defined by \code{window}}
-\item{NDVI_std}{standard deviation of NDVI in a window, size defined by \code{window}}
+\item{NDVImean}{mean of NDVI in a window, size defined by \code{window}}
+\item{NDVIstd}{standard deviation of NDVI in a window, size defined by \code{window}}
 Bivariate metrics include:
 \item{NDWIswir}{Normalized difference water index (SWIR), \code{(NIR - SWIR) / (NIR + SWIR)},
 an index of water content in leaves; requires a Mica layer for \code{pattern1}, and a matched

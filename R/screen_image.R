@@ -15,7 +15,7 @@ screen_image <- function(score_choices, input, output, session) {
       screen_no_site(input, output, session)
    else
    {
-      lapply(c('score', 'comment', 'insets', 'first', 'previous', 'next_', 'last'), enable)
+      lapply(c('score', 'comment', 'inset', 'first', 'previous', 'next_', 'last'), enable)
       
       
       output$image_no <- renderText(paste0(session$userData$index, ' of ', length(session$userData$sel)))
@@ -30,20 +30,24 @@ screen_image <- function(score_choices, input, output, session) {
                       value = session$userData$db$comment[row])
       
       session$userData$full <- rast(file.path(session$userData$dir, session$userData$db$name[row]))
+      sensor <- session$userData$db$sensor[row]
       bands <- nlyr(session$userData$full)
       fi <- c(session$userData$db$type[row], 
-              session$userData$db$sensor[row], 
+              sensor, 
               session$userData$db$season[row], 
               session$userData$db$year[row], 
-              session$userData$db$tide[row], 
-              session$userData$db$tidemod[row])
-      fi <- fi[!is.na(fi)]
-   
-      image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), ' | ', paste(fi, collapse = ' '))
-      output$image_info <- renderText(image_info)
+              ifelse(is.na(session$userData$db$tidemod[row]) || session$userData$db$tidemod[row] == '', 
+                     session$userData$db$tide[row],
+                     paste(session$userData$db$tide[row], session$userData$db$tidemod[row], sep = '-'))
+      )
+
+      fi <- fi[!(is.na(fi) | fi == '')]
+      
+      image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), '<br>', paste(fi, collapse = ' | '))
+      output$image_info <- renderUI(HTML(image_info))
       
       output$inset1 <- NULL
       output$inset2 <- NULL
-      output$full <- screen_plot('full', bands, input, output, session = getDefaultReactiveDomain())
+      output$full <- screen_plot('full', sensor, bands, input, output, session = getDefaultReactiveDomain())
    }
 }
