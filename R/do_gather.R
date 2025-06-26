@@ -230,30 +230,8 @@ do_gather <- function(site, pattern = '',
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
       msg(paste0('Finished with site ', sites$site[i]), lf)
-      }
+   }
    d <- as.duration(interval(start, Sys.time()))
    msg(paste0('Run finished. ', count$tiff,' geoTIFFs and ', count$transect, ' transect shapefiles processed in ', round(d), ifelse(count$tiff == 0, '', paste0('; ', round(d / count$tiff), ' per geoTIFF.'))), lf)
-   
-   
-   
-   
-   if(FALSE) {                      # Calls for testing   *** THIS IS OUTDATED ***   Need to come up with a test set
-      # local on my laptop
-      gather_data(site = c('oth', 'wes'), sourcedir = 'c:/Work/etc/saltmarsh/data',
-                  sourcedrive = 'local', subdirs = c('Orthomosaics/', 'Photogrammetry DEMs/', 'Canopy height models/'))
-      
-      # from Google Drive to my laptop
-      gather_data(site = c('oth', 'wes'), sourcedir = 'UAS Data Collection/', 
-                  sourcedrive = 'google')
-      
-      # from landeco SFTP to my laptop. Set pw to password before calling.
-      gather_data(site = c('oth', 'wes'), sourcedrive = 'sftp', 
-                  sftp = list(url = 'sftp://landeco.umass.edu/D/temp/salt_marsh_test', user = paste0('campus\\landeco:', pw)), cachedir = 'c:/temp/cache/')
-      
-      
-      # To narrow down inputs
-      # pattern = 'nov.*low*.mica'
-      # pattern = '27Apr2021_OTH_Low_RGB_DEM.tif|24Jun22_WES_Mid_SWIR_Ortho.tif'
-      
-   }
-   }
+}
+

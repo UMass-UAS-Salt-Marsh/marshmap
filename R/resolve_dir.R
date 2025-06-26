@@ -11,6 +11,8 @@
 resolve_dir <- function(dir, site, share = site) {
    
    
-   sub('<site>', site, dir, fixed = TRUE)
-   sub('<share>', share, dir, fixed = TRUE)
+   z <- sub('<site>', site, dir, fixed = TRUE)
+   z <- sub('<share>', share, z, fixed = TRUE)
+   
+   z
 }
