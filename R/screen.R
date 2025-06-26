@@ -113,7 +113,9 @@ screen <- function() {
         # bs_themer()                                                                                       # uncomment to select a new theme
         
         
-        observeEvent(input$site, {                                                                          # --- picked a site                                                         
+        observeEvent(input$site, {                                                                          # --- picked a site   
+            save_screen_db(session$userData$db, session$userData$db_name)                                   #    save database for previous site
+
             session$userData$dir <- resolve_dir(the$flightsdir, input$site)
             screen <- build_screen_db(input$site)
             

@@ -8,6 +8,7 @@
 save_screen_db <- function(db, db_name) {
    
    
-   write.table(db, db_name, sep = '\t', quote = FALSE, row.names = FALSE, na = '')
+   if(!is.null(db))
+      write.table(db, db_name, sep = '\t', quote = FALSE, row.names = FALSE, na = '')
    
 }
