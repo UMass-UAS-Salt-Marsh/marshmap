@@ -124,7 +124,7 @@ do_gather <- function(site, pattern = '',
       
       dumb_warning <- 'Sum of Photometric type-related color channels'              #    we don't want to hear about this!
       suppress_warnings(r <- get_rast(file.path(dir, sites$standard[i]), 
-                                             gd, logfile = lf), 
+                                      gd, logfile = lf), 
                         pattern = dumb_warning, class = 'warning')
       standard <- r$rast
       type <- r$type
@@ -191,7 +191,7 @@ do_gather <- function(site, pattern = '',
       
       
       count$tiff <- count$tiff + length(files)
-      for(j in files) {                                                             #----for each target geoTIFF in site,
+      for(j in add_x(files)) {                                                      #----for each target geoTIFF in site (with 'x' prepended if necessary),
          msg(paste0('      processing ', j), lf)
          
          if(tryCatch({                                                              #    read the raster, skipping bad ones
@@ -206,13 +206,12 @@ do_gather <- function(site, pattern = '',
             msg(paste0('         *** Skipping missing or corrupted raster ', j), lf)
             TRUE
          }))
-            next
+         next
          
          
          if(length(grep('SWIR', j)) == 1)                                           #    if image is SWIR (shortwave infrared),
             g <- g[[1]]                                                             #       it's 3 redundant bands, so just take first one
          
-         j <- add_x(j)                                                              #    if 1st character of filename is a digit, add 'x' to the beginning 
          
          if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
             msg(paste0('         !!! Reprojecting ', g), lf)
@@ -231,7 +230,7 @@ do_gather <- function(site, pattern = '',
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
       msg(paste0('Finished with site ', sites$site[i]), lf)
-   }
+      }
    d <- as.duration(interval(start, Sys.time()))
    msg(paste0('Run finished. ', count$tiff,' geoTIFFs and ', count$transect, ' transect shapefiles processed in ', round(d), ifelse(count$tiff == 0, '', paste0('; ', round(d / count$tiff), ' per geoTIFF.'))), lf)
    
@@ -257,4 +256,4 @@ do_gather <- function(site, pattern = '',
       # pattern = '27Apr2021_OTH_Low_RGB_DEM.tif|24Jun22_WES_Mid_SWIR_Ortho.tif'
       
    }
-}
+   }
