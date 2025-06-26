@@ -44,6 +44,7 @@ do_gather <- function(site, pattern = '',
    
    allsites <- read_pars_table('sites')                                             # site names from abbreviations to paths
    sites <- allsites[match(tolower(site), tolower(allsites$site)), ]
+   sites$share <- ifelse(sites$share == '', sites$site_name, sites$share)
    sites$site <- tolower(sites$site)
    
    if(!the$gather$sourcedrive %in% c('local', 'google', 'sftp'))                    # make source sourcedrive is good
@@ -110,7 +111,7 @@ do_gather <- function(site, pattern = '',
          if(update) {                                                               #       if update, don't mess with files that have already been done
             sdir <- file.path(the$gather$sourcedir, sites$site_name[i])
             rdir <- resolve_dir(the$flightsdir, tolower(sites$site[i]))
-            files <- files[!check_files(files, gd, sdir, rdir)]                     #          see which files already exist and are up to date
+            files <- files[!check_files(files, gd, sdir, rdir, addx = TRUE)]        #          see which files already exist and are up to date
          }
          
          
@@ -211,7 +212,7 @@ do_gather <- function(site, pattern = '',
          if(length(grep('SWIR', j)) == 1)                                           #    if image is SWIR (shortwave infrared),
             g <- g[[1]]                                                             #       it's 3 redundant bands, so just take first one
          
-         j <- add_x                                                                 #    if 1st character of filename is a digit, add 'x' to the beginning 
+         j <- add_x(j)                                                              #    if 1st character of filename is a digit, add 'x' to the beginning 
          
          if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
             msg(paste0('         !!! Reprojecting ', g), lf)

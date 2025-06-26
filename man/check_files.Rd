@@ -4,7 +4,7 @@
 \alias{check_files}
 \title{Check that each source file exists on the result directory and is up to date}
 \usage{
-check_files(files, gd, sourcedir, resultdir)
+check_files(files, gd, sourcedir, resultdir, addx = FALSE)
 }
 \arguments{
 \item{files}{Vector of files to check}
@@ -19,6 +19,8 @@ check_files(files, gd, sourcedir, resultdir)
 \item{sourcedir}{Origin directory of files}
 
 \item{resultdir}{Target directory of files - see if origin files are here and up to date}
+
+\item{addx}{If TRUE, prepends 'x' to files starting with a digit}
 }
 \value{
 A vector corresponding to files, TRUE for those that are up to date

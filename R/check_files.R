@@ -7,18 +7,22 @@
    #'    - `sftp`           `list(url, user)`
    #' @param sourcedir Origin directory of files
    #' @param resultdir Target directory of files - see if origin files are here and up to date
+   #' @param addx If TRUE, prepends 'x' to files starting with a digit
    #' @returns A vector corresponding to files, TRUE for those that are up to date
    #' @importFrom googledrive drive_reveal
    #' @export
    
       
-      'check_files' <- function(files, gd, sourcedir, resultdir) {
+      'check_files' <- function(files, gd, sourcedir, resultdir, addx = FALSE) {
          
       
    z <- rep(FALSE, length(files))
    
    for(i in 1:length(files))                                                              # for each file,
-      if(file.exists(f <- add_x(file.path(resultdir, file.path(basename(files[i])))))) {  #    if the file (with prepended 'x'!) exists in the results directory,
+      f <- g <- file.path(resultdir, file.path(basename(files[i])))                       #    file name
+      if(addx)                                                                           #       if addx, prepend 'x' if necessary
+         g <- add_x(g)
+      if(file.exists(g)) {                                                                #    if the file exists in the results directory,
          sdate <- switch(gd$sourcedrive,                                                  #       get last modified date on source drive
                          'local' = file.mtime(f),
                          'google' = drive_reveal(gd$dir[gd$dir$name == files[i], ],
