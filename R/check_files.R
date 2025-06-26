@@ -18,7 +18,7 @@
    z <- rep(FALSE, length(files))
    
    for(i in 1:length(files))                                                              # for each file,
-      if(file.exists(f <- file.path(resultdir, file.path(basename(files[i]))))) {         #    if the file exists in the results directory,
+      if(file.exists(f <- add_x(file.path(resultdir, file.path(basename(files[i])))))) {  #    if the file (with prepended 'x'!) exists in the results directory,
          sdate <- switch(gd$sourcedrive,                                                  #       get last modified date on source drive
                          'local' = file.mtime(f),
                          'google' = drive_reveal(gd$dir[gd$dir$name == files[i], ],
