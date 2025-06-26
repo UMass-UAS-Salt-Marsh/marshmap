@@ -77,7 +77,7 @@ do_gather <- function(site, pattern = '',
       s <- unique(s)                                                                #    and drop likely duplicate
       
       x <- NULL
-      for(j in resolve_dir(s, sites$site_name[i]))                                  #    for each subdir (with site name replacement),
+      for(j in resolve_dir(s, sites$share[i]))                                      #    for each subdir (with site name replacement using share name),
          x <- rbind(x, get_dir(file.path(dir, j), 
                                the$gather$sourcedrive,
                                sftp = the$gather$sftp, logfile = lf))               #       get directory
@@ -191,7 +191,7 @@ do_gather <- function(site, pattern = '',
       
       
       count$tiff <- count$tiff + length(files)
-      for(j in add_x(files)) {                                                      #----for each target geoTIFF in site (with 'x' prepended if necessary),
+      for(j in files) {                                                             #----for each target geoTIFF in site,
          msg(paste0('      processing ', j), lf)
          
          if(tryCatch({                                                              #    read the raster, skipping bad ones
@@ -209,7 +209,7 @@ do_gather <- function(site, pattern = '',
          next
          
          
-         if(length(grep('SWIR', j)) == 1)                                           #    if image is SWIR (shortwave infrared),
+         if(length(grep('SWIR|XT2', j)) == 1)                                       #    if image is SWIR (shortwave infrared),
             g <- g[[1]]                                                             #       it's 3 redundant bands, so just take first one
          
          
@@ -224,8 +224,8 @@ do_gather <- function(site, pattern = '',
             resample(g, standard, method = 'bilinear', threads = TRUE) |>
                crop(footprint) |>
                mask(footprint) |>
-               writeRaster(file.path(rd, basename(j)), overwrite = TRUE, 
-                           datatype = type, NAflag = missing)
+               writeRaster(file.path(rd, basename(add_x(j))), overwrite = TRUE, 
+                           datatype = type, NAflag = missing)                       #    save raster (with prepended 'x' for files that start with a digit)
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }

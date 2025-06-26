@@ -2,19 +2,21 @@
 % Please edit documentation in R/resolve_dir.R
 \name{resolve_dir}
 \alias{resolve_dir}
-\title{Resolve directory with embedded \verb{<site>}}
+\title{Resolve directory with embedded \verb{<site>} or \verb{<share>}}
 \usage{
-resolve_dir(dir, site)
+resolve_dir(dir, site, share = site)
 }
 \arguments{
 \item{dir}{Directory path}
 
 \item{site}{Site name. For Google Drive, use \code{site_name}; on Unity, use
 \code{tolower(site)}, 3 letter code}
+
+\item{share}{Share site name. For Google Drive, use \code{share}}
 }
 \value{
 Directory path including specified site.
 }
 \description{
-Resolve directory with embedded \verb{<site>}
+Resolve directory with embedded \verb{<site>} or \verb{<share>}
 }
