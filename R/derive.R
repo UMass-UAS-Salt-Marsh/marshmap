@@ -45,7 +45,7 @@
 #'    \item{delta}{The difference between `pattern1` and `pattern2`, may be useful for taking a 
 #'    difference between late-season and early-season DEMs to represent vegetation canopy height}
 #' }
-#' @param window Window size for mean, std, NDVImean, and NDVIstd, in cells; windows are square, so just specify
+#' @param window Window size for `mean`, `std`, `NDVImean`, and `NDVIstd`, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #' #'    over the function's defaults.

@@ -45,7 +45,7 @@ SWIR layer for \code{pattern2}}
 difference between late-season and early-season DEMs to represent vegetation canopy height}
 }}
 
-\item{window}{Window size for mean, std, NDVImean, and NDVIstd, in cells; windows are square, so just specify
+\item{window}{Window size for \code{mean}, \code{std}, \code{NDVImean}, and \code{NDVIstd}, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
