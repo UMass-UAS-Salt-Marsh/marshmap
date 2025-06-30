@@ -14,7 +14,7 @@ This documentation is a work in progress.
 
 ## Installation and set up
 
-### Install\ the package and dependencies
+### Install the package and dependencies
 
 ```
 # install.packages("devtools")
@@ -43,14 +43,15 @@ An exmaple sequence will be created soon. Not all functions are fully implemente
 2. `screen` build the flights database and open a web app to allow visually assigning quality
    scores to each image.
 3. `derive` create derived images, such as NDVI (Normalized Difference Vegetation Index), upscaled
-   images, and canopy height estimates from the delta between early spring and mid-summer DEMs.
+   images, and canopy height estimates from the difference between mid-summer and early spring DEMs.
 4. `sample` sample images at points where we have field-collected data, creating a data table 
    for modeling.
 5. `fit` build statistical models of vegetation cover with random forest, Adaboost (planned), or
    potentially other modeling frameworks and report model assessment.
 6. `assess` provide a model assessment. This is normally included in `fit`, but `assess` may be
-   called separately to assess the fit of a model built on one or more sites to other sites.
-7. `map` produce geoTIFF maps of predicted vegetation. 
+   called separately to assess the fit of a model built on one or more sites and applited to other 
+   sites.
+7. `map` produce geoTIFF maps of predicted vegetation cover. 
 
 ## Image naming
 
@@ -108,12 +109,12 @@ Finally, search names allow model fits to refer to multiple files in an easily-r
 The components of a search name are separated with vertical bars. Multiple values of a component
 are separated with commas, or a colon to select a range for ordinal values such as season or year.
 Modifiers (in, out, and spring for tides; window size for upscaled variables) are separated from
-the component with a dash, e.g., `mid-out`. The order of components in a search name is unimportant. 
+the component with a dash, e.g., `mid-out`. Components in a search name may appear in any order. 
 Here are some example search names:
 
-`mid-in, mid-out, high`
-`mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022`
-`mica, swir | ortho, dem | low:high | spring | 2018`
+`mid-in, mid-out, high`  
+`mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022`  
+`mica, swir | ortho, dem | low:high | spring | 2018`  
 
 Search names allow model fits to be described clearly and concisely, even for models that contain
 dozens of variables, as they often will.
