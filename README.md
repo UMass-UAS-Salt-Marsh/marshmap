@@ -2,16 +2,29 @@
 
 UMass UAS Salt Marsh Project salt marsh land cover mapping
 
-## Installation
+`salt-marsh-mapping` is a special-purpose package for the vegetation mapping component of the UMass
+UAS Salt Marsh project. This project uses UAS (Unoccupied Aerial Systems), a.k.a "drones," with a
+number of sensors, along with field transects to drive vegetation cover models at several salt
+marshes in Massachusetts.
+
+This package supports modeling for this project. It is intended to be run on the UMass Unity
+cluster, although all functions may be run locally if needed.
+
+This documentation is a work in progress.
+
+## Installation and set up
+
+### Install\ the package and dependencies
 
 ```
 # install.packages("devtools")
 devtools::install_github('UMass-UAS-Salt-Marsh/salt-marsh-mapping')
-devtools::install_github('bwcompton/batchtools', ref = 'bwcompton-robust-sbatch')         # while waiting for pull request
-devtools::install_github('UMassCDS/slurmcollie')
+devtools::install_github('UMassCDS/slurmcollie')                                    # a companion package required for running batch jobs on Unity
+devtools::install_github('bwcompton/batchtools', ref = 'bwcompton-robust-sbatch')   # while waiting for pull request
+
 ```
 
-## Authorize Google Drive
+### Authorize Google Drive
 
 If you'll be getting data from the Google Drive with `gather`, you'll need get an 
 authorization token. This needs to be done only once for each user. Run the following
@@ -21,19 +34,34 @@ from the Unity account you'll be using:
 set_up_google_drive()
 ```
 
+## Processing sequence
 
+Here's a brief summary of the processing sequence. See the help for each function for details.
+An exmaple sequence will be created soon. Not all functions are fully implemented yet.
 
-
-
+1. `gather` gather the data from the source (either Google Drive or SFTP)
+2. `screen` build the flights database and open a web app to allow visually assigning quality
+   scores to each image.
+3. `derive` create derived images, such as NDVI (Normalized Difference Vegetation Index), upscaled
+   images, and canopy height estimates from the delta between early spring and mid-summer DEMs.
+4. `sample` sample images at points where we have field-collected data, creating a data table 
+   for modeling.
+5. `fit` build statistical models of vegetation cover with random forest, Adaboost (planned), or
+   potentially other modeling frameworks and report model assessment.
+6. `assess` provide a model assessment. This is normally included in `fit`, but `assess` may be
+   called separately to assess the fit of a model built on one or more sites to other sites.
+7. `map` produce geoTIFF maps of predicted vegetation. 
 
 ## Image naming
-UAS images (orthophotos, DEMs, and canopy height models) may be referred to in three different ways:
+
+UAS images (orthophotos, DEMs, canopy height models, and derived variables) may be referred to in
+three different ways:
 
 ### File name 
 
 This is the file name assigned during image processing. Filenames usually encode the
 image's date, site, tide level, sensor, and type, for instance `19Aug22_OTH_Mid_SWIR_Ortho.tif` or
-`14Oct20_OTH_Low_Mica_DEM.tif`. Unfortunately file names are somewhat inconsistent, for instance,
+`14Oct20_OTH_Low_Mica_DEM.tif`. File names are somewhat inconsistent, for instance,
 the month may be `Sep` or `Sept`, years may be 2 or 4 digits, and some sensors are referred to by
 multiple names. Additionally, some filenames follow a wildly different pattern, such as
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif`, a canopy height model. Files are imported from the
@@ -41,22 +69,22 @@ source repositories (either Google Drive or SFTP) with their names unmodified, e
 names that start with a digit have an `x` prepended, thus `14Oct20_OTH_Low_Mica_DEM.tif` becomes
 `x14Oct20_OTH_Low_Mica_DEM.tif`.
 
-When using `derive` to create derived images (for example, `NDVI` or `mean upscaling), derived names
-are generated from the base name (or names), with derivation information separated with a douple 
+When using `derive` to create derived images (for example, `NDVI` or `mean upscaling`), derived names
+are generated from the base name (or names), with derivation information separated with a double
 underscore, e.g., `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif`. See `derive` for details.
 
-These file names are unsuitable for use in modeling for two primary reasons: they include the site
-code, and the exact date of the flight, both of which would break any attempt to build a model on 
+These file names are unsuitable for use in modeling beause they include the site
+code and the exact date of the flight, both of which would break any attempt to build a model on 
 one or more sites and apply it to others. The name inconsistencies also make them difficult to use.
 
 ### Portable name
 
-Portable names are generated build `build_flights_db` (which is called to update the flights database whenever you run `screen`, so 
-if you're visually screening all images in a normal process you won't need to worry about this). Portable
-names exclude the site, use seasons instead of an exact date, and force naming consistency. 
+Portable names are generated by `build_flights_db` (which is called to update the flights database
+whenever you run `screen`, so if you're visually screening all images in a normal process you won't
+need to worry about this). Portable names exclude the site, use seasons instead of an exact date,
+and force naming consistency.
 
-Portable names for our examples above are
-
+Here are examples of file names and portable names
 
 File name | Portable name
 ---|---
@@ -64,9 +92,30 @@ File name | Portable name
 `14Oct20_OTH_Low_Mica_DEM.tif` | `dem_mica_fall_2020_low`
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_summer_2022`
 `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif` | `ndvi_mica_spring_2022_mid`
+`x01Aug20_OTH_MidOut_Mica_Ortho.tif` | `ortho_mica_summer_2020_mid-out`
 
-Portable names are used for variable names in data files created by `sample`, and they're the names you'll see 
-in model assessments. You can find the portable name for each file in `data/<site>/flights/flights_<site>.txt`,
-and the portable name is displayed in the `screen` app.
+Portable names are used for variable names in data files created by `sample`, and they're the names
+you'll see in model assessments. You can find the portable name for each file in
+`data/<site>/flights/flights_<site>.txt`. The portable name is displayed in the `screen` app.
 
-### Generalized name
+In cases where portable names refer to two or more image files (because two identical 
+site/type/sensor/tide flights were flown in the same season), the image with the highest score will
+be used. Remaining ties will be broken by taking the earliest matching image.
+
+### Search name
+
+Finally, search names allow model fits to refer to multiple files in an easily-readable format.
+The components of a search name are separated with vertical bars. Multiple values of a component
+are separated with commas, or a colon to select a range for ordinal values such as season or year.
+Modifiers (in, out, and spring for tides; window size for upscaled variables) are separated from
+the component with a dash, e.g., `mid-out`. The order of components in a search name is unimportant. 
+Here are some example search names:
+
+`mid-in, mid-out, high`
+`mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022`
+`mica, swir | ortho, dem | low:high | spring | 2018`
+
+Search names allow model fits to be described clearly and concisely, even for models that contain
+dozens of variables, as they often will.
+
+See `help(get_ortho_names)` for details.
