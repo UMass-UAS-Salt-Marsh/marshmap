@@ -8,7 +8,7 @@
 #' 
 #' File names must include at least a month and year to get a season, so 
 #' `xOTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif` will return an NA for season. Such 
-#' errors may be fixed by editing `screen_<site>.txt`.
+#' errors may be fixed by editing `flights_<site>.txt`.
 #' 
 #' @param files Vector of imagery file names
 #' @returns named list of:

@@ -114,10 +114,10 @@ screen <- function() {
         
         
         observeEvent(input$site, {                                                                          # --- picked a site   
-            save_screen_db(session$userData$db, session$userData$db_name)                                   #    save database for previous site
+            save_flights_db(session$userData$db, session$userData$db_name)                                   #    save database for previous site
 
             session$userData$dir <- resolve_dir(the$flightsdir, input$site)
-            screen <- build_screen_db(input$site)
+            screen <- build_flights_db(input$site)
             
             if(is.null(screen)) {
                 output$site_info <- renderText(paste0('There is no flights directory for ', 
@@ -213,8 +213,8 @@ screen <- function() {
         
         
         observeEvent(input$exit, {                                                                         # --- Exit
-            save_screen_db(session$userData$db, session$userData$db_name)
-            message('Screening database saved')
+            save_flights_db(session$userData$db, session$userData$db_name)
+            message('Flights database saved')
             stopApp()
         })
     }

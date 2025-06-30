@@ -25,6 +25,6 @@ format, followed by an underscore. For file names with two dates, finds the firs
 
 File names must include at least a month and year to get a season, so
 \code{xOTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif} will return an NA for season. Such
-errors may be fixed by editing \verb{screen_<site>.txt}.
+errors may be fixed by editing \verb{flights_<site>.txt}.
 }
 \keyword{internal}

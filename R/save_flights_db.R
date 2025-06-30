@@ -1,11 +1,11 @@
-#' Saves the screening database
+#' Saves the flights database
 #' 
 #' @param db Database table
 #' @param db_name Path and name of database file
 #' @keywords internal
 
 
-save_screen_db <- function(db, db_name) {
+save_flights_db <- function(db, db_name) {
    
    
    if(!is.null(db))

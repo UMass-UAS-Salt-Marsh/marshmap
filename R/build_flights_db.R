@@ -1,6 +1,6 @@
-#' Read and update or build a screening database for a site
+#' Read and update or build the flights database for a site
 #'
-#' Reads any existing screen_<site>.txt from flights directory for site, 
+#' Reads any existing flights_<site>.txt from flights directory for site, 
 #' builds it or updates it for new or deleted files, saves the new version,
 #' and returns the path/name and table. Finds classes from `pars.yml` as 
 #' case-insensitive underscore-separated words (after applying name fixes).
@@ -17,7 +17,7 @@
 #' @keywords internal
 
 
-build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
+build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    
    
    find_targets <- function(targets, names) {                           # find targets as substrings in names
@@ -49,7 +49,7 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
    if(!dir.exists(dir))                                                 # if there's no flights dir, just return NULL
       return(NULL)
    
-   db_name <- file.path(dir, paste0('screen_', site, '.txt'))
+   db_name <- file.path(dir, paste0('flights_', site, '.txt'))
    
    
    if(file.exists(db_name) & !refresh)                                  # get or make database
@@ -112,7 +112,7 @@ build_screen_db <- function(site, refresh = FALSE, really = FALSE) {
    }
    
    
-   save_screen_db(db, db_name)
+   save_flights_db(db, db_name)
    
    invisible(list(db = db, db_name = db_name))
 }

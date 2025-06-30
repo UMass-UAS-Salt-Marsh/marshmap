@@ -37,7 +37,7 @@ set_up_google_drive()
 ## Processing sequence
 
 Here's a brief summary of the processing sequence. See the help for each function for details.
-An exmaple sequence will be created soon. Not all functions are fully implemented yet.
+An example sequence will be created soon. Not all functions are fully implemented yet.
 
 1. `gather` gather the data from the source (either Google Drive or SFTP)
 2. `screen` build the flights database and open a web app to allow visually assigning quality
@@ -46,10 +46,10 @@ An exmaple sequence will be created soon. Not all functions are fully implemente
    images, and canopy height estimates from the difference between mid-summer and early spring DEMs.
 4. `sample` sample images at points where we have field-collected data, creating a data table 
    for modeling.
-5. `fit` build statistical models of vegetation cover with random forest, Adaboost (planned), or
+5. `fit` build statistical models of vegetation cover with random forests, AdaBoost (planned), or
    potentially other modeling frameworks and report model assessment.
 6. `assess` provide a model assessment. This is normally included in `fit`, but `assess` may be
-   called separately to assess the fit of a model built on one or more sites and applited to other 
+   called separately to assess the fit of a model built on one or more sites and applied to other 
    sites.
 7. `map` produce geoTIFF maps of predicted vegetation cover. 
 
@@ -74,7 +74,7 @@ When using `derive` to create derived images (for example, `NDVI` or `mean upsca
 are generated from the base name (or names), with derivation information separated with a double
 underscore, e.g., `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif`. See `derive` for details.
 
-These file names are unsuitable for use in modeling beause they include the site
+These file names are unsuitable for use in modeling because they include the site
 code and the exact date of the flight, both of which would break any attempt to build a model on 
 one or more sites and apply it to others. The name inconsistencies also make them difficult to use.
 
