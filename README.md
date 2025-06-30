@@ -1,4 +1,5 @@
-# salt-marsh-mapping
+# salt-marsh-mapping <a href="https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/"><img src="man/figures/hexsticker.png" align="right" height="139"/></a>
+
 UMass UAS Salt Marsh Project salt marsh land cover mapping
 
 ## Installation
@@ -59,10 +60,10 @@ Portable names for our examples above are
 
 File name | Portable name
 ---|---
-`19Aug22_OTH_Mid_SWIR_Ortho.tif` | `ortho_swir_summer_mid`
-`14Oct20_OTH_Low_Mica_DEM.tif` | `dem_mica_fall_low`
-`OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_summer`
-x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif | `ndvi_mica_spring_mid`
+`19Aug22_OTH_Mid_SWIR_Ortho.tif` | `ortho_swir_summer_2022_mid`
+`14Oct20_OTH_Low_Mica_DEM.tif` | `dem_mica_fall_2020_low`
+`OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_summer_2022`
+`x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif` | `ndvi_mica_spring_2022_mid`
 
 Portable names are used for variable names in data files created by `sample`, and they're the names you'll see 
 in model assessments. You can find the portable name for each file in `data/<site>/flights/flights_<site>.txt`,
