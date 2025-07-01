@@ -111,7 +111,7 @@ gather <- function(site, pattern = '',
    res <- resources
    resources <- get_resources(resources, list(
       ncpus = 1,                                      # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
-      memory = 150,                                   # an OTH run blew out at 115 GB
+      memory = 115,                                   # an OTH run blew out at 115 GB, both others seem okay here
       walltime = '10:00:00'
    ))
    

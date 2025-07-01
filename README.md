@@ -85,6 +85,14 @@ whenever you run `screen`, so if you're visually screening all images in a norma
 need to worry about this). Portable names exclude the site, use seasons instead of an exact date,
 and force naming consistency.
 
+Portable names for most images consist of:
+
+`<type>_<sensor>_<season>_<year>_<tide>[-tidemod]_[<derive>[-<window>]]`
+
+The protable names for canopy height models are simply:
+
+`chm_<source>_<year>`, where `source` is either `lidar` or `delta`.
+
 Here are examples of file names and portable names
 
 File name | Portable name
@@ -94,6 +102,8 @@ File name | Portable name
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_summer_2022`
 `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif` | `ndvi_mica_spring_2022_mid`
 `x01Aug20_OTH_MidOut_Mica_Ortho.tif` | `ortho_mica_summer_2020_mid-out`
+`OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_lidar_2022`
+`x02Aug19_OTH_Low_Mica_DEM__x27Aug21_OTH_Low_Mica_DEM__chm.tif` | `chm_delta_2021`
 
 Portable names are used for variable names in data files created by `sample`, and they're the names
 you'll see in model assessments. You can find the portable name for each file in

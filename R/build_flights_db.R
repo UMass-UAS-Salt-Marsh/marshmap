@@ -91,6 +91,12 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       deriv <- grep('__', db$name)
       db$type[deriv] <- 'derived'                                       #    derived variables get type = 'derived' no matter what sensor was used
       db$sensor[i] <- find_targets(the$category$sensor, y)
+      
+      db$type[i] <- ifelse(db$derive[i] == 'delta', 'chm', db$type[i])
+      db$sensor[i] <- ifelse(db$type[i] == 'chm', 
+                             ifelse(db$derive[i] == 'delta', 'delta', 'lidar'),
+                             db$sensor[i])                              #    annoying special case to set sensor for canopy height models
+      
       db$derive[i] <- find_targets(the$category$derive, y)
       db$window[i] <- find_targets(the$category$window, y)
       db$tide[i] <- find_targets(the$category$tide, y)
@@ -102,6 +108,19 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       db$score[i] <- 0                                                  #    score starts with 0 = not scored
       db$comment[i] <- ''
       db$deleted[i] <- FALSE
+      
+      
+      # Create portable names
+      t <- ifelse(db$tidemod[i] != '', paste0(db$tide[i], '-', db$tidemod[i]), db$tide[i])
+      d <- ifelse(db$window[i] != '', paste0(db$derive[i], '-', db$window[i]), db$derive[i])
+      
+      p <- paste(db$type[i], db$sensor[i], db$season[i], db$year[i], t, sep = '_')
+      p <- ifelse(db$derive[i] != '', paste0(p, '_', d), p)
+      
+      c <- paste0(db$type[i], '_', db$sensor[i])
+      c <- ifelse(is.na(db$year[i]), c, paste0(c, '_', db$year[i]))
+      p <- ifelse(db$type[i] == 'chm', c, p)
+      db$portable[i] <- p
       
       
       for(j in deriv) {                                                 #    get minimum of parent's scores for derived variables
