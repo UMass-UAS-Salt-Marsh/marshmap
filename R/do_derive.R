@@ -9,7 +9,7 @@
 #' @param metrics A list of metrics to apply. Univariate metrics include:
 #' \describe{
 #'    \item{NDVI}{Normalized difference vegetation index, `(NIR - red) / (NIR + red)`, an index of biomass}
-#'    \item{NDWIg}{Normalized difference water index (green), `(green - NIR) / (green + NIR)`,
+#'    \item{NDWIg}{Normalized difference water index (green, commonly known as McFeeter's NDWI), `(green - NIR) / (green + NIR)`,
 #'       primarily helps distinguish waterbodies}
 #'    \item{NDRE}{Normalized difference red edge index, `(NIR - RE) / (NIR + RE)`, an index of the
 #'       amount of chlorophyll in a plant}
@@ -18,7 +18,7 @@
 #'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
 #'    \item{NDVIstd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
-#'    \item{NDWIswir}{Normalized difference water index (SWIR), `(NIR - SWIR) / (NIR + SWIR)`,
+#'    \item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's NDWI), `(NIR - SWIR) / (NIR + SWIR)`,
 #'       an index of water content in leaves; requires a Mica layer for `pattern1`, and a matched
 #'       SWIR layer for `pattern2`}
 #'    \item{delta}{The difference between `pattern1` and `pattern2`, may be useful for taking a 
