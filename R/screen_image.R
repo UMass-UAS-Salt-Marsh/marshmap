@@ -18,7 +18,8 @@ screen_image <- function(score_choices, input, output, session) {
       lapply(c('score', 'comment', 'inset', 'first', 'previous', 'next_', 'last'), enable)
       
       
-      output$image_no <- renderText(paste0(session$userData$index, ' of ', length(session$userData$sel)))
+      output$image_no <- renderText(paste0(session$userData$index, ' of ', length(session$userData$sel),
+                                           ifelse(input$filter != '', ' (filtered)', '')))
       
       row <- session$userData$sel[session$userData$index]
       
@@ -32,6 +33,13 @@ screen_image <- function(score_choices, input, output, session) {
       session$userData$full <- rast(file.path(session$userData$dir, session$userData$db$name[row]))
       sensor <- session$userData$db$sensor[row]
       bands <- nlyr(session$userData$full)
+      session$userData$db$bands[row] <- bands
+      
+      output$portable_name <- renderText(paste0(session$userData$db$portable[row], 
+                                                ifelse(session$userData$db$dups[row] > 1,
+                                                       paste0(' (',session$userData$db$dups[row], ')'),
+                                                       '')))
+      
       fi <- c(session$userData$db$type[row], 
               sensor, 
               session$userData$db$season[row], 
@@ -40,7 +48,7 @@ screen_image <- function(score_choices, input, output, session) {
                      session$userData$db$tide[row],
                      paste(session$userData$db$tide[row], session$userData$db$tidemod[row], sep = '-'))
       )
-
+      
       fi <- fi[!(is.na(fi) | fi == '')]
       
       image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), '<br>', paste(fi, collapse = ' | '))

@@ -87,6 +87,7 @@ screen <- function() {
                            HTML('<h5 style="display: inline-block;">Image</h5>'),
                            
                            textOutput('image_name'),
+                           textOutput('portable_name'),
                            uiOutput('image_info'),
                            
                            sliderTextInput('score', HTML('<h6 style="display: inline-block;">Image score</h6>'),

@@ -57,6 +57,8 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    else
       db <- data.frame(
          name = character(),
+         portable = character(),
+         dups = integer(),
          type = character(),
          sensor = character(),
          derive = character(),
@@ -86,20 +88,21 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       
       db$name[i] <- y
       db$type[i] <- find_targets(the$category$type, y)
-      db$type[i] <- ifelse(is.na(db$type[i]), 
+      db$type[i] <- ifelse(db$type[i] %in% c('', NA), 
                            the$category$type[1], db$type[i])            #    special case: omitted type gets 1st type (should be 'ortho')
       deriv <- grep('__', db$name)
       db$type[deriv] <- 'derived'                                       #    derived variables get type = 'derived' no matter what sensor was used
       db$sensor[i] <- find_targets(the$category$sensor, y)
+      db$derive[i] <- find_targets(the$category$derive, y)
+      db$window[i] <- find_targets('window', y)                         #    window is hard-wired in find_targets
       
-      db$type[i] <- ifelse(db$derive[i] == 'delta', 'chm', db$type[i])
-      db$sensor[i] <- ifelse(db$type[i] == 'chm', 
-                             ifelse(db$derive[i] == 'delta', 'delta', 'lidar'),
+      db$type[i] <- ifelse(db$derive[i] %in% 'delta', 'chm', db$type[i])
+      db$sensor[i] <- ifelse(db$type[i] %in% 'chm', 
+                             ifelse(db$derive[i] %in% 'delta', 'delta', 'lidar'),
                              db$sensor[i])                              #    annoying special case to set sensor for canopy height models
       
-      db$derive[i] <- find_targets(the$category$derive, y)
-      db$window[i] <- find_targets(the$category$window, y)
       db$tide[i] <- find_targets(the$category$tide, y)
+      the$category$tidemod <- substring(the$category$tide[grep('^-', the$category$tide)], 2)
       db$tidemod[i] <- find_targets(the$category$tidemod, y)
       s <- seasons(y)
       db$date[i] <- s$date
@@ -111,15 +114,15 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       
       
       # Create portable names
-      t <- ifelse(db$tidemod[i] != '', paste0(db$tide[i], '-', db$tidemod[i]), db$tide[i])
-      d <- ifelse(db$window[i] != '', paste0(db$derive[i], '-', db$window[i]), db$derive[i])
+      t <- ifelse(!db$tidemod[i] %in% c('', NA), paste0(db$tide[i], '-', db$tidemod[i]), db$tide[i])
+      d <- ifelse(!db$window[i] %in% c('', NA), paste0(db$derive[i], '-', db$window[i]), db$derive[i])
       
       p <- paste(db$type[i], db$sensor[i], db$season[i], db$year[i], t, sep = '_')
-      p <- ifelse(db$derive[i] != '', paste0(p, '_', d), p)
+      p <- ifelse(!db$derive[i] %in% c('', NA), paste0(p, '_', d), p)
       
       c <- paste0(db$type[i], '_', db$sensor[i])
-      c <- ifelse(is.na(db$year[i]), c, paste0(c, '_', db$year[i]))
-      p <- ifelse(db$type[i] == 'chm', c, p)
+      c <- ifelse(db$year[i] %in% c('', NA), c, paste0(c, '_', db$year[i]))
+      p <- ifelse(db$type[i] %in% 'chm', c, p)
       db$portable[i] <- p
       
       
@@ -131,6 +134,10 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    }
    
    
+   a <- aggreg(rep(1, nrow(db)), db$portable, FUN = sum, drop_by = FALSE)
+   db$dups <- a[match(db$portable, a$Group.1),]$x
+   
+
    save_flights_db(db, db_name)
    
    invisible(list(db = db, db_name = db_name))
