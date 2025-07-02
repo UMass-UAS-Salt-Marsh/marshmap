@@ -26,4 +26,11 @@ builds it or updates it for new or deleted files, saves the new version,
 and returns the path/name and table. Finds classes from \code{pars.yml} as
 case-insensitive underscore-separated words (after applying name fixes).
 }
+\details{
+Files with changed timestamps are presumed to have been re-downloaded
+with gather (as stamps are set in processing). Files shouldn't be
+re-downloaded and replaced unless they've changed on the source, so
+these files have presumable been repaired. They are refreshed in the
+flights database, ready for re-screening.
+}
 \keyword{internal}

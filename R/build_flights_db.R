@@ -4,6 +4,12 @@
 #' builds it or updates it for new or deleted files, saves the new version,
 #' and returns the path/name and table. Finds classes from `pars.yml` as 
 #' case-insensitive underscore-separated words (after applying name fixes).
+#' 
+#' Files with changed timestamps are presumed to have been re-downloaded
+#' with gather (as stamps are set in processing). Files shouldn't be 
+#' re-downloaded and replaced unless they've changed on the source, so 
+#' these files have presumable been repaired. They are refreshed in the 
+#' flights database, ready for re-screening. 
 #'
 #' @param site Site abbreviation
 #' @param refresh Recreated database from scratch. **Warning:** this will
@@ -13,7 +19,7 @@
 #' @returns A list of
 #'    \item{db}{Site database table}
 #'    \item{db_name}{Path and name of database table}
-#' @importFrom lubridate ymd
+#' @importFrom lubridate ymd ymd_hms
 #' @keywords internal
 
 
@@ -72,7 +78,8 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
          score = integer(),                                             # score, repair flag, and comment are entered by user
          repair = logical(),
          comment = character(),
-         deleted = logical()
+         deleted = logical(),
+         filestamp = ymd_hms()                                          # filestamps are used to check for changed files
       )
    
    
@@ -80,6 +87,13 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    x <- grep('.tif', x, value = TRUE)                                   # only want TIFFs
    
    db$deleted <- !db$name %in% x                                        # flag deleted files
+   
+   
+   i <- match(x, db$name)                                               # indices of files already in database
+   d <- round(file.mtime(file.path(dir, x[!is.na(i)])))                 # filestamps for these
+   c <- db$filestamp[i] != d
+   if(any(c))
+      db <- db[-i[db$filestamp[i] != d], ]                              # drop files with changed stamps from database (md5 is way too slow)                                
    
    
    y <- x[!x %in% db$name]
@@ -106,13 +120,14 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       the$category$tidemod <- substring(the$category$tide[grep('^-', the$category$tide)], 2)
       db$tidemod[i] <- find_targets(the$category$tidemod, y)
       s <- seasons(y)
-      db$date[i] <- s$date
+      db$date[i] <- as.character(ymd(s$date))
       db$year[i] <- s$year
       db$season[i] <- s$season
       db$score[i] <- 0                                                  #    score starts with 0 = not scored
       db$repair[i] <- FALSE
       db$comment[i] <- ''
       db$deleted[i] <- FALSE
+      db$filestamp[i] <- as.character(ymd_hms(round(file.mtime(file.path(dir, db$name[i])))))
       
       
       # Create portable names
@@ -139,7 +154,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    a <- aggreg(rep(1, nrow(db)), db$portable, FUN = sum, drop_by = FALSE)
    db$dups <- a[match(db$portable, a$Group.1),]$x
    
-
+   
    save_flights_db(db, db_name)
    
    invisible(list(db = db, db_name = db_name))
