@@ -143,4 +143,4 @@ Here are some example search names:
 Search names allow model fits to be described clearly and concisely, even for models that contain
 dozens of variables, as they often will.
 
-See `help(get_ortho_names)` for details.
+See `help(search_names)` for details.

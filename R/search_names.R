@@ -1,6 +1,6 @@
-#' Pull orthophoto names out of a description string
+#' Find orthoimages that match search names
 #' 
-#' Processes user-friendly generalized orthoimage descriptions, such as 
+#' Processes user-friendly generalized orthoimage search names, such as 
 #' `mica, swir | ortho | low | summer | 2020:2022`, returning a list of matching category values
 #' from `categories` in `pars.yml`. These descriptions allow selecting multiple orthoimages clearly
 #' and simply (e.g., `mica | low` selects all low-tide Mica images). Importantly for cross-site
@@ -27,15 +27,15 @@
 #' @examples
 #' require(saltmarsh)
 #' init()
-#' get_ortho_names('mid-in, mid-out, high')
-#' get_ortho_names('mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022')
-#' get_ortho_names('mica, swir | ortho, dem | low:high | spring | 2018')
-#' get_ortho_names('2022 | oth | mid | mica | ortho | mean-w5')
-#' get_ortho_names('20x22 | other | muddle | micro')     # this throws an error
-#' get_ortho_names('*x22Sep18_OTH_Low_Mica_DEM_NoTiles.tif')
+#' search_names('mid-in, mid-out, high')
+#' search_names('mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022')
+#' search_names('mica, swir | ortho, dem | low:high | spring | 2018')
+#' search_names('2022 | oth | mid | mica | ortho | mean-w5')
+#' search_names('20x22 | other | muddle | micro')     # this throws an error
+#' search_names('*x22Sep18_OTH_Low_Mica_DEM_NoTiles.tif')
 
 
-get_ortho_names <- function(descrip) {
+search_names <- function(descrip) {
    
    
    descrip <- gsub(' ', '', descrip)                                             # remove all spaces
