@@ -17,8 +17,9 @@ screen_no_site <- function(input, output, session) {
    output$inset1 <- NULL
    output$inset2 <- NULL
    updateSliderTextInput(inputId = 'score', selected = 1)
+   updateCheckboxInput(inputId = 'repair', value = FALSE)
    updateTextInput(inputId = 'comment', value = '')
    output$image_no <- renderText('-- of 0')
    
-   lapply(c('score', 'comment', 'inset', 'first', 'previous', 'next_', 'last'), disable)
+   lapply(c('score', 'repair', 'comment', 'inset', 'first', 'previous', 'next_', 'last'), disable)
 }

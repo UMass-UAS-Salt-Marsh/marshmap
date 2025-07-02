@@ -27,6 +27,7 @@ screen_image <- function(score_choices, input, output, session) {
       
       updateSliderTextInput(inputId = 'score', 
                             selected = score_choices[session$userData$db$score[row] + 1])
+      updateCheckboxInput(inputId = 'repair', value = session$userData$db$repair[row])
       updateTextInput(inputId = 'comment', 
                       value = session$userData$db$comment[row])
       

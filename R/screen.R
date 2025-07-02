@@ -1,5 +1,46 @@
 #' Screen imagery for salt marsh project
 #'
+#' Used to screen images for quality, this web app allows users to view and score each image,
+#' marking images to send back for repair, and entering comments. Results are saved in the
+#' flights database for each site, and are used by `flights_report`. Image scores are used to 
+#' help select the image to use when there are duplicated portable names. Minimum scores may
+#' be included in search names. Rejected images are never used in fitting.
+#' 
+#' `screen` builds the flights database for each site when you select it from the `site` 
+#' dropdown. An alternative to running `screen` is to call `build_fights_db` for each site
+#' whenever new images are added. Scores may be added to a sites database 
+#' (`flights/flights_<site>.txt`) by hand if necessary.
+#' 
+#' `screen` displays the selected image with a red outline indicating the site footprint. 
+#' It includes the following controls:
+#'
+#' - **Site** select the site. All sites listed in pars/sites.txt are included. The full
+#'   site name will be displayed, along with the number of scored images, the total number
+#'   of images, and the percent that have been scored.
+#' - **Revisit images**. Normally, images that have been scored or flagged for repair are
+#'   hidden. Turn this switch on to revisit all images. (After scoring or flagging an image,
+#'   it won't be hidden until changing sites or toggling this switch.)
+#' - **Image filter** enter a regular expression to filter images on either the file name or
+#'   portable name (see README for a description of names). When the filter is in effect, only
+#'   the selected images will be displayed. Usually, typing a distinct portion of the name 
+#'   will suffice, but you can go crazy with regular expressions if you want.
+#' - **Navigation buttons** Jump to the first, previous, next, or last image for this site.
+#'   It takes a couple of seconds to render high-resolution images.
+#' - **Image info** displays the image file name, the portable name, the number of bands, and
+#'   key components of the image (type, sensor, season, year, and tide stage).
+#' - **Image Score** allows you to score each image for quality. Categories are unscored,
+#'   poor, fair, good, very good, and excellent. Scoring should take into account the 
+#'   amount of missing data, image quality, and artifacts such as cloud stripes and water
+#'   reflections.
+#' - **Flag for repair** marks images for repair (for instance, stripes are usually due 
+#'   to cloud cover on interleaved transects; image processing software can sometimes
+#'   remove these). Images flagged for repair will be hidden unless **Revisit images** is
+#'   selected.
+#' - **Comments**
+#' - **Show zooms** shows a 10x and 100x zoom of the center of the image for up-close 
+#'   quality inspection. It takes a moment.
+#' - **Exit** saves the flights database for the current site and exits (flights databases
+#'   are also saved when switching sites).
 #' @import shiny
 #' @import bslib
 #' @importFrom shinybusy add_busy_spinner
@@ -9,14 +50,12 @@
 #' @export
 
 
-
-
 screen <- function() {
     
     sites <- read_pars_table('sites')
     sites$footprint <- basename(sites$footprint)
     
-    score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'excellent')
+    score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'very good', 'excellent')
     
     
     
@@ -93,13 +132,15 @@ screen <- function() {
                            sliderTextInput('score', HTML('<h6 style="display: inline-block;">Image score</h6>'),
                                            choices = score_choices, force_edges = TRUE),
                            
+                           checkboxInput('repair', 'Flag for repair'),
+                           
                            textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',
                                          width = '100%', rows = 3),
                            actionButton('inset', 'Show zooms', width = '115px')
                        ),
                        
                        card(
-                        actionButton('exit', 'Exit', width = '60px')
+                           actionButton('exit', 'Exit', width = '60px')
                        )
                 )
             )
@@ -116,7 +157,7 @@ screen <- function() {
         
         observeEvent(input$site, {                                                                          # --- picked a site   
             save_flights_db(session$userData$db, session$userData$db_name)                                   #    save database for previous site
-
+            
             session$userData$dir <- resolve_dir(the$flightsdir, input$site)
             screen <- build_flights_db(input$site)
             
@@ -156,6 +197,10 @@ screen <- function() {
                 match(input$score, score_choices) - 1
         })
         
+        observeEvent(input$repair, {                                                                        # --- flag for repair
+            session$userData$db$repair[session$userData$sel[session$userData$index]] <- 
+                input$repair
+        })
         
         observeEvent(input$comment, {                                                                       # --- image comment
             session$userData$db$comment[session$userData$sel[session$userData$index]] <- 

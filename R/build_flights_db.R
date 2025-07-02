@@ -69,7 +69,8 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
          year = integer(),
          season = character(),
          bands = integer(),                                             # bands is calulated when we load images
-         score = integer(),                                             # score and comment are entered by user
+         score = integer(),                                             # score, repair flag, and comment are entered by user
+         repair = logical(),
          comment = character(),
          deleted = logical()
       )
@@ -109,6 +110,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       db$year[i] <- s$year
       db$season[i] <- s$season
       db$score[i] <- 0                                                  #    score starts with 0 = not scored
+      db$repair[i] <- FALSE
       db$comment[i] <- ''
       db$deleted[i] <- FALSE
       

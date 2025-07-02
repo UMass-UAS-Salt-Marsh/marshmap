@@ -7,5 +7,47 @@
 screen()
 }
 \description{
-Screen imagery for salt marsh project
+Used to screen images for quality, this web app allows users to view and score each image,
+marking images to send back for repair, and entering comments. Results are saved in the
+flights database for each site, and are used by \code{flights_report}. Image scores are used to
+help select the image to use when there are duplicated portable names. Minimum scores may
+be included in search names. Rejected images are never used in fitting.
+}
+\details{
+\code{screen} builds the flights database for each site when you select it from the \code{site}
+dropdown. An alternative to running \code{screen} is to call \code{build_fights_db} for each site
+whenever new images are added. Scores may be added to a sites database
+(\verb{flights/flights_<site>.txt}) by hand if necessary.
+
+\code{screen} displays the selected image with a red outline indicating the site footprint.
+It includes the following controls:
+\itemize{
+\item \strong{Site} select the site. All sites listed in pars/sites.txt are included. The full
+site name will be displayed, along with the number of scored images, the total number
+of images, and the percent that have been scored.
+\item \strong{Revisit images}. Normally, images that have been scored or flagged for repair are
+hidden. Turn this switch on to revisit all images. (After scoring or flagging an image,
+it won't be hidden until changing sites or toggling this switch.)
+\item \strong{Image filter} enter a regular expression to filter images on either the file name or
+portable name (see README for a description of names). When the filter is in effect, only
+the selected images will be displayed. Usually, typing a distinct portion of the name
+will suffice, but you can go crazy with regular expressions if you want.
+\item \strong{Navigation buttons} Jump to the first, previous, next, or last image for this site.
+It takes a couple of seconds to render high-resolution images.
+\item \strong{Image info} displays the image file name, the portable name, the number of bands, and
+key components of the image (type, sensor, season, year, and tide stage).
+\item \strong{Image Score} allows you to score each image for quality. Categories are unscored,
+poor, fair, good, very good, and excellent. Scoring should take into account the
+amount of missing data, image quality, and artifacts such as cloud stripes and water
+reflections.
+\item \strong{Flag for repair} marks images for repair (for instance, stripes are usually due
+to cloud cover on interleaved transects; image processing software can sometimes
+remove these). Images flagged for repair will be hidden unless \strong{Revisit images} is
+selected.
+\item \strong{Comments}
+\item \strong{Show zooms} shows a 10x and 100x zoom of the center of the image for up-close
+quality inspection. It takes a moment.
+\item \strong{Exit} saves the flights database for the current site and exits (flights databases
+are also saved when switching sites).
+}
 }
