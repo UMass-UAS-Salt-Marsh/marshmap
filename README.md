@@ -103,7 +103,7 @@ Portable names for most images consist of:
 
 `<type>_<sensor>_<season>_<year>_<tide>[-tidemod][_<derive>[-<window>]]`
 
-The protable names for canopy height models are simply:
+The portable names for canopy height models are simply:
 
 `chm_<source>_<year>`, where `source` is either `lidar` or `delta`.
 

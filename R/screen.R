@@ -11,6 +11,10 @@
 #' whenever new images are added. Scores may be added to a sites database 
 #' (`flights/flights_<site>.txt`) by hand if necessary.
 #' 
+#' When an image file is updated (presumably from downloading a repaired image), the old
+#' image is replaced in the database with the new one, thus the score, repair flag, and 
+#' comments will be reset. This sets you up for assessing repaired images.
+#' 
 #' `screen` displays the selected image with a red outline indicating the site footprint. 
 #' It includes the following controls:
 #'
@@ -21,7 +25,7 @@
 #'   hidden. Turn this switch on to revisit all images. (After scoring or flagging an image,
 #'   it won't be hidden until changing sites or toggling this switch.)
 #' - **Image filter** enter a regular expression to filter images on either the file name or
-#'   portable name (see README for a description of names). When the filter is in effect, only
+#'   portable name (see `README` for a description of names). When the filter is in effect, only
 #'   the selected images will be displayed. Usually, typing a distinct portion of the name 
 #'   will suffice, but you can go crazy with regular expressions if you want.
 #' - **Navigation buttons** Jump to the first, previous, next, or last image for this site.
