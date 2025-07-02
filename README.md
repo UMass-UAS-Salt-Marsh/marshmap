@@ -53,6 +53,19 @@ An example sequence will be created soon. Not all functions are fully implemente
    sites.
 7. `map` produce geoTIFF maps of predicted vegetation cover. 
 
+### Additional functions
+
+- `build_flights_db` Builds the flights database for a site, necessary after new files are downloaded
+   with `gather`. This is normally called by `screen` when you first view a site, so there's no need
+   to call it manually unless you are unable or unwilling to run `screen`.
+- `flights_report` Creates a report on on orthoimages for all sites, including a summary for each site,
+   a list of files flagged for repair in `screen`, a list of duplicated portable names for each site, 
+   and a list of all files for each site.
+- `info()` Shows the status of jobs you've launched. This is a `slurmcollie` function.
+- `kill(jobs)` Kill one or more jobs you didn't mean to launch (`slurmcollie`).
+- `purge(jobs)` Purge jobs that have finished or failed once you no longer care about them (`slurmcollie`).
+- `showlog(job)` Shows the log of a running or finished job (`slurmcollie`).
+
 ## Image naming
 
 UAS images (orthophotos, DEMs, canopy height models, and derived variables) may be referred to in
@@ -68,7 +81,8 @@ multiple names. Additionally, some filenames follow a wildly different pattern, 
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif`, a canopy height model. Files are imported from the
 source repositories (either Google Drive or SFTP) with their names unmodified, except that file
 names that start with a digit have an `x` prepended, thus `14Oct20_OTH_Low_Mica_DEM.tif` becomes
-`x14Oct20_OTH_Low_Mica_DEM.tif`.
+`x14Oct20_OTH_Low_Mica_DEM.tif`. (File names beginning with a digit can lead to 
+downstream problems in R, as they are invalid variable names).
 
 When using `derive` to create derived images (for example, `NDVI` or `mean upscaling`), derived names
 are generated from the base name (or names), with derivation information separated with a double
@@ -87,7 +101,7 @@ and force naming consistency.
 
 Portable names for most images consist of:
 
-`<type>_<sensor>_<season>_<year>_<tide>[-tidemod]_[<derive>[-<window>]]`
+`<type>_<sensor>_<season>_<year>_<tide>[-tidemod][_<derive>[-<window>]]`
 
 The protable names for canopy height models are simply:
 
@@ -103,7 +117,7 @@ File name | Portable name
 `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif` | `ndvi_mica_spring_2022_mid`
 `x01Aug20_OTH_MidOut_Mica_Ortho.tif` | `ortho_mica_summer_2020_mid-out`
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_lidar_2022`
-`x02Aug19_OTH_Low_Mica_DEM__x27Aug21_OTH_Low_Mica_DEM__chm.tif` | `chm_delta_2021`
+`x26May22_RR_Low_Mica_DEM__x19Aug22_RR_Low_Mica_DEM.tif` | `chm_delta_2022`
 
 Portable names are used for variable names in data files created by `sample`, and they're the names
 you'll see in model assessments. You can find the portable name for each file in
