@@ -22,7 +22,7 @@
 #'   \item{row}{row numbers in `flights<site>.txt`}
 #'   \item{file}{file names}
 #'   \item{portable}{portable names}
-#' importFrom stringr str_extract_all str_split str_trim
+#' @importFrom stringr str_extract_all str_split str_trim
 #' @export
 
 
@@ -46,6 +46,7 @@ find_orthos <- function(site, descrip) {
    z <- integer(0)                                                                     # we'll match an unknown number of names
    
    for(n in name) {                                                                    # for each name,
+      print(n)
       if(!grepl('.tif$', n, ignore.case = TRUE))                                       #    filenames end in optional .tif
          m <- paste0(n, '.tif')
       
@@ -59,13 +60,16 @@ find_orthos <- function(site, descrip) {
          else {                                                                        #       else
             a <- search_names(n)                                                       #          treat it as a search name
             k <- rep(TRUE, nrow(db))
-            for(j in seq_along(a)) {
+            for(j in seq_along(a))
                k <- k & db[, names(a)[j]] == a[[j]]               # *** but need to deal with mods too
-               z <- c(z, seq_along(db$file)[k])
-            }
+            
+            z <- c(z, seq_along(db$file)[k])
+            
          }
       }
    }
+   
+   print(z)
    
    for(r in regex) {                                                                   # for each regex,
       s <- grepl(r, db$file, ignore.case = TRUE) |                                     #    match either file name or portable name
@@ -73,6 +77,6 @@ find_orthos <- function(site, descrip) {
       z <- c(z, seq_along(db$file)[s])                                                 #    get any matching row numers
    }
    
-   
+   print(z)
    data.frame(row = z, file = db$file[z], portable = db$portable[z])                   # return data frame of rows, file names, and portable names
 }
