@@ -10,16 +10,13 @@
 #' to separate multiple tags in a category. Pairs of ordinal categories such as seasons and dates
 #' may be provided separated by a colon to designate a sequence; e.g., `2019:2022` is the same as
 #' `2019, 2020, 2021, 2022`. Tags may include modifiers (for instance, high tide may be modified as
-#' `high-spring`). Modified tags are returned as two items: first the base tag(s), such as 
-#' `high`, and then the tag with modification, `c(high`, `spring)`.
+#' `high-spring`). Modified tags are returned as lists of paired `category, modifier strings: 
+#' e.g., `mid-out, high-spring` results in `list(c('mid', 'out'), c('high', 'spring'))`.
 #'
 #' Non-existent tags generally result in an error with an informative message. Note that, for
 #' multiple tags, the category is determined by the first tag, so `sprang, summer, fall` will report
 #' all three seasons as errors, even though the second two are correct.
-#' 
-#' An exact filename may be used as the description by prepending a `*`, e.g., 
-#' `*x22Sep18_OTH_Low_Mica_DEM_NoTiles.tif`.
-#' 
+# 
 #' @param descrip Description string. See details.
 #' @returns A named list of all orthophoto attributes designated in the description
 #' @export
@@ -32,18 +29,12 @@
 #' search_names('mica, swir | ortho, dem | low:high | spring | 2018')
 #' search_names('2022 | oth | mid | mica | ortho | mean-w5')
 #' search_names('20x22 | other | muddle | micro')     # this throws an error
-#' search_names('*x22Sep18_OTH_Low_Mica_DEM_NoTiles.tif')
 
 
 search_names <- function(descrip) {
    
    
    descrip <- gsub(' ', '', descrip)                                             # remove all spaces
-   
-   
-   if(length(grep('^[*]+', descrip) > 0))
-      return(substring(descrip, 2))
-   
    
    if(is.null(the$category$site))                                                # get categories not present in pars.yml
       the$category$site <- read_pars_table('sites')$site
@@ -53,6 +44,7 @@ search_names <- function(descrip) {
    
    
    cats <- strsplit(descrip, '|', fixed = TRUE)[[1]]                             # split groups on vertical bars
+   cats <- cats[cats != '']
    
    z <- errs <- list()
    
@@ -78,9 +70,8 @@ search_names <- function(descrip) {
       
       if(length(grep('-', x) > 0)) {
          y <- sapply(x, function(a) strsplit(a, '-'))                            #    now pull out modifiers
-         z[cat] <- list(unique(sapply(y, '[[', 1)))
          names(y) <- NULL                                                        #    get rid of hideous names
-         z[paste0(cat, 'mod')] <- list(y)
+         z[cat] <- list(y)
          errs[i] <- list(unlist(y)[!sub('^w[0-9]+', 'w000', unlist(y)) %in% 
                                       sub('^-', '', unlist(the$category[cat]))])
       }

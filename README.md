@@ -61,6 +61,9 @@ An example sequence will be created soon. Not all functions are fully implemente
 - `flights_report` Creates a report on on orthoimages for all sites, including a summary for each site,
    a list of files flagged for repair in `screen`, a list of duplicated portable names for each site, 
    and a list of all files for each site.
+- `find_orthos(site, descrip)` Returns a data frame of file names and portable names matched by a search
+  name for the given site. You can use this to refine search names and be sure you're getting what you
+  want.
 - `info()` Shows the status of jobs you've launched. This is a `slurmcollie` function.
 - `kill(jobs)` Kill one or more jobs you didn't mean to launch (`slurmcollie`).
 - `purge(jobs)` Purge jobs that have finished or failed once you no longer care about them (`slurmcollie`).
@@ -130,10 +133,13 @@ be used. Remaining ties will be broken by taking the earliest matching image.
 ### Search name
 
 Finally, search names allow model fits to refer to multiple files in an easily-readable format.
-The components of a search name are separated with vertical bars. Multiple values of a component
+The components of a search name are separated with vertical bars (note these are pretty separators,
+NOT logical ors--the parts of a search name are conjunctive). Multiple values of a component
 are separated with commas, or a colon to select a range for ordinal values such as season or year.
 Modifiers (in, out, and spring for tides; window size for upscaled variables) are separated from
 the component with a dash, e.g., `mid-out`. Components in a search name may appear in any order. 
+Each component in the search name narrows the search, thus `mica | low, mid` matches any files 
+with a Mica sensor that are at low or mid-tide.
 Here are some example search names:
 
 `mid-in, mid-out, high`  
