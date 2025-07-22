@@ -7,7 +7,9 @@
 #' Note that portable names will be filtered so there is only one result for 
 #' each unique portable name. When there are duplicate portable names at a site,
 #' filtering picks the portable name with the highest score, breaking ties by 
-#' picking the earliest day in the season.
+#' picking the earliest day in the season. Filtering is only applied to portable 
+#' names (perhaps matched by a regex). File names and search names that give 
+#' multiple matches are not filtered.
 #' 
 #' @param site Site name
 #' @param descrip Character string with one or more of any of the following, 
@@ -68,7 +70,7 @@ find_orthos <- function(site, descrip) {
       else {                                                                           #    else,
          i <- match(n, db$portable)
          if(!is.na(i))                                                                 #       if we matched a portable name
-            z <- c(z, pick(db$portable[i]))                                            #          pick from among dups and we're done
+            z <- c(z, pick(db$portable[i], db))                                        #          pick from among dups and we're done
          else {                                                                        #       else
             a <- search_names(n)                                                       #          treat it as a search name
             b <- rep(TRUE, nrow(db))

@@ -33,5 +33,7 @@ These may be mixed and matched, separated by \code{+}.
 Note that portable names will be filtered so there is only one result for
 each unique portable name. When there are duplicate portable names at a site,
 filtering picks the portable name with the highest score, breaking ties by
-picking the earliest day in the season.
+picking the earliest day in the season. Filtering is only applied to portable
+names (perhaps matched by a regex). File names and search names that give
+multiple matches are not filtered.
 }
