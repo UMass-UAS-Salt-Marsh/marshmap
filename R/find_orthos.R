@@ -73,22 +73,18 @@ find_orthos <- function(site, descrip) {
             a <- search_names(n)                                                       #          treat it as a search name
             b <- rep(TRUE, nrow(db))
             for(j in seq_along(a)) {                                                   #          for each search name part,
-             #  print('===')
-             #  print(a[[j]])
                c <- rep(FALSE, nrow(db))
                for(k in seq_along(a[[j]])) {                                           #                for each category,
-              #    print('---')
-              #    print(a[[j]][[k]])
-                  if(depth(a[[j]][[k]]) < 1)                                             #             if not nested, it's a regular category, like sensor = mica  
+                  if(depth(a[[j]]) < 1)                                                #             if not nested, it's a regular category, like sensor = mica  
                      c <- c | db[, names(a)[j]] == a[[j]][k]                           #                   match category value
                   else {                                                               #             else, nested list, so category-modifier, like tide = high & tidemod = spring
-                    print('compound!')
-                     c <- c | (db[, names(a)[j]] == a[[j]][[k]][[1]]) &
-                        (db[, mods(names(a)[j])] == a[[j]][[k]][[2]])                  #                need both category and modifier values
+                     t <- db[, names(a)[j]] == a[[j]][[k]][[1]]
+                     if(length(a[[j]][[k]]) > 1)                                       #                if this one has a mod,
+                        t <- t & (db[, mods(names(a)[j])] == a[[j]][[k]][[2]])         #                   need both category and modifier values
+                     c <- c | t               
                   }
                }
                b <- b & c
-            #   print(b)
             }
             z <- c(z, seq_along(db$name)[b])
          }
