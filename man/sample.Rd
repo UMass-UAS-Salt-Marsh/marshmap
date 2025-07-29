@@ -22,8 +22,10 @@ sample(
 \arguments{
 \item{site}{One or more site names, using 3 letter abbreviation. Default = all sites.}
 
-\item{pattern}{Regex filtering rasters of predictor variables, case-insensitive.
-Default = "" (match all). Note: only files ending in \code{.tif} are included in any case.}
+\item{pattern}{File names, portable names, regex matching either, or search names
+selecting files to sample. See Image naming in
+\href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
+for details.}
 
 \item{n}{Number of total samples to return.}
 
@@ -55,22 +57,28 @@ than resampling. Saves a whole lot of time if you're changing \code{n}, \code{p}
 Sampled data table (invisibly)
 }
 \description{
-There are three mutually available sampling strategies (n, p, and d). You
+There are three mutually exclusive sampling strategies (n, p, and d). You
 must choose exactly one. \code{n} samples the total number of points provided.
 \code{p} samples the proportion of total points (after balancing, if \code{balance} is
 selected. \code{d} samples points with a mean (but not guaranteed) minimum distance.
 }
 \details{
-Results are saved in four files:
+Portable names are used for variable names in the resulting data files. Dashes
+from modifications are changed to underscore to avoid causing trouble.
+
+Results are saved in four files, plus a metadata file:
 \enumerate{
 \item \if{html}{\out{<result>}}_all.txt - A text version of the full dataset (selected by \code{pattern}
 but not subsetted by \code{n}, \code{p}, \code{d}, \code{balance}, or \code{drop_corr}). Readable by
 any software.
 \item \if{html}{\out{<result>}}_all.RDS - An RDS version of the full dataset; far faster to read
-in R (1.1 s vs. 14.4 s in one example).
+than a text file in R (1.1 s vs. 14.4 s in one example).
 \item \if{html}{\out{<result>}}.txt - A text version of the final selected and subsetted dataset,
 as a text file.
 \item \if{html}{\out{<result>}}.RDS - An RDS version of the final dataset.
+\item \if{html}{\out{<result>}}_vars.txt - Lists the portable names used for variables in the sample
+alongside the file names on disk. This disambiguates when there are duplicate
+portable names in a flights directory.
 }
 
 \strong{Memory requirements: I've measured up to 28.5 GB.}

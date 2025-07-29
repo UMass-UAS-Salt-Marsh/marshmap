@@ -1,26 +1,34 @@
 #' Sample Y and X variables for a site
 #' 
-#' There are three mutually available sampling strategies (n, p, and d). You
+#' There are three mutually exclusive sampling strategies (n, p, and d). You
 #' must choose exactly one. `n` samples the total number of points provided. 
 #' `p` samples the proportion of total points (after balancing, if `balance` is 
 #' selected. `d` samples points with a mean (but not guaranteed) minimum distance.
 #' 
-#' Results are saved in four files:
+#' Portable names are used for variable names in the resulting data files. Dashes
+#' from modifications are changed to underscore to avoid causing trouble.
+#' 
+#' Results are saved in four files, plus a metadata file:
 #' 
 #' 1. <result>_all.txt - A text version of the full dataset (selected by `pattern` 
 #'    but not subsetted by `n`, `p`, `d`, `balance`, or `drop_corr`). Readable by
 #'    any software.
 #' 2. <result>_all.RDS - An RDS version of the full dataset; far faster to read 
-#'    in R (1.1 s vs. 14.4 s in one example).
+#'    than a text file in R (1.1 s vs. 14.4 s in one example).
 #' 3. <result>.txt - A text version of the final selected and subsetted dataset,
 #'    as a text file.
 #' 4. <result>.RDS - An RDS version of the final dataset.
+#' 5. <result>_vars.txt - Lists the portable names used for variables in the sample
+#'    alongside the file names on disk. This disambiguates when there are duplicate
+#'    portable names in a flights directory.
 #' 
 #' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Default = all sites.
-#' @param pattern Regex filtering rasters of predictor variables, case-insensitive. 
-#'    Default = "" (match all). Note: only files ending in `.tif` are included in any case.
+#' @param pattern File names, portable names, regex matching either, or search names
+#'    selecting files to sample. See Image naming in
+#'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
+#'    for details.
 #' @param n Number of total samples to return.
 #' @param p Proportion of total samples to return. Use p = 1 to sample all.
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
@@ -95,9 +103,13 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       if(!is.null(classes))
          field <- subst(field, from = classes, to = classes, others = NA)           # select classes in transect
       
+      
       fl <- resolve_dir(the$flightsdir, tolower(sites$site))
-      xvars <- list.files(fl, pattern = '.tif$')                                    # just want TIFFs
-      xvars <- xvars[grep(pattern, xvars)]                                          # and match supplied pattern
+      x <- find_orthos(sites$site, pattern)                                         # find matching files
+      xvars <- gsub('-', '_', x$portable)                                           # we'll use the portable name as the variable name, except change dashes to underscore
+      xfiles <- x$file                                                              # and here are the files for reading and writing to <result>_vars.txt 
+      
+      
       msg(paste0('Sampling ', length(xvars), ' variables'), lf)
       
       sel <- !is.na(field)                                                          # cells with field samples
@@ -105,12 +117,11 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       z <- data.frame(field[sel])                                                   # result is expected to be ~4 GB for 130 variables
       names(z)[1] <- 'subclass'
       
-      
       pr <- progressor(along = xvars)
-      for(xv in xvars) {                                                            # for each predictor variable,
+      for(i in seq_along(xfiles)) {                                                 # for each predictor variable,
          pr()
-         x <- rast(file.path(fl, xv))                                               #    get the raster
-         names(x)[grep('Band_', names(x))] <- paste0(xv, '_', 1:length(names(x)))   #    rename Band_1 to <layer>_1 (e.g., OTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif)
+         x <- rast(file.path(fl, xfiles[i]))                                        #    get the raster
+         names(x) <- paste0(xvars[i], '_', 1:length(names(x)))                      #    variable names with _<band number>
          z[, names(x)] <- x[sel]                                                    #    sample selected values
       }
       
@@ -126,7 +137,7 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
    }
    
    
-   if(balance) {                                                                    # if balancing smaples,
+   if(balance) {                                                                    # if balancing samples,
       counts <- table(z$subclass)
       counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classe in balance_ex,l
       target_n <- min(counts)
@@ -160,6 +171,11 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
    
    write.table(z, f <- file.path(sd, paste0(result, '.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
    saveRDS(z, f2 <- file.path(sd, paste0(result, '.RDS')))
+
+   x <- cbind(xvars, xfiles)
+   names(x) <- c('var', 'file')
+   write.table(x, file.path(sd, paste0(result, '_vars.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
+   
    msg(paste0('Sampled dataset saved to ', f, ' and ', f2), logfile = lf)
    
    invisible(z)
