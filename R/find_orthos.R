@@ -14,16 +14,20 @@
 #' @param site Site name
 #' @param descrip Character string with one or more of any of the following, 
 #'    separated by `+`:
+#' \describe{
 #'    \item{file name}{a complete file name (`.tif` is optional)}
 #'    \item{portable name}{a portable name}
 #'    \item{regex}{a regular expression enclosed in `{}`, to be
 #'       applied to both file names and portable names. Regular expressions
 #'       are case-insensitive.}
 #'    \item{search name}{a search string (see `search_names` for details)}
+#' }
 #' @returns Data frame with
-#'   \item{row}{row numbers in `flights<site>.txt`}
-#'   \item{file}{file names}
-#'   \item{portable}{portable names}
+#' \describe{
+#'    \item{row}{row numbers in `flights<site>.txt`}
+#'    \item{file}{file names}
+#'    \item{portable}{portable names}
+#' }
 #' @importFrom stringr str_extract_all str_split str_trim
 #' @export
 

@@ -5,11 +5,11 @@
 #' 
 #' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
-#' @param site site, using 3 letter abbreviation
+#' @param site site, using 3 letter abbrWviation
 #' @param pattern File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
-#'    for details.
+#'    for details.W
 #' @param n Number of total samples to return.
 #' @param p Proportion of total samples to return. Use p = 1 to sample all.
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
@@ -23,7 +23,7 @@
 #' @param reuse Reuse the named file (ending in `_all.txt`) from previous run, rather
 #'    than resampling. Saves a whole lot of time if you're changing `n`, `p`, `d`, `balance`, 
 #'    `balance_excl`, or `drop_corr`.
-#' @param result Name of result file. If not specified, file will be constructed from
+#' @param result Name of result file. If not specified, file will be constructed fromW
 #'    site, number of X vars, and strategy.
 #' @param transects Name of transects file; default is `transects`.
 #' @returns Sampled data table (invisibly)
@@ -31,7 +31,7 @@
 #' @importFrom dplyr group_by slice_sample
 #' @importFrom caret findCorrelation
 #' @importFrom stats cor
-#' @export
+#' @keywords internal
 
 
 do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL, 
@@ -39,26 +39,28 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
                       transects = NULL, drop_corr = NULL, reuse = FALSE) {
    
    
-   message('', lf)
-   message('-----', lf)
-   message('', lf)
-   message('Running sample', lf)
-   message(paste0('site = ', paste(site, collapse = ', ')), lf)
-   message(paste0('pattern = ', pattern), lf)
+   message('')
+   message('-----')
+   message('')
+   message('Running sample')
+   message('site = ', paste(site, collapse = ', '))
+   message('pattern = ', pattern)
    if(!is.null(n))
-      message(paste0('n = ', n), lf)
+      message('n = ', n)
    if(!is.null(p))
-      message(paste0('p = ', p), lf)
+      message('p = ', p)
    if(!is.null(d))
-      message(paste0('d = ', d), lf)
+      message('d = ', d)
    
    
-   result <- 'data'                                                                 # will tart this up
+   if(is.null(result))
+      result <- 'data'
+      
    sd <- resolve_dir(the$samplesdir, site)
    
    if(reuse) {
       z <- readRDS(f2 <- file.path(sd, paste0(result, '_all.RDS')))
-      message(paste0('Reusing dataset ', f2), logfile = lf)
+      message('Reusing dataset ', f2)
    }
    
    else {
@@ -79,7 +81,7 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       xfiles <- x$file                                                              # and here are the files for reading and writing to <result>_vars.txt 
       
       
-      message(paste0('Sampling ', length(xvars), ' variables'), lf)
+      message('Sampling ', length(xvars), ' variables')
       
       sel <- !is.na(field)                                                          # cells with field samples
       nrows <- as.numeric(global(sel, fun = 'sum', na.rm = TRUE))                   # total sample size
@@ -100,7 +102,7 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
          dir.create(sd, recursive = TRUE)
       write.table(z, f <- file.path(sd, paste0(result, '_all.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
       saveRDS(z, f2 <- file.path(sd, paste0(result, '_all.RDS')))
-      message(paste0('Complete dataset saved to ', f, ' and ', f2), logfile = lf)
+      message('Complete dataset saved to ', f, ' and ', f2)
    }
    
    
@@ -132,7 +134,7 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       cat('Correlations after applying drop_corr:\n')
       corr <- cor(z, use = 'pairwise.complete.obs')
       print(summary(corr[upper.tri(corr)]))
-      message(paste0('Applying drop_corr = ', drop_corr, ' reduced X variables from ', length(xvars), ' to ', dim(z)[2] - 1), lf)
+      message('Applying drop_corr = ', drop_corr, ' reduced X variables from ', length(xvars), ' to ', dim(z)[2] - 1)
    }
    
    
@@ -143,5 +145,5 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
    names(x) <- c('var', 'file')
    write.table(x, file.path(sd, paste0(result, '_vars.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
    
-   message(paste0('Sampled dataset saved to ', f, ' and ', f2), logfile = lf)
+   message('Sampled dataset saved to ', f, ' and ', f2)
 }

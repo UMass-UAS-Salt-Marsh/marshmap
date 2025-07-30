@@ -11,18 +11,22 @@ find_orthos(site, descrip)
 
 \item{descrip}{Character string with one or more of any of the following,
 separated by \code{+}:
+\describe{
 \item{file name}{a complete file name (\code{.tif} is optional)}
 \item{portable name}{a portable name}
 \item{regex}{a regular expression enclosed in \code{{}}, to be
 applied to both file names and portable names. Regular expressions
 are case-insensitive.}
-\item{search name}{a search string (see \code{search_names} for details)}}
+\item{search name}{a search string (see \code{search_names} for details)}
+}}
 }
 \value{
 Data frame with
+\describe{
 \item{row}{row numbers in \verb{flights<site>.txt}}
 \item{file}{file names}
 \item{portable}{portable names}
+}
 }
 \description{
 Finds orthophotos at a given site from complete file names, portable names,

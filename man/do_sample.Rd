@@ -20,12 +20,12 @@ do_sample(
 )
 }
 \arguments{
-\item{site}{site, using 3 letter abbreviation}
+\item{site}{site, using 3 letter abbrWviation}
 
 \item{pattern}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
 \href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
-for details.}
+for details.W}
 
 \item{n}{Number of total samples to return.}
 
@@ -42,7 +42,7 @@ selected to match the sparsest class.}
 \item{balance_excl}{Vector of classes to exclude when determining sample size when
 balancing. Include classes with low samples we don't care much about.}
 
-\item{result}{Name of result file. If not specified, file will be constructed from
+\item{result}{Name of result file. If not specified, file will be constructed fromW
 site, number of X vars, and strategy.}
 
 \item{transects}{Name of transects file; default is \code{transects}.}
@@ -63,3 +63,4 @@ fitting. This is an internal function, called by sample.
 \details{
 \strong{Memory requirements: I've measured up to 28.5 GB.}
 }
+\keyword{internal}

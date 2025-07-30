@@ -20,7 +20,6 @@ Imports:
     tools,
     stats,
     dplyr,
-    progressr,
     caret, 
     stringr,
     pROC,

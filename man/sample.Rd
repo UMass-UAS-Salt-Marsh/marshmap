@@ -69,9 +69,6 @@ no effect if local = FALSE.}
 
 \item{comment}{Optional slurmcollie comment}
 }
-\value{
-Sampled data table (invisibly)
-}
 \description{
 There are three mutually exclusive sampling strategies (n, p, and d). You
 must choose exactly one. \code{n} samples the total number of points provided.

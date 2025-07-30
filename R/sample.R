@@ -53,26 +53,25 @@
 #'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
 #'    no effect if local = FALSE.
 #' @param comment Optional slurmcollie comment
-#' @returns Sampled data table (invisibly)
-#' @importFrom terra rast global subst
-#' @importFrom progressr progressor handlers
-#' @importFrom dplyr group_by slice_sample
-#' @importFrom caret findCorrelation
-#' @importFrom stats cor
 #' @importFrom slurmcollie launch get_resources
 #' @export
 
 
-sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL, 
+sample <- function(site, pattern = NULL, n = NULL, p = NULL, d = NULL, 
                    classes = NULL, balance = TRUE, balance_excl = c(7, 33), result = NULL, 
                    transects = NULL, drop_corr = NULL, reuse = FALSE, resources = NULL, 
                    local = FALSE, trap = TRUE, comment = NULL) {
    
    
+   if(is.null(pattern))
+      stop('A pattern must be specified')
+   
    sites <- read_pars_table('sites')
    site <- tolower(site)
-   if(site == 'all')                                        # if all sites,
-      site <- sites$site                                    #    get list of all of them so we can split across reps in batch mode
+   if(site == '')
+      stop('No sites specified. Use site = \'all\' for all sites.')
+   if(site == 'all')                                                    # if all sites,
+      site <- sites$site                                                #    get list of all of them so we can split across reps in batch mode
    if(any(m <- !site %in% sites$site))
       stop('Non-existent sites: ', site[m])
    
@@ -82,13 +81,13 @@ sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
    
    
    resources <- get_resources(resources, list(
-      ncpus = 2,
+      ncpus = 1,
       memory = 40,
       walltime = '2:00:00'
    ))
    
    if(is.null(comment))
-      comment <- paste0('gather ', site)
+      comment <- paste0('sample ', site)
    
    launch('do_sample', reps = site, repname = 'site', 
           moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, 
