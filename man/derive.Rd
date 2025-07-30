@@ -17,8 +17,8 @@ derive(
 )
 }
 \arguments{
-\item{site}{One or more site names, using 3 letter abbreviation. If running in batch mode, each
-named site will be run in a separate job.}
+\item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.
+in batch mode, each named site will be run in a separate job.}
 
 \item{pattern1}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
 files ending in \code{.tif} are included in any case. \code{pattern1} may alternatively be a vector

@@ -16,11 +16,16 @@ sample(
   result = NULL,
   transects = NULL,
   drop_corr = NULL,
-  reuse = FALSE
+  reuse = FALSE,
+  resources = NULL,
+  local = FALSE,
+  trap = TRUE,
+  comment = NULL
 )
 }
 \arguments{
-\item{site}{One or more site names, using 3 letter abbreviation. Default = all sites.}
+\item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.
+in batch mode, each named site will be run in a separate job.}
 
 \item{pattern}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
@@ -52,6 +57,17 @@ site, number of X vars, and strategy.}
 \item{reuse}{Reuse the named file (ending in \verb{_all.txt}) from previous run, rather
 than resampling. Saves a whole lot of time if you're changing \code{n}, \code{p}, \code{d}, \code{balance},
 \code{balance_excl}, or \code{drop_corr}.}
+
+\item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+over the function's defaults.}
+
+\item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
+
+\item{trap}{If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
+for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
+no effect if local = FALSE.}
+
+\item{comment}{Optional slurmcollie comment}
 }
 \value{
 Sampled data table (invisibly)

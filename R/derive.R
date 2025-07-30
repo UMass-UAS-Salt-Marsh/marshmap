@@ -21,8 +21,8 @@
 #' 
 #' This fits in the workflow after `gather` and before `sample`.
 #' 
-#' @param site One or more site names, using 3 letter abbreviation. If running in batch mode, each 
-#'    named site will be run in a separate job.
+#' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
+#'    in batch mode, each named site will be run in a separate job.
 #' @param pattern1 Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only 
 #'    files ending in `.tif` are included in any case. `pattern1` may alternatively be a vector 
 #'    of layer names (or patterns if you want to get tricky). See details.
@@ -65,6 +65,9 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
    
    
    sites <- read_pars_table('sites')
+   site <- tolower(site)
+   if(site == 'all')                                        # if all sites,
+      site <- sites$site                                    #    get list of all of them so we can split across reps in batch mode
    if(any(m <- !site %in% sites$site))
       stop('Non-existent sites: ', site[m])
    
@@ -74,7 +77,6 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
       memory = 32,
       walltime = '00:10:00'
    ))
-   
    
    if(is.null(comment))
       comment <- paste0('derive ', paste(site, collapse = ', '), '(', paste(metrics, collapse = ', '), ')')

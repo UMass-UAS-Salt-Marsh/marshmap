@@ -1,6 +1,4 @@
-#' Pull season out of salt marsh imagery files
-#' 
-#' For now, this returns months. Eventually, it will return our defined flight seasons.
+#' Pull date, year, and season out of salt marsh imagery files
 #' 
 #' Robust to wildly haphazard file and date formats (e.g., 18Jun2025, 18June25); does 
 #' a pretty good job of hunting down the date from the filename. Dates must be in `dmy`

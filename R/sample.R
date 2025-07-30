@@ -24,7 +24,8 @@
 #' 
 #' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
-#' @param site One or more site names, using 3 letter abbreviation. Default = all sites.
+#' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
+#'    in batch mode, each named site will be run in a separate job.
 #' @param pattern File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
@@ -45,138 +46,53 @@
 #' @param result Name of result file. If not specified, file will be constructed from
 #'    site, number of X vars, and strategy.
 #' @param transects Name of transects file; default is `transects`.
+#' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#'    over the function's defaults.
+#' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
+#' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
+#'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
+#'    no effect if local = FALSE.
+#' @param comment Optional slurmcollie comment
 #' @returns Sampled data table (invisibly)
 #' @importFrom terra rast global subst
 #' @importFrom progressr progressor handlers
 #' @importFrom dplyr group_by slice_sample
 #' @importFrom caret findCorrelation
 #' @importFrom stats cor
+#' @importFrom slurmcollie launch get_resources
 #' @export
 
 
 sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL, 
                    classes = NULL, balance = TRUE, balance_excl = c(7, 33), result = NULL, 
-                   transects = NULL, drop_corr = NULL, reuse = FALSE) {
+                   transects = NULL, drop_corr = NULL, reuse = FALSE, resources = NULL, 
+                   local = FALSE, trap = TRUE, comment = NULL) {
    
    
-   handlers(global = TRUE)
-   lf <- file.path(the$modelsdir, paste0('sample_', site, '.log'))                  # set up logging
+   sites <- read_pars_table('sites')
+   site <- tolower(site)
+   if(site == 'all')                                        # if all sites,
+      site <- sites$site                                    #    get list of all of them so we can split across reps in batch mode
+   if(any(m <- !site %in% sites$site))
+      stop('Non-existent sites: ', site[m])
    
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)
       stop('You must choose exactly one of the n, p, and d options')
    
    
-   msg('', lf)
-   msg('-----', lf)
-   msg('', lf)
-   msg('Running sample', lf)
-   msg(paste0('site = ', paste(site, collapse = ', ')), lf)
-   msg(paste0('pattern = ', pattern), lf)
-   if(!is.null(n))
-      msg(paste0('n = ', n), lf)
-   if(!is.null(p))
-      msg(paste0('p = ', p), lf)
-   if(!is.null(d))
-      msg(paste0('d = ', d), lf)
+   resources <- get_resources(resources, list(
+      ncpus = 2,
+      memory = 40,
+      walltime = '2:00:00'
+   ))
    
+   if(is.null(comment))
+      comment <- paste0('gather ', site)
    
-   allsites <- read_pars_table('sites')                                             # site names from abbreviations to paths
-   sites <- allsites[match(tolower(site), tolower(allsites$site)), ]
-   
-   result <- 'data'   # will tart this up
-   sd <- resolve_dir(the$samplesdir, tolower(sites$site))
-   
-   if(reuse) {
-      z <- readRDS(f2 <- file.path(sd, paste0(result, '_all.RDS')))
-      msg(paste0('Reusing dataset ', f2), logfile = lf)
-   }
-   
-   else {
-      
-      f <- resolve_dir(the$fielddir, tolower(sites$site))                           # get field transects
-      if(is.null(transects))
-         transects <- 'transects.tif'
-      field <- rast(file.path(f, transects))
-      
-      
-      if(!is.null(classes))
-         field <- subst(field, from = classes, to = classes, others = NA)           # select classes in transect
-      
-      
-      fl <- resolve_dir(the$flightsdir, tolower(sites$site))
-      x <- find_orthos(sites$site, pattern)                                         # find matching files
-      xvars <- gsub('-', '_', x$portable)                                           # we'll use the portable name as the variable name, except change dashes to underscore
-      xfiles <- x$file                                                              # and here are the files for reading and writing to <result>_vars.txt 
-      
-      
-      msg(paste0('Sampling ', length(xvars), ' variables'), lf)
-      
-      sel <- !is.na(field)                                                          # cells with field samples
-      nrows <- as.numeric(global(sel, fun = 'sum', na.rm = TRUE))                   # total sample size
-      z <- data.frame(field[sel])                                                   # result is expected to be ~4 GB for 130 variables
-      names(z)[1] <- 'subclass'
-      
-      pr <- progressor(along = xvars)
-      for(i in seq_along(xfiles)) {                                                 # for each predictor variable,
-         pr()
-         x <- rast(file.path(fl, xfiles[i]))                                        #    get the raster
-         names(x) <- paste0(xvars[i], '_', 1:length(names(x)))                      #    variable names with _<band number>
-         z[, names(x)] <- x[sel]                                                    #    sample selected values
-      }
-      
-      names(z) <- sub('^(\\d)', 'X\\1', names(z))                                   # add an X to the start of names that begin with a digit
-      z <- round(z, 2)                                                              # round to 2 digits, which seems like plenty
-      
-      
-      if(!dir.exists(sd))
-         dir.create(sd, recursive = TRUE)
-      write.table(z, f <- file.path(sd, paste0(result, '_all.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
-      saveRDS(z, f2 <- file.path(sd, paste0(result, '_all.RDS')))
-      msg(paste0('Complete dataset saved to ', f, ' and ', f2), logfile = lf)
-   }
-   
-   
-   if(balance) {                                                                    # if balancing samples,
-      counts <- table(z$subclass)
-      counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classe in balance_ex,l
-      target_n <- min(counts)
-      
-      z <- group_by(z, subclass) |>
-         slice_sample(n = target_n) |>                                              #    take minimum subclass n for every class
-         data.frame()                                                               #    and cure tidyverse infection
-   }
-   
-   if(!is.null(d))                                                                  #    if sampling by mean distance,
-      p <- 1 / (d + 1) ^ 2                                                          #       set proportion
-   
-   if(!is.null(p))                                                                  #    if sampling by proportion,
-      n <- p * dim(z)[1]                                                            #       set n to proportion
-   
-   z <- z[base::sample(dim(z)[1], size = n, replace = FALSE), ]                     #    sample points
-   
-   
-   if(!is.null(drop_corr)) {                                                        #----drop_corr option: drop correlated variables
-      cat('Correlations before applying drop_corr:\n')
-      corr <- cor(z, use = 'pairwise.complete.obs')
-      print(summary(corr[upper.tri(corr)]))
-      c <- findCorrelation(corr, cutoff = drop_corr)
-      z <- z[, -c]
-      cat('Correlations after applying drop_corr:\n')
-      corr <- cor(z, use = 'pairwise.complete.obs')
-      print(summary(corr[upper.tri(corr)]))
-      msg(paste0('Applying drop_corr = ', drop_corr, ' reduced X variables from ', length(xvars), ' to ', dim(z)[2] - 1), lf)
-   }
-   
-   
-   write.table(z, f <- file.path(sd, paste0(result, '.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
-   saveRDS(z, f2 <- file.path(sd, paste0(result, '.RDS')))
-
-   x <- cbind(xvars, xfiles)
-   names(x) <- c('var', 'file')
-   write.table(x, file.path(sd, paste0(result, '_vars.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
-   
-   msg(paste0('Sampled dataset saved to ', f, ' and ', f2), logfile = lf)
-   
-   invisible(z)
+   launch('do_sample', reps = site, repname = 'site', 
+          moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, 
+                          balance = balance, balance_excl = balance_excl, result = result, 
+                          transects = transects, drop_corr = drop_corr, reuse = reuse), 
+          finish = 'sample_finish', local = local, trap = trap, resources = resources, comment = comment)
 }

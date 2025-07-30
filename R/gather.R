@@ -103,22 +103,19 @@ gather <- function(site, pattern = '',
                    trap = TRUE, comment = NULL) {
    
    
-   if(site == 'all')                                  # if all sites,
-      site <- (read_pars_table('sites'))$site         #    get list of all of them so we can split across reps in batch mode
-   
+   sites <- read_pars_table('sites')
    site <- tolower(site)
+   if(site == 'all')                                        # if all sites,
+      site <- sites$site                                    #    get list of all of them so we can split across reps in batch mode
+   if(any(m <- !site %in% sites$site))
+      stop('Non-existent sites: ', site[m])
+
    
-   res <- resources
    resources <- get_resources(resources, list(
       ncpus = 1,                                      # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
       memory = 115,                                   # an OTH run blew out at 115 GB, both others seem okay here
       walltime = '10:00:00'
    ))
-   
-   if(!is.null(res)) {
-      both <- c(res, resources)
-      both[unique(names(both))]
-   }
    
    if(is.null(comment))
       comment <- paste0('gather ', site)

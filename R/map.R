@@ -14,6 +14,9 @@
 #' @export
 
 
+
+# need to add resources, etc. See e.g. gather.
+
 map <- function(fit, site = the$site, clip = NULL, result = NULL, local = FALSE, comment = paste0('Map')) {
    
    
@@ -39,6 +42,14 @@ map <- function(fit, site = the$site, clip = NULL, result = NULL, local = FALSE,
    }
    else if(dirname(result) == '.')                                                     # else, if we have a result with no path,
       result <- file.path(res_path, result)                                            #    use default path
+   
+   
+   resources <- get_resources(resources, list(
+      # ncpus = 1,                                             
+      # memory = 32,
+      walltime = '00:10:00'
+   ))
+   
    
    
    source <- resolve_dir(the$flightsdir, site)

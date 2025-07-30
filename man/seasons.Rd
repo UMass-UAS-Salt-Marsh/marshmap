@@ -2,7 +2,7 @@
 % Please edit documentation in R/seasons.R
 \name{seasons}
 \alias{seasons}
-\title{Pull season out of salt marsh imagery files}
+\title{Pull date, year, and season out of salt marsh imagery files}
 \usage{
 seasons(files)
 }
@@ -16,13 +16,11 @@ named list of:
 \item{season}{vector of seasons}
 }
 \description{
-For now, this returns months. Eventually, it will return our defined flight seasons.
-}
-\details{
 Robust to wildly haphazard file and date formats (e.g., 18Jun2025, 18June25); does
 a pretty good job of hunting down the date from the filename. Dates must be in \code{dmy}
 format, followed by an underscore. For file names with two dates, finds the first.
-
+}
+\details{
 File names must include at least a month and year to get a season, so
 \code{xOTH_Aug_CHM_CSF2012_Thin25cm_TriNN8cm.tif} will return an NA for season. Such
 errors may be fixed by editing \verb{flights_<site>.txt}.
