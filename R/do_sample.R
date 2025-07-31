@@ -100,7 +100,8 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       
       if(!dir.exists(sd))
          dir.create(sd, recursive = TRUE)
-      write.table(z, f <- file.path(sd, paste0(result, '_all.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
+      write.table(z, f <- file.path(sd, paste0(result, '_all.txt')), 
+                  sep = '\t', quote = FALSE, row.names = FALSE, na = '')
       saveRDS(z, f2 <- file.path(sd, paste0(result, '_all.RDS')))
       message('Complete dataset saved to ', f, ' and ', f2)
    }
@@ -138,12 +139,14 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
    }
    
    
-   write.table(z, f <- file.path(sd, paste0(result, '.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
+   write.table(z, f <- file.path(sd, paste0(result, '.txt')), 
+               sep = '\t', quote = FALSE, row.names = FALSE, na = '')
    saveRDS(z, f2 <- file.path(sd, paste0(result, '.RDS')))
    
    x <- cbind(xvars, xfiles)
    names(x) <- c('var', 'file')
-   write.table(x, file.path(sd, paste0(result, '_vars.txt')), sep = '\t', quote = FALSE, row.names = FALSE)
+   write.table(x, file.path(sd, paste0(result, '_vars.txt')), 
+               sep = '\t', quote = FALSE, row.names = FALSE, na  = '')
    
    message('Sampled dataset saved to ', f, ' and ', f2)
 }

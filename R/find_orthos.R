@@ -7,9 +7,11 @@
 #' Note that portable names will be filtered so there is only one result for 
 #' each unique portable name. When there are duplicate portable names at a site,
 #' filtering picks the portable name with the highest score, breaking ties by 
-#' picking the earliest day in the season. Filtering is only applied to portable 
-#' names (perhaps matched by a regex). File names and search names that give 
-#' multiple matches are not filtered.
+#' picking the earliest day in the season. Filtering is only applied to exact matches
+#' of portable names, not when they're matched by a regex. File names and search names 
+#' that give multiple matches are not filtered.
+#' 
+#' Use `descrip = '{*}'` to match all names.
 #' 
 #' @param site Site name
 #' @param descrip Character string with one or more of any of the following, 
@@ -77,16 +79,16 @@ find_orthos <- function(site, descrip) {
             z <- c(z, pick(db$portable[i], db))                                        #          pick from among dups and we're done
          else {                                                                        #       else
             a <- search_names(n)                                                       #          treat it as a search name
-            b <- rep(TRUE, nrow(db))
+            b <- rep(length(a) != 0, nrow(db))                                         #          start with a vector of TRUE unless we found nothing in search_names
             for(j in seq_along(a)) {                                                   #          for each search name part,
                c <- rep(FALSE, nrow(db))
-               for(k in seq_along(a[[j]])) {                                           #                for each category,
-                  if(depth(a[[j]]) < 1)                                                #             if not nested, it's a regular category, like sensor = mica  
+               for(k in seq_along(a[[j]])) {                                           #             for each category,
+                  if(depth(a[[j]]) < 1)                                                #                if not nested, it's a regular category, like sensor = mica  
                      c <- c | db[, names(a)[j]] == a[[j]][k]                           #                   match category value
-                  else {                                                               #             else, nested list, so category-modifier, like tide = high & tidemod = spring
+                  else {                                                               #                else, nested list, so category-modifier, like tide = high & tidemod = spring
                      t <- db[, names(a)[j]] == a[[j]][[k]][[1]]
-                     if(length(a[[j]][[k]]) > 1)                                       #                if this one has a mod,
-                        t <- t & (db[, mods(names(a)[j])] == a[[j]][[k]][[2]])         #                   need both category and modifier values
+                     if(length(a[[j]][[k]]) > 1)                                       #                   if this one has a mod,
+                        t <- t & (db[, mods(names(a)[j])] == a[[j]][[k]][[2]])         #                      need both category and modifier values
                      c <- c | t               
                   }
                }

@@ -82,8 +82,8 @@ sample <- function(site, pattern = NULL, n = NULL, p = NULL, d = NULL,
    
    resources <- get_resources(resources, list(
       ncpus = 1,
-      memory = 40,
-      walltime = '2:00:00'
+      memory = 64,                                 # the most I've seen is 61.55 GB
+      walltime = '2:00:00'                         # longest run: 28:43
    ))
    
    if(is.null(comment))

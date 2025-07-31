@@ -6,7 +6,7 @@
 \usage{
 sample(
   site,
-  pattern = "",
+  pattern = NULL,
   n = NULL,
   p = NULL,
   d = NULL,
