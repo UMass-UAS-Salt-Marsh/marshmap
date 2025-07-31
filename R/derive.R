@@ -22,7 +22,7 @@
 #' This fits in the workflow after `gather` and before `sample`.
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
-#'    in batch mode, each named site will be run in a separate job.
+#'    In batch mode, each named site will be run in a separate job.
 #' @param pattern1 File names, portable names, regex matching either, or search names
 #'    selecting source for derived variables. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
@@ -65,13 +65,7 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
                    window = 3, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
-   sites <- read_pars_table('sites')
-   site <- tolower(site)
-   if(site == 'all')                                        # if all sites,
-      site <- sites$site                                    #    get list of all of them so we can split across reps in batch mode
-   if(any(m <- !site %in% sites$site))
-      stop('Non-existent sites: ', site[m])
-   
+   site <- get_sites(site)
    
    resources <- get_resources(resources, list(
       ncpus = 1,                                               # I'm seeing up to 17 GB, less than 3 min

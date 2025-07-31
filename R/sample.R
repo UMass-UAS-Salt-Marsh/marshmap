@@ -25,7 +25,7 @@
 #' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
-#'    in batch mode, each named site will be run in a separate job.
+#'    In batch mode, each named site will be run in a separate job.
 #' @param pattern File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
@@ -66,15 +66,7 @@ sample <- function(site, pattern = NULL, n = NULL, p = NULL, d = NULL,
    if(is.null(pattern))
       stop('A pattern must be specified')
    
-   sites <- read_pars_table('sites')
-   site <- tolower(site)
-   if(site == '')
-      stop('No sites specified. Use site = \'all\' for all sites.')
-   if(site == 'all')                                                    # if all sites,
-      site <- sites$site                                                #    get list of all of them so we can split across reps in batch mode
-   if(any(m <- !site %in% sites$site))
-      stop('Non-existent sites: ', site[m])
-   
+   site <- get_sites(site)
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)
       stop('You must choose exactly one of the n, p, and d options')

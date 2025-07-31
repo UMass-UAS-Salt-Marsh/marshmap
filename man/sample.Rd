@@ -25,7 +25,7 @@ sample(
 }
 \arguments{
 \item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.
-in batch mode, each named site will be run in a separate job.}
+In batch mode, each named site will be run in a separate job.}
 
 \item{pattern}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
