@@ -10,7 +10,7 @@
 #' 
 #' For bivariate metrics, specify matched pairs of layers with `pattern1` and `pattern2`. It's
 #' best to specify complete names (you can use vectors for each) so the layers are paired properly.
-#' If you're crazy enough to use patterns here, scrutinize the result names carefully.
+#' If you're crazy enough to use regular expressions here, scrutinize the result names carefully.
 #' Results will be named `<layer1>__<layer2>__metric`. At the moment, `NDWIswir` and `delta` are the 
 #' only bivariate metrics.
 #' 
@@ -23,9 +23,10 @@
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
 #'    in batch mode, each named site will be run in a separate job.
-#' @param pattern1 Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only 
-#'    files ending in `.tif` are included in any case. `pattern1` may alternatively be a vector 
-#'    of layer names (or patterns if you want to get tricky). See details.
+#' @param pattern1 File names, portable names, regex matching either, or search names
+#'    selecting source for derived variables. See Image naming in
+#'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
+#'    for details. See details.
 #' @param pattern2 A second pattern or vector of layer names, used for bivariate metrics. See details.
 #' @param metrics A list of metrics to apply. Univariate metrics include:
 #' \describe{

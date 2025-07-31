@@ -2,9 +2,10 @@
 #'
 #' @param site One or more site names, using 3 letter abbreviation. If running in batch mode, each 
 #'    named site will be run in a separate job.
-#' @param pattern1 Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only 
-#'        files ending in `.tif` are included in any case. `pattern1` may alternatively be a vector 
-#'        of layer names (or patterns if you want to get tricky).
+#' @param pattern1 File names, portable names, regex matching either, or search names
+#'    selecting source for derived variables. See Image naming in
+#'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
+#'    for details. See details.
 #' @param pattern2 A second pattern or vector of layer names, used for bivariate metrics. See details.
 #' @param metrics A list of metrics to apply. Univariate metrics include:
 #' \describe{
@@ -57,12 +58,10 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
    files <- list.files(path)
    files <- files[grep('.tif$', tolower(files))]                                       # only want files ending in .tif
    files <- files[grep('__', files, invert = TRUE)]                                    # and please, no derived files!
-   one <- file_path_sans_ext(files[grep(tolower(paste(pattern1, collapse = '|')), 
-                                        tolower(files))])                              # match user's pattern(s) for pattern1
+   one <- find_orthos(site, pattern1)                                                  # match user's pattern(s) for pattern1
    
    if(!is.null(pattern2)) {
-      two <- file_path_sans_ext(files[grep(tolower(paste(pattern2, collapse = '|')), 
-                                           tolower(files))])                           # match user's pattern(s) for pattern2
+      two <- find_orthos(site, pattern1)                                               # match user's pattern(s) for pattern2
       
       if(length(pattern1) != length(pattern2))
          stop('pattern1 and pattern2 returned different numbers of files')

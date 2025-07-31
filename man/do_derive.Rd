@@ -16,9 +16,10 @@ do_derive(
 \item{site}{One or more site names, using 3 letter abbreviation. If running in batch mode, each
 named site will be run in a separate job.}
 
-\item{pattern1}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
-files ending in \code{.tif} are included in any case. \code{pattern1} may alternatively be a vector
-of layer names (or patterns if you want to get tricky).}
+\item{pattern1}{File names, portable names, regex matching either, or search names
+selecting source for derived variables. See Image naming in
+\href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
+for details. See details.}
 
 \item{pattern2}{A second pattern or vector of layer names, used for bivariate metrics. See details.}
 

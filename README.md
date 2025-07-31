@@ -61,9 +61,9 @@ An example sequence will be created soon. Not all functions are fully implemente
 - `flights_report` Creates a report on on orthoimages for all sites, including a summary for each site,
    a list of files flagged for repair in `screen`, a list of duplicated portable names for each site, 
    and a list of all files for each site.
-- `find_orthos(site, descrip)` Returns a data frame of file names and portable names matched by a search
-  name for the given site. You can use this to refine search names and be sure you're getting what you
-  want.
+- `find_orthos(site, descrip)` Returns a data frame of file names and portable names matched by one or 
+   more file names, portable names, search names, or regular expressions of file names or portable names
+   for a given site. You can use this to refine name designations and be sure you're getting what you want.
 - `info()` Shows the status of jobs you've launched. This is a `slurmcollie` function.
 - `kill(jobs)` Kill one or more jobs you didn't mean to launch (`slurmcollie`).
 - `purge(jobs)` Purge jobs that have finished or failed once you no longer care about them (`slurmcollie`).
@@ -72,7 +72,9 @@ An example sequence will be created soon. Not all functions are fully implemente
 ## Image naming
 
 UAS images (orthophotos, DEMs, canopy height models, and derived variables) may be referred to in
-three different ways:
+three different ways. Functions that take imagery names as arguments (`gather`, `derive`, `sample`, and 
+`fit`) use `find_orthos` to resolve all three of these name types, as well as regular expressions of 
+file names and portable names. Use `find_orthos` to try out name designations. 
 
 ### File name 
 

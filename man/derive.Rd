@@ -20,9 +20,10 @@ derive(
 \item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.
 in batch mode, each named site will be run in a separate job.}
 
-\item{pattern1}{Regex filtering rasters, case-insensitive. Default = "" (match all). Note: only
-files ending in \code{.tif} are included in any case. \code{pattern1} may alternatively be a vector
-of layer names (or patterns if you want to get tricky). See details.}
+\item{pattern1}{File names, portable names, regex matching either, or search names
+selecting source for derived variables. See Image naming in
+\href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
+for details. See details.}
 
 \item{pattern2}{A second pattern or vector of layer names, used for bivariate metrics. See details.}
 
@@ -71,7 +72,7 @@ calculated for each layer specified by \code{pattern1}. Results will be named \v
 
 For bivariate metrics, specify matched pairs of layers with \code{pattern1} and \code{pattern2}. It's
 best to specify complete names (you can use vectors for each) so the layers are paired properly.
-If you're crazy enough to use patterns here, scrutinize the result names carefully.
+If you're crazy enough to use regular expressions here, scrutinize the result names carefully.
 Results will be named \verb{<layer1>__<layer2>__metric}. At the moment, \code{NDWIswir} and \code{delta} are the
 only bivariate metrics.
 
