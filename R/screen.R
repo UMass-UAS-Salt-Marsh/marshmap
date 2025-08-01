@@ -175,15 +175,15 @@ screen <- function() {
                 session$userData$db <- screen$db                                                            #    Get the database for this site
                 session$userData$db_name <- screen$db_name
                 
-                lays <- nrow(session$userData$db) - sum(session$userData$db$deleted)                        #    Site info
-                scored <- sum(session$userData$db$score > 0)
-                pct <- round(scored / lays * 100, 0)
-                if(lays == 0)
-                    info <- paste0(' has no images')
-                else
-                    info <- paste0(' - ', scored, ' scored of ', lays, ' (', pct, '%)')
-                output$site_info <- renderText(paste0(sites$site_name[sites$site == input$site], info))
-                
+                # lays <- nrow(session$userData$db) - sum(session$userData$db$deleted)                        #    Site info
+                # scored <- sum(session$userData$db$score > 0)
+                # pct <- round(scored / lays * 100, 0)
+                # if(lays == 0)
+                #     info <- paste0(' has no images')
+                # else
+                #     info <- paste0(' - ', scored, ' scored of ', lays, ' (', pct, '%)')
+                # output$site_info <- renderText(paste0(sites$site_name[sites$site == input$site], info))
+                output$site_info <- screen_site_info(sites, input, output, session)
                 
                 footfile <- file.path(resolve_dir(the$shapefilesdir, input$site), 
                                       sites$footprint[sites$site == input$site])
@@ -199,6 +199,7 @@ screen <- function() {
         observeEvent(input$score, {                                                                         # --- image score
             session$userData$db$score[session$userData$sel[session$userData$index]] <- 
                 match(input$score, score_choices) - 1
+                output$site_info <- screen_site_info(sites, input, output, session)
         })
         
         observeEvent(input$repair, {                                                                        # --- flag for repair
