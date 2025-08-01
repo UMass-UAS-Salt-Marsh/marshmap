@@ -4,13 +4,17 @@
 \alias{flights_report}
 \title{Produce a flights report for one or more sites}
 \usage{
-flights_report(site = "all")
-}
-\arguments{
-\item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.}
+flights_report()
 }
 \description{
-The site report is a tab-delimited text file listing images flagged for repair.
+The site report is seroes of tab-delimited text files:
+}
+\details{
+\enumerate{
+\item Summary of orthos for each site
+\item List of orthos flagged for repair
+\item List of duplicated portable names (* marks selected names)
+}
 
-Files are written to \code{reports/flagged_for_repair.txt}.
+Files are written to the \verb{reports/} directory.
 }
