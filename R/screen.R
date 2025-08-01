@@ -160,7 +160,7 @@ screen <- function() {
         
         
         observeEvent(input$site, {                                                                          # --- picked a site   
-            save_flights_db(session$userData$db, session$userData$db_name)                                   #    save database for previous site
+            save_flights_db(session$userData$db, session$userData$db_name)                                  #    save database for previous site
             
             session$userData$dir <- resolve_dir(the$flightsdir, input$site)
             screen <- build_flights_db(input$site)
@@ -172,10 +172,10 @@ screen <- function() {
             }
             else
             {
-                session$userData$db <- screen$db                                                                #    Get the database for this site
+                session$userData$db <- screen$db                                                            #    Get the database for this site
                 session$userData$db_name <- screen$db_name
                 
-                lays <- nrow(session$userData$db) - sum(session$userData$db$deleted)                            #    Site info
+                lays <- nrow(session$userData$db) - sum(session$userData$db$deleted)                        #    Site info
                 scored <- sum(session$userData$db$score > 0)
                 pct <- round(scored / lays * 100, 0)
                 if(lays == 0)
@@ -187,11 +187,11 @@ screen <- function() {
                 
                 footfile <- file.path(resolve_dir(the$shapefilesdir, input$site), 
                                       sites$footprint[sites$site == input$site])
-                session$userData$footprint <- st_read(footfile, quiet = TRUE)                                   #    get site footprint
+                session$userData$footprint <- st_read(footfile, quiet = TRUE)                               #    get site footprint
                 
-                screen_filter(input, output, session)                                                           #    initial filtering
-                session$userData$index <- 1                                                                     #    start with first image for site
-                screen_image(score_choices, input, output, session = getDefaultReactiveDomain())                #    display the first image
+                screen_filter(input, output, session)                                                       #    initial filtering
+                session$userData$index <- 1                                                                 #    start with first image for site
+                screen_image(score_choices, input, output, session = getDefaultReactiveDomain())            #    display the first image
             }
         })
         
@@ -217,10 +217,12 @@ screen <- function() {
             bands <- nlyr(session$userData$full)
             
             session$userData$inset1 <- center_zoom(session$userData$full, 0.1)
-            output$inset1 <- screen_plot('inset1', sensor, bands, input, output, session = getDefaultReactiveDomain())
+            output$inset1 <- screen_plot('inset1', sensor, bands, input, output, 
+                                         session = getDefaultReactiveDomain())
             
             session$userData$inset2 <- center_zoom(session$userData$full, 0.01)
-            output$inset2 <- screen_plot('inset2', sensor, bands, input, output, session = getDefaultReactiveDomain())
+            output$inset2 <- screen_plot('inset2', sensor, bands, input, output, 
+                                         session = getDefaultReactiveDomain())
         })
         
         

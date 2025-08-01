@@ -47,16 +47,7 @@ find_orthos <- function(site, descrip) {
       m$mods[match(cat, m$cats)]
    }
    
-   
-   site <- tolower(site)                                                               # get the flights directory for this site
-   dir <- resolve_dir(the$flightsdir, site)
-   if(!dir.exists(dir))
-      stop('There is no flights directory for site ', site)
-   db_name <- file.path(dir, paste0('flights_', site, '.txt'))
-   if(!file.exists(db_name))
-      stop('The flights directory for site ', site, ' hasn\'t been built yet')
-   db <- read.table(db_name, sep = '\t', header = TRUE)
-   
+   db <- get_flights_db(site)                                                          # get the flights database
    
    regex <- gsub('^\\{|\\}$', '', str_extract_all(descrip, '\\{[^\\}]*\\}')[[1]])      # extract regexes, in {}
    

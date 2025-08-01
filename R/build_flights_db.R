@@ -59,7 +59,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    
    
    if(file.exists(db_name) & !refresh)                                  # get or make database
-      db <- read.table(db_name, sep = '\t', header = TRUE)
+      db <- read.table(db_name, sep = '\t', quote = '', header = TRUE)
    else
       db <- data.frame(
          name = character(),
