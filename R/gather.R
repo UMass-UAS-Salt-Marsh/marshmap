@@ -103,7 +103,7 @@ gather <- function(site, pattern = '',
                    trap = TRUE, comment = NULL) {
    
    
-   site <- get_sites(site)
+   site <- get_sites(site)$site
 
    resources <- get_resources(resources, list(
       ncpus = 1,                                      # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
