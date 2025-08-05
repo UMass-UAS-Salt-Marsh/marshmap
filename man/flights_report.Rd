@@ -7,13 +7,21 @@
 flights_report()
 }
 \description{
-The site report is series of tab-delimited text files:
+The site report is series text files.
 }
 \details{
 \enumerate{
-\item Summary of orthos for each site
-\item List of orthos flagged for repair
-\item List of duplicated portable names (* marks selected names)
+\item Summary of orthos for each site, with stats and frequency tables
+for each site. Unformatted text file, suitable for viewing in a text
+editor.
+\item List of orthos flagged for repair. Tab-delimited text file with columns
+\code{site}, \code{name}, \code{score}, and \code{comment}. Best viewed in Excel or read into R.
+\item List of duplicated portable names. Tab-delimited text file with columns
+\code{site}, \code{portable}, \code{name}, \code{pick} (\code{*} for selected images), \code{dups},
+\code{season}, and \code{score}. Best viewed in Excel or read into R.
+\item List of all orthos. Tab-delimited text file with columns \code{site}, \code{portable},
+\code{name}, \code{type}, \code{sensor}, \code{derive}, \code{window}, \code{tide}, \code{tidemod}, \code{season},
+\code{year}, \code{score}, and \code{repair}.  Best viewed in Excel or read into R.
 }
 
 Files are written to the \verb{reports/} directory.
