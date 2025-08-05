@@ -5,7 +5,7 @@
 #' 
 #' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
-#' @param site site, using 3 letter abbrWviation
+#' @param site site, using 3 letter abbreviation
 #' @param pattern File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
@@ -23,7 +23,7 @@
 #' @param reuse Reuse the named file (ending in `_all.txt`) from previous run, rather
 #'    than resampling. Saves a whole lot of time if you're changing `n`, `p`, `d`, `balance`, 
 #'    `balance_excl`, or `drop_corr`.
-#' @param result Name of result file. If not specified, file will be constructed fromW
+#' @param result Name of result file. If not specified, file will be constructed from
 #'    site, number of X vars, and strategy.
 #' @param transects Name of transects file; default is `transects`.
 #' @returns Sampled data table (invisibly)

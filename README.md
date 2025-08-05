@@ -136,7 +136,7 @@ be used. Remaining ties will be broken by taking the earliest matching image.
 
 Finally, search names allow model fits to refer to multiple files in an easily-readable format.
 The components of a search name are separated with vertical bars (note these are pretty separators,
-NOT logical ors--the parts of a search name are conjunctive). Multiple values of a component
+NOT logical or--the parts of a search name are conjunctive). Multiple values of a component
 are separated with commas, or a colon to select a range for ordinal values such as season or year.
 Modifiers (in, out, and spring for tides; window size for upscaled variables) are separated from
 the component with a dash, e.g., `mid-out`. Components in a search name may appear in any order. 

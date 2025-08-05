@@ -20,7 +20,7 @@ do_sample(
 )
 }
 \arguments{
-\item{site}{site, using 3 letter abbrWviation}
+\item{site}{site, using 3 letter abbreviation}
 
 \item{pattern}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
@@ -42,7 +42,7 @@ selected to match the sparsest class.}
 \item{balance_excl}{Vector of classes to exclude when determining sample size when
 balancing. Include classes with low samples we don't care much about.}
 
-\item{result}{Name of result file. If not specified, file will be constructed fromW
+\item{result}{Name of result file. If not specified, file will be constructed from
 site, number of X vars, and strategy.}
 
 \item{transects}{Name of transects file; default is \code{transects}.}

@@ -11,13 +11,14 @@
 #'
 #' @importFrom grDevices pdf
 #' @importFrom lubridate stamp now with_tz
+#' @importFrom utils capture.output
 #' @export
 
 
 flights_report <- function() {
    
    
-   freq_table <- function(col, title, classes = NULL) {                                         # make a frequency table for a column, sorted to match classes
+   freq_table <- function(col, title, classes = NULL) {                                      # make a frequency table for a column, sorted to match classes
       x <- as.data.frame(table(db[, col], useNA = 'ifany'))
       names(x) <- c(col, 'count')
       if(!is.null(classes))
