@@ -7,7 +7,7 @@
 flights_report()
 }
 \description{
-The site report is seroes of tab-delimited text files:
+The site report is series of tab-delimited text files:
 }
 \details{
 \enumerate{

@@ -66,7 +66,7 @@ sample <- function(site, pattern = NULL, n = NULL, p = NULL, d = NULL,
    if(is.null(pattern))
       stop('A pattern must be specified')
    
-   site <- get_sites(site)
+   site <- get_sites(site)$site
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)
       stop('You must choose exactly one of the n, p, and d options')

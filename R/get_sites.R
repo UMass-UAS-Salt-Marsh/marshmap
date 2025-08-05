@@ -1,12 +1,13 @@
 #' Get names of one or more sites
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
-#' @returns site Vector of one or more standard 3 letter site abbreviations
+#' @returns site Data frame with one or more rows of:
+#' \item{site}{Standard 3 letter site abbreviation}
+#' \item{site_name}{Site name}
 #' @keywords internal
 
 
 get_sites <- function(site) {
-   
    
    
    sites <- read_pars_table('sites')
@@ -18,5 +19,5 @@ get_sites <- function(site) {
    if(any(m <- !site %in% sites$site))
       stop('Non-existent sites: ', site[m])
    
-   return(site)
+   return(sites[match(site, sites$site), c('site', 'site_name')])
 }

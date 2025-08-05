@@ -10,7 +10,9 @@ get_sites(site)
 \item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.}
 }
 \value{
-site Vector of one or more standard 3 letter site abbreviations
+site Data frame with one or more rows of:
+\item{site}{Standard 3 letter site abbreviation}
+\item{site_name}{Site name}
 }
 \description{
 Get names of one or more sites
