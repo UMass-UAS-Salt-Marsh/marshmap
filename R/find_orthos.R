@@ -13,7 +13,10 @@
 #' 
 #' Use `descrip = '{*}'` to match all names.
 #' 
-#' @param site Site name
+#' You may pass more than one site name, in which case all sites will be searched. In
+#' this case, the returned portable names will be the only useful result.
+#' 
+#' @param site Vector of one or more site names
 #' @param descrip Character string with one or more of any of the following, 
 #'    separated by `+`:
 #' \describe{
@@ -47,7 +50,13 @@ find_orthos <- function(site, descrip) {
       m$mods[match(cat, m$cats)]
    }
    
-   db <- get_flights_db(site)                                                          # get the flights database
+   
+   db <- get_flights_db(site[1])                                                       # get the flights database
+   
+   if(length(site) > 1)                                                                # if multiple sites, get the rest of the flights databases
+      for(i in 2:length(site))
+         db <- rbind(db, get_flights_db(site[i]))
+   
    
    regex <- gsub('^\\{|\\}$', '', str_extract_all(descrip, '\\{[^\\}]*\\}')[[1]])      # extract regexes, in {}
    

@@ -22,7 +22,7 @@
 #' @param drop_corr Drop one of any pair of variables with correlation more than `drop_corr`.
 #' @param reuse Reuse the named file (ending in `_all.txt`) from previous run, rather
 #'    than resampling. Saves a whole lot of time if you're changing `n`, `p`, `d`, `balance`, 
-#'    `balance_excl`, or `drop_corr`.
+#'    `balance_excl`, or `drop_corr`. ** Not implemented yet! **
 #' @param result Name of result file. If not specified, file will be constructed from
 #'    site, number of X vars, and strategy.
 #' @param transects Name of transects file; default is `transects`.

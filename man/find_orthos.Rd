@@ -7,7 +7,7 @@
 find_orthos(site, descrip)
 }
 \arguments{
-\item{site}{Site name}
+\item{site}{Vector of one or more site names}
 
 \item{descrip}{Character string with one or more of any of the following,
 separated by \code{+}:
@@ -42,4 +42,7 @@ of portable names, not when they're matched by a regex. File names and search na
 that give multiple matches are not filtered.
 
 Use \code{descrip = '{*}'} to match all names.
+
+You may pass more than one site name, in which case all sites will be searched. In
+this case, the returned portable names will be the only useful result.
 }

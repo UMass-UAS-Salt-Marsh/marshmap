@@ -51,7 +51,7 @@ site, number of X vars, and strategy.}
 
 \item{reuse}{Reuse the named file (ending in \verb{_all.txt}) from previous run, rather
 than resampling. Saves a whole lot of time if you're changing \code{n}, \code{p}, \code{d}, \code{balance},
-\code{balance_excl}, or \code{drop_corr}.}
+\code{balance_excl}, or \code{drop_corr}. ** Not implemented yet! **}
 }
 \value{
 Sampled data table (invisibly)
