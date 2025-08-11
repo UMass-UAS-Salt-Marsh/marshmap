@@ -8,7 +8,8 @@ number of sensors, along with field transects to drive vegetation cover models a
 marshes in Massachusetts.
 
 This package supports modeling for this project. It is intended to be run on the UMass Unity
-cluster, although all functions may be run locally if needed.
+cluster using [slurmcollie](https://github.com/UMassCDS/slurmcollie), although all functions may 
+be run locally if needed.
 
 This documentation is a work in progress.
 
