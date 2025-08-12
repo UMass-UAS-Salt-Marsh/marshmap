@@ -38,7 +38,8 @@ set_up_google_drive()
 ## Processing sequence
 
 Here's a brief summary of the processing sequence. See the help for each function for details.
-An example sequence will be created soon. Not all functions are fully implemented yet.
+An example sequence will be created soon. All of these are normally launched as batch jobs on Unity 
+via `slurmcollie` (except for `screen` which is intrinsically interactive and speedy `assess`).
 
 1. `gather` gather the data from the source (either Google Drive or SFTP)
 2. `screen` build the flights database and open a web app to allow visually assigning quality

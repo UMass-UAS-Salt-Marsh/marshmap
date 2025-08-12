@@ -7,9 +7,14 @@
 save_database(database)
 }
 \arguments{
-\item{database}{Name of database (should \code{db})}
+\item{database}{Name of database (should be \code{fdb} for the model fit database, or
+\code{mdb} for the map database)}
 }
 \description{
-Saves the database in directory \code{the$dbdir}. Previous versions are renamed e.g., \code{jdb_1.RDS},
-\code{jdb_2.RDS}, etc. Will need a mechanism to delete databases more than a week old (or something).
+Saves the database in directory \code{the$dbdir}. Previous versions are renamed e.g., \code{fdb_1.RDS},
+\code{fdb_2.RDS}, etc. Will need a mechanism to delete databases more than a week old (or something).
+}
+\details{
+For the model fit database, \code{fdb}, \code{the$last_fit_id} is written to \code{last_fit_id.txt} to track
+the highest fit id used, as these ids are \emph{never} reused.
 }

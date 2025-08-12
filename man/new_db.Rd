@@ -7,16 +7,14 @@
 new_db(database, really = FALSE)
 }
 \arguments{
-\item{database}{Name of database (\code{jdb} or \code{db})}
+\item{database}{Name of database (\code{fdb} or \code{mdb})}
 
 \item{really}{If TRUE, creates database, \strong{destroying existing database}}
 }
 \description{
-Creates a new empty fits database (\code{db}) or jobs database (\code{jdb}). This is a
+Creates a new empty fits database (\code{fdb}) or maps database (\code{mdb}). This is a
 drastic function, intended to be used only when initially creating a database
 or when an existing database is a hopeless mess. Use with great care--this
-function will destroy any existing database and backups. When creating a new
-jobs database (\code{jdb}), it also deletes all logs and registries, and saves an
-empty database to disk immediately. \strong{This function is drastic and
+function will destroy any existing database and backups. \\strong{This function is drastic and
 unrecoverable.}
 }

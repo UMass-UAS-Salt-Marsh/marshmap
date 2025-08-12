@@ -61,6 +61,10 @@ the size of the single validation set, while for boosting, it is the size of eac
 of the testing and validation sets.}
 
 \item{auc}{If TRUE, calculate class probabilities so we can calculate AUC.}
+
+\item{name}{Optional model name}
+
+\item{hyper}{Hyperparameters. \emph{\strong{To be defined.}}}
 }
 \description{
 Fit models

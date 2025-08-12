@@ -1,9 +1,13 @@
 #' Save the specified database 
 #' 
-#' Saves the database in directory `the$dbdir`. Previous versions are renamed e.g., `jdb_1.RDS`,
-#' `jdb_2.RDS`, etc. Will need a mechanism to delete databases more than a week old (or something).
+#' Saves the database in directory `the$dbdir`. Previous versions are renamed e.g., `fdb_1.RDS`,
+#' `fdb_2.RDS`, etc. Will need a mechanism to delete databases more than a week old (or something).
 #' 
-#' @param database Name of database (should `db`)
+#' For the model fit database, `fdb`, `the$last_fit_id` is written to `last_fit_id.txt` to track
+#' the highest fit id used, as these ids are *never* reused.
+#' 
+#' @param database Name of database (should be `fdb` for the model fit database, or 
+#'    `mdb` for the map database)
 #' @importFrom tools file_path_sans_ext
 #' @export
 
@@ -28,4 +32,10 @@ save_database <- function(database) {
    }
    
    saveRDS(the[[database]], f)
+   
+   if(database == 'fdb') {                                        # if saving the model fit database,
+      f <- file.path(the$dbdir, 'last_fit_id.txt')                #    save the last fit id
+      writeLines(the$last_fit_id, f)
+   }
+   
 }

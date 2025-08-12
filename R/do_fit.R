@@ -3,6 +3,7 @@
 #' @param sites Data frame with `site` (3 letter code), `site_name` (long name), and 
 #'    `datafile` (resolved path and filename of datafile). Sites, paths, and filenames
 #'    are vetted by fit - there's no checking here.
+#' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
 #' @param vars An optional vector of variables to restrict analysis to. Default = NULL, 
 #'    all variables. You may use portable names (in full or via regex), file names (in
@@ -18,6 +19,7 @@
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
 #' @param auc If TRUE, calculate class probabilities so we can calculate AUC.
+#' @param hyper Hyperparameters. ***To be defined.***
 #' @param rep Throwaway argument for `slurmcollie`.
 #' @importFrom caret createDataPartition trainControl train varImp confusionMatrix
 #' @importFrom stats complete.cases predict reformulate
@@ -27,9 +29,9 @@
 #' @export
 
 
-do_fit <- function(sites, method = 'rf', 
+do_fit <- function(sites, datafile, name, method = 'rf', 
                    vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
-                   top_importance = 20, holdout = 0.2, auc = TRUE, rep = NULL) {
+                   top_importance = 20, holdout = 0.2, auc = TRUE, hyper, rep = NULL) {
    
    
    if(length(sites) > 1)

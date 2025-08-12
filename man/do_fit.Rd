@@ -6,6 +6,8 @@
 \usage{
 do_fit(
   sites,
+  datafile,
+  name,
   method = "rf",
   vars = NULL,
   exclude = NULL,
@@ -14,6 +16,7 @@ do_fit(
   top_importance = 20,
   holdout = 0.2,
   auc = TRUE,
+  hyper,
   rep = NULL
 )
 }
@@ -21,6 +24,8 @@ do_fit(
 \item{sites}{Data frame with \code{site} (3 letter code), \code{site_name} (long name), and
 \code{datafile} (resolved path and filename of datafile). Sites, paths, and filenames
 are vetted by fit - there's no checking here.}
+
+\item{name}{Optional model name}
 
 \item{method}{One of \code{rf} for Random Forest, \code{boost} for AdaBoost. Default = \code{rf}.}
 
@@ -44,6 +49,8 @@ the size of the single validation set, while for boosting, it is the size of eac
 of the testing and validation sets.}
 
 \item{auc}{If TRUE, calculate class probabilities so we can calculate AUC.}
+
+\item{hyper}{Hyperparameters. \emph{\strong{To be defined.}}}
 
 \item{rep}{Throwaway argument for \code{slurmcollie}.}
 }

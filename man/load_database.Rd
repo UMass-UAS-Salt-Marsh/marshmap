@@ -4,14 +4,17 @@
 \alias{load_database}
 \title{Load the specified database unless we've already got it}
 \usage{
-load_database(database, force = FALSE)
+load_database(database)
 }
 \arguments{
-\item{database}{Name of database (should \code{db})}
-
-\item{force}{If TRUE, always loads the database, replacing the current one if it exists}
+\item{database}{Name of database (should be \code{fdb} for the model fit database, or
+\code{mdb} for the map database)}
 }
 \description{
-Loads the database from directory \code{the$dbdir} into environment \code{the} if it hasn't
-already been loaded or if \code{force = TRUE}.
+Loads the database from directory \code{the$dbdir} into environment \code{the}.
+}
+\details{
+For the model fit database, \code{fdb}, the file \code{last_fit_id.txt} is read to get model
+sequence for empty databases, as these ids are \emph{never} reused. If the file isn't
+found, use the max id from \code{fdb} or 0 as a last resort, and display a warning.
 }
