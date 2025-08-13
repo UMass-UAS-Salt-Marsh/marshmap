@@ -30,8 +30,8 @@ for details. See details.}
 \item{metrics}{A list of metrics to apply. Univariate metrics include:
 \describe{
 \item{NDVI}{Normalized difference vegetation index, \code{(NIR - red) / (NIR + red)}, an index of biomass}
-\item{NDWIg}{Normalized difference water index (green), \code{(green - NIR) / (green + NIR)},
-primarily helps distinguish waterbodies}
+\item{NDWIg}{Normalized difference water index (green, commonly known as McFeeter's \code{NDWI}),
+\code{(green - NIR) / (green + NIR)}, primarily helps distinguish waterbodies}
 \item{NDRE}{Normalized difference red edge index, \code{(NIR - RE) / (NIR + RE)}, an index of the
 amount of chlorophyll in a plant}
 \item{mean}{mean of each band in a window, size defined by \code{window}}
@@ -39,9 +39,9 @@ amount of chlorophyll in a plant}
 \item{NDVImean}{mean of NDVI in a window, size defined by \code{window}}
 \item{NDVIstd}{standard deviation of NDVI in a window, size defined by \code{window}}
 Bivariate metrics include:
-\item{NDWIswir}{Normalized difference water index (SWIR), \code{(NIR - SWIR) / (NIR + SWIR)},
-an index of water content in leaves; requires a Mica layer for \code{pattern1}, and a matched
-SWIR layer for \code{pattern2}}
+\item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's \code{NDWI}),
+\code{(NIR - SWIR) / (NIR + SWIR)}, an index of water content in leaves; requires a Mica layer for
+\code{pattern1}, and a matched SWIR layer for \code{pattern2}}
 \item{delta}{The difference between \code{pattern1} and \code{pattern2}, may be useful for taking a
 difference between late-season and early-season DEMs to represent vegetation canopy height}
 }}

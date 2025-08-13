@@ -41,35 +41,43 @@ Here's a brief summary of the processing sequence. See the help for each functio
 An example sequence will be created soon. All of these are normally launched as batch jobs on Unity 
 via `slurmcollie` (except for `screen` which is intrinsically interactive and speedy `assess`).
 
-1. `gather` gather the data from the source (either Google Drive or SFTP)
+1. `gather` Gather the data from the source (either Google Drive or SFTP)
 2. `screen` build the flights database and open a web app to allow visually assigning quality
    scores to each image.
-3. `derive` create derived images, such as NDVI (Normalized Difference Vegetation Index), upscaled
+3. `derive` Create derived images, such as NDVI (Normalized Difference Vegetation Index), upscaled
    images, and canopy height estimates from the difference between mid-summer and early spring DEMs.
-4. `sample` sample images at points where we have field-collected data, creating a data table 
+4. `sample` Sample images at points where we have field-collected data, creating a data table 
    for modeling.
-5. `fit` build statistical models of vegetation cover with random forests, AdaBoost (planned), or
+5. `fit` Build statistical models of vegetation cover with random forests, AdaBoost (planned), or
    potentially other modeling frameworks and report model assessment.
-6. `assess` provide a model assessment. This is normally included in `fit`, but `assess` may be
+6. `assess` Provide a model assessment. This is normally included in `fit`, but `assess` may be
    called separately to assess the fit of a model built on one or more sites and applied to other 
    sites.
-7. `map` produce geoTIFF maps of predicted vegetation cover. 
+7. `map` Produce geoTIFF maps of predicted vegetation cover. 
 
 ### Additional functions
 
-- `build_flights_db` Builds the flights database for a site, necessary after new files are downloaded
-   with `gather`. This is normally called by `screen` when you first view a site, so there's no need
-   to call it manually unless you are unable or unwilling to run `screen`.
+- `fitinfo` Displays information from the fits database on one or more fits, including model 
+   specification, assessment, and run statistics such as CPU and memory use. Can also be used to save
+   an Excel-friendly text version of the fits database and to set assessment scores and comments.
+- `mapinfo` Displays information from the maps database, including model used for each map and run 
+   statistics such as CPU and memory use. Can also be used to Can also be used to save
+   an Excel-friendly text version of the maps database and set map scores and comments.
 - `flights_report` Creates a report on on orthoimages for all sites, including a summary for each site,
    a list of files flagged for repair in `screen`, a list of duplicated portable names for each site, 
    and a list of all files for each site.
+- `build_flights_db` Builds the flights database for a site, necessary after new files are downloaded
+   with `gather`. This is normally called by `screen` when you first view a site, so there's no need
+   to call it manually unless you are unable or unwilling to run `screen`.
 - `find_orthos(site, descrip)` Returns a data frame of file names and portable names matched by one or 
    more file names, portable names, search names, or regular expressions of file names or portable names
    for a given site. You can use this to refine name designations and be sure you're getting what you want.
-- `info()` Shows the status of jobs you've launched. This is a `slurmcollie` function.
-- `kill(jobs)` Kill one or more jobs you didn't mean to launch (`slurmcollie`).
-- `purge(jobs)` Purge jobs that have finished or failed once you no longer care about them (`slurmcollie`).
-- `showlog(job)` Shows the log of a running or finished job (`slurmcollie`).
+
+### `slurmcollie` functions
+- `info()` Shows the status of jobs you've launched
+- `showlog(job)` Shows the log of a running or finished job
+- `kill(jobs)` Kill one or more jobs you didn't mean to launch
+- `purge(jobs)` Purge jobs that have finished or failed once you no longer care about them
 
 ## Image naming
 
