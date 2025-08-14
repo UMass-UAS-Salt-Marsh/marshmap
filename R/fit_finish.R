@@ -12,17 +12,7 @@
 
 
 fit_finish <- function(jobid, status) {
-   
-   
-   # load slurmcollie db
-   # use jobid to look up fitid
-   # load fit db
-   # look up our row with fitid
-   # now can pull stuff out of slurmcollie db into fit db
-   # then read temp fit RDS
-   # and pull stuff out of it into fit db 
-   
-   
+
    
    jrow <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database (it's been loaded by info)
    
@@ -46,16 +36,17 @@ fit_finish <- function(jobid, status) {
    if(the$jdb$success[frow]) {                                    # If job was successful, get stuff from zz<id>_fit.RDS
       x <- readRDS(file.path(the$modeldir, paste0('zz', slu$jdb$callerid, '_fit.RDS')))
       
-      the$fdb$model[frow] <- x$model                                # user-specified model, set in do_fit, resolved in fit_finish
-      the$fdb$full_model[frow] <- x$full_model                           # complete model specification, set in do_fit, resolved in fit_finish
-      the$fdb$hyper[frow] <- x$hyper                                # hyperparameters, set in do_fit, resolved in fit_finish
+      the$fdb$model[frow] <- x$model                              # user-specified model, set in do_fit, resolved in fit_finish
+      the$fdb$full_model[frow] <- x$full_model                    # complete model specification, set in do_fit, resolved in fit_finish
+      the$fdb$hyper[frow] <- x$hyper                              # hyperparameters, set in do_fit, resolved in fit_finish
       
       the$fdb$CCR[frow] <- x$CCR                                  # correct classification rate
-      the$fdb$kappa[frow] <- x$kappa                               # Kappa
-      the$fdb$F1[frow] <- x$F1                                   # F1 statistic
+      the$fdb$kappa[frow] <- x$kappa                              # Kappa
+      the$fdb$F1[frow] <- x$F1                                    # F1 statistic
    }
    
    
+   # Copy log file
    if(!dir.exists(the$modelsdir))
       dir.create(the$modelsdir, recursive = TRUE, showWarnings = FALSE)
    sink <- file.copy(logfile(jobid)$done, 
