@@ -1,5 +1,6 @@
 #' Fit models
 #' 
+#' @param fitid Fit id in the fits database
 #' @param sites Data frame with `site` (3 letter code), `site_name` (long name), and 
 #'    `datafile` (resolved path and filename of datafile). Sites, paths, and filenames
 #'    are vetted by fit - there's no checking here.
@@ -29,7 +30,7 @@
 #' @export
 
 
-do_fit <- function(sites, datafile, name, method = 'rf', 
+do_fit <- function(fitid, sites, name, method = 'rf', 
                    vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
                    top_importance = 20, holdout = 0.2, auc = TRUE, hyper, rep = NULL) {
    
@@ -45,6 +46,12 @@ do_fit <- function(sites, datafile, name, method = 'rf',
    x <- bind_rows(x, .id = 'site')
    
    data$subclass <- as.factor(x$subclass)                                                 # we want subclass to be factor, not numeric
+   
+   
+   ### *** do something with model name?
+   ### *** when I write zz<id>.RDS, use fitid
+   print(fitid)
+   print(name)
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual

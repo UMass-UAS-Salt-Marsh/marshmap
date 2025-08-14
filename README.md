@@ -74,6 +74,8 @@ via `slurmcollie` (except for `screen` which is intrinsically interactive and sp
    for a given site. You can use this to refine name designations and be sure you're getting what you want.
 
 ### `slurmcollie` functions
+See [slurmcollie](https://github.com/UMassCDS/slurmcollie) for details.
+
 - `info()` Shows the status of jobs you've launched
 - `showlog(job)` Shows the log of a running or finished job
 - `kill(jobs)` Kill one or more jobs you didn't mean to launch

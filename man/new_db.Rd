@@ -15,6 +15,6 @@ new_db(database, really = FALSE)
 Creates a new empty fits database (\code{fdb}) or maps database (\code{mdb}). This is a
 drastic function, intended to be used only when initially creating a database
 or when an existing database is a hopeless mess. Use with great care--this
-function will destroy any existing database and backups. \\strong{This function is drastic and
+function will destroy any existing database and backups. \strong{This function is drastic and
 unrecoverable.}
 }

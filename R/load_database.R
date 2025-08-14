@@ -26,7 +26,7 @@ load_database <- function(database) {
       if(file.exists(f))
          the$last_fit_id <- as.numeric(readLines(f))
       else {                                                      #    if there is no last_fit_id.txt,
-         the$last_fit_id <- max(fdb$id, 0)                        #       use the max in the database or 0. This shouldn't happen except early in development.
+         the$last_fit_id <- max(the$fdb$id, 0)                    #       use the max in the database or 0. This shouldn't happen except early in development.
          warning('last_fit_id.txt not found. Using ', the$last_fit_id, ' as last fit. Make sure fit ids aren\'t being reused!')
       }
    }

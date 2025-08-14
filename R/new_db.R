@@ -3,7 +3,7 @@
 #' Creates a new empty fits database (`fdb`) or maps database (`mdb`). This is a
 #' drastic function, intended to be used only when initially creating a database
 #' or when an existing database is a hopeless mess. Use with great care--this
-#' function will destroy any existing database and backups. \**This function is drastic and
+#' function will destroy any existing database and backups. **This function is drastic and
 #' unrecoverable.**
 #' 
 #' @param database Name of database (`fdb` or `mdb`)
@@ -41,9 +41,9 @@ new_db <- function(database, really = FALSE) {
                 CCR = double(),                       # correct classification rate
                 kappa = double(),                     # Kappa
                 F1 = double(),                        # F1 statistic
-                confusion = character(),              # confusion matrix (in <id>_extra.RDS)        *** placeholder - not sure what to do with them
-                var_importance = character(),         # variable importance (in <id>_extra.RDS)
-                model_object = character(),           # model object (in <id>_extra.RDS)
+              #  confusion = character(),              # confusion matrix (in <id>_extra.RDS)        *** placeholder - not sure what to do with them
+              #  var_importance = character(),         # variable importance (in <id>_extra.RDS)
+              #  model_object = character(),           # model object (in <id>_extra.RDS)
                 predicted = character(),              #  name of predicted geoTIFF, based on model id and name as it existed when prediction was run. Added by map
                 score = double(),                     # subjective scoring field - 1 to 5 stars or something
                 comment_launch = character(),         # comment set at launch

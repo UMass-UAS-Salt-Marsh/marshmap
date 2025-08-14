@@ -18,6 +18,13 @@
 #'    of the testing and validation sets.
 #' @param auc If TRUE, calculate class probabilities so we can calculate AUC.
 #' @param hyper Hyperparameters. ***To be defined.***
+#' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#' #'    over the function's defaults.
+#' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
+#' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
+#'   for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
+#'   no effect if local = FALSE.
+#' @param comment Optional launch / slurmcollie comment
 #' @importFrom lubridate now
 #' @export
 
@@ -66,34 +73,31 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    the$fdb$name[i] <- name                               # optional model name
    the$fdb$site[i] <- paste(sites, collapse = ', ')      # site (or sites) model is fit to
    the$fdb$method[i] <- method                           # modeling approach used (rf[i] <- random forest, ab[i] <- AdaBoost, perhaps others)
-   the$fdb$model[i] <- NA                                # user-specified model, set in do_fit, resolved in finish_fit
-   the$fdb$full_model[i] <- NA                           # complete model specification, set in do_fit, resolved in finish_fit
-   the$fdb$hyper[i] <- NA                                # hyperparameters, set in do_fit, resolved in finish_fit
+   the$fdb$model[i] <- NA                                # user-specified model, set in do_fit, resolved in fit_finish
+   the$fdb$full_model[i] <- NA                           # complete model specification, set in do_fit, resolved in fit_finish
+   the$fdb$hyper[i] <- NA                                # hyperparameters, set in do_fit, resolved in fit_finish
    the$fdb$success[i] <- NA                              # run success; NA = not run yet
    the$fdb$launched[i] <- now()                          # date and time launched (may disagree with slurmcollie by a couple of seconds)
-   the$fdb$status[i] <- NA                               # final slurmcollie status, resolved in finish_fit
-   the$fdb$error[i] <- NA                                # TRUE if error, resolved in finish_fit
-   the$fdb$message[i] <- NA                              # error message if any, resolved in finish_fit
-   the$fdb$cores[i] <- NA                                # cores requested, resolved in finish_fit
-   the$fdb$cpu[i] <- NA                                  # CPU time, resolved in finish_fit
-   the$fdb$cpu_pct[i] <- NA                              # percent CPU used, resolved in finish_fit
-   the$fdb$mem_req[i] <- NA                              # memory requested (GB), resolved in finish_fit
-   the$fdb$mem_gb[i] <- NA                               # memory used (GB), resolved in finish_fit
-   the$fdb$walltime[i] <-  NA                            # elapsed run time, resolved in finish_fit
-   the$fdb$CCR[i] <- NA                                  # correct classification rate, resolved in finish_fit
-   the$fdb$kappa[i] <- NA                                # Kappa, resolved in finish_fit
-   the$fdb$F1[i] <-  NA                                  # F1 statistic, resolved in finish_fit
-   the$fdb$confusion[i] <-  NA                           # confusion matrix (in <id>_extra.RDS), resolved in finish_fit        *** placeholder - not sure what to do with them
-   the$fdb$var_importance[i] <-NA                        # variable importance (in <id>_extra.RDS), resolved in finish_fit
-   the$fdb$model_object[i] <- NA                         # model object (in <id>_extra.RDS), resolved in finish_fit
+   the$fdb$status[i] <- NA                               # final slurmcollie status, resolved in fit_finish
+   the$fdb$error[i] <- NA                                # TRUE if error, resolved in fit_finish
+   the$fdb$message[i] <- NA                              # error message if any, resolved in fit_finish
+   the$fdb$cores[i] <- NA                                # cores requested, resolved in fit_finish
+   the$fdb$cpu[i] <- NA                                  # CPU time, resolved in fit_finish
+   the$fdb$cpu_pct[i] <- NA                              # percent CPU used, resolved in fit_finish
+   the$fdb$mem_req[i] <- NA                              # memory requested (GB), resolved in fit_finish
+   the$fdb$mem_gb[i] <- NA                               # memory used (GB), resolved in fit_finish
+   the$fdb$walltime[i] <-  NA                            # elapsed run time, resolved in fit_finish
+   the$fdb$CCR[i] <- NA                                  # correct classification rate, resolved in fit_finish
+   the$fdb$kappa[i] <- NA                                # Kappa, resolved in fit_finish
+   the$fdb$F1[i] <- NA                                   # F1 statistic, resolved in fit_finish
    the$fdb$predicted[i] <- NA                            #  name of predicted geoTIFF, added by map
-   the$fdb$score[i] <-   NA                              # subjective scoring field, *** added with function TBD ***
+   the$fdb$score[i] <- NA                                # subjective scoring field, *** added with function TBD ***
    the$fdb$comment_launch[i] <- comment                  # comment set at launch
    the$fdb$comment_assess[i] <- ''                       # comment based on assessment, *** added with function TBD ***
    the$fdb$comment_map[i] <- ''                          # comment based on final map, *** added with function TBD ***
    
    
-   the$last_fit_id <- the$last_fit_id + 1                # save last_fit_id
+   the$last_fit_id <- the$fdb$id[i]                      # save last_fit_id
    save_database('fdb')
    
    
@@ -101,6 +105,7 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
           moreargs = list(sites = sites, name = name, method = method,
                           vars = vars, exclude = exclude, years = years, 
                           maxmissing = maxmissing, top_importance = top_importance,
-                          holdout = holdout, auc = auc),
+                          holdout = holdout, auc = auc, hyper = hyper),
+          finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
 }

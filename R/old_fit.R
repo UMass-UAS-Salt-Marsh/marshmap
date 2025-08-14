@@ -28,7 +28,7 @@
 # OLD FIT - Last good version before rewrite
 
 
-fit <- function(site = the$site, datafile = the$datafile, method = 'rf', 
+old_fit <- function(site = the$site, datafile = the$datafile, method = 'rf', 
                 vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
                 top_importance = 20, reread = FALSE, holdout = 0.2, auc = TRUE) {
    
