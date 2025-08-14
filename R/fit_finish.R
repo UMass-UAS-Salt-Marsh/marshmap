@@ -2,7 +2,7 @@
 #' 
 #' Finish a fit run:
 #'  - Populate fits database with `slurmcollie` stats
-#'  - and with info from `zz<id>_fit.RDS`, written by `do_fit`
+#'  - and with info from `zz_<id>_fit.RDS`, written by `do_fit`
 #'  - Copy the log file to the models directory
 #' 
 #' @param jobid Job id to finish for
@@ -17,7 +17,7 @@ fit_finish <- function(jobid, status) {
    jrow <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database (it's been loaded by info)
    
    load_database('fdb')
-   frow <- match(slu$jdb$callerid, the$fdb$id)                    # find our row in the fit database
+   frow <- match(slu$jdb$callerid[jrow], the$fdb$id)              # find our row in the fit database
    
    
    # Get stuff from slurmcollie jobs database
@@ -33,8 +33,8 @@ fit_finish <- function(jobid, status) {
    the$fdb$walltime[frow] <- slu$jdb$walltime[jrow]               # elapsed run time
    
    
-   if(the$jdb$success[frow]) {                                    # If job was successful, get stuff from zz<id>_fit.RDS
-      x <- readRDS(file.path(the$modeldir, paste0('zz', slu$jdb$callerid, '_fit.RDS')))
+   if(the$fdb$success[frow]) {                                    # If job was successful, get stuff from zz_<id>_fit.RDS
+      x <- readRDS(file.path(the$modeldir, paste0('zz_', slu$jdb$callerid, '_fit.RDS')))
       
       the$fdb$model[frow] <- x$model                              # user-specified model, set in do_fit, resolved in fit_finish
       the$fdb$full_model[frow] <- x$full_model                    # complete model specification, set in do_fit, resolved in fit_finish

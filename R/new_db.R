@@ -27,7 +27,7 @@ new_db <- function(database, really = FALSE) {
                 model = character(),                  # This is user-specified model, using find_orthos
                 full_model = character(),             # Complete model specification using original variable names. Written to temp file by do_fit
                 hyper = character(),                  # hyperparameters specification. Either full spec or the name of a text file (w/o .txt) with the full spec.
-                success = character(),                # TRUE if the model ran successfully, FALSE if it failed, or NA if a run hasn't been competed yet
+                success = logical(),                  # TRUE if the model ran successfully, FALSE if it failed, or NA if a run hasn't been competed yet
                 launched = as.POSIXct(character()),   # date and time launched
                 status = character(),                 # final slurmcollie status
                 error = character(),                  # TRUE if error
@@ -41,15 +41,13 @@ new_db <- function(database, really = FALSE) {
                 CCR = double(),                       # correct classification rate
                 kappa = double(),                     # Kappa
                 F1 = double(),                        # F1 statistic
-              #  confusion = character(),              # confusion matrix (in <id>_extra.RDS)        *** placeholder - not sure what to do with them
-              #  var_importance = character(),         # variable importance (in <id>_extra.RDS)
-              #  model_object = character(),           # model object (in <id>_extra.RDS)
                 predicted = character(),              #  name of predicted geoTIFF, based on model id and name as it existed when prediction was run. Added by map
                 score = double(),                     # subjective scoring field - 1 to 5 stars or something
                 comment_launch = character(),         # comment set at launch
                 comment_assess = character(),         # comment based on assessment
-                comment_map = character(),            # comment based on final map
+                comment_map = character()             # comment based on final map
              )  
+             
              unlink(file.path(the$dbdir, paste0(database, '*.RDS')))             # delete old database and backups
           },
           

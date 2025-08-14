@@ -35,7 +35,9 @@ save_database <- function(database) {
    
    if(database == 'fdb') {                                        # if saving the model fit database,
       f <- file.path(the$dbdir, 'last_fit_id.txt')                #    save the last fit id
-      writeLines(the$last_fit_id, f)
+      if(is.null(the$last_fit_id))
+         the$last_fit_id <- 0
+      writeLines(as.character(the$last_fit_id), f)
    }
    
 }

@@ -24,7 +24,7 @@
 #' @param rep Throwaway argument for `slurmcollie`.
 #' @importFrom caret createDataPartition trainControl train varImp confusionMatrix
 #' @importFrom stats complete.cases predict reformulate
-#' @importFrom lubridate interval as.duration
+#' @importFrom lubridate interval as.duration timestamp now
 #' @importFrom stringr str_extract
 #' @importFrom dplyr bind_rows
 #' @export
@@ -34,6 +34,18 @@ do_fit <- function(fitid, sites, name, method = 'rf',
                    vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
                    top_importance = 20, holdout = 0.2, auc = TRUE, hyper, rep = NULL) {
    
+   cat('---\n')
+   print(slu$jdb$callerid)
+   cat('---\n')
+   print(slu$jdb)
+   cat('===\n\n')
+   
+   timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
+      ts <- stamp('[17 Feb 2025, 3:22:18 pm]  ', quiet = TRUE)
+      ts(with_tz(now(), 'America/New_York'))
+   }
+   
+   message('\n\n', timestamp(), 'Fitting id ', fitid, ifelse(nchar(name) > 0, paste0(' (', name, ')'), ''))
    
    if(length(sites) > 1)
       message('Merging datafiles for ', nrow(sites), '...')
@@ -48,10 +60,7 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    data$subclass <- as.factor(x$subclass)                                                 # we want subclass to be factor, not numeric
    
    
-   ### *** do something with model name?
-   ### *** when I write zz<id>.RDS, use fitid
-   print(fitid)
-   print(name)
+
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual
@@ -148,7 +157,44 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    
    
    
-   ########### From here on down, move everything to assess
+   # Call assess
+   
+   
+   
+   
+   # Write info from run and assessment to temporary RDS for fit_finish
+   
+   x <- list()
+   
+   x$model <- model                              # user-specified model
+   x$full_model[frow] <- full_model                    # complete model specification
+   x$hyper[frow] <- hyper                              # hyperparameters
+   
+   x$CCR[frow] <- CCR                                  # correct classification rate
+   x$kappa[frow] <- kappa                              # Kappa
+   x$F1[frow] <- F1                                    # F1 statistic
+   
+   writeRDS(x, file.path(the$modeldir, paste0('zz_', fitid, '_fit.RDS')))
+   
+   
+   
+   # Write info that doesn't fit in a table (and more importantly, is BIG) to <id>_extra.RDS
+   
+   x <- list()
+   
+   x$model_object <- z       # model object
+       # x$confuse <- confuse             # confusion matrix                        confusion and varimp come from assess. They're easy to derive, so maybe they're derived on display and not here
+       #                                 #                                          it seems that these will be displayed (to the log or console) in assess, but also by fitinfo
+       # x$varimp <- varimp         # variable importance
+
+      
+   writeRDS(x, file.path(the$modeldir, paste0(fitid, '_extra.RDS')))
+   
+   
+   
+   
+   
+   ########### From here on down, move everything to assess               THIS IS ALL JUNK BUT WILL PULL STUFF OUT OF IT
    
    
    import <- varImp(z)

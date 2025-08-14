@@ -66,7 +66,7 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    
    
    
-   new_db('fdb')                                         # Create new database
+   load_database('fdb')                                         # Create new database
    the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add rows to database 
    
    the$fdb$id[i] <- the$last_fit_id + 1                  # model id
@@ -101,8 +101,10 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    save_database('fdb')
    
    
+   
+   print(the$fdb$id[i])
    launch('do_fit', 
-          moreargs = list(sites = sites, name = name, method = method,
+          moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
                           vars = vars, exclude = exclude, years = years, 
                           maxmissing = maxmissing, top_importance = top_importance,
                           holdout = holdout, auc = auc, hyper = hyper),
