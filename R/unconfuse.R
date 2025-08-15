@@ -8,37 +8,38 @@
 #' - Round the `byClass` table to 4 digits, which is more than plenty!
 #' - Optionally add a row for AUC to the `byClass` table. If the model hasn't been
 #'   run with the necessary data for AUC, a message will be displayed and the
-#'   row won't be added.L
+#'   row won't be added.
 #' 
-#' Print the resulting table with `print(fit$confuse, mode = 'prec_recall')`.
+#' Print the resulting table with `print(confuse, mode = 'prec_recall')`.
 #' 
-#' @param fit A ranger model object
+#' @param confuse Confusion matrix
 #' @param auc If TRUE, add AUC to the `byClass` table
+#' @param fit A `ranger` model object (only needed if `auc` = TRUE)
 #' @returns A new model object with the confusion matrix cleaned up
 #' @export
 
 
-unconfuse <- function(fit, auc = TRUE) {
+unconfuse <- function(confuse, auc = TRUE, fit = NULL) {
    
    
-   classes <- colnames(fit$confuse$table)
+   classes <- colnames(confuse$table)
    if(length(grep('\\d$', classes)) == length(classes)) {                        # if class names all end in numbers
       n <- as.numeric(sub('[a-zA-Z]*(\\d+)$', '\\1', classes))                   #    pull the numbers
       s <- order(n)
       
-      colnames(fit$confuse$table) <- n                                           #    use numbers for names in confusion matrix
-      rownames(fit$confuse$table) <- n
-      fit$confuse$table <- fit$confuse$table[s, s]                               #    and sort it numerically
+      colnames(confuse$table) <- n                                           #    use numbers for names in confusion matrix
+      rownames(confuse$table) <- n
+      confuse$table <- confuse$table[s, s]                               #    and sort it numerically
    
-      rownames(fit$confuse$byClass) <- paste0('Class ', n)                       #    use numbers in byClass table
-      fit$confuse$byClass <- fit$confuse$byClass[s, ]
+      rownames(confuse$byClass) <- paste0('Class ', n)                       #    use numbers in byClass table
+      confuse$byClass <- confuse$byClass[s, ]
    }
    
-   fit$confuse$byClass <- round(fit$confuse$byClass, 4)
+   confuse$byClass <- round(confuse$byClass, 4)
    
    if(auc)
-      if(!is.null(auc <- aucs(fit$fit, sort = FALSE)))
-      fit$confuse$byClass <- cbind(fit$confuse$byClass, AUC = auc)
+      if(!is.null(auc <- aucs(fit, sort = FALSE)))
+      confuse$byClass <- cbind(confuse$byClass, AUC = auc)
   
-   fit
+   confuse
 }

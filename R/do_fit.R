@@ -34,11 +34,6 @@ do_fit <- function(fitid, sites, name, method = 'rf',
                    vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
                    top_importance = 20, holdout = 0.2, auc = TRUE, hyper, rep = NULL) {
    
-   cat('---\n')
-   print(slu$jdb$callerid)
-   cat('---\n')
-   print(slu$jdb)
-   cat('===\n\n')
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
       ts <- stamp('[17 Feb 2025, 3:22:18 pm]  ', quiet = TRUE)
@@ -47,43 +42,47 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    
    message('\n\n', timestamp(), 'Fitting id ', fitid, ifelse(nchar(name) > 0, paste0(' (', name, ')'), ''))
    
-   if(length(sites) > 1)
-      message('Merging datafiles for ', nrow(sites), '...')
+   if(nrow(sites) > 1)
+      message('Merging datafiles for ', nrow(sites), ' sites...')
    
    x <- list()
-   for(i in seq_len(sites))                                                               # read data files and merge them
+   for(i in seq_len(nrow(sites)))                                                         # read data files and merge them
       x[[i]] <- readRDS(sites$datafile[i])
    
    names(x) <- sites$site
    x <- bind_rows(x, .id = 'site')
    
-   data$subclass <- as.factor(x$subclass)                                                 # we want subclass to be factor, not numeric
+   x$subclass <- as.factor(x$subclass)                                                    # we want subclass to be factor, not numeric
    
    
-
+   x <- x[1:1000, ]   ########################## TRIM THE DATA FILE TO SPEED THINGS UP FOR TESTING
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual
    # do want to produce a report with % missing for each var, number of vars with >10, 25, 50% missing, stuff like that
    
    
-   message('\nFitting for site', (ifelse(nrow(sites) != 1, 's', '')), ' = ', paste(sites$site, collapse = ', '))
+   message('\nFitting for site', ifelse(nrow(sites) != 1, 's', ''), ' = ', paste(sites$site, collapse = ', '))
    
    
-   v <- unique(find_orthos(sites$site, vars)$portable)                                    # portable names from vars
-   if(!is.null(vars)) {                                                                   # if restricting to selected variables,
-      x <- x[, names(x) %in% c('subclass', vars)]
+   v <- unique(gsub('-', '_', find_orthos(sites$site, vars)$portable))                    # portable names from vars (replace dash with underscore to match var names)
+   if(!is.null(v)) {                                                                      # if restricting to selected variables,
+      x <- x[, sub('_\\d$', '', names(x)) %in% c('site', 'subclass', v)]
       message('Analysis limited to ', length(names(x)) - 1, 
               ' selected variables')
    }
    
-   
-   e <- unique(find_orthos(sites$site, exclude)$portable)                                 # portable names from exclude
+   e <- unique(gsub('-', '_', find_orthos(sites$site, exclude)$portable))                 # portable names from exclude
    if(!is.null(exclude)) {                                                                # if excluding variables,
-      x <- x[, !names(x) %in% exclude]                                              
+      x <- x[, !sub('_\\d$', '', names(x)) %in% exclude]                                              
       message('Analysis limited to ', length(names(x)) - 1, 
               ' variables after exclusions')
    }
+   
+   if(sum(!names(x) %in% c('site', 'subclass')) <= 1)
+      stop('Analysis doesn\'t include any orthoimage variables')
+   
+   x <- x[, !names(x) == 'site']                                                          # finally drop site name (not sure if we'll want it at some point, so I've kept it up to here)
    
    
    if(!is.null(years)) {                                                                  # if restricting to selected years,
@@ -153,75 +152,83 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
    #    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity', tuneGrid = expand.grid(.mtry = 1, .splitrule = 'gini', .min.node.size = c(10, 20)))
    
-   message('Elapsed time for training = ',  as.duration(round(interval(a, Sys.time()))))
-   
-   
-   
-   # Call assess
-   
-   
-   
-   
-   # Write info from run and assessment to temporary RDS for fit_finish
-   
-   x <- list()
-   
-   x$model <- model                              # user-specified model
-   x$full_model[frow] <- full_model                    # complete model specification
-   x$hyper[frow] <- hyper                              # hyperparameters
-   
-   x$CCR[frow] <- CCR                                  # correct classification rate
-   x$kappa[frow] <- kappa                              # Kappa
-   x$F1[frow] <- F1                                    # F1 statistic
-   
-   writeRDS(x, file.path(the$modeldir, paste0('zz_', fitid, '_fit.RDS')))
-   
-   
-   
-   # Write info that doesn't fit in a table (and more importantly, is BIG) to <id>_extra.RDS
-   
-   x <- list()
-   
-   x$model_object <- z       # model object
-       # x$confuse <- confuse             # confusion matrix                        confusion and varimp come from assess. They're easy to derive, so maybe they're derived on display and not here
-       #                                 #                                          it seems that these will be displayed (to the log or console) in assess, but also by fitinfo
-       # x$varimp <- varimp         # variable importance
-
-      
-   writeRDS(x, file.path(the$modeldir, paste0(fitid, '_extra.RDS')))
-   
-   
-   
-   
-   
-   ########### From here on down, move everything to assess               THIS IS ALL JUNK BUT WILL PULL STUFF OUT OF IT
-   
-   
-   import <- varImp(z)
-   import$importance <- import$importance[order(import$importance$Overall, decreasing = TRUE), , drop = FALSE][1:top_importance, , drop = FALSE]
-   plot(import)
    
    validate <- validate[complete.cases(validate), ]
    validate$subclass <- droplevels(validate$subclass)
-   y <- stats::predict(z, newdata = validate)
-   
-   confuse <- confusionMatrix(validate$subclass, y)
-   kappa <- confuse$overall['Kappa']                                             # can pull stats like this
-   
-   cat('\n')
-   print(confuse)
+   y <- stats::predict(z, newdata = validate)                                             #---validate the model on the holdout set
    
    
-   the$fit$fit <- z                                                              # save most recent fit
-   the$fit$pred <- y
-   the$fit$train <- train
-   the$fit$validate <- validate
-   the$fit$confuse <- confuse
-   the$fit$import <- import
    
-   ts <- stamp('2025-Mar-25_13-18', quiet = TRUE)                                # and write to an RDS (this is temporary; will include in database soon)
-   f <- file.path(the$modelsdir, paste0('fit_', sites[1], '_', ts(now()), '.RDS'))# ***************** temporary!! 
-   saveRDS(the$fit, f)
-   message('Fit saved to ', f)
+   message('Elapsed time for training = ',  as.duration(round(interval(a, Sys.time()))))
+   
+   
+   confuse <- unconfuse(confusionMatrix(validate$subclass, y, mode = 'prec_recall'))
+   x <- assess(model = z, confuse = confuse, nvalidate = dim(validate)[1])                                                   #---model assessment
+   
+   
+   
+   
+   
+ #   # Write info from run and assessment to temporary RDS for fit_finish
+ #   
+ #   x <- list()
+ #   
+ #   x$model <- model                              # user-specified model
+ # #  x$full_model[frow] <- full_model                    # complete model specification
+ # #  x$hyper[frow] <- hyper                              # hyperparameters
+ #   
+ #   x$CCR[frow] <- CCR                                  # correct classification rate
+ #   x$kappa[frow] <- kappa                              # Kappa
+ #   x$F1[frow] <- F1                                    # F1 statistic
+ #   
+ #   writeRDS(x, file.path(the$modeldir, paste0('zz_', fitid, '_fit.RDS')))
+ #   
+ #   
+ #   
+ #   # Write info that doesn't fit in a table (and more importantly, is BIG) to <id>_extra.RDS
+ #   
+ #   x <- list()
+ #   
+ #   x$model_object <- z       # model object
+ #   # x$confuse <- confuse             # confusion matrix                        confusion and varimp come from assess. They're easy to derive, so maybe they're derived on display and not here
+ #   #                                 #                                          it seems that these will be displayed (to the log or console) in assess, but also by fitinfo
+ #   # x$varimp <- varimp         # variable importance
+ #   
+ #   
+ #   writeRDS(x, file.path(the$modeldir, paste0(fitid, '_extra.RDS')))
+ #   
+ #   
+ #   
+ #   
+ #   
+ #   ########### From here on down, move everything to assess               THIS IS ALL JUNK BUT WILL PULL STUFF OUT OF IT
+ #   
+ #   
+ #   import <- varImp(z)
+ #   import$importance <- import$importance[order(import$importance$Overall, decreasing = TRUE), , drop = FALSE][1:top_importance, , drop = FALSE]
+ #   plot(import)
+ #   
+ #   validate <- validate[complete.cases(validate), ]
+ #   validate$subclass <- droplevels(validate$subclass)
+ #   y <- stats::predict(z, newdata = validate)
+ #   
+ #   confuse <- confusionMatrix(validate$subclass, y)
+ #   kappa <- confuse$overall['Kappa']                                             # can pull stats like this
+ #   
+ #   cat('\n')
+ #   print(confuse)
+ #   
+ #   
+ #   the$fit$fit <- z                                                              # save most recent fit
+ #   the$fit$pred <- y
+ #   the$fit$train <- train
+ #   the$fit$validate <- validate
+ #   the$fit$confuse <- confuse
+ #   the$fit$import <- import
+ #   
+ #   ts <- stamp('2025-Mar-25_13-18', quiet = TRUE)                                # and write to an RDS (this is temporary; will include in database soon)
+ #   f <- file.path(the$modelsdir, paste0('fit_', sites[1], '_', ts(now()), '.RDS'))# ***************** temporary!! 
+ #   saveRDS(the$fit, f)
+ #   message('Fit saved to ', f)
    
 }

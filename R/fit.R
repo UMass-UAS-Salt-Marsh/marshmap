@@ -6,9 +6,11 @@
 #'    matching site.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
-#' @param vars An optional vector of variables to restrict analysis to. Default = NULL, 
-#'    all variables.
-#' @param exclude An optional vector of variables to exclude.
+#' @param vars An optional vector of variables to restrict analysis to. Default = {*}, 
+#'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
+#'    portable names, search names and regular expressions of file and portable names.
+#' @param exclude An optional vector of variables to exclude. As with `vars`, variables
+#'    are processed by `find_orthos`.
 #' @param years An optional vector of years to restrict variables to.
 #' @param maxmissing Maximum proportion of missing training points allowed before a 
 #'    variable is dropped.
@@ -30,7 +32,7 @@
 
 
 fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf', 
-                vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
+                vars = '{*}', exclude = '', years = NULL, maxmissing = 0.05, 
                 top_importance = 20, holdout = 0.2, auc = TRUE, hyper = NULL,
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
@@ -56,7 +58,7 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
                  collapse = ', '))
    
    resources <- get_resources(resources, list(
-      ncpus = 10,                                        # ************ NEED TO TUNE ALL OF THESE
+      ncpus = 10,                                        # ************ NEED TO TUNE THESE
       memory = 200,
       walltime = '02:00:00'
    ))
@@ -101,8 +103,8 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    save_database('fdb')
    
    
+   message('Fit id is ', the$fdb$id[i])
    
-   print(the$fdb$id[i])
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
                           vars = vars, exclude = exclude, years = years, 
