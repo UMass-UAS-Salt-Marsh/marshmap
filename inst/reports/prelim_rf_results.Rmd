@@ -105,7 +105,7 @@ size classes such as 7 and 12.
 ## Variable importance
 
 This plot summarizes overall variable importance. Only the most important 20 variables are shown. 
-Not that *variable* refers to an imagery band, not the entire image; thus an RGB true color image
+Note that *variable* refers to an imagery band, not the entire image; thus an RGB true color image
 represents three varaibles, any of which may come into the model separately.
 
 ```{r}

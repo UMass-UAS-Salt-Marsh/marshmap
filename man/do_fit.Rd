@@ -44,7 +44,7 @@ these must match portable names in any site, which will be used for all sites.}
 \item{maxmissing}{Maximum proportion of missing training points allowed before a
 variable is dropped.}
 
-\item{top_importance}{Give number of variables to keep for variable importance.}
+\item{top_importance}{Number of variables to keep for variable importance}
 
 \item{holdout}{Proportion of points to hold out. For Random Forest, this specifies
 the size of the single validation set, while for boosting, it is the size of each

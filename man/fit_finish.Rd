@@ -15,7 +15,7 @@ fit_finish(jobid, status)
 Finish a fit run:
 \itemize{
 \item Populate fits database with \code{slurmcollie} stats
-\item and with info from \verb{zz<id>_fit.RDS}, written by \code{do_fit}
+\item and with info from \verb{zz_<id>_fit.RDS}, written by \code{do_fit}
 \item Copy the log file to the models directory
 }
 }

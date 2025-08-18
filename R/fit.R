@@ -14,7 +14,7 @@
 #' @param years An optional vector of years to restrict variables to.
 #' @param maxmissing Maximum proportion of missing training points allowed before a 
 #'    variable is dropped.
-#' @param top_importance Give number of variables to keep for variable importance.
+#' @param top_importance Number of variables to keep for variable importance
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.

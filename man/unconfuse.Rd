@@ -4,12 +4,14 @@
 \alias{unconfuse}
 \title{Clean up confusion matrix and associated stats}
 \usage{
-unconfuse(fit, auc = TRUE)
+unconfuse(confuse, auc = TRUE, fit = NULL)
 }
 \arguments{
-\item{fit}{A ranger model object}
+\item{confuse}{Confusion matrix}
 
 \item{auc}{If TRUE, add AUC to the \code{byClass} table}
+
+\item{fit}{A \code{ranger} model object (only needed if \code{auc} = TRUE)}
 }
 \value{
 A new model object with the confusion matrix cleaned up
@@ -26,9 +28,9 @@ numerically
 \item Round the \code{byClass} table to 4 digits, which is more than plenty!
 \item Optionally add a row for AUC to the \code{byClass} table. If the model hasn't been
 run with the necessary data for AUC, a message will be displayed and the
-row won't be added.L
+row won't be added.
 }
 }
 \details{
-Print the resulting table with \code{print(fit$confuse, mode = 'prec_recall')}.
+Print the resulting table with \code{print(confuse, mode = 'prec_recall')}.
 }

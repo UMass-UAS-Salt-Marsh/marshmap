@@ -9,8 +9,8 @@ fit(
   datafile = "data.RDS",
   name = "",
   method = "rf",
-  vars = NULL,
-  exclude = NULL,
+  vars = "{*}",
+  exclude = "",
   years = NULL,
   maxmissing = 0.05,
   top_importance = 20,
@@ -34,17 +34,19 @@ matching site.}
 
 \item{method}{One of \code{rf} for Random Forest, \code{boost} for AdaBoost. Default = \code{rf}.}
 
-\item{vars}{An optional vector of variables to restrict analysis to. Default = NULL,
-all variables.}
+\item{vars}{An optional vector of variables to restrict analysis to. Default = {*},
+all variables. \code{vars} is processed by \code{find_orthos}, and may include file names,
+portable names, search names and regular expressions of file and portable names.}
 
-\item{exclude}{An optional vector of variables to exclude.}
+\item{exclude}{An optional vector of variables to exclude. As with \code{vars}, variables
+are processed by \code{find_orthos}.}
 
 \item{years}{An optional vector of years to restrict variables to.}
 
 \item{maxmissing}{Maximum proportion of missing training points allowed before a
 variable is dropped.}
 
-\item{top_importance}{Give number of variables to keep for variable importance.}
+\item{top_importance}{Number of variables to keep for variable importance}
 
 \item{holdout}{Proportion of points to hold out. For Random Forest, this specifies
 the size of the single validation set, while for boosting, it is the size of each
