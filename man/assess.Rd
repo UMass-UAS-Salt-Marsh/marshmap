@@ -7,7 +7,6 @@
 assess(
   fitid = NULL,
   model = NULL,
-  confuse = NULL,
   newdata = NULL,
   top_importance,
   summary = TRUE,
@@ -19,9 +18,10 @@ assess(
 \item{fitid}{id of a model in the fits database. If using this, omit \code{model}, as
 this info will be extracted from the database.}
 
-\item{model}{named list of:
+\item{model}{Only when called by do_fit; named list of:
 \describe{
 \item{fit}{model fit oject}
+\item{confuse}{Confusion matrix}
 \item{nvalidate}{Number of cases in validation set}
 \item{id}{Model id}
 \item{name}{Model name}
@@ -41,7 +41,6 @@ must conform with the original dataset.}
 \value{
 Invisibly, a named list of
 \describe{
-\item{summary}{Model id, name, and topline statistics}
 \item{confusion}{Confusion matrix and complete statistics}
 \item{importance}{Variable importance data frame}
 }

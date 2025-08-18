@@ -72,7 +72,6 @@
 #' @param importance Print variable importance if TRUE, and skip printing if FALSE
 #' @returns Invisibly, a named list of
 #'   \describe{
-#'     \item{summary}{Model id, name, and topline statistics}
 #'     \item{confusion}{Confusion matrix and complete statistics}
 #'     \item{importance}{Variable importance data frame}
 #'  }
@@ -104,21 +103,21 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL,
    info <- paste0(info, '\nCorrect classification rate (CCR) = ', round(confuse$overall['Accuracy'] * 100, 2), '%')  
    info <- paste0(info, '\nKappa = ', round(confuse$overall['Kappa'], 4), '\n\n')
    
-   varimp <- varImp(model$fit)$importance
-   names(varimp) <- 'Importance'
-   varimp <- varimp[order(varimp$Importance, decreasing = TRUE), , drop = FALSE][1:min(top_importance, nrow(varimp)), , drop = FALSE]
-   varimp <- round(varimp, 2)
-   
    if(summary)
       cat(info)
    
    if(confusion)
       print(confuse)
    
+   varimp <- varImp(model$fit)$importance
+   names(varimp) <- 'Importance'
+   varimp <- varimp[order(varimp$Importance, decreasing = TRUE), , drop = FALSE][1:min(top_importance, nrow(varimp)), , drop = FALSE]
+   varimp <- round(varimp, 2)
+   
    if(importance) {
       cat('\nVariable importance\n')
       print(varimp)
    }
    
-   invisible(list(summary = info, confusion = confuse, importance = varimp))
+   invisible(list(confusion = confuse, importance = varimp))
 }
