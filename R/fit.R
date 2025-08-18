@@ -63,9 +63,6 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
       walltime = '02:00:00'
    ))
    
-   if(is.null(comment))
-      comment <- paste0('fit ', paste(site, collapse = ', '))
-   
    
    
    load_database('fdb')                                         # Create new database
@@ -73,26 +70,31 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    
    the$fdb$id[i] <- the$last_fit_id + 1                  # model id
    the$fdb$name[i] <- name                               # optional model name
-   the$fdb$site[i] <- paste(sites, collapse = ', ')      # site (or sites) model is fit to
+   the$fdb$site[i] <- paste(sites$site, collapse = ', ') # site (or sites) model is fit to
+   
+   if(is.null(comment))                                  # now that we know some stuff, make up default comment
+      comment <- paste0('fit ', the$fdb$id[i], 
+                        ifelse(nchar(name) > 0, paste0(' (', name, ')'), ''), 
+                        ', site: ', paste(site, collapse = ', '))
+   
    the$fdb$method[i] <- method                           # modeling approach used (rf[i] <- random forest, ab[i] <- AdaBoost, perhaps others)
-   the$fdb$model[i] <- NA                                # user-specified model, set in do_fit, resolved in fit_finish
-   the$fdb$full_model[i] <- NA                           # complete model specification, set in do_fit, resolved in fit_finish
-   the$fdb$hyper[i] <- NA                                # hyperparameters, set in do_fit, resolved in fit_finish
+   the$fdb$model[i] <- ''                                # user-specified model, set in do_fit, resolved in fit_finish
+   the$fdb$full_model[i] <- ''                           # complete model specification, set in do_fit, resolved in fit_finish
+   the$fdb$hyper[i] <- ''                                # hyperparameters, set in do_fit, resolved in fit_finish
    the$fdb$success[i] <- NA                              # run success; NA = not run yet
    the$fdb$launched[i] <- now()                          # date and time launched (may disagree with slurmcollie by a couple of seconds)
-   the$fdb$status[i] <- NA                               # final slurmcollie status, resolved in fit_finish
+   the$fdb$status[i] <- ''                               # final slurmcollie status, resolved in fit_finish
    the$fdb$error[i] <- NA                                # TRUE if error, resolved in fit_finish
-   the$fdb$message[i] <- NA                              # error message if any, resolved in fit_finish
+   the$fdb$message[i] <- ''                              # error message if any, resolved in fit_finish
    the$fdb$cores[i] <- NA                                # cores requested, resolved in fit_finish
-   the$fdb$cpu[i] <- NA                                  # CPU time, resolved in fit_finish
-   the$fdb$cpu_pct[i] <- NA                              # percent CPU used, resolved in fit_finish
+   the$fdb$cpu[i] <- ''                                  # CPU time, resolved in fit_finish
+   the$fdb$cpu_pct[i] <- ''                              # percent CPU used, resolved in fit_finish
    the$fdb$mem_req[i] <- NA                              # memory requested (GB), resolved in fit_finish
    the$fdb$mem_gb[i] <- NA                               # memory used (GB), resolved in fit_finish
-   the$fdb$walltime[i] <-  NA                            # elapsed run time, resolved in fit_finish
+   the$fdb$walltime[i] <-  ''                            # elapsed run time, resolved in fit_finish
    the$fdb$CCR[i] <- NA                                  # correct classification rate, resolved in fit_finish
    the$fdb$kappa[i] <- NA                                # Kappa, resolved in fit_finish
-   the$fdb$F1[i] <- NA                                   # F1 statistic, resolved in fit_finish
-   the$fdb$predicted[i] <- NA                            #  name of predicted geoTIFF, added by map
+   the$fdb$predicted[i] <- ''                            # name of predicted geoTIFF, added by map
    the$fdb$score[i] <- NA                                # subjective scoring field, *** added with function TBD ***
    the$fdb$comment_launch[i] <- comment                  # comment set at launch
    the$fdb$comment_assess[i] <- ''                       # comment based on assessment, *** added with function TBD ***

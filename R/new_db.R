@@ -40,6 +40,7 @@ new_db <- function(database, really = FALSE) {
                 walltime = character(),               # elapsed run time
                 vars = integer(),                     # number of variables in model
                 cases = integer(),                    # sample size of model
+                holdout = integer(),                  # number of holdout cases
                 CCR = double(),                       # correct classification rate
                 kappa = double(),                     # Kappa
                 predicted = character(),              # name of predicted geoTIFF, based on model id and name as it existed when prediction was run. Added by map

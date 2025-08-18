@@ -1,8 +1,10 @@
 #' Assess a model
 #'
-#' Called by do_fit, but also may be called by the user. Either provide `fitid` for
+#' Called by `do_fit`, but also may be called by the user. Either provide `fitid` for
 #' the model you want to assess (the normal approach), or `model`, a list with necessary
-#' arguments (the approach used by do_fit, becaue the model is not yet in the database).
+#' arguments (the approach used by `do_fit`, becaue the model is not yet in the database).
+#' When you call `assess` from the console, the fits database is not updated with the new
+#' assessment.
 #' 
 #' You may supply `newdata` to assess a model on sites different from what the model
 #' was built on. `newdata` is a data frame that conforms to the data the model was 
@@ -80,25 +82,36 @@
 
 
 assess <- function(fitid = NULL, model = NULL, newdata = NULL,
-                   top_importance, summary = TRUE, confusion = TRUE, importance = TRUE) {
+                   top_importance = 20, summary = TRUE, confusion = TRUE, importance = TRUE) {
    
    
    if(!is.null(fitid)) {
-      # ********************* set model, confuse, and nvalidate from fit database ***************
-      # model <- list(...)
+      load_database('fdb')
+      frow <- match(fitid, the$fdb$id)              # find our row in the fit database
+      if(is.na(frow))
+         stop('Fit id ', fitid, ' is not present in the fits database')
+      
+      extra <- readRDS(file.path(the$modelsdir, paste0(fitid, '_extra.RDS')))
+      
+      model <- list(fit = extra$model_object, 
+                    confuse = extra$confuse, 
+                    nvalidate = the$fdb$holdout[frow], 
+                    id = fitid, 
+                    name = the$fdb$name[frow])
    }
    
    confuse <- model$confuse
    
    if(!is.null(newdata)) {                                           # if new data have been passed,
       y <- stats::predict(model, newdata = newdata)                  #    we'l work with it
-      confuse <- help(newdata$subclass, y)
+      model$nvalidate <- nrow(newdata)                               #    update number of validation cases
+      confuse <- help(newdata$subclass, y)                           #    and build the new confusion matrix
    }
    
    info <- paste0('Model ', model$id, ifelse(nchar(model$name) > 0, paste0(' (', model$name, ')'), ''))
    lines <- strrep('-', nchar(info))
    info <- paste('\n', lines, info, lines, sep = '\n')
-   info <- paste0(info, '\n', dim(model$fit$train)[2], ' variables')
+   info <- paste0(info, '\n', sum(!names(model$fit$train) %in% c('site', 'subclass', '.outcome')), ' variables')
    info <- paste0(info, '\nn = ', dim(model$fit$train)[1], ' (training), ', model$nvalidate, ' (validation)')
    info <- paste0(info, '\nCorrect classification rate (CCR) = ', round(confuse$overall['Accuracy'] * 100, 2), '%')  
    info <- paste0(info, '\nKappa = ', round(confuse$overall['Kappa'], 4), '\n\n')

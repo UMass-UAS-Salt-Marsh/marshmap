@@ -8,7 +8,7 @@ assess(
   fitid = NULL,
   model = NULL,
   newdata = NULL,
-  top_importance,
+  top_importance = 20,
   summary = TRUE,
   confusion = TRUE,
   importance = TRUE
@@ -46,9 +46,11 @@ Invisibly, a named list of
 }
 }
 \description{
-Called by do_fit, but also may be called by the user. Either provide \code{fitid} for
+Called by \code{do_fit}, but also may be called by the user. Either provide \code{fitid} for
 the model you want to assess (the normal approach), or \code{model}, a list with necessary
-arguments (the approach used by do_fit, becaue the model is not yet in the database).
+arguments (the approach used by \code{do_fit}, becaue the model is not yet in the database).
+When you call \code{assess} from the console, the fits database is not updated with the new
+assessment.
 }
 \details{
 You may supply \code{newdata} to assess a model on sites different from what the model

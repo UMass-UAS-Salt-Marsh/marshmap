@@ -34,16 +34,25 @@ fit_finish <- function(jobid, status) {
    
    
    if(the$fdb$success[frow]) {                                    # If job was successful, get stuff from zz_<id>_fit.RDS
-      x <- readRDS(file.path(the$modeldir, paste0('zz_', slu$jdb$callerid, '_fit.RDS')))
+      
+      the$fdb$error[frow] <- FALSE                                #    since we're here, we know there wasn't an error
+      the$fdb$message <- ''                                       #    and no error message
+      
+      x <- readRDS(f <- file.path(the$modelsdir, paste0('zz_', slu$jdb$callerid[jrow], '_fit.RDS')))
       
       the$fdb$model[frow] <- x$model                              # user-specified model, set in do_fit, resolved in fit_finish
       the$fdb$full_model[frow] <- x$full_model                    # complete model specification, set in do_fit, resolved in fit_finish
       the$fdb$hyper[frow] <- x$hyper                              # hyperparameters, set in do_fit, resolved in fit_finish
       
+      the$fdb$vars <- x$vars                                      # number of variables
+      the$fdb$cases <- x$cases                                    # sample size   
+      the$fdb$holdout <- x$holdout                                # holdout sample size
       the$fdb$CCR[frow] <- x$CCR                                  # correct classification rate
       the$fdb$kappa[frow] <- x$kappa                              # Kappa
-      the$fdb$F1[frow] <- x$F1                                    # F1 statistic
    }
+   
+   save_database('fdb')                                           # save the database
+   unlink(f)                                                      # it's now safe to delete the temporary file from do_fit
    
    
    # Copy log file

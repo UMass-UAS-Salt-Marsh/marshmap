@@ -12,16 +12,16 @@
 #'    these must match portable names in any site, which will be used for all sites.
 #' @param exclude An optional vector of variables to exclude. Names are specified as for 
 #'    `vars`.
-#' @param years An optional vector of years to restrict variables to.
+#' @param years An optional vector of years to restrict variables to
 #' @param maxmissing Maximum proportion of missing training points allowed before a 
-#'    variable is dropped.
+#'    variable is dropped
 #' @param top_importance Number of variables to keep for variable importance
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
-#' @param auc If TRUE, calculate class probabilities so we can calculate AUC.
-#' @param hyper Hyperparameters. ***To be defined.***
-#' @param rep Throwaway argument for `slurmcollie`.
+#' @param auc If TRUE, calculate class probabilities so we can calculate AUC
+#' @param hyper Hyperparameters ***To be defined***
+#' @param rep Throwaway argument to make `slurmcollie` happy
 #' @importFrom caret createDataPartition trainControl train varImp confusionMatrix
 #' @importFrom stats complete.cases predict reformulate
 #' @importFrom lubridate interval as.duration stamp now
@@ -55,7 +55,7 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    r$subclass <- as.factor(r$subclass)                                                    # we want subclass to be factor, not numeric
    
    
-   r <- r[1:1000, ]   ########################## TRIM THE DATA FILE TO SPEED THINGS UP FOR TESTING
+ ###  r <- r[1:1000, ]   ########################## TRIM THE DATA FILE TO SPEED THINGS UP FOR TESTING
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual
@@ -69,15 +69,16 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    if(!is.null(v)) {                                                                      # if restricting to selected variables,
       r <- r[, sub('_\\d$', '', names(r)) %in% c('site', 'subclass', v)]
       if(vars != '{*}')
-         message('Analysis limited to ', length(names(r)) - 1, 
+         message('Analysis limited to ', sum(!names(r) %in% c('site', 'subclass')), 
                  ' selected variables')
    }
    
    e <- unique(gsub('-', '_', find_orthos(sites$site, exclude)$portable))                 # portable names from exclude
    if(!is.null(exclude)) {                                                                # if excluding variables,
-      r <- r[, !sub('_\\d$', '', names(r)) %in% exclude]                                              
-      message('Analysis limited to ', length(names(r)) - 1, 
-              ' variables after exclusions')
+      r <- r[, !sub('_\\d$', '', names(r)) %in% e] 
+      if(exclude != '')
+         message('Analysis limited to ', sum(!names(r) %in% c('site', 'subclass')), 
+                 ' variables after exclusions')
    }
    
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
@@ -143,7 +144,8 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    
    t <- length(levels(training$subclass))
    training$subclass <- droplevels(training$subclass)
-   message(length(levels(training$subclass)) - t, ' levels dropped because of missing values')
+   if(dropped <- length(levels(training$subclass)) - t > 0)
+      message(dropped, ' levels dropped because of missing values')
    
    model <- reformulate(names(training)[-1], 'subclass')
    
@@ -171,13 +173,14 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    
    
    r <- list()                                                                            # --- write info from run and assessment to temporary RDS for fit_finish
-   r$model <- model                                                                       # user-specified model
+   r$model <- gsub('\\s+', ' ', deparse1(model, collapse = ''))                           # user-specified model in well-behaved text format
    
-   #  r$full_model <- full_model                                                          # complete model specification          ************************** need these
-   #  r$hyper <- hyper                                                                    # hyperparameters
+   r$full_model <- 'tbd' # full_model                                                          # complete model specification          ************************** need these
+   r$hyper <- 'tbd' # hyper                                                                    # hyperparameters
    
    r$vars <- ncol(z$train)                                                                # number of variables
-   r$cases <- nrow(z$train)                                                               # sample size                                
+   r$cases <- nrow(z$train)                                                               # sample size   
+   r$holdout <- dim(validate)[1]                                                          # holdout sample size
    r$CCR <- f$confusion$overall[['Accuracy']]                                             # correct classification rate
    r$kappa <- f$confusion$overall[['Kappa']]                                              # Kappa
    
