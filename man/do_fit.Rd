@@ -39,10 +39,10 @@ these must match portable names in any site, which will be used for all sites.}
 \item{exclude}{An optional vector of variables to exclude. Names are specified as for
 \code{vars}.}
 
-\item{years}{An optional vector of years to restrict variables to.}
+\item{years}{An optional vector of years to restrict variables to}
 
 \item{maxmissing}{Maximum proportion of missing training points allowed before a
-variable is dropped.}
+variable is dropped}
 
 \item{top_importance}{Number of variables to keep for variable importance}
 
@@ -50,11 +50,11 @@ variable is dropped.}
 the size of the single validation set, while for boosting, it is the size of each
 of the testing and validation sets.}
 
-\item{auc}{If TRUE, calculate class probabilities so we can calculate AUC.}
+\item{auc}{If TRUE, calculate class probabilities so we can calculate AUC}
 
-\item{hyper}{Hyperparameters. \emph{\strong{To be defined.}}}
+\item{hyper}{Hyperparameters \emph{\strong{To be defined}}}
 
-\item{rep}{Throwaway argument for \code{slurmcollie}.}
+\item{rep}{Throwaway argument to make \code{slurmcollie} happy}
 }
 \description{
 Fit models

@@ -33,7 +33,7 @@ Imports:
     shinybusy,
     shinyWidgets
 Remotes:
-    UMass-UAS-Salt-Marsh/slurmcollie
+    UMassCDS/slurmcollie
 Suggests: 
     ranger
 Encoding: UTF-8
