@@ -50,9 +50,6 @@ via `slurmcollie` (except for `screen` which is intrinsically interactive and sp
    for modeling.
 5. `fit` Build statistical models of vegetation cover with random forests, AdaBoost (planned), or
    potentially other modeling frameworks and report model assessment.
-6. `assess` Provide a model assessment. This is normally included in `fit`, but `assess` may be
-   called separately to assess the fit of a model built on one or more sites and applied to other 
-   sites.
 7. `map` Produce geoTIFF maps of predicted vegetation cover. 
 
 ### Additional functions
@@ -63,6 +60,9 @@ via `slurmcollie` (except for `screen` which is intrinsically interactive and sp
 - `mapinfo` Displays information from the maps database, including model used for each map and run 
    statistics such as CPU and memory use. Can also be used to Can also be used to save
    an Excel-friendly text version of the maps database and set map scores and comments.
+- `assess` Provide a model assessment. This is normally included in `fit`, but `assess` may be
+   called separately to assess the fit of a model built on one or more sites and applied to other 
+   sites.
 - `flights_report` Creates a report on on orthoimages for all sites, including a summary for each site,
    a list of files flagged for repair in `screen`, a list of duplicated portable names for each site, 
    and a list of all files for each site.
