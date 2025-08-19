@@ -78,11 +78,7 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
                         ', site: ', paste(site, collapse = ', '))
    
    the$fdb$method[i] <- method                           # modeling approach used (rf[i] <- random forest, ab[i] <- AdaBoost, perhaps others)
-   the$fdb$model[i] <- ''                                # user-specified model, set in do_fit, resolved in fit_finish
-   the$fdb$full_model[i] <- ''                           # complete model specification, set in do_fit, resolved in fit_finish
-   the$fdb$hyper[i] <- ''                                # hyperparameters, set in do_fit, resolved in fit_finish
    the$fdb$success[i] <- NA                              # run success; NA = not run yet
-   the$fdb$launched[i] <- now()                          # date and time launched (may disagree with slurmcollie by a couple of seconds)
    the$fdb$status[i] <- ''                               # final slurmcollie status, resolved in fit_finish
    the$fdb$error[i] <- NA                                # TRUE if error, resolved in fit_finish
    the$fdb$message[i] <- ''                              # error message if any, resolved in fit_finish
@@ -99,13 +95,16 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    the$fdb$comment_launch[i] <- comment                  # comment set at launch
    the$fdb$comment_assess[i] <- ''                       # comment based on assessment, *** added with function TBD ***
    the$fdb$comment_map[i] <- ''                          # comment based on final map, *** added with function TBD ***
-   
-   
-   the$last_fit_id <- the$fdb$id[i]                      # save last_fit_id
-   save_database('fdb')
-   
+   the$fdb$model[i] <- ''                                # user-specified model, set in do_fit, resolved in fit_finish
+   the$fdb$full_model[i] <- ''                           # complete model specification, set in do_fit, resolved in fit_finish
+   the$fdb$hyper[i] <- ''                                # hyperparameters, set in do_fit, resolved in fit_finish
    
    message('Fit id is ', the$fdb$id[i])
+      the$last_fit_id <- the$fdb$id[i]                   # save last_fit_id
+   
+   the$fdb$launched[i] <- now()                          # date and time launched (may disagree with slurmcollie by second or two)
+   save_database('fdb')
+   
    
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,

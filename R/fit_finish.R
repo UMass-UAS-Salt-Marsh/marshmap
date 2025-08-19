@@ -40,15 +40,15 @@ fit_finish <- function(jobid, status) {
       
       x <- readRDS(f <- file.path(the$modelsdir, paste0('zz_', slu$jdb$callerid[jrow], '_fit.RDS')))
       
-      the$fdb$model[frow] <- x$model                              # user-specified model, set in do_fit, resolved in fit_finish
-      the$fdb$full_model[frow] <- x$full_model                    # complete model specification, set in do_fit, resolved in fit_finish
-      the$fdb$hyper[frow] <- x$hyper                              # hyperparameters, set in do_fit, resolved in fit_finish
-      
       the$fdb$vars <- x$vars                                      # number of variables
       the$fdb$cases <- x$cases                                    # sample size   
       the$fdb$holdout <- x$holdout                                # holdout sample size
       the$fdb$CCR[frow] <- x$CCR                                  # correct classification rate
       the$fdb$kappa[frow] <- x$kappa                              # Kappa
+      
+      the$fdb$model[frow] <- x$model                              # user-specified model, set in do_fit, resolved in fit_finish
+      the$fdb$full_model[frow] <- x$full_model                    # complete model specification, set in do_fit, resolved in fit_finish
+      the$fdb$hyper[frow] <- x$hyper                              # hyperparameters, set in do_fit, resolved in fit_finish
    }
    
    save_database('fdb')                                           # save the database
