@@ -12,13 +12,22 @@
 
 
 fit_finish <- function(jobid, status) {
-
+   
    
    jrow <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database (it's been loaded by info)
    
    load_database('fdb')
    frow <- match(slu$jdb$callerid[jrow], the$fdb$id)              # find our row in the fit database
    
+   
+   # Copy log file
+   if(!dir.exists(the$modelsdir))
+      dir.create(the$modelsdir, recursive = TRUE, showWarnings = FALSE)
+   sink <- file.copy(logfile(jobid)$done, 
+                     file.path(the$modelsdir, 
+                               paste0('fit_', the$fdb$id[frow], '.log')),
+                     overwrite = TRUE)
+
    
    # Get stuff from slurmcollie jobs database
    the$fdb$success[frow] <- slu$jdb$status[jrow] == 'finished'    # run success
@@ -33,16 +42,16 @@ fit_finish <- function(jobid, status) {
    the$fdb$walltime[frow] <- slu$jdb$walltime[jrow]               # elapsed run time
    
    
-   if(the$fdb$success[frow]) {                                    # If job was successful, get stuff from zz_<id>_fit.RDS
+   if(the$fdb$success[frow]) {                                    # If job was successful, get stuff from zz_<id>_fit.RDS, written by do_fit
       
       the$fdb$error[frow] <- FALSE                                #    since we're here, we know there wasn't an error
       the$fdb$message <- ''                                       #    and no error message
       
       x <- readRDS(f <- file.path(the$modelsdir, paste0('zz_', slu$jdb$callerid[jrow], '_fit.RDS')))
       
-      the$fdb$vars <- x$vars                                      # number of variables
-      the$fdb$cases <- x$cases                                    # sample size   
-      the$fdb$holdout <- x$holdout                                # holdout sample size
+      the$fdb$vars[frow] <- x$vars                                      # number of variables
+      the$fdb$cases[frow] <- x$cases                                    # sample size   
+      the$fdb$holdout[frow] <- x$holdout                                # holdout sample size
       the$fdb$CCR[frow] <- x$CCR                                  # correct classification rate
       the$fdb$kappa[frow] <- x$kappa                              # Kappa
       
@@ -52,14 +61,7 @@ fit_finish <- function(jobid, status) {
    }
    
    save_database('fdb')                                           # save the database
-   unlink(f)                                                      # it's now safe to delete the temporary file from do_fit
    
-   
-   # Copy log file
-   if(!dir.exists(the$modelsdir))
-      dir.create(the$modelsdir, recursive = TRUE, showWarnings = FALSE)
-   sink <- file.copy(logfile(jobid)$done, 
-                     file.path(the$modelsdir, 
-                               paste0('fit_', the$fdb$id[frow], '.log')),
-                     overwrite = TRUE)
+   if(the$fdb$success[frow])                                      # If the job was successful,
+      unlink(f)                                                   #    it's now safe to delete the temporary file from do_fit
 }

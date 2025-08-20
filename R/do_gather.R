@@ -56,7 +56,8 @@ do_gather <- function(site, pattern = '',
    if(any(t <- is.na(sites$standard) | sites$standard == ''))                       # check for missing standards
       stop('Missing standards for sites ', paste(sites$site[t], collapse = ', '))
    
-   if((the$gather$sourcedrive %in% c('google', 'sftp')) & 
+   if(!check &                                                                      #    if we're not just checking,
+      (the$gather$sourcedrive %in% c('google', 'sftp')) & 
       !dir.exists(the$cachedir))                                                    #    make sure cache directory exists if needed
       dir.create(the$cachedir, recursive = TRUE)
    
@@ -65,7 +66,7 @@ do_gather <- function(site, pattern = '',
    
    
    if(check)
-      msg('check = TRUE, so printing but not processing files', lf)
+      msg('check = TRUE, so checking but not processing files', lf)
    
    
    for(i in 1:dim(sites)[1]) {                                                      # for each site,
@@ -104,6 +105,15 @@ do_gather <- function(site, pattern = '',
       files <- files[grep(tolower(pattern), tolower(files))]                        #    match user's pattern - this is our definitive list of geoTIFFs to process for this site
       files <- files[grep('^bad_', tolower(files), invert = TRUE)]                  #    BUT drop files that begin with 'bad_', as they're corrupted
       files <- files[!files %in% the$gather$exclude]                                #    also drop files listed in exclude
+      
+      
+      dups <- table(files)                                                          #    check for duplicates
+      dups <- names(dups[dups > 1])
+      if(length(dups) > 0) {
+         message('Duplicate files in source data for ', site, ':')
+         print(dups)
+         stop('Unable to process until duplicates are resolved')
+      }
       
       
       if(length(files) != 0) {                                                      #    if there are some geoTIFFs to process,

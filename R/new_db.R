@@ -45,8 +45,10 @@ new_db <- function(database, really = FALSE) {
                 comment_launch = character(),         # comment set at launch
                 comment_assess = character(),         # comment based on assessment
                 comment_map = character(),            # comment based on final map
+                call = character(),                   # full function call
                 model = character(),                  # This is user-specified model, using find_orthos
-                full_model = character(),             # Complete model specification using original variable names. Written to temp file by do_fit
+                full_model = character(),             # complete model specification using original variable names. Written to temp file by do_fit
+                datafile = character(),               # name of data file used
                 hyper = character()                   # hyperparameters specification. Either full spec or the name of a text file (w/o .txt) with the full spec.
              )  
              

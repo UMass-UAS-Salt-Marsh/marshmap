@@ -217,11 +217,11 @@ screen <- function() {
             sensor <- session$userData$db$sensor[session$userData$sel[session$userData$index]]
             bands <- nlyr(session$userData$full)
             
-            session$userData$inset1 <- center_zoom(session$userData$full, 0.1)
+            session$userData$inset1 <- center_zoom(session$userData$full, 0.20)
             output$inset1 <- screen_plot('inset1', sensor, bands, input, output, 
                                          session = getDefaultReactiveDomain())
             
-            session$userData$inset2 <- center_zoom(session$userData$full, 0.01)
+            session$userData$inset2 <- center_zoom(session$userData$full, 0.05)
             output$inset2 <- screen_plot('inset2', sensor, bands, input, output, 
                                          session = getDefaultReactiveDomain())
         })

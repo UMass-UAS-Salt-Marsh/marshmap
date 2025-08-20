@@ -1,9 +1,9 @@
 #' Fit models
 #' 
 #' @param site Site name, or vector of site names if fitting multiple sites.
-#' @param datafile Name of data file. Extension `.RDS` must be included. If fitting 
-#'    multiple sites, either use a single datafile name shared among sites, or a vector
-#'    matching site.
+#' @param datafile Name of data file. It must be an `.RDS` file, but exclude the
+#'   extension. If fitting multiple sites, either use a single datafile name
+#'   shared among sites, or a vector matching site.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
 #' @param vars An optional vector of variables to restrict analysis to. Default = {*}, 
@@ -20,24 +20,27 @@
 #'    of the testing and validation sets.
 #' @param auc If TRUE, calculate class probabilities so we can calculate AUC.
 #' @param hyper Hyperparameters. ***To be defined.***
-#' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+#' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
+#'   These take priority
 #' #'    over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
-#' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
-#'   for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
-#'   no effect if local = FALSE.
+#' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error
+#'   handling. Use this for debugging. If you get unrecovered errors, the job
+#'   won't be added to the jobs database. Has no effect if local = FALSE.
 #' @param comment Optional launch / slurmcollie comment
 #' @importFrom lubridate now
 #' @export
 
 
-fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf', 
+fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
                 vars = '{*}', exclude = '', years = NULL, maxmissing = 0.05, 
                 top_importance = 20, holdout = 0.2, auc = TRUE, hyper = NULL,
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    sites <- get_sites(site)                              # get one or more sites
+   
+   datafile <- paste0(datafile, '.RDS')
    tryCatch({                                            # repeat datafile to match
       sites$datafile <- datafile
    },
@@ -60,7 +63,7 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    resources <- get_resources(resources, list(
       ncpus = 10,                                        # ************ NEED TO TUNE THESE
       memory = 200,
-      walltime = '02:00:00'
+      walltime = '05:00:00'
    ))
    
    
@@ -95,12 +98,16 @@ fit <- function(site = NULL, datafile = 'data.RDS', name = '', method = 'rf',
    the$fdb$comment_launch[i] <- comment                  # comment set at launch
    the$fdb$comment_assess[i] <- ''                       # comment based on assessment, *** added with function TBD ***
    the$fdb$comment_map[i] <- ''                          # comment based on final map, *** added with function TBD ***
+   the$fdb$call[i] <- 
+      gsub('\\"', '\'', deparse(sys.calls()[[sys.nframe()]]))   # grab function call
    the$fdb$model[i] <- ''                                # user-specified model, set in do_fit, resolved in fit_finish
    the$fdb$full_model[i] <- ''                           # complete model specification, set in do_fit, resolved in fit_finish
+   the$fdb$datafile[i] <- datafile                       # name of data file used
+   
    the$fdb$hyper[i] <- ''                                # hyperparameters, set in do_fit, resolved in fit_finish
    
    message('Fit id is ', the$fdb$id[i])
-      the$last_fit_id <- the$fdb$id[i]                   # save last_fit_id
+   the$last_fit_id <- the$fdb$id[i]                      # save last_fit_id
    
    the$fdb$launched[i] <- now()                          # date and time launched (may disagree with slurmcollie by second or two)
    save_database('fdb')

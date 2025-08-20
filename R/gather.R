@@ -103,8 +103,13 @@ gather <- function(site, pattern = '',
                    trap = TRUE, comment = NULL) {
    
    
+   if(!check)                                         # make sure scratch directory exists if we're going to use it
+      if(!dir.exists(the$scratchdir))
+         stop('Scratch directory ', the$scratchdir, ' doesn\'t exist. See help(gather).')
+   
+   
    site <- get_sites(site)$site
-
+   
    resources <- get_resources(resources, list(
       ncpus = 1,                                      # in run of Red River, used 45% of 2 cores, 66 GB memory, took just over an hour
       memory = 115,                                   # an OTH run blew out at 115 GB, both others seem okay here
