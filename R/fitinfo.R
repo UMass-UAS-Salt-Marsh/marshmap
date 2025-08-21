@@ -1,0 +1,6 @@
+
+
+
+fitinfo <- function() {
+   
+}
