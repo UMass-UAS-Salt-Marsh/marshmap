@@ -14,7 +14,7 @@ reference:
 - title: Additional functions
 - contents:
   - fitinfo
-  - mapinfo
+#  - mapinfo
   - assess
   - flights_report
   - build_flights_db
