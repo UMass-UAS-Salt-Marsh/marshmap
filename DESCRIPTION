@@ -33,7 +33,7 @@ Imports:
     shinybusy,
     shinyWidgets
 Remotes:
-    UMassCDS/slurmcollie
+    UMassCDS/slurmcollie,
     ethanplunkett/rasterPrep
 Suggests: 
     ranger
