@@ -20,9 +20,9 @@ reference:
   - build_flights_db
   - find_orthos
 
-- title: slurmcollie functions
-- contents:
-  - info
-  - showlog
-  - kill
-  - purge
+# - title: slurmcollie functions
+# - contents:
+#   - info
+#   - showlog
+#   - kill
+#   - purge
