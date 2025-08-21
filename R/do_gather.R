@@ -23,6 +23,7 @@
 #' @param check If TRUE, just check to see that source directories and files exist, but don't 
 #'    cache or process anything
 #' @param field If TRUE, download and process the field transects if they don't already exist. 
+#'    Deal with overlaps in the shapefile--those with more than one subclass will be erased.
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
 #' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
 #' @importFrom sf st_read 
@@ -179,7 +180,8 @@ do_gather <- function(site, pattern = '',
             tpath <- get_file(file.path(tp, sites$transects[i]), 
                               gd)                                                   #       path and name of transects shapefile
             
-            transects <- rasterize(vect(tpath), standard, field = 'SubCl')$SubCl |> #       convert it to raster and pull SubCl, numeric version of subclass
+            transects <- overlaps(vect(tpath), 'Subclass') |>                       #       deal with overlaps in shapefile               *** this doesn't save the fixed shapefile, which I probably want to do ***
+               rasterize(standard, field = 'SubCl')$SubCl |>                        #       convert it to raster and pull SubCl, numeric version of subclass
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
