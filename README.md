@@ -1,5 +1,5 @@
 # salt-marsh-mapping 
-<a href="https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/"><img src="man/figures/hexsticker.png" align="right" height="200" style="float:right; height:200px;">></a>
+<a href="https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/"><img src="man/figures/hexsticker.png" align="right" height="150" style="float:right; height:150px;"></a>
 
 
 UMass UAS Salt Marsh Project salt marsh land cover mapping
