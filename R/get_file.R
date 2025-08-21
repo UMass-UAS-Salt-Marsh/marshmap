@@ -23,7 +23,6 @@
 #' - `sourcedrive` - which source drive (`local`, `google`, or `sftp`)
 #' - `sftp` - list(url, user)
 #' - `cachedir` - local cache directory
-#' @param logfile Log file, for reporting missing directories (which don't throw an error)
 #' @returns path to file on local drive
 #' @importFrom googledrive drive_download drive_reveal 
 #' @importFrom lubridate with_tz dseconds as.duration
@@ -31,7 +30,7 @@
 #' @keywords internal
 
 
-'get_file' <- function(name, gd, logfile) {
+'get_file' <- function(name, gd) {
    
    
    name <- gsub('/+', '/', name)                                                    # clean up slashes
@@ -42,7 +41,8 @@
    else {                                                                           # else, it's on the Google Drive or SFTP, so we'll deal with caching
       sname <- gd$dir[gd$dir$name == basename(name), ]                              #    name and id on Google Drive
       if(dim(sname)[1] != 1)
-         stop('File occurs in ', dim(sname)[1], ' places on drive; rename duplicates to "bad_<filename>"')
+         stop('File occurs in ', dim(sname)[1], 
+              ' places on drive; rename duplicates to "bad_<filename>"')
       cname <- file.path(gd$cachedir, basename(name))                               #    name in cache
       
       if(file.exists(cname)) {                                                      #    if the file exists in the cache,
@@ -58,7 +58,7 @@
          
       }                                                                             #    elseish, it doesn't exist or is outdated in the cache, so gotta get it
       tname <- file.path(dirname(cname), paste0('zzz_', basename(cname)))           #    we'll use a temporary name so we don't end up with failed downloads with good names
-      msg('         downloading...', logfile)
+      message('         downloading...')
       start <- Sys.time() 
       tryCatch({
          if(gd$sourcedrive == 'google')                                             #    if it's on the Google Drive, get it from there
@@ -75,8 +75,8 @@
       
       s <- (file.size(tname) * 8 / 1e6) / 
          as.numeric(dseconds(as.duration(Sys.time() - start)))                      #    Download speed in Mbps
-      msg(paste0('         download speed: ', 
-                 prettyNum(round(s, 2), big.mark = ','), ' Mbps'), logfile)
+      message('         download speed: ', 
+              prettyNum(round(s, 2), big.mark = ','), ' Mbps')
       file.rename(tname, cname)                                                     #    rename from temporary to the final name
       return(cname)
    }

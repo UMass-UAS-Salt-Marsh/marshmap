@@ -4,7 +4,7 @@
 \alias{get_file}
 \title{Return a file name from the local drive, Google Drive, or SFTP}
 \usage{
-get_file(name, gd, logfile)
+get_file(name, gd)
 }
 \arguments{
 \item{name}{File path and name}
@@ -16,8 +16,6 @@ get_file(name, gd, logfile)
 \item \code{sftp} - list(url, user)
 \item \code{cachedir} - local cache directory
 }}
-
-\item{logfile}{Log file, for reporting missing directories (which don't throw an error)}
 }
 \value{
 path to file on local drive

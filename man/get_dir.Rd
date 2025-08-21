@@ -4,14 +4,12 @@
 \alias{get_dir}
 \title{Return directory listing as a data frame from the local drive, Google Drive, or SFTP site}
 \usage{
-get_dir(path, sourcedrive = "local", logfile, sftp)
+get_dir(path, sourcedrive = "local", sftp)
 }
 \arguments{
 \item{path}{directory path (must end with '/' on Google Drive)}
 
 \item{sourcedrive}{one of \code{local}, \code{google}, or \code{sftp}}
-
-\item{logfile}{log file, for reporting missing directories (which don't throw an error)}
 
 \item{sftp}{list of url = address of site, user = credentials (optional)}
 }
@@ -24,7 +22,7 @@ Returns data frame with name (filenames), and id (Google Drive id, only if \verb
 \item when \code{sourcedrive = local} name is full path to local files
 \item when \code{sourcedrive = google}, name is just the base name
 \item when \code{sourcedrive = sftp}, name is the full path to files on the SFTP site
-\item When directories aren't found, the name is added to the log and NULL is returned
+\item When directories aren't found, throw an error
 }
 
 Notes:

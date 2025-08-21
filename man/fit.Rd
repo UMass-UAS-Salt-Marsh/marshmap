@@ -6,7 +6,7 @@
 \usage{
 fit(
   site = NULL,
-  datafile = "data.RDS",
+  datafile = "data",
   name = "",
   method = "rf",
   vars = "{*}",
@@ -26,9 +26,9 @@ fit(
 \arguments{
 \item{site}{Site name, or vector of site names if fitting multiple sites.}
 
-\item{datafile}{Name of data file. Extension \code{.RDS} must be included. If fitting
-multiple sites, either use a single datafile name shared among sites, or a vector
-matching site.}
+\item{datafile}{Name of data file. It must be an \code{.RDS} file, but exclude the
+extension. If fitting multiple sites, either use a single datafile name
+shared among sites, or a vector matching site.}
 
 \item{name}{Optional model name}
 
@@ -56,14 +56,15 @@ of the testing and validation sets.}
 
 \item{hyper}{Hyperparameters. \emph{\strong{To be defined.}}}
 
-\item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
+\item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}.
+These take priority
 #'    over the function's defaults.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 
-\item{trap}{If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
-for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
-no effect if local = FALSE.}
+\item{trap}{If TRUE, trap errors in local mode; if FALSE, use normal R error
+handling. Use this for debugging. If you get unrecovered errors, the job
+won't be added to the jobs database. Has no effect if local = FALSE.}
 
 \item{comment}{Optional launch / slurmcollie comment}
 }

@@ -4,7 +4,7 @@
 \alias{get_rast}
 \title{A wrapper for \code{rast(get_file)} that sets missing values to NA}
 \usage{
-get_rast(name, gd, logfile)
+get_rast(name, gd)
 }
 \arguments{
 \item{name}{File path and name}
@@ -16,8 +16,6 @@ get_rast(name, gd, logfile)
 \item \code{sftp} - list(url, user)
 \item \code{cachedir} - local cache directory
 }}
-
-\item{logfile}{Log file, for reporting missing directories (which don't throw an error)}
 }
 \value{
 list of:

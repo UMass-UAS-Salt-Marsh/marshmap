@@ -6,7 +6,7 @@
 #' - when `sourcedrive = local` name is full path to local files
 #' - when `sourcedrive = google`, name is just the base name
 #' - when `sourcedrive = sftp`, name is the full path to files on the SFTP site
-#' - When directories aren't found, the name is added to the log and NULL is returned
+#' - When directories aren't found, throw an error
 #'        
 #' Notes: 
 #' - paths for Google Drive are case-sensitive
@@ -24,17 +24,16 @@
 #'      
 #' @param path directory path (must end with '/' on Google Drive)
 #' @param sourcedrive one of `local`, `google`, or `sftp`
-#' @param logfile log file, for reporting missing directories (which don't throw an error)
 #' @param sftp list of url = address of site, user = credentials (optional)
 #' @importFrom RCurl getURL 
 #' @importFrom lubridate as_datetime mdy_hm
 #' @export
 
 
-get_dir <- function(path, sourcedrive = 'local', logfile, sftp) {
+get_dir <- function(path, sourcedrive = 'local', sftp) {
    
    
-   path <- gsub('/+', '/', paste0(path, '/'))         # clean up for Google Drive (dir must end in a slash; no doubled slashes)
+   path <- gsub('/+', '/', paste0(path, '/'))                                             # clean up for Google Drive (dir must end in a slash; no doubled slashes)
    
    z <- switch(sourcedrive,                                                               # case sourcedrive,  
                'local' = {
@@ -55,14 +54,13 @@ get_dir <- function(path, sourcedrive = 'local', logfile, sftp) {
                      d <- strsplit(d, '\n')[[1]]
                      'grab_date' <- function(x) mdy_hm(substr(sub('\\s*\\d*\\s*', '', x), 1, 18))           #    pull the date out of the directory listing
                      'grab_name' <- function(x) paste0(path, substring(sub('\\s*\\d*\\s*', '', x), 20))     #    path and filename
-                     data.frame(name = unlist(lapply(d, FUN = grab_name)), date = as_datetime(unlist(lapply(d, FUN = grab_date)) + 60))  #    add one minute to truncated dates
+                     data.frame(name = unlist(lapply(d, FUN = grab_name)), 
+                                date = as_datetime(unlist(lapply(d, FUN = grab_date)) + 60))                #    add one minute to truncated dates
                   }
                })
    
-   if(is.null(z)) {
-      msg(paste0('*** Missing directory: ', path), logfile)
-      z <- NULL
-   }
+   if(is.null(z))
+      stop('Missing directory: ', path)
    
    z
 }

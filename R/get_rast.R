@@ -14,7 +14,6 @@
 #' - `sourcedrive` - which source drive (`local`, `google`, or `sftp`)
 #' - `sftp` - list(url, user)
 #' - `cachedir` - local cache directory
-#' @param logfile Log file, for reporting missing directories (which don't throw an error)
 #' @returns list of:
 #'    \item{rast}{raster object}
 #'    \item{type}{data type of the object}
@@ -24,10 +23,10 @@
 #' @keywords internal
 
 
-get_rast <- function(name, gd, logfile) {
+get_rast <- function(name, gd) {
    
    
-   x <- rast(get_file(name, gd, logfile))
+   x <- rast(get_file(name, gd))
    type <- datatype(x, bylyr = FALSE)                                   # get datatype
    missing <- get_NAflag(x)                                             # get NAflag if there is one
    
