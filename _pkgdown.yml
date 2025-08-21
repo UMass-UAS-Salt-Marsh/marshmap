@@ -2,3 +2,27 @@ url: https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/
 template:
   bootstrap: 5
 
+reference:
+- title: Processing sequence
+- contents:
+  - gather
+  - screen
+  - derive
+  - sample
+  - fit
+  - map
+- title: Additional functions
+- contents:
+  - fitinfo
+  - mapinfo
+  - assess
+  - flights_report
+  - build_flights_db
+  - find_orthos
+
+- title: slurmcollie functions
+- contents:
+  - info
+  - showlog
+  - kill
+  - purge
