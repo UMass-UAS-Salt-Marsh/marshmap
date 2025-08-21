@@ -25,6 +25,7 @@ process all files and replace existing ones.}
 cache or process anything}
 
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
+Deal with overlaps in the shapefile--those with more than one subclass will be erased.
 The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
 }
 \description{

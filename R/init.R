@@ -74,6 +74,9 @@ init <- function() {
    
    # Note: 'the' is created as an environment by aaa.R
    
+   if(Sys.getenv('GITHUB_ACTIONS') == 'true')                                          # DON'T RUN THIS FROM GITHUB BECAUSE IT BREAKS PKGDOWN!
+      return()
+   
    f <- file.path(path.expand('~'), 'saltmarsh.yml')
    if(!file.exists(f))
       stop('User parameter file ', f, ' not found')

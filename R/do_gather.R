@@ -180,8 +180,8 @@ do_gather <- function(site, pattern = '',
             tpath <- get_file(file.path(tp, sites$transects[i]), 
                               gd)                                                   #       path and name of transects shapefile
             
-            transects <- overlaps(vect(tpath), 'Subclass') |>                       #       deal with overlaps in shapefile               *** this doesn't save the fixed shapefile, which I probably want to do ***
-  ####             rasterize(standard, field = 'SubCl')$SubCl |>                        #       convert it to raster and pull SubCl, numeric version of subclass
+            transects <- # ################ overlaps(, 'Subclass') |>                       #       deal with overlaps in shapefile               *** this doesn't save the fixed shapefile, which I probably want to do ***
+               rasterize(vect(tpath), standard, field = 'SubCl')$SubCl |>                        #       convert it to raster and pull SubCl, numeric version of subclass
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
