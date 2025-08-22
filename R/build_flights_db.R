@@ -1,4 +1,5 @@
-#' Read and update or build the flights database for a site
+#' Build or update the flights database for a site, normally called by 
+#' `screen`; call if you're unable or unwilling to run `screen`
 #'
 #' Reads any existing flights_<site>.txt from flights directory for site, 
 #' builds it or updates it for new or deleted files, saves the new version,

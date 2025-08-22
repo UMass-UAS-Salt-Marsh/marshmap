@@ -1,4 +1,4 @@
-#' Assess a model
+#' Provide a model assessment. Normally called by `fit`, but may be called separately for models applied to new sites
 #'
 #' Called by `do_fit`, but also may be called by the user. Either provide `fitid` for
 #' the model you want to assess (the normal approach), or `model`, a list with necessary

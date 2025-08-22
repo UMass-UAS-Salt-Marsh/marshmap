@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_orthos.R
 \name{find_orthos}
 \alias{find_orthos}
-\title{Find orthophotos for a site}
+\title{Find orthophotos for a site; use this to test and refine orthoimage designations}
 \usage{
 find_orthos(site, descrip)
 }

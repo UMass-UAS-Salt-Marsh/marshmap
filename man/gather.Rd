@@ -2,7 +2,7 @@
 % Please edit documentation in R/gather.R
 \name{gather}
 \alias{gather}
-\title{Collect raster data for each site}
+\title{Gather raster and vector data from the source (either Google Drive or SFTP)}
 \usage{
 gather(
   site,

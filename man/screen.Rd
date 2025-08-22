@@ -2,7 +2,7 @@
 % Please edit documentation in R/screen.R
 \name{screen}
 \alias{screen}
-\title{Screen imagery for salt marsh project}
+\title{Build the flights database and open a web app to visually screen orthoimages}
 \usage{
 screen()
 }

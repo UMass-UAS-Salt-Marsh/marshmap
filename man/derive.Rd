@@ -2,7 +2,7 @@
 % Please edit documentation in R/derive.R
 \name{derive}
 \alias{derive}
-\title{Create derived variables such as NDVI and NDRE}
+\title{Create derived variables such as NDVI and NDRE, upscaled images, and canopy height estimates}
 \usage{
 derive(
   site,

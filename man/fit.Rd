@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{fit}
 \alias{fit}
-\title{Fit models}
+\title{Build statistical models of vegetation cover, reporting model assessment}
 \usage{
 fit(
   site = NULL,
@@ -69,5 +69,5 @@ won't be added to the jobs database. Has no effect if local = FALSE.}
 \item{comment}{Optional launch / slurmcollie comment}
 }
 \description{
-Fit models
+Build statistical models of vegetation cover, reporting model assessment
 }

@@ -1,4 +1,5 @@
-#' Produce a flights report for one or more sites
+#' Produces reports on on orthoimages for all sites, including site summaries, files flagged for 
+#' repair, duplicated portable names, and all files for each site
 #'
 #' The site report is series text files. 
 #' 

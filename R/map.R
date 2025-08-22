@@ -1,4 +1,4 @@
-#' Build a geoTIFF map of predictions for specified model fit
+#' Produce geoTIFF maps of predicted vegetation cover from fitted models
 #' 
 #' Console command to launch a prediction run via `do_map`, typically in a batch job on Unity.
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitinfo.R
 \name{fitinfo}
 \alias{fitinfo}
-\title{Give info on models that have been built with \code{fit}}
+\title{Displays information on model fits, including model specification, assessment, and run statistics}
 \usage{
 fitinfo()
 }
@@ -12,5 +12,5 @@ fitinfo()
 \item{cols}{Selected columns to display}
 }
 \description{
-Give info on models that have been built with \code{fit}
+Displays information on model fits, including model specification, assessment, and run statistics
 }

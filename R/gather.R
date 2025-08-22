@@ -1,4 +1,4 @@
-#' Collect raster data for each site
+#' Gather raster and vector data from the source (either Google Drive or SFTP)
 #' 
 #' Clip to site boundary, resample and align to standard resolution. Data will be copied from various source 
 #' locations (orthophotos, DEMs, canopy height models). Robust to crashes and interruptions: cached 

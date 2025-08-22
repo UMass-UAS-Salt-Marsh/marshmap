@@ -2,7 +2,7 @@
 % Please edit documentation in R/assess.R
 \name{assess}
 \alias{assess}
-\title{Assess a model}
+\title{Provide a model assessment. Normally called by \code{fit}, but may be called separately for models applied to new sites}
 \usage{
 assess(
   fitid = NULL,

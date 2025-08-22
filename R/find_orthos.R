@@ -1,4 +1,4 @@
-#' Find orthophotos for a site
+#' Find orthophotos for a site; use this to test and refine orthoimage designations
 #' 
 #' Finds orthophotos at a given site from complete file names, portable names,
 #' search names, or regular expressions that match file names or portable names.

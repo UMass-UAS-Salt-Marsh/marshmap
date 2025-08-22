@@ -2,7 +2,7 @@
 % Please edit documentation in R/map.R
 \name{map}
 \alias{map}
-\title{Build a geoTIFF map of predictions for specified model fit}
+\title{Produce geoTIFF maps of predicted vegetation cover from fitted models}
 \usage{
 map(
   fit,

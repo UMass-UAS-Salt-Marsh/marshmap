@@ -1,4 +1,4 @@
-#' Screen imagery for salt marsh project
+#' Build the flights database and open a web app to visually screen orthoimages
 #'
 #' Used to screen images for quality, this web app allows users to view and score each image,
 #' marking images to send back for repair, and entering comments. Results are saved in the

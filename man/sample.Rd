@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample.R
 \name{sample}
 \alias{sample}
-\title{Sample Y and X variables for a site}
+\title{Sample images at points where we have field-collected data, creating a data table for modeling}
 \usage{
 sample(
   site,

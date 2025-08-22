@@ -2,7 +2,8 @@
 % Please edit documentation in R/build_flights_db.R
 \name{build_flights_db}
 \alias{build_flights_db}
-\title{Read and update or build the flights database for a site}
+\title{Build or update the flights database for a site, normally called by
+\code{screen}; call if you're unable or unwilling to run \code{screen}}
 \usage{
 build_flights_db(site, refresh = FALSE, really = FALSE)
 }

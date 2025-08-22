@@ -1,4 +1,4 @@
-#' Give info on models that have been built with `fit`
+#' Displays information on model fits, including model specification, assessment, and run statistics
 #' 
 #' @param rows Selected rows in the fits database
 #' @param cols Selected columns to display

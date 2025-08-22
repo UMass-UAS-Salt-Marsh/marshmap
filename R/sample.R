@@ -1,4 +1,4 @@
-#' Sample Y and X variables for a site
+#' Sample images at points where we have field-collected data, creating a data table for modeling
 #' 
 #' There are three mutually exclusive sampling strategies (n, p, and d). You
 #' must choose exactly one. `n` samples the total number of points provided. 

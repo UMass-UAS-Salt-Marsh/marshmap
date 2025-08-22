@@ -1,4 +1,4 @@
-#' Fit models
+#' Build statistical models of vegetation cover, reporting model assessment
 #' 
 #' @param site Site name, or vector of site names if fitting multiple sites.
 #' @param datafile Name of data file. It must be an `.RDS` file, but exclude the

@@ -2,7 +2,8 @@
 % Please edit documentation in R/flights_report.R
 \name{flights_report}
 \alias{flights_report}
-\title{Produce a flights report for one or more sites}
+\title{Produces reports on on orthoimages for all sites, including site summaries, files flagged for
+repair, duplicated portable names, and all files for each site}
 \usage{
 flights_report()
 }
