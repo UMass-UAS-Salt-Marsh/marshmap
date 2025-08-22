@@ -8,7 +8,7 @@
 #' 
 #' @param database Name of database (should be `fdb` for the model fit database, or 
 #'    `mdb` for the map database)
-#' @export
+#' @keywords internal
 
 
 load_database <- function(database) {

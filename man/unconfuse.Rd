@@ -34,3 +34,4 @@ row won't be added.
 \details{
 Print the resulting table with \code{print(confuse, mode = 'prec_recall')}.
 }
+\keyword{internal}

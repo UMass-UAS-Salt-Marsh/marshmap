@@ -18,3 +18,4 @@ For the model fit database, \code{fdb}, the file \code{last_fit_id.txt} is read 
 sequence for empty databases, as these ids are \emph{never} reused. If the file isn't
 found, use the max id from \code{fdb} or 0 as a last resort, and display a warning.
 }
+\keyword{internal}

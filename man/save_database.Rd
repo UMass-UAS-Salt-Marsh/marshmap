@@ -18,3 +18,4 @@ Saves the database in directory \code{the$dbdir}. Previous versions are renamed 
 For the model fit database, \code{fdb}, \code{the$last_fit_id} is written to \code{last_fit_id.txt} to track
 the highest fit id used, as these ids are \emph{never} reused.
 }
+\keyword{internal}

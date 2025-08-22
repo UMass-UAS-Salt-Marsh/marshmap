@@ -10,7 +10,7 @@
 #' @param addx If TRUE, prepends 'x' to files starting with a digit
 #' @returns A vector corresponding to files, TRUE for those that are up to date
 #' @importFrom googledrive drive_reveal
-#' @export
+#' @keywords internal
 
 
 check_files <- function(files, gd, sourcedir, resultdir, addx = FALSE) {

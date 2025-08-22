@@ -27,7 +27,7 @@
 #' @param files Vector of file names
 #' @returns Vector of cleaned-up file names
 #' @importFrom stringr str_replace_all
-#' @export
+#' @keywords internal
 
 
 fix_names <- function(files) {

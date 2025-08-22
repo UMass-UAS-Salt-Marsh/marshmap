@@ -5,7 +5,7 @@
 #'    `tolower(site)`, 3 letter code
 #' @param share Share site name. For Google Drive, use `share`
 #' @returns Directory path including specified site.
-#' @export
+#' @keywords internal
 
 
 resolve_dir <- function(dir, site, share = site) {

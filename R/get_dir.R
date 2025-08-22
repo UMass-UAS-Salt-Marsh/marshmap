@@ -27,7 +27,7 @@
 #' @param sftp list of url = address of site, user = credentials (optional)
 #' @importFrom RCurl getURL 
 #' @importFrom lubridate as_datetime mdy_hm
-#' @export
+#' @keywords internal
 
 
 get_dir <- function(path, sourcedrive = 'local', sftp) {

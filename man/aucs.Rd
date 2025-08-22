@@ -33,3 +33,4 @@ If class levels all end in numbers (e.g., \code{class1}, \code{class}, \code{cla
 result will be sorted by the numbers so you won't get crap like \code{class1},
 \code{class10}, \code{class100}.
 }
+\keyword{internal}

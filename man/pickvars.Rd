@@ -14,3 +14,4 @@ pickvars(n, importance = the$fit$import)
 \description{
 pick variables based on importance >= n
 }
+\keyword{internal}

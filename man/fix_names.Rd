@@ -37,3 +37,4 @@ right:
 This would change an orthophoto named \code{x01Sept20_RR_MidOut_Zenmuse_Ortho.tif} to
 \code{x01Sep20_Red_Mid_Out_X3_Ortho.tif}.
 }
+\keyword{internal}

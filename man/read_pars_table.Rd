@@ -15,3 +15,4 @@ Data frame of the parameter file
 \description{
 Given a parameter name the corresponds to tab-delimited file, read and return the file
 }
+\keyword{internal}

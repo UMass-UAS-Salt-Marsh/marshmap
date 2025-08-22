@@ -16,7 +16,7 @@
 #' @param auc If TRUE, add AUC to the `byClass` table
 #' @param fit A `ranger` model object (only needed if `auc` = TRUE)
 #' @returns A new model object with the confusion matrix cleaned up
-#' @export
+#' @keywords internal
 
 
 unconfuse <- function(confuse, auc = TRUE, fit = NULL) {

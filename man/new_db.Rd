@@ -18,3 +18,4 @@ or when an existing database is a hopeless mess. Use with great care--this
 function will destroy any existing database and backups. \strong{This function is drastic and
 unrecoverable.}
 }
+\keyword{internal}

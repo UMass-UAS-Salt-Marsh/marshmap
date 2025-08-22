@@ -28,3 +28,4 @@ A vector corresponding to files, TRUE for those that are up to date
 \description{
 Check that each source file exists on the result directory and is up to date
 }
+\keyword{internal}

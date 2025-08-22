@@ -21,7 +21,7 @@
 #' @returns A vector with the AUC for each class
 #' @importFrom pROC auc
 #' @importFrom stats setNames
-#' @export
+#' @keywords internal
 
 
 aucs <- function(fit, sort = TRUE) {

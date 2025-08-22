@@ -20,3 +20,4 @@ Directory path including specified site.
 \description{
 Resolve directory with embedded \verb{<site>} or \verb{<share>}
 }
+\keyword{internal}

@@ -39,3 +39,4 @@ search_names('mica, swir | ortho, dem | low:high | spring | 2018')
 search_names('2022 | oth | mid | mica | ortho | mean-w5')
 search_names('20x22 | other | muddle | micro')                 # this throws an error
 }
+\keyword{internal}

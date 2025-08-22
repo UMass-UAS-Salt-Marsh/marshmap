@@ -9,7 +9,7 @@
 #' @param database Name of database (should be `fdb` for the model fit database, or 
 #'    `mdb` for the map database)
 #' @importFrom tools file_path_sans_ext
-#' @export
+#' @keywords internal
 
 
 save_database <- function(database) {

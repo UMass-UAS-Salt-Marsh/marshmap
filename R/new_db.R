@@ -8,7 +8,7 @@
 #' 
 #' @param database Name of database (`fdb` or `mdb`)
 #' @param really If TRUE, creates database, **destroying existing database**
-#' @export 
+#' @keywords internal
 
 
 new_db <- function(database, really = FALSE) {
