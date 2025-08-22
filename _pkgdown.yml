@@ -22,18 +22,18 @@ reference:
   - init
   
 - title: internal
-do_gather
-do_derive
-do_sample
-do_fit
-do_map
-gather_finish
-sample_finish
-fit_finish
-map_finish
-the
-aaa
-zzz
+  - do_gather
+  - do_derive
+  - do_sample
+  - do_fit
+  - do_map
+  - gather_finish
+  - sample_finish
+  - fit_finish
+  - map_finish
+  - the
+  - aaa
+  - zzz
 
 
 
