@@ -31,9 +31,8 @@ reference:
   - build_flights_db
   - find_orthos
 
-  
 - title: internal
-- contents:
+  contents:
   - do_gather
   - do_derive
   - do_sample
@@ -48,9 +47,9 @@ reference:
 
 
 
-# - title: slurmcollie functions
-# - contents:
-#   - info
+- title: slurmcollie functions
+- contents:
+   - slurmcollie::info
 #   - showlog
 #   - kill
 #   - purge
