@@ -52,37 +52,37 @@
           <code><a href="gather.html">gather()</a></code>
 
         </dt>
-        <dd>Collect raster data for each site</dd>
+        <dd>Gather raster and vector data from the source (either Google Drive or SFTP)</dd>
       </dl><dl><dt>
 
           <code><a href="screen.html">screen()</a></code>
 
         </dt>
-        <dd>Screen imagery for salt marsh project</dd>
+        <dd>Build the flights database and open a web app to visually screen orthoimages</dd>
       </dl><dl><dt>
 
           <code><a href="derive.html">derive()</a></code>
 
         </dt>
-        <dd>Create derived variables such as NDVI and NDRE</dd>
+        <dd>Create derived variables such as NDVI and NDRE, upscaled images, and canopy height estimates</dd>
       </dl><dl><dt>
 
           <code><a href="sample.html">sample()</a></code>
 
         </dt>
-        <dd>Sample Y and X variables for a site</dd>
+        <dd>Sample images at points where we have field-collected data, creating a data table for modeling</dd>
       </dl><dl><dt>
 
           <code><a href="fit.html">fit()</a></code>
 
         </dt>
-        <dd>Fit models</dd>
+        <dd>Build statistical models of vegetation cover, reporting model assessment</dd>
       </dl><dl><dt>
 
           <code><a href="map.html">map()</a></code>
 
         </dt>
-        <dd>Build a geoTIFF map of predictions for specified model fit</dd>
+        <dd>Produce geoTIFF maps of predicted vegetation cover from fitted models</dd>
       </dl></div><div class="section level2">
       <h2 id="reporting-functions">Reporting functions<a class="anchor" aria-label="anchor" href="#reporting-functions"></a></h2>
 
@@ -105,19 +105,19 @@
           <code><a href="fitinfo.html">fitinfo()</a></code>
 
         </dt>
-        <dd>Give info on models that have been built with <code>fit</code></dd>
+        <dd>Displays information on model fits, including model specification, assessment, and run statistics</dd>
       </dl><dl><dt>
 
           <code><a href="assess.html">assess()</a></code>
 
         </dt>
-        <dd>Assess a model</dd>
+        <dd>Provide a model assessment. Normally called by <code>fit</code>, but may be called separately for models applied to new sites</dd>
       </dl><dl><dt>
 
           <code><a href="flights_report.html">flights_report()</a></code>
 
         </dt>
-        <dd>Produce a flights report for one or more sites</dd>
+        <dd>Produces reports on on orthoimages for all sites, including site summaries, files flagged for repair, duplicated portable names, and all files for each site</dd>
       </dl></div><div class="section level2">
       <h2 id="utility-functions">Utility functions<a class="anchor" aria-label="anchor" href="#utility-functions"></a></h2>
 
@@ -146,16 +146,22 @@
           <code><a href="build_flights_db.html">build_flights_db()</a></code>
 
         </dt>
-        <dd>Read and update or build the flights database for a site</dd>
+        <dd>Build or update the flights database for a site, normally called by <code>screen</code>; call if you're unable or unwilling to run <code>screen</code></dd>
       </dl><dl><dt>
 
           <code><a href="find_orthos.html">find_orthos()</a></code>
 
         </dt>
-        <dd>Find orthophotos for a site</dd>
+        <dd>Find orthophotos for a site; use this to test and refine orthoimage designations</dd>
       </dl></div><div class="section level2">
       <h2 id="slurmcollie-functions">slurmcollie functions<a class="anchor" aria-label="anchor" href="#slurmcollie-functions"></a></h2>
 
+
+
+
+    </div><div class="section level2">
+
+      <h3 id="these-functions-are-part-of-the-slurmcollie-https-github-com-umasscds-slurmcollie-package-used-to-manage-batch-jobs-on-the-unity-cluster-">These functions are part of the <a href="https://github.com/UMassCDS/slurmcollie" class="external-link">slurmcollie</a> package, used to manage batch jobs on the Unity cluster.<a class="anchor" aria-label="anchor" href="#these-functions-are-part-of-the-slurmcollie-https-github-com-umasscds-slurmcollie-package-used-to-manage-batch-jobs-on-the-unity-cluster-"></a></h3>
 
 
 
@@ -170,6 +176,24 @@
 
         </dt>
         <dd>Give info on batch jobs (from slurmcollie)</dd>
+      </dl><dl><dt>
+
+          <code><a href="https://rdrr.io/pkg/slurmcollie/man/showlog.html" class="external-link">showlog()</a></code>
+
+        </dt>
+        <dd>Prints the contents log file for a batch job (from slurmcollie)</dd>
+      </dl><dl><dt>
+
+          <code><a href="https://rdrr.io/pkg/slurmcollie/man/kill.html" class="external-link">kill()</a></code>
+
+        </dt>
+        <dd>Kill launched Slurm jobs (from slurmcollie)</dd>
+      </dl><dl><dt>
+
+          <code><a href="https://rdrr.io/pkg/slurmcollie/man/purge.html" class="external-link">purge()</a></code>
+
+        </dt>
+        <dd>Purge selected jobs from the jobs database (from slurmcollie)</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
