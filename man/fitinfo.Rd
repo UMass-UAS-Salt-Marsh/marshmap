@@ -2,15 +2,74 @@
 % Please edit documentation in R/fitinfo.R
 \name{fitinfo}
 \alias{fitinfo}
-\title{Displays information on model fits, including model specification, assessment, and run statistics}
+\title{Displays information on model fits, including model specification, assessment,
+and run statistics \emph{or} displays a model assessment \emph{or} sets model scores or
+comments}
 \usage{
-fitinfo()
+fitinfo(rows = "all", cols = "normal", report = TRUE)
 }
 \arguments{
-\item{rows}{Selected rows in the fits database}
+\item{rows}{Selected rows in the fits database. Use one of
+\itemize{
+\item a vector of \code{fitids}
+\item 'all' for all fits
+\item a named list to filter fits. List items are \verb{<field in fdb> = <value>},
+where \verb{<value>} is a regex for character fields, or an actual value (or vector of
+values) for logical or numeric fields.
+}}
 
-\item{cols}{Selected columns to display}
+\item{cols}{Selected columns to display. Use one of
+\itemize{
+\item \emph{brief} (1)
+\item \emph{normal} (2)
+\item \emph{long} (3)
+\item \emph{all} (4)
+\item \emph{report}
+#'   - 1, 2, 3, or 4 is a shortcut for the above column sets
+\item A vector of column names to include
+}}
+
+\item{report}{If TRUE, give a report (on a single fit); otherwise, list info on fits.
+If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE}
+
+\item{score}{Set the subjective model score in the fits database. This may be numeric
+or character; it'll be treated as a character.}
+
+\item{assess}{Sets the assessment comment in the fits database.}
+
+\item{map}{Sets the map comment in the fits database.}
+
+\item{sort}{The name of the column to be used to sort the table}
+
+\item{decreasing}{If TRUE, sort in descending order}
+
+\item{nrows}{Number of rows to display in the table. Positive numbers
+display the first \emph{n} rows, and negative numbers display the last \emph{n} rows.
+Use \code{nrows = NA} to display all rows.}
+
+\item{quiet}{If TRUE, doesn't print anything, just returns values}
+
+\item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
+}
+\value{
+The fit table or assessment, invisibly
 }
 \description{
-Displays information on model fits, including model specification, assessment, and run statistics
+\code{fitinfo} works in three different modes:
+\itemize{
+\item \verb{fitinfo(rows = <selected rows>, cols = <selected columns>)} displays a table
+of selected rows and columns
+\item \verb{fitinfo(rows = <a single row>, cols = 'report')} displays a report for the
+selected fit id, focusing on the model assessment (the same information in
+the \code{fit} log)
+\item Any of
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{fitinfo(rows = <a single row>, score = <fit score>)
+fitinfo(rows = <a single row>, assess = 'an assessment comment')
+fitinfo(rows = <a single row>, map = 'a map comment')
+}\if{html}{\out{</div>}}
+
+sets the subjective model fit score, the assessment comment, or the map
+comment. Any of these may be combined in a single call.
+}
 }
