@@ -1,4 +1,7 @@
-#' Build statistical models of vegetation cover, reporting model assessment
+#' Build statistical models of vegetation cover
+#' 
+#' Given one or more sites and a model specification, builds a model of vegetation
+#' cover and report model assessment.
 #' 
 #' @param site Site name, or vector of site names if fitting multiple sites.
 #' @param datafile Name of data file. It must be an `.RDS` file, but exclude the

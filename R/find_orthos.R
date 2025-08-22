@@ -1,8 +1,9 @@
-#' Find orthophotos for a site; use this to test and refine orthoimage designations
+#' Find orthophotos for a site
 #' 
 #' Finds orthophotos at a given site from complete file names, portable names,
 #' search names, or regular expressions that match file names or portable names.
-#' These may be mixed and matched, separated by `+`.
+#' These may be mixed and matched, separated by `+`. This function is primarily
+#' used internally, but you may use this to test and refine orthoimage designations.
 #' 
 #' Note that portable names will be filtered so there is only one result for 
 #' each unique portable name. When there are duplicate portable names at a site,

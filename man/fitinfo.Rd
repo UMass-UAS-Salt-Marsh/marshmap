@@ -2,9 +2,7 @@
 % Please edit documentation in R/fitinfo.R
 \name{fitinfo}
 \alias{fitinfo}
-\title{Displays information on model fits, including model specification, assessment,
-and run statistics \emph{or} displays a model assessment \emph{or} sets model scores or
-comments}
+\title{Display information on model fits}
 \usage{
 fitinfo(rows = "all", cols = "normal", report = TRUE)
 }
@@ -25,7 +23,7 @@ values) for logical or numeric fields.
 \item \emph{long} (3)
 \item \emph{all} (4)
 \item \emph{report}
-#'   - 1, 2, 3, or 4 is a shortcut for the above column sets
+\item 1, 2, 3, or 4 is a shortcut for the above column sets
 \item A vector of column names to include
 }}
 
@@ -55,6 +53,11 @@ Use \code{nrows = NA} to display all rows.}
 The fit table or assessment, invisibly
 }
 \description{
+Display model specification, assessment,
+and run statistics \emph{or} display a model assessment \emph{or} set model scores or
+comments.
+}
+\details{
 \code{fitinfo} works in three different modes:
 \itemize{
 \item \verb{fitinfo(rows = <selected rows>, cols = <selected columns>)} displays a table

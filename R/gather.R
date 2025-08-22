@@ -1,6 +1,7 @@
-#' Gather raster and vector data from the source (either Google Drive or SFTP)
+#' Gather and prepare GIS data from data sources
 #' 
-#' Clip to site boundary, resample and align to standard resolution. Data will be copied from various source 
+#' Gather raster and vector data from the source (either Google Drive or SFTP), and clip to site 
+#' boundary, resample and align to standard resolution. Data will be copied from various source 
 #' locations (orthophotos, DEMs, canopy height models). Robust to crashes and interruptions: cached 
 #' datasets that are fully downloaded will be used over re-downloading, and processed rasters won't be 
 #' re-processed unless `update = TRUE` or `replace = TRUE`.

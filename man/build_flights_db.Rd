@@ -2,8 +2,7 @@
 % Please edit documentation in R/build_flights_db.R
 \name{build_flights_db}
 \alias{build_flights_db}
-\title{Build or update the flights database for a site, normally called by
-\code{screen}; call if you're unable or unwilling to run \code{screen}}
+\title{Build or update the flights database}
 \usage{
 build_flights_db(site, refresh = FALSE, really = FALSE)
 }
@@ -22,12 +21,15 @@ A list of
 \item{db_name}{Path and name of database table}
 }
 \description{
+Build or update the flights database for a site, normally called by
+\code{screen}; call if you're unable or unwilling to run \code{screen}.
+}
+\details{
 Reads any existing flights_\if{html}{\out{<site>}}.txt from flights directory for site,
 builds it or updates it for new or deleted files, saves the new version,
 and returns the path/name and table. Finds classes from \code{pars.yml} as
 case-insensitive underscore-separated words (after applying name fixes).
-}
-\details{
+
 Files with changed timestamps are presumed to have been re-downloaded
 with gather (as stamps are set in processing). Files shouldn't be
 re-downloaded and replaced unless they've changed on the source, so

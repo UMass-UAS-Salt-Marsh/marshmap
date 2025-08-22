@@ -2,7 +2,7 @@
 % Please edit documentation in R/derive.R
 \name{derive}
 \alias{derive}
-\title{Create derived variables such as NDVI and NDRE, upscaled images, and canopy height estimates}
+\title{Create derived variables}
 \usage{
 derive(
   site,
@@ -61,12 +61,14 @@ no effect if local = FALSE.}
 \item{comment}{Optional slurmcollie comment}
 }
 \description{
+Crease derived variables such as NDVI and NDRE, upscaled images, and canopy height estimates.
+}
+\details{
 This function creates any of a number of univariate and bivariate metrics derived from
 raster data, such as NDVI and NDRE. Results are written as rasters to the \code{flights} directory,
 with the metric included in the name. These metrics will be treated like source layers in
 subsequent processing and modeling.
-}
-\details{
+
 For univariate metrics, supply one or more layer names via \code{pattern1}. All metrics will be
 calculated for each layer specified by \code{pattern1}. Results will be named \verb{<layer>__<metric>}.
 

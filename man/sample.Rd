@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample.R
 \name{sample}
 \alias{sample}
-\title{Sample images at points where we have field-collected data, creating a data table for modeling}
+\title{Sample orthoimages for field-collected data}
 \usage{
 sample(
   site,
@@ -70,12 +70,14 @@ no effect if local = FALSE.}
 \item{comment}{Optional slurmcollie comment}
 }
 \description{
+Sample images at points where we have field-collected data, creating a data table for modeling.
+}
+\details{
 There are three mutually exclusive sampling strategies (n, p, and d). You
 must choose exactly one. \code{n} samples the total number of points provided.
 \code{p} samples the proportion of total points (after balancing, if \code{balance} is
 selected. \code{d} samples points with a mean (but not guaranteed) minimum distance.
-}
-\details{
+
 Portable names are used for variable names in the resulting data files. Dashes
 from modifications are changed to underscore to avoid causing trouble.
 

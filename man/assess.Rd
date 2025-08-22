@@ -2,7 +2,7 @@
 % Please edit documentation in R/assess.R
 \name{assess}
 \alias{assess}
-\title{Provide a model assessment. Normally called by \code{fit}, but may be called separately for models applied to new sites}
+\title{Assess a model fit from validation data}
 \usage{
 assess(
   fitid = NULL,
@@ -46,13 +46,15 @@ Invisibly, a named list of
 }
 }
 \description{
+Provide a model assessment. Normally called by \code{fit}, but may be called separately for models applied to new sites.
+}
+\details{
 Called by \code{do_fit}, but also may be called by the user. Either provide \code{fitid} for
 the model you want to assess (the normal approach), or \code{model}, a list with necessary
 arguments (the approach used by \code{do_fit}, becaue the model is not yet in the database).
 When you call \code{assess} from the console, the fits database is not updated with the new
 assessment.
-}
-\details{
+
 You may supply \code{newdata} to assess a model on sites different from what the model
 was built on. \code{newdata} is a data frame that conforms to the data the model was
 built on. (\emph{\strong{how exactly}}?)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_orthos.R
 \name{find_orthos}
 \alias{find_orthos}
-\title{Find orthophotos for a site; use this to test and refine orthoimage designations}
+\title{Find orthophotos for a site}
 \usage{
 find_orthos(site, descrip)
 }
@@ -31,7 +31,8 @@ Data frame with
 \description{
 Finds orthophotos at a given site from complete file names, portable names,
 search names, or regular expressions that match file names or portable names.
-These may be mixed and matched, separated by \code{+}.
+These may be mixed and matched, separated by \code{+}. This function is primarily
+used internally, but you may use this to test and refine orthoimage designations.
 }
 \details{
 Note that portable names will be filtered so there is only one result for

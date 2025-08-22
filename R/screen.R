@@ -1,7 +1,8 @@
-#' Build the flights database and open a web app to visually screen orthoimages
+#' Visually screen orthoimages via a web app
 #'
 #' Used to screen images for quality, this web app allows users to view and score each image,
-#' marking images to send back for repair, and entering comments. Results are saved in the
+#' marking images to send back for repair, and entering comments. The flights database is built
+#' the first time each site is visited in the app. Results are saved in the
 #' flights database for each site, and are used by `flights_report`. Image scores are used to 
 #' help select the image to use when there are duplicated portable names. Minimum scores may
 #' be included in search names. Rejected images are never used in fitting.

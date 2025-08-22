@@ -2,7 +2,7 @@
 % Please edit documentation in R/gather.R
 \name{gather}
 \alias{gather}
-\title{Gather raster and vector data from the source (either Google Drive or SFTP)}
+\title{Gather and prepare GIS data from data sources}
 \usage{
 gather(
   site,
@@ -50,7 +50,8 @@ no effect if local = FALSE.}
 \item{comment}{Optional slurmcollie comment}
 }
 \description{
-Clip to site boundary, resample and align to standard resolution. Data will be copied from various source
+Gather raster and vector data from the source (either Google Drive or SFTP), and clip to site
+boundary, resample and align to standard resolution. Data will be copied from various source
 locations (orthophotos, DEMs, canopy height models). Robust to crashes and interruptions: cached
 datasets that are fully downloaded will be used over re-downloading, and processed rasters won't be
 re-processed unless \code{update = TRUE} or \code{replace = TRUE}.

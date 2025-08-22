@@ -1,4 +1,6 @@
-#' Create derived variables such as NDVI and NDRE, upscaled images, and canopy height estimates
+#' Create derived variables
+#' 
+#' Crease derived variables such as NDVI and NDRE, upscaled images, and canopy height estimates.
 #' 
 #' This function creates any of a number of univariate and bivariate metrics derived from
 #' raster data, such as NDVI and NDRE. Results are written as rasters to the `flights` directory,
