@@ -4,6 +4,10 @@ template:
 
 reference:
 - title: Processing sequence
+- subtitle: The primary sequence of preparing data, building models, and making maps.
+  desc: These functions normally spawn batch jobs on Unity via 
+    [slurmcollie](https://github.com/UMassCDS/slurmcollie) (except for `screen` 
+    which is intrinsically interactive), though you can run locally with `local = TRUE`.
 - contents:
   - gather
   - screen
@@ -11,15 +15,22 @@ reference:
   - sample
   - fit
   - map
-- title: Additional functions
+  
+- title: Reporting functions
+- subtitle: These functions report data and model status
 - contents:
   - fitinfo
 #  - mapinfo
   - assess
   - flights_report
+  
+- title: Utility functions
+- subtitle: Uncommonly-used utility functions
+- contents:
+  - init
   - build_flights_db
   - find_orthos
-  - init
+
   
 - title: internal
   - do_gather
