@@ -20,7 +20,7 @@
 #' 
 #' @importFrom gargle token_fetch
 #' @importFrom googledrive drive_auth drive_find
-#' @export
+#' @keywords internal
 
 
 set_up_google_drive <- function() {

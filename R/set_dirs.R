@@ -3,7 +3,7 @@
 #' Sets all directory names from `pars.yml` or defaults. Note that `basedir`, `parsdir`, 
 #' and `scratchdir` are set by [init()].
 #' 
-#' @export
+#' @keywords internal
 
 
 set_dirs <- function() {

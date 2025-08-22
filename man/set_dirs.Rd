@@ -10,3 +10,4 @@ set_dirs()
 Sets all directory names from \code{pars.yml} or defaults. Note that \code{basedir}, \code{parsdir},
 and \code{scratchdir} are set by \code{\link[=init]{init()}}.
 }
+\keyword{internal}

@@ -24,3 +24,4 @@ for separate code.
 \if{html}{\out{<div class="sourceCode">}}\preformatted{googledrive::drive_auth(token = readRDS('~/.google_auth/google_drive_token.RDS'))
 }\if{html}{\out{</div>}}
 }
+\keyword{internal}
