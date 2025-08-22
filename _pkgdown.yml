@@ -4,8 +4,8 @@ template:
 
 reference:
 - title: Processing sequence
-- subtitle: The primary sequence of preparing data, building models, and making maps.
-  desc: These functions normally spawn batch jobs on Unity via 
+  desc: The primary sequence of preparing data, building models, and making maps.
+    These functions normally spawn batch jobs on Unity via 
     [slurmcollie](https://github.com/UMassCDS/slurmcollie) (except for `screen` 
     which is intrinsically interactive), though you can run locally with `local = TRUE`.
 - contents:
@@ -17,7 +17,7 @@ reference:
   - map
   
 - title: Reporting functions
-- subtitle: These functions report data and model status
+  desc: These functions report data and model status.
 - contents:
   - fitinfo
 #  - mapinfo
@@ -25,11 +25,20 @@ reference:
   - flights_report
   
 - title: Utility functions
-- subtitle: Uncommonly-used utility functions
+  desc: Uncommonly-used utility functions.
 - contents:
   - init
   - build_flights_db
   - find_orthos
+
+- title: slurmcollie functions
+  desc: These functions are part of the [slurmcollie](https://github.com/UMassCDS/slurmcollie) 
+    package, used to manage batch jobs on the Unity cluster.
+- contents:
+   - slurmcollie::info
+   - slurmcollie::showlog
+   - slurmcollie::kill
+   - slurmcollie::purge
 
 - title: internal
   contents:
@@ -44,12 +53,3 @@ reference:
   - map_finish
   - the
   - .onLoad
-
-- title: slurmcollie functions
-- subtitle: These functions are part of the [slurmcollie](https://github.com/UMassCDS/slurmcollie) 
-    package, used to manage batch jobs on the Unity cluster.
-- contents:
-   - slurmcollie::info
-   - slurmcollie::showlog
-   - slurmcollie::kill
-   - slurmcollie::purge
