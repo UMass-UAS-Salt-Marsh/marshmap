@@ -47,7 +47,7 @@ reference:
 
 - title: slurmcollie functions
 - subtitle: These functions are part of the [slurmcollie](https://github.com/UMassCDS/slurmcollie) 
-  package, used to manage batch jobs on the Unity cluster.
+    package, used to manage batch jobs on the Unity cluster.
 - contents:
    - slurmcollie::info
    - slurmcollie::showlog
