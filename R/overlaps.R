@@ -10,9 +10,10 @@
 overlaps <- function(polys, field) {
    
    
-   x <- st_intersection(polys)                                                   # intersect shapefile with itself                                     
-   b <- sapply(x$origins, function(i) length(unique(polys[i, field])) == 1)      # TRUE if all overlaps are equal
-   z <- x[b, ]                                                                   # keep these
+   x <- st_intersection(polys)                                                         # intersect shapefile with itself                                     
+   b <- sapply(x$origins, function(i) length(unique(polys[[field]][i])) == 1)          # TRUE if all overlaps are equal
+   z <- x[b, names(x) != 'origins']                                                    # keep these; don't want origins list
+   z <-z[st_geometry_type(z) %in% c("POLYGON", "MULTIPOLYGON"), ]                      # only want polys
    
    z
 }
