@@ -2,37 +2,52 @@
 #' 
 #' Console command to launch a prediction run via `do_map`, typically in a batch job on Unity.
 #' 
-#' @param fit Model ID, fit filename, or fit object - figure it out)
-#' @param site Three-letter site abbreviation
+#' @param fit Model fit ID, fit object, or path to a .RDS with a fit object
+#' @param site Three letter site code. If fitting from a fit id that was built on a single
+#'    site, you may omit `site` to map the same site. If you want to map sites other than the 
+#'    site the model was built on, or the model was built on mutiple sites, site is required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
 #' @param result Optional result filename or path and filename. If not provided, uses name from 
 #'    database if it exists. Otherwise, constructs a name. If no path is supplied, `the$predicteddir`
 #'    for the current site is used.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
-#' @param comment Optional run comment
+#' @param comment Optional map/slurmcollie comment
 #' @importFrom slurmcollie launch
 #' @export
 
 
-
-# need to add resources, etc. See e.g. gather.
-
-map <- function(fit, site = the$site, clip = NULL, result = NULL, local = FALSE, comment = paste0('Map')) {
+map <- function(fit, site = NULL, clip = NULL, result = NULL, local = FALSE, comment = paste0('Map')) {
    
    
-   if(!is.list(fit)) {                                                                 # if fit isn't a list (thus a fit object),
-      if(is.character(fit))                                                            #    if it's a character (thus a file name),
-         fit <- readRDS(fit)                                                           #       read it
-      else                                                                             #    else, it's a number (thus fit id in database),
-         print('load fit from databse')                                                #       pull fit from database
-   }                                                                                   # otherwise, it's already a fit object
+   if(is.list(fit)) {                                                                  # if fit is a list, it's (1) fit object,
+      fitid <- NULL
+      fitfile <- paste0('zz_', as.character(round(as.numeric(Sys.time())), '.RDS'))    #       make up a file name to pass to do_fit
+      writeRDS(fit, file.path(the$modelsdir, paste0('zz', fitid, '_extra.RDS')))       #       and save it the model
+   }
+   else {                                                                              #    else, one of
+      if(is.character(fit))                                                            #    if it's a character, it's (2) file name,
+         fitid <- NULL                                                                 #       we'll read it in do_fit
+      else {                                                                           #    else, it's a number, so (3) fit id in database,
+         fitid <- fit                                               
+         fitfile <- file.path(the$modelsdir, paste0(fitid, '_extra.RDS'))              #       we'll pull fit from database in do_fit
+      }
+   }
    
    
-   if(is.null(site) & is.null(the$site))                                               # get the site
-      stop('Site name isn\'t already specified; it must be set with the site option')
-   if(is.null(site))
-      site <- the$site
-   the$site <- site                                                                    # and save it
+   if(is.null(site)) {                                                                 # if no site specified, 
+      if(!is.null(fitid))                                                              #    if fit is from database, use that, otherwise error
+         site <- the$fdb$site
+      else 
+         stop('site must be supplied when fit is not from fits database')
+   }
+   else {
+      site <- get_sites(site)                                                          # get one or more sites
+   }
+   if(length(site != 1))
+      stop('map requires exactly one site')
+   
+   
+   
    
    
    res_path <- resolve_dir(the$predicteddir, site)                                     # default result path
@@ -51,9 +66,9 @@ map <- function(fit, site = the$site, clip = NULL, result = NULL, local = FALSE,
    ))
    
    
-   
-   source <- resolve_dir(the$flightsdir, site)
-   runinfo <- paste0(result, '.RDS')
-   
-   launch('do_map', moreargs = list(sourcedir = source, result = result, runinfo = runinfo, clip = clip), local = local, finish = 'map_finish')
+   launch('do_map', 
+          moreargs = list(site = site, fitid = fitid, fitfile = fitfile, 
+                          result = result, clip = clip), 
+          finish = 'map_finish', callerid = the$mdb$id[i], 
+          local = local, trap = trap, resources = resources, comment = comment)
 }

@@ -3,7 +3,7 @@
 #' Given one or more sites and a model specification, builds a model of vegetation
 #' cover and report model assessment.
 #' 
-#' @param site Site name, or vector of site names if fitting multiple sites.
+#' @param site Three letter site code, or vector of site names if fitting multiple sites.
 #' @param datafile Name of data file. It must be an `.RDS` file, but exclude the
 #'   extension. If fitting multiple sites, either use a single datafile name
 #'   shared among sites, or a vector matching site.
