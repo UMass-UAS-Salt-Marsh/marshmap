@@ -24,7 +24,7 @@ fit(
 )
 }
 \arguments{
-\item{site}{Site name, or vector of site names if fitting multiple sites.}
+\item{site}{Three letter site code, or vector of site names if fitting multiple sites.}
 
 \item{datafile}{Name of data file. It must be an \code{.RDS} file, but exclude the
 extension. If fitting multiple sites, either use a single datafile name
@@ -57,8 +57,7 @@ of the testing and validation sets.}
 \item{hyper}{Hyperparameters. \emph{\strong{To be defined.}}}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}.
-These take priority
-#'    over the function's defaults.}
+These take priority over the function's defaults.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 

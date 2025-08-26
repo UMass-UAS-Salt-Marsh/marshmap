@@ -49,13 +49,28 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    for(i in seq_len(nrow(sites)))                                                         # read data files and merge them
       r[[i]] <- readRDS(sites$datafile[i])
    
+   
+   # This will replace any 1-column data.frame columns with numeric vectors               # ********** need to track this down at the source in sample **********************
+   r_fixed <- as.data.frame(lapply(r, function(col) {
+      if (is.data.frame(col) && ncol(col) == 1) {
+         # Extract the column as a vector
+         col[[1]]
+      } else {
+         col
+      }
+   }))
+   
+   r <- r_fixed
+   
+   
+   
    names(r) <- sites$site
-   r <- bind_rows(r, .id = 'site')
+ #  r <- bind_rows(r, .id = 'site')
    
    r$subclass <- as.factor(r$subclass)                                                    # we want subclass to be factor, not numeric
    
    
- ###  r <- r[1:1000, ]   ########################## TRIM THE DATA FILE TO SPEED THINGS UP FOR TESTING
+   ###  r <- r[1:1000, ]   ########################## TRIM THE DATA FILE TO SPEED THINGS UP FOR TESTING
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual
@@ -150,6 +165,7 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    model <- reformulate(names(training)[-1], 'subclass')
    
    message('Training set has ', dim(training)[2] - 1, ' predictor variables and ', dim(training)[1], ' cases')
+   
    
    a <- Sys.time()
    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model

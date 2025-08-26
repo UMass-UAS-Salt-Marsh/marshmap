@@ -6,27 +6,36 @@
 \usage{
 map(
   fit,
-  site = the$site,
+  site = NULL,
   clip = NULL,
-  result = NULL,
+  resources = NULL,
   local = FALSE,
+  trap = FALSE,
   comment = paste0("Map")
 )
 }
 \arguments{
-\item{fit}{Model ID, fit filename, or fit object - figure it out)}
+\item{fit}{Fit id in the fits database, fit object, or path to a .RDS with a
+fit object}
 
-\item{site}{Three-letter site abbreviation}
+\item{site}{Three letter site code. If fitting from a fit id that was built
+on a single site, you may omit \code{site} to map the same site (this is the
+most common situation). If you want to map sites other than the site the
+model was built on, or the model was built on mutiple sites, \code{site} is
+required.}
 
 \item{clip}{Optional clip, vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
 
-\item{result}{Optional result filename or path and filename. If not provided, uses name from
-database if it exists. Otherwise, constructs a name. If no path is supplied, \code{the$predicteddir}
-for the current site is used.}
+\item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}.
+These take priority over the function's defaults.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 
-\item{comment}{Optional run comment}
+\item{trap}{If TRUE, trap errors in local mode; if FALSE, use normal R error
+handling. Use this for debugging. If you get unrecovered errors, the job
+won't be added to the jobs database. Has no effect if local = FALSE.}
+
+\item{comment}{Optional launch / slurmcollie comment}
 }
 \description{
 Console command to launch a prediction run via \code{do_map}, typically in a batch job on Unity.

@@ -24,8 +24,7 @@
 #' @param auc If TRUE, calculate class probabilities so we can calculate AUC.
 #' @param hyper Hyperparameters. ***To be defined.***
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
-#'   These take priority
-#' #'    over the function's defaults.
+#'   These take priority over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error
 #'   handling. Use this for debugging. If you get unrecovered errors, the job

@@ -2,33 +2,27 @@
 % Please edit documentation in R/do_map.R
 \name{do_map}
 \alias{do_map}
-\title{Build a map of geoTIFF of predictions for specified model fit}
+\title{Produce geoTIFF maps of predicted vegetation cover from fitted models}
 \usage{
-do_map(
-  fit,
-  clip = NULL,
-  sourcedir = the$flightsdir,
-  result = NULL,
-  cores = 1,
-  runinfo = NULL
-)
+do_map(site, fitid, fitfile, clip, rep = NULL)
 }
 \arguments{
-\item{fit}{Model fit object}
+\item{site}{Three letter site code. If fitting from a fit id that was built
+on a single site, you may omit \code{site} to map the same site (this is the
+most common situation). If you want to map sites other than the site the
+model was built on, or the model was built on mutiple sites, \code{site} is
+required.}
+
+\item{fitid}{id in the fits database (NULL if not specified)}
+
+\item{fitfile}{Full specification of an RDS file with the fit object}
 
 \item{clip}{Optional clip, vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
 
-\item{sourcedir}{Source directory, probably the flights directory}
-
-\item{result}{Result path and filename, sans extension}
-
-\item{cores}{Number of CPU cores to use}
-
-\item{runinfo}{Path and filename of run info file. When the run finishes, run info
-is written to this file.}
+\item{rep}{Throwaway argument to make \code{slurmcollie} happy}
 }
 \description{
-This function may be run at the console, but it's typically spun off as a batch job on Unity by \code{map}.
+Console command to launch a prediction run via \code{do_map}, typically in a batch job on Unity.
 }
 \details{
 Side effects:
