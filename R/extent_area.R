@@ -4,6 +4,7 @@
 #' @param units Area units to return
 #' @param crs Coordinate reference system of clip
 #' @importFrom terra ext as.polygons crs<- project expanse
+#' @keywords internal
 
 
 extent_area <- function(clip, units = 'ha', crs = 'epsg:4326') {

@@ -16,3 +16,4 @@ extent_area(clip, units = "ha", crs = "epsg:4326")
 \description{
 Give the area of a clip vector
 }
+\keyword{internal}
