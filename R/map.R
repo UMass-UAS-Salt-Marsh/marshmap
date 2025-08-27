@@ -22,7 +22,7 @@
 
 
 map <- function(fit, site = NULL, clip = NULL, resources = NULL, local = FALSE, 
-                trap = FALSE, comment = paste0('Map')) {
+                trap = FALSE, comment = NULL) {
    
    
    if(is.list(fit)) {                                                                  # if fit is a list, it's (1) fit object,
@@ -59,20 +59,27 @@ map <- function(fit, site = NULL, clip = NULL, resources = NULL, local = FALSE,
       stop('map requires exactly one site')
    
    
+   if(is.null(comment))
+      comment <- paste0('map', 
+                        ifelse(is.null(fitid), '', paste0(' (fit id ', fitid, ')')), 
+                        ', site: ', site)
+   
+   
    if(!is.null(fitid))                                                                 # if we're getting model from fit database,
       fitfile <- file.path(resolve_dir(the$modelsdir, site),
                            paste0(fitid, '_extra.RDS'))                                #       we'll pull fit from the database in do_fit
    
    
    resources <- get_resources(resources, list(                                         # define resources
-      # ncpus = 1,                                             
-      # memory = 32,
-      walltime = '00:10:00'
+      ncpus = 2,                                             
+      memory = 200,
+      walltime = '04:00:00'
    ))
    
    
    launch('do_map', 
           moreargs = list(site = site, fitid = fitid, fitfile = fitfile, clip = clip), 
-          finish = 'map_finish', callerid = the$mdb$id[i], 
+          finish = 'map_finish', 
+          #################callerid = the$mdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)        # launch it
 }

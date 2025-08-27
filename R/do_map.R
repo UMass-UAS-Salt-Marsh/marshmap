@@ -39,6 +39,9 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    result <- file.path(resolve_dir(the$mapsdir, site),
                        paste0('map_', site, cr))                              # result path and name, sans extension
    
+   if(!dir.exists(dirname(result)))                                           # make sure result directory exists
+      dir.create(dirname(result), recursive = TRUE)
+   
    r <- (as.numeric(Sys.time()) %% 1) * 1e7                                   # random part of name to prevent collisions
    f0 <- paste0(result, '_0', r, '.tif')                                      # preliminary result filename
    f0x <- paste0(result, '_0', r, '.*')                                       # all preliminary result files for later deletion
@@ -51,7 +54,7 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    
    x <- names(model$trainingData)[-1]                                         # get source raster names from bands
    y <- sub('_\\d+$', '', x)                                                  # drop band number
- ###  band <- substring(sub('(.*)(_\\d+$)', '\\2', x), 2)                        # and get band number         DON'T NEED THIS                                     
+   ###  band <- substring(sub('(.*)(_\\d+$)', '\\2', x), 2)                        # and get band number         DON'T NEED THIS                                     
    y <- sub('mean_w', 'mean-w', y)   # THIS BULLSHIT IS JUST TO GET IT WORKING NOW. NEED TO RESOLVE - VS _ IN DERIVED NAMES. GRR. ********************
    files <- find_orthos(site, paste(y, collapse = '+'))$file                  # get file names to read
    
@@ -73,7 +76,7 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    
    cat('Predicting...\n')
    pred <- terra::predict(rasters, model, cpkgs = model$method, 
-                                         cores = 1, na.rm = TRUE)        # prediction for the model
+                          cores = 1, na.rm = TRUE)        # prediction for the model
    
    # cores = cores  ############### ******************************************** need to get the number of cores from call!
    
@@ -81,7 +84,7 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    
    levs <- terra::levels(pred$class)[[1]]                                     # get class levels from prediction
-   levs$class <- as.numeric(levs$class)                                       # make sure they're numeric
+   levs$class <- as.numeric(sub('^class', '', levs$class))                    # make sure they're numeric with no "class"
    names(levs)[2] <- target                                                   # use target (e.g., 'subclass') as class name                                                                                 
    
    classes <- read_pars_table('classes')                                      # read classes file
@@ -101,7 +104,4 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    
    unlink(f0x)                                                                # delete preliminary files
    
-   
 }
-
-
