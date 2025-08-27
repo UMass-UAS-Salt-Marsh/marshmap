@@ -91,7 +91,10 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       for(i in seq_along(xfiles)) {                                                 # for each predictor variable,
          x <- rast(file.path(fl, xfiles[i]))                                        #    get the raster
          names(x) <- paste0(xvars[i], '_', 1:length(names(x)))                      #    variable names with _<band number>
-         z[, names(x)] <- x[sel]                                                    #    sample selected values
+         y <- x[sel]
+         if(dim(y)[2] == 1)                                                         #    if the variable has one band, vectorize to avoid making a mess
+            y <- as.vector(y)
+         z[, names(x)] <- y                                                         #    sample selected values
       }
       
       names(z) <- sub('^(\\d)', 'X\\1', names(z))                                   # add an X to the start of names that begin with a digit
