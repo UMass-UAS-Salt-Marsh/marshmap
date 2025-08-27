@@ -11,7 +11,7 @@ map(
   resources = NULL,
   local = FALSE,
   trap = FALSE,
-  comment = paste0("Map")
+  comment = NULL
 )
 }
 \arguments{

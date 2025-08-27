@@ -6,7 +6,7 @@
 \usage{
 sample(
   site,
-  pattern = NULL,
+  pattern = "{*}",
   n = NULL,
   p = NULL,
   d = NULL,
@@ -30,7 +30,7 @@ In batch mode, each named site will be run in a separate job.}
 \item{pattern}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
 \href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
-for details.}
+for details. The default is \verb{\{*\}}, which will include all variables.}
 
 \item{n}{Number of total samples to return.}
 

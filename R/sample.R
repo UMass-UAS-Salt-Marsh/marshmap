@@ -31,7 +31,7 @@
 #' @param pattern File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
-#'    for details.
+#'    for details. The default is `{*}`, which will include all variables.
 #' @param n Number of total samples to return.
 #' @param p Proportion of total samples to return. Use p = 1 to sample all.
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
@@ -59,14 +59,11 @@
 #' @export
 
 
-sample <- function(site, pattern = NULL, n = NULL, p = NULL, d = NULL, 
+sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL, 
                    classes = NULL, balance = TRUE, balance_excl = c(7, 33), result = NULL, 
                    transects = NULL, drop_corr = NULL, reuse = FALSE, resources = NULL, 
                    local = FALSE, trap = TRUE, comment = NULL) {
    
-   
-   if(is.null(pattern))
-      stop('A pattern must be specified')
    
    site <- get_sites(site)$site
    

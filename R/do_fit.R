@@ -48,33 +48,9 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    r <- list()
    for(i in seq_len(nrow(sites)))                                                         # read data files and merge them
       r[[i]] <- readRDS(sites$datafile[i])
-   
-    
-   
-   
    names(r) <- sites$site
    r <- bind_rows(r, .id = 'site')
-   
-   
-   
-   # This will replace any 1-column data.frame columns with numeric vectors               # ********** need to track this down at the source in sample **********************
-   r_fixed <- as.data.frame(lapply(r, function(col) {                                     # ********** it happens, unsurprisingly, with univariate images *******************
-      if (is.data.frame(col) && ncol(col) == 1) {
-         # Extract the column as a vector
-         col[[1]]
-      } else {
-         col
-      }
-   }))
-   
-   r <- r_fixed
-   
-   
-   
    r$subclass <- as.factor(r$subclass)                                                    # we want subclass to be factor, not numeric
-   
-   
-   ###  r <- r[1:1000, ]   ########################## TRIM THE DATA FILE TO SPEED THINGS UP FOR TESTING
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual
