@@ -149,6 +149,9 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    
    a <- Sys.time()
    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
+
+   ####   z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, , importance = "permutation", local.importance = TRUE)             #---train the model     ***************************** with local importance**********************
+   
    #    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity', tuneGrid = expand.grid(.mtry = 1, .splitrule = 'gini', .min.node.size = c(10, 20)))
    
    
