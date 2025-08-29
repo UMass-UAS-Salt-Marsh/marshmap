@@ -1,4 +1,4 @@
-#' Resolve directory with embedded `<site>`, `<site_name>`, or `<share>`
+#' Resolve directory with embedded `<site>`, `<SITE>`, `<site_name>`, or `<share>`
 #' 
 #' @param dir Directory path
 #' @param site Site name. For Google Drive, use `site_name`; on Unity, use
@@ -10,10 +10,12 @@
 
 resolve_dir <- function(dir, site, share = site_name) {
    
+   
    sites <- read_pars_table('sites')
    x <- sites[tolower(sites$site) == tolower(get_sites(site)$site), ]
    
    z <- sub('<site>', x$site, dir, fixed = TRUE)
+   z <- sub('<SITE>', toupper(x$site), dir, fixed = TRUE)
    z <- sub('<site_name>', x$site_name, z, fixed = TRUE)
    if(x$share == '')                                                    # share defaults to site_name
       x$share <- x$site_name

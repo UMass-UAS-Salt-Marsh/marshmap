@@ -60,7 +60,7 @@ get_dir <- function(path, sourcedrive = 'local', sftp) {
                })
    
    if(is.null(z))
-      stop('Missing directory: ', path)
+      message('*** Missing or empty directory: ', path)
    
    z
 }
