@@ -58,11 +58,11 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    y <- sub('mean_w', 'mean-w', y)   # THIS BULLSHIT IS JUST TO GET IT WORKING NOW. NEED TO RESOLVE - VS _ IN DERIVED NAMES. GRR. ********************
    files <- find_orthos(site, paste(y, collapse = '+'))$file                  # get file names to read
    
-   files <- unique(files)                                                             # and remove dups
+   files <- unique(files)                                                     # and remove dups
    
    
    sourcedir <- resolve_dir(the$flightsdir, site)
-   rasters <- rast(file.path(sourcedir, files))                   # get rasters with our bands
+   rasters <- rast(file.path(sourcedir, files))                               # get rasters with our bands
    names(rasters) <- x
    
    
@@ -76,8 +76,8 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    
    cat('Predicting...\n')
    pred <- terra::predict(rasters, model, cpkgs = model$method, 
-                          cores = 1, na.rm = TRUE)        # prediction for the model
-   
+                          cores = 1, na.rm = TRUE)                            # prediction for the model
+   # odd: 10 cores uses 3x memory, but takes twice as long as 1 core. 2 cores isn't really better than 1 core either.
    # cores = cores  ############### ******************************************** need to get the number of cores from call!
    
    writeRaster(pred, f0, overwrite = TRUE, datatype = 'INT1U', progress = 1, 

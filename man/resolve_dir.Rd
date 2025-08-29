@@ -2,9 +2,9 @@
 % Please edit documentation in R/resolve_dir.R
 \name{resolve_dir}
 \alias{resolve_dir}
-\title{Resolve directory with embedded \verb{<site>} or \verb{<share>}}
+\title{Resolve directory with embedded \verb{<site>}, \verb{<site_name>}, or \verb{<share>}}
 \usage{
-resolve_dir(dir, site, share = site)
+resolve_dir(dir, site, share = site_name)
 }
 \arguments{
 \item{dir}{Directory path}
@@ -18,6 +18,6 @@ resolve_dir(dir, site, share = site)
 Directory path including specified site.
 }
 \description{
-Resolve directory with embedded \verb{<site>} or \verb{<share>}
+Resolve directory with embedded \verb{<site>}, \verb{<site_name>}, or \verb{<share>}
 }
 \keyword{internal}

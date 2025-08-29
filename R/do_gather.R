@@ -71,14 +71,14 @@ do_gather <- function(site, pattern = '',
    
    for(i in 1:dim(sites)[1]) {                                                      # for each site,
       message('Site ', sites$site[i])
-      dir <- file.path(the$gather$sourcedir, sites$site_name[i], '/')
+      dir <- file.path(the$gather$sourcedir, sites$site[i], '/')
       
       s <- c(the$gather$subdirs, dirname(sites$standard[i]))                        #    add path to standard to subdirs in case it's not there already
       s <- gsub('/+', '/', paste0(s, '/'))                                          #    clean up slashes
       s <- unique(s)                                                                #    and drop likely duplicate
       
       x <- NULL
-      for(j in resolve_dir(s, sites$share[i]))                                      #    for each subdir (with site name replacement using share name),
+      for(j in resolve_dir(s, sites$site[i]))                                       #    for each subdir (with site name replacement using share name),
          x <- rbind(x, get_dir(file.path(dir, j), 
                                the$gather$sourcedrive,
                                sftp = the$gather$sftp))                             #       get directory

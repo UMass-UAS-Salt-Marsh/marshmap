@@ -70,7 +70,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    
    
-   load_database('fdb')                                         # Create new database
+   load_database('fdb')                                  # Create new database
    the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add rows to database 
    
    the$fdb$id[i] <- the$last_fit_id + 1                  # model id
