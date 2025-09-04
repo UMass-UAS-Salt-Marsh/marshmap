@@ -35,7 +35,7 @@
 
 
 do_gather <- function(site, pattern = '', 
-                      update = TRUE, check = FALSE, field = FALSE) {
+                      update, check, field) {
    
    
    start <- Sys.time()
@@ -89,8 +89,7 @@ do_gather <- function(site, pattern = '',
       
       
       if(field) {                                                                   #    if we're processing field transects,
-         tp <- file.path(the$gather$sourcedir, sites$site_name[i], 
-                         the$gather$transects)
+         tp <- file.path(the$gather$sourcedir, the$gather$transects)
          t <- get_dir(tp, the$gather$sourcedrive, 
                       sftp = the$gather$sftp)                                       #       get transect directory
          x <- rbind(x, t[grep('.shp$|.shx$|.prj$|.dbf$', t$name),])                 #       only want .shp, .shx, .prj, and .dbf
@@ -171,17 +170,20 @@ do_gather <- function(site, pattern = '',
          if(!file.exists(file.path(fd, 'transects.tif'))) {                         #       if we don't already have it transect results,
             message(' Processing field transect shapefile')
             
-            tp <- file.path(the$gather$sourcedir, sites$site_name[i], 
-                            the$gather$transects)
+            tp <- file.path(the$gather$sourcedir, the$gather$transects)
             
             if(the$gather$sourcedrive %in% c('google', 'sftp'))                     #       if reading from Google Drive or SFTP,
                get_sidecars(tp, sites$transects[i], gd)                             #       load three sidecar files (include .dbf) for shapefile into cache
             
-            tpath <- get_file(file.path(tp, sites$transects[i]), 
-                              gd)                                                   #       path and name of transects shapefile
+            tpath <- get_file(file.path(tp, sites$transects[i]), gd)                #       path and name of transects shapefile
             
-            transects <- # ################ overlaps(, 'Subclass') |>                       #       deal with overlaps in shapefile               *** this doesn't save the fixed shapefile, which I probably want to do ***
-               rasterize(vect(tpath), standard, field = 'SubCl')$SubCl |>                        #       convert it to raster and pull SubCl, numeric version of subclass
+            
+            overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
+            gt <- overlaps(st_read(tpath), 'Subclass')                              #       get the shapefile and process overlaps
+            st_write(gt, overlaps, append = FALSE)                                  #       save the overlapped shapefile as *_final
+            
+            transects <- 
+               rasterize(vect(overlaps), standard, field = 'Subclass')$Subclass |>  #       convert it to raster and pull SubCl, numeric version of subclass
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,

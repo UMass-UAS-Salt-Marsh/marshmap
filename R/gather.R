@@ -100,7 +100,7 @@
 
 
 gather <- function(site, pattern = '', 
-                   update = TRUE, check = FALSE, field = FALSE, resources = NULL, local = FALSE, 
+                   update = TRUE, check = FALSE, field = TRUE, resources = NULL, local = FALSE, 
                    trap = TRUE, comment = NULL) {
    
    
