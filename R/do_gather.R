@@ -121,7 +121,7 @@ do_gather <- function(site, pattern = '',
          if(update) {                                                               #       if update, don't mess with files that have already been done
             sdir <- file.path(the$gather$sourcedir, sites$site_name[i])
             rdir <- resolve_dir(the$flightsdir, tolower(sites$site[i]))
-            files <- files[!check_files(files, gd, sdir, rdir, addx = TRUE)]        #          see which files already exist and are up to date
+            files <- files[!check_files(files, gd, sdir, rdir)]                     #          see which files already exist and are up to date
          }
          
          
@@ -236,7 +236,7 @@ do_gather <- function(site, pattern = '',
                crop(footprint) |>
                mask(footprint) |>
                writeRaster(file.path(rd, basename(add_x(j))), overwrite = TRUE, 
-                           datatype = type, NAflag = missing)                       #    save raster (with prepended 'x' for files that start with a digit)
+                           datatype = type, NAflag = missing)                       #    save raster
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }

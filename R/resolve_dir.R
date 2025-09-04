@@ -15,7 +15,7 @@ resolve_dir <- function(dir, site, share = site_name) {
    x <- sites[tolower(sites$site) == tolower(get_sites(site)$site), ]
    
    z <- sub('<site>', x$site, dir, fixed = TRUE)
-   z <- sub('<SITE>', toupper(x$site), dir, fixed = TRUE)
+   z <- sub('<SITE>', toupper(x$site), z, fixed = TRUE)
    z <- sub('<site_name>', x$site_name, z, fixed = TRUE)
    if(x$share == '')                                                    # share defaults to site_name
       x$share <- x$site_name

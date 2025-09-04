@@ -84,8 +84,8 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
          deleted = logical(),
          filestamp = ymd_hms()                                          # filestamps are used to check for changed files
       )
-   
-   
+
+
    x <- list.files(dir)                                                 # list files
    x <- grep('.tif', x, value = TRUE)                                   # only want TIFFs
    
