@@ -26,7 +26,7 @@
 #'    Deal with overlaps in the shapefile--those with more than one subclass will be erased.
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
 #' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
-#' @importFrom sf st_read 
+#' @importFrom sf st_read st_write
 #' @importFrom lubridate as.duration interval
 #' @importFrom pkgcond suppress_warnings
 #' @importFrom tools file_path_sans_ext
@@ -182,12 +182,12 @@ do_gather <- function(site, pattern = '',
             gt <- overlaps(st_read(tpath), 'Subclass')                              #       get the shapefile and process overlaps
             st_write(gt, overlaps, append = FALSE)                                  #       save the overlapped shapefile as *_final
             
-            transects <- 
+            suppressWarnings(transects <-                                           #       mask gives a bogus warning that CRS do not match
                rasterize(vect(overlaps), standard, field = 'Subclass')$Subclass |>  #       convert it to raster and pull SubCl, numeric version of subclass
                crop(footprint) |>                                                   #       crop, mask, and write
                mask(footprint) |>
                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                           datatype = type, NAflag = missing)
+                           datatype = type, NAflag = missing))
             
             shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
             for(f in shps)
@@ -237,7 +237,7 @@ do_gather <- function(site, pattern = '',
             resample(g, standard, method = 'bilinear', threads = TRUE) |>
                crop(footprint) |>
                mask(footprint) |>
-               writeRaster(file.path(rd, basename(add_x(j))), overwrite = TRUE, 
+               writeRaster(file.path(rd, basename(j)), overwrite = TRUE, 
                            datatype = type, NAflag = missing)                       #    save raster
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory

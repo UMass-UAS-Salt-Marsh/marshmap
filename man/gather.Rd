@@ -9,7 +9,7 @@ gather(
   pattern = "",
   update = TRUE,
   check = FALSE,
-  field = FALSE,
+  field = TRUE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,

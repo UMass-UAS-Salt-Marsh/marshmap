@@ -4,7 +4,7 @@
 \alias{do_gather}
 \title{Collect raster data for each site}
 \usage{
-do_gather(site, pattern = "", update = TRUE, check = FALSE, field = FALSE)
+do_gather(site, pattern = "", update, check, field)
 }
 \arguments{
 \item{site}{site, using 3 letter abbreviation}
