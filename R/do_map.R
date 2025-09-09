@@ -55,7 +55,6 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    x <- names(model$trainingData)[-1]                                         # get source raster names from bands
    y <- sub('_\\d+$', '', x)                                                  # drop band number
    ###  band <- substring(sub('(.*)(_\\d+$)', '\\2', x), 2)                        # and get band number         DON'T NEED THIS                                     
-   y <- sub('mean_w', 'mean-w', y)   # THIS BULLSHIT IS JUST TO GET IT WORKING NOW. NEED TO RESOLVE - VS _ IN DERIVED NAMES. GRR. ********************
    files <- find_orthos(site, paste(y, collapse = '+'))$file                  # get file names to read
    
    files <- unique(files)                                                     # and remove dups

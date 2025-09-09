@@ -34,9 +34,9 @@
 #' @keywords internal
 
 
-do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL, 
-                      classes = NULL, balance = TRUE, balance_excl = c(7, 33), result = NULL, 
-                      transects = NULL, drop_corr = NULL, reuse = FALSE) {
+do_sample <- function(site, pattern, n, p, d, 
+                      classes, balance, balance_excl, result, 
+                      transects, drop_corr, reuse) {
    
    
    message('')
@@ -77,7 +77,7 @@ do_sample <- function(site, pattern = '', n = NULL, p = NULL, d = NULL,
       
       fl <- resolve_dir(the$flightsdir, tolower(site))
       x <- find_orthos(site, pattern)                                               # find matching files
-      xvars <- gsub('-', '_', x$portable)                                           # we'll use the portable name as the variable name, except change dashes to underscore
+      xvars <- x$portable                                                           # we'll use the portable name as the variable name
       xfiles <- x$file                                                              # and here are the files for reading and writing to <result>_vars.txt 
       
       

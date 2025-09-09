@@ -98,10 +98,7 @@ image's date, site, tide level, sensor, and type, for instance `19Aug22_OTH_Mid_
 the month may be `Sep` or `Sept`, years may be 2 or 4 digits, and some sensors are referred to by
 multiple names. Additionally, some filenames follow a wildly different pattern, such as
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif`, a canopy height model. Files are imported from the
-source repositories (either Google Drive or SFTP) with their names unmodified, except that file
-names that start with a digit have an `x` prepended, thus `14Oct20_OTH_Low_Mica_DEM.tif` becomes
-`x14Oct20_OTH_Low_Mica_DEM.tif`. (File names beginning with a digit can lead to 
-downstream problems in R, as they are invalid variable names).
+source repositories (either Google Drive or SFTP) with their names unmodified.
 
 When using `derive` to create derived images (for example, `NDVI` or `mean upscaling`), derived names
 are generated from the base name (or names), with derivation information separated with a double
@@ -120,7 +117,7 @@ and force naming consistency.
 
 Portable names for most images consist of:
 
-`<type>_<sensor>_<season>_<year>_<tide>[-tidemod][_<derive>[-<window>]]`
+`<type>_<sensor>_<season>_<year>_<tide>[.<tidemod>][_<derive>[.<window>]]`
 
 The portable names for canopy height models are simply:
 
@@ -134,7 +131,7 @@ File name | Portable name
 `14Oct20_OTH_Low_Mica_DEM.tif` | `dem_mica_fall_2020_low`
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_summer_2022`
 `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif` | `ndvi_mica_spring_2022_mid`
-`x01Aug20_OTH_MidOut_Mica_Ortho.tif` | `ortho_mica_summer_2020_mid-out`
+`x01Aug20_OTH_MidOut_Mica_Ortho.tif` | `ortho_mica_summer_2020_mid.out`
 `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_lidar_2022`
 `x26May22_RR_Low_Mica_DEM__x19Aug22_RR_Low_Mica_DEM.tif` | `chm_delta_2022`
 
@@ -153,13 +150,13 @@ The components of a search name are separated with vertical bars (note these are
 NOT logical or--the parts of a search name are conjunctive). Multiple values of a component
 are separated with commas, or a colon to select a range for ordinal values such as season or year.
 Modifiers (in, out, and spring for tides; window size for upscaled variables) are separated from
-the component with a dash, e.g., `mid-out`. Components in a search name may appear in any order. 
+the component with a period, e.g., `mid.out`. Components in a search name may appear in any order. 
 Each component in the search name narrows the search, thus `mica | low, mid` matches any files 
 with a Mica sensor that are at low or mid-tide.
 Here are some example search names:
 
-`mid-in, mid-out, high`  
-`mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022`  
+`mid.in, mid.out, high`  
+`mica, swir, p4 | ortho | high.spring | spring:fall | 2019:2022`  
 `mica, swir | ortho, dem | low:high | spring | 2018`  
 
 Search names allow model fits to be described clearly and concisely, even for models that contain

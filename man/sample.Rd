@@ -12,7 +12,7 @@ sample(
   d = NULL,
   classes = NULL,
   balance = TRUE,
-  balance_excl = c(7, 33),
+  balance_excl = NULL,
   result = NULL,
   transects = NULL,
   drop_corr = NULL,

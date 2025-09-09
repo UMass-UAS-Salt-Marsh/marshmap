@@ -6,17 +6,17 @@
 \usage{
 do_sample(
   site,
-  pattern = "",
-  n = NULL,
-  p = NULL,
-  d = NULL,
-  classes = NULL,
-  balance = TRUE,
-  balance_excl = c(7, 33),
-  result = NULL,
-  transects = NULL,
-  drop_corr = NULL,
-  reuse = FALSE
+  pattern,
+  n,
+  p,
+  d,
+  classes,
+  balance,
+  balance_excl,
+  result,
+  transects,
+  drop_corr,
+  reuse
 )
 }
 \arguments{

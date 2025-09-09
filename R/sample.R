@@ -60,12 +60,15 @@
 
 
 sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL, 
-                   classes = NULL, balance = TRUE, balance_excl = c(7, 33), result = NULL, 
+                   classes = NULL, balance = TRUE, balance_excl = NULL, result = NULL, 
                    transects = NULL, drop_corr = NULL, reuse = FALSE, resources = NULL, 
                    local = FALSE, trap = TRUE, comment = NULL) {
    
    
    site <- get_sites(site)$site
+   
+   if(all(c(is.null(n), is.null(p), is.null(d))))  # if n, p, and d are all omitted, default to p = 0.25, a quarter of data
+      p <- 0.25
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)
       stop('You must choose exactly one of the n, p, and d options')

@@ -31,7 +31,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    
    find_targets <- function(targets, names) {                           # find targets as substrings in names
       names <- fix_names(names)                                         #    clean up naming errors
-      names <- gsub('-', '_', names)                                    #    treat modifiers are separate names here
+      names <- gsub('.', '_', names)                                    #    treat modifiers are separate names here
       z <- rep(NA, length(names))
       
       for(j in targets) {
@@ -86,17 +86,31 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       )
 
 
+   
+   
+   ### ---delete this crap---
+   cat(site, ': BEFORE FIX: db has ', nrow(db), ' rows\n', sep = '')                # ******************************** this is temporary code in case duplicated name bug reappears
+   db <- db[match(unique(db$name), db$name), ]  #****************************** fix dups in db *************************************
+   cat(site, ': AFTER FIX: db has ', nrow(db), ' rows\n\n', sep = '')
+   
+  ### db$portable <- gsub('-', '.', db$portable)  # SUPER TEMP!!!!!!!!!!!!!!!!!!!!
+  ### -----------------------
+   
+   
+   
    x <- list.files(dir)                                                 # list files
    x <- grep('.tif', x, value = TRUE)                                   # only want TIFFs
    
    db$deleted <- !db$name %in% x                                        # flag deleted files
    
    
+   # check timestamps
    i <- match(x, db$name)                                               # indices of files already in database
    d <- round(file.mtime(file.path(dir, x[!is.na(i)])))                 # filestamps for these
+   i <- i[!is.na(i)]
    c <- db$filestamp[i] != d
    if(any(c))
-      db <- db[-i[db$filestamp[i] != d], ]                              # drop files with changed stamps from database (md5 is way too slow)                                
+      db <- db[-i[db$filestamp[i] != d], ]                              # drop files with changed stamps from database (md5 on Google Drive is way too slow to do it that way)                                
    
    
    y <- x[!x %in% db$name]
@@ -120,7 +134,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
                              db$sensor[i])                              #    annoying special case to set sensor for canopy height models
       
       db$tide[i] <- find_targets(the$category$tide, y)
-      the$category$tidemod <- substring(the$category$tide[grep('^-', the$category$tide)], 2)
+      the$category$tidemod <- substring(the$category$tide[grep('^\\.', the$category$tide)], 2)
       db$tidemod[i] <- find_targets(the$category$tidemod, y)
       s <- seasons(y)
       db$date[i] <- as.character(ymd(s$date))
@@ -134,8 +148,8 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       
       
       # Create portable names
-      t <- ifelse(!db$tidemod[i] %in% c('', NA), paste0(db$tide[i], '-', db$tidemod[i]), db$tide[i])
-      d <- ifelse(!db$window[i] %in% c('', NA), paste0(db$derive[i], '-', db$window[i]), db$derive[i])
+      t <- ifelse(!db$tidemod[i] %in% c('', NA), paste0(db$tide[i], '.', db$tidemod[i]), db$tide[i])
+      d <- ifelse(!db$window[i] %in% c('', NA), paste0(db$derive[i], '.', db$window[i]), db$derive[i])
       
       p <- paste(db$type[i], db$sensor[i], db$season[i], db$year[i], t, sep = '_')
       p <- ifelse(!db$derive[i] %in% c('', NA), paste0(p, '_', d), p)

@@ -10,8 +10,8 @@
 #' to separate multiple tags in a category. Pairs of ordinal categories such as seasons and dates
 #' may be provided separated by a colon to designate a sequence; e.g., `2019:2022` is the same as
 #' `2019, 2020, 2021, 2022`. Tags may include modifiers (for instance, high tide may be modified as
-#' `high-spring`). Modified tags are returned as lists of paired `category, modifier strings: 
-#' e.g., `mid-out, high-spring` results in `list(c('mid', 'out'), c('high', 'spring'))`.
+#' `high.spring`). Modified tags are returned as lists of paired `category, modifier strings: 
+#' e.g., `mid.out, high.spring` results in `list(c('mid', 'out'), c('high', 'spring'))`.
 #'
 #' Non-existent tags generally result in an error with an informative message. Note that, for
 #' multiple tags, the category is determined by the first tag, so `sprang, summer, fall` will report
@@ -24,10 +24,10 @@
 #' @examples
 #' require(saltmarsh)
 #' init()
-#' search_names('mid-in, mid-out, high')
-#' search_names('mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022')
+#' search_names('mid.in, mid.out, high')
+#' search_names('mica, swir, p4 | ortho | high.spring | spring:fall | 2019:2022')
 #' search_names('mica, swir | ortho, dem | low:high | spring | 2018')
-#' search_names('2022 | oth | mid | mica | ortho | mean-w5')
+#' search_names('2022 | oth | mid | mica | ortho | mean.w5')
 #' search_names('20x22 | other | muddle | micro')                 # this throws an error
 #' @keywords internal
 
@@ -41,7 +41,7 @@ search_names <- function(descrip) {
       the$category$site <- read_pars_table('sites')$site
    if(is.null(the$category$season))
       the$category$season <- read_pars_table('seasons')$season
-   the$category$year <- as.character(2015:2050)
+   the$category$year <- as.character(2015:2100)
    
    
    cats <- strsplit(descrip, '|', fixed = TRUE)[[1]]                             # split groups on vertical bars
@@ -52,7 +52,7 @@ search_names <- function(descrip) {
    for(i in seq_along(cats)) {                                                   # for each category,
       x <- cats[i]
       
-      f <- strsplit(x, '[-,:]')[[1]][1]
+      f <- strsplit(x, '[\\.,:]')[[1]][1]
       cat <- names(which(sapply(the$category, function(a) f %in% a)))            #    here's our category (from the 1st element)
       
       
@@ -69,12 +69,12 @@ search_names <- function(descrip) {
             x <- the$category[cat][[1]][s[1]:s[2]]                               #       pull out the range (even where it doesn't make sense)
          }
       
-      if(length(grep('-', x) > 0)) {
-         y <- sapply(x, function(a) strsplit(a, '-'))                            #    now pull out modifiers
+      if(length(grep('\\.', x) > 0)) {
+         y <- sapply(x, function(a) strsplit(a, '\\.'))                          #    now pull out modifiers
          names(y) <- NULL                                                        #    get rid of hideous names
          z[cat] <- list(y)
          errs[i] <- list(unlist(y)[!sub('^w[0-9]+', 'w000', unlist(y)) %in% 
-                                      sub('^-', '', unlist(the$category[cat]))])
+                                      sub('^\\.', '', unlist(the$category[cat]))])
       }
       else {
          z[cat] <- list(x)

@@ -24,7 +24,7 @@ Categories are separated by \code{|} (spaces are optional anywhere except within
 to separate multiple tags in a category. Pairs of ordinal categories such as seasons and dates
 may be provided separated by a colon to designate a sequence; e.g., \code{2019:2022} is the same as
 \verb{2019, 2020, 2021, 2022}. Tags may include modifiers (for instance, high tide may be modified as
-\code{high-spring}). Modified tags are returned as lists of paired \verb{category, modifier strings:  e.g., }mid-out, high-spring\verb{results in}list(c('mid', 'out'), c('high', 'spring'))`.
+\code{high.spring}). Modified tags are returned as lists of paired \verb{category, modifier strings:  e.g., }mid.out, high.spring\verb{results in}list(c('mid', 'out'), c('high', 'spring'))`.
 
 Non-existent tags generally result in an error with an informative message. Note that, for
 multiple tags, the category is determined by the first tag, so \verb{sprang, summer, fall} will report
@@ -33,10 +33,10 @@ all three seasons as errors, even though the second two are correct.
 \examples{
 require(saltmarsh)
 init()
-search_names('mid-in, mid-out, high')
-search_names('mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022')
+search_names('mid.in, mid.out, high')
+search_names('mica, swir, p4 | ortho | high.spring | spring:fall | 2019:2022')
 search_names('mica, swir | ortho, dem | low:high | spring | 2018')
-search_names('2022 | oth | mid | mica | ortho | mean-w5')
+search_names('2022 | oth | mid | mica | ortho | mean.w5')
 search_names('20x22 | other | muddle | micro')                 # this throws an error
 }
 \keyword{internal}
