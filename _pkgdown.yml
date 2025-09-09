@@ -23,6 +23,7 @@ reference:
 #  - mapinfo
   - assess
   - flights_report
+  - sample_freq
   
 - title: Utility functions
   desc: Uncommonly-used utility functions.
