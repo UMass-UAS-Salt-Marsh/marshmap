@@ -71,7 +71,7 @@ modeling, dates are replaced by seasons.</p>
 to separate multiple tags in a category. Pairs of ordinal categories such as seasons and dates
 may be provided separated by a colon to designate a sequence; e.g., <code>2019:2022</code> is the same as
 <code>2019, 2020, 2021, 2022</code>. Tags may include modifiers (for instance, high tide may be modified as
-<code>high-spring</code>). Modified tags are returned as lists of paired <code>category, modifier strings:  e.g., </code>mid-out, high-spring<code>results in</code>list(c('mid', 'out'), c('high', 'spring'))`.</p>
+<code>high.spring</code>). Modified tags are returned as lists of paired <code>category, modifier strings:  e.g., </code>mid.out, high.spring<code>results in</code>list(c('mid', 'out'), c('high', 'spring'))`.</p>
 <p>Non-existent tags generally result in an error with an informative message. Note that, for
 multiple tags, the category is determined by the first tag, so <code>sprang, summer, fall</code> will report
 all three seasons as errors, even though the second two are correct.</p>
@@ -82,13 +82,13 @@ all three seasons as errors, even though the second two are correct.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping" class="external-link">saltmarsh</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="init.html">init</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'mid-in, mid-out, high'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'mid.in, mid.out, high'</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in read_pars_table("sites"):</span> Parameter sites not in </span>
-<span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'mica, swir, p4 | ortho | high-spring | spring:fall | 2019:2022'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'mica, swir, p4 | ortho | high.spring | spring:fall | 2019:2022'</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in read_pars_table("sites"):</span> Parameter sites not in </span>
 <span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'mica, swir | ortho, dem | low:high | spring | 2018'</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in read_pars_table("sites"):</span> Parameter sites not in </span>
-<span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'2022 | oth | mid | mica | ortho | mean-w5'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'2022 | oth | mid | mica | ortho | mean.w5'</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in read_pars_table("sites"):</span> Parameter sites not in </span>
 <span class="r-in"><span><span class="fu">search_names</span><span class="op">(</span><span class="st">'20x22 | other | muddle | micro'</span><span class="op">)</span>                 <span class="co"># this throws an error</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in read_pars_table("sites"):</span> Parameter sites not in </span>
