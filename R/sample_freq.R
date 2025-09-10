@@ -1,8 +1,9 @@
 #' Create a frequency table of number of cells by subclass from field data
 #' 
 #' Create a frequency table of number of cells by subclass from field data for one or more
-#' sites. Results are written to the reports directory as `sample_freq_<site>.txt`. Takes 
-#' about a minute per site.
+#' sites. Results are written to the reports directory as `sample_freq_<site>.txt`. 
+#' 
+#' Always runs locally. Takes about a minute per site.
 #' 
 #' @param sites One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
 #' @param transects Name of transects file; default is `transects`.

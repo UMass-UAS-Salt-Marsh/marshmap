@@ -72,8 +72,8 @@ map <- function(fit, site = NULL, clip = NULL, resources = NULL, local = FALSE,
    
    resources <- get_resources(resources, list(                                         # define resources
       ncpus = 2,                                             
-      memory = 200,
-      walltime = '04:00:00'
+      memory = 400,                                                                    # SOR failed at 200 GB. WEL and PEG failed at 250 GB.
+      walltime = '06:00:00'
    ))
    
    

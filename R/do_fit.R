@@ -92,7 +92,7 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    }
    
    
-   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / dim(r)[1] <= maxmissing)]                   # drop variables with too many missing values
+   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= maxmissing)]                   # drop variables with too many missing values
    
    
    if(auc)                                                                                # if preparing data for AUC, 
