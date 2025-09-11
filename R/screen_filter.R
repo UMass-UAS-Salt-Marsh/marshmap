@@ -16,7 +16,7 @@ screen_filter <- function(input, output, session) {
    if(input$filter != '')
       suppressWarnings(tryCatch({
          sel <- sel & (grepl(input$filter, session$userData$db$name, ignore.case = TRUE) |
-                          grepl(input$filter, session$userData$db$portable, ignore.case = TRUE))      #    apply filter - now we have our complete list of images for this site
+                          grepl(input$filter, session$userData$db$portable, ignore.case = TRUE))   #    apply filter - now we have our complete list of images for this site
       },    
       error = function(cond) {
          showModal(modalDialog(

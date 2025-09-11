@@ -13,6 +13,8 @@ sample_freq(sites, transects = NULL)
 }
 \description{
 Create a frequency table of number of cells by subclass from field data for one or more
-sites. Results are written to the reports directory as \verb{sample_freq_<site>.txt}. Takes
-about a minute per site.
+sites. Results are written to the reports directory as \verb{sample_freq_<site>.txt}.
+}
+\details{
+Always runs locally. Takes about a minute per site.
 }

@@ -58,16 +58,21 @@ flights_report <- function() {
       
       if(!is.null(db)) {
          db$site <- sites$site[i]
-         
+         db$scoren[is.na(db$scoren)] <- 0
          
          x <- paste0('Site: ', toupper(sites$site[i]), ', ', sites$site_name[i])             # 1. flights summary
          x <- paste(strrep('-', nchar(x)), x, strrep('-', nchar(x)), sep = '\n')
          x <- paste0('\n\n', x, '\n\n', nrow(db), ' images, ', sum(db$scoren != 0), 
-                     ' scored (', round(sum((db$scoren != 0) / nrow(db)) * 100, 0), '%)')
+                     ' scored (', round(sum((db$scoren != 0) / nrow(db)) * 100, 0), '%)\n')
+         b <- sum(db$bands, na.rm = TRUE) + sum(is.na(db$bands))
+         if(any(is.na(db$bands)))
+            x <- paste0(x, 'At least ', b, ' total bands (some images have not been screened)\n')
+         else
+            x <- paste0(x, b, ' total bands\n')
          
          x <- paste0(x, freq_table('score', 'Distribution of scores'))
-         x <- paste0(x, freq_table('type', 'Distribution of image types', the$category$type))
          x <- paste0(x, freq_table('sensor', 'Distribution of sensors', the$category$sensor))
+         x <- paste0(x, freq_table('type', 'Distribution of image types', the$category$type))
          x <- paste0(x, freq_table('tide', 'Distribution of tide levels', the$category$tide))
          x <- paste0(x, freq_table('season', 'Distribution of seasons', seasons))
          x <- paste0(x, freq_table('year', 'Distribution of years'))
@@ -100,9 +105,9 @@ flights_report <- function() {
             z_dups <- rbind(z_dups, dups)
       }
       
-      all <- db[order(db$type, db$sensor, db$derive, db$window, db$tide, db$tidemod, 
+      all <- db[order(db$sensor, db$type, db$derive, db$window, db$tide, db$tidemod, 
                       db$season, db$year, db$score, db$repair), ]                            # 4. list all orthos
-      all <- db[, c('site', 'portable', 'name', 'type', 'sensor', 'derive', 'window', 'tide', 'tidemod',
+      all <- db[, c('site', 'portable', 'name', 'sensor', 'type', 'derive', 'window', 'tide', 'tidemod',
                     'season', 'year', 'score', 'repair')]
       
       if(is.null(z_all))
