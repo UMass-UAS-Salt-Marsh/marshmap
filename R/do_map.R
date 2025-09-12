@@ -21,6 +21,7 @@
 #'   model was built on, or the model was built on mutiple sites, `site` is
 #'   required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
+#' @param result Optional result name
 #' @param rep Throwaway argument to make `slurmcollie` happy
 #' @importFrom peakRAM peakRAM
 #' @importFrom terra ext predict levels writeRaster ncell
@@ -29,24 +30,29 @@
 #' @export
 
 
-do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
+do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    
    if(!is.null(clip))                                                         # if there's a clip, modify result name
       cr <- paste0('_clip_', round(extent_area(clip)), '_ha')
    else
       cr <- ''
-   result <- file.path(resolve_dir(the$mapsdir, site),
-                       paste0('map_', site, cr))                              # result path and name, sans extension
    
+   if(is.null(result))                                                        # if result isn't supplied,
+      result <- paste0('map_', site, cr)                                      #    make result name, sans extension
+
    if(!dir.exists(dirname(result)))                                           # make sure result directory exists
       dir.create(dirname(result), recursive = TRUE)
    
    r <- (as.numeric(Sys.time()) %% 1) * 1e7                                   # random part of name to prevent collisions
-   f0 <- paste0(result, '_0', r, '.tif')                                      # preliminary result filename
-   f0x <- paste0(result, '_0', r, '.*')                                       # all preliminary result files for later deletion
+   f0 <- paste0('zz_', result, '_0', r, '.tif')                               # preliminary result filename
+   f0x <- paste0('zz_', result, '_0', r, '.*')                                # all preliminary result files for later deletion
    f <- paste0(result, '.tif')                                                # final result filename
    
+   p <- resolve_dir(the$mapsdir, site)                                        # add paths to filenames
+   f0 <- file.path(p, f0)
+   f0x <- file.path(p, f0x)
+   f <- file.path(p, f)
    
    model <- readRDS(fitfile)$model_object
    target <- as.character(model$terms[[2]])                                   # get target level, typically 'subclass'
@@ -54,7 +60,6 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    
    x <- names(model$trainingData)[-1]                                         # get source raster names from bands
    y <- sub('_\\d+$', '', x)                                                  # drop band number
-   ###  band <- substring(sub('(.*)(_\\d+$)', '\\2', x), 2)                        # and get band number         DON'T NEED THIS                                     
    files <- find_orthos(site, paste(y, collapse = '+'))$file                  # get file names to read
    
    files <- unique(files)                                                     # and remove dups
@@ -65,8 +70,6 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    names(rasters) <- x
    
    
-   #  names(rasters) <- sub('^(\\d)', 'X\\1', names(rasters))                    # files with leading digit get X prepended by R  
-   
    rasters <- rasters[[names(rasters) %in% names(model$trainingData)[-1]]]    # drop bands we don't want - now we have target bands
    
    if(!is.null(clip))                                                         # if clip is provided,
@@ -75,10 +78,8 @@ do_map <- function(site, fitid, fitfile, clip, rep = NULL) {
    
    cat('Predicting...\n')
    pred <- terra::predict(rasters, model, cpkgs = model$method, 
-                          cores = 1, na.rm = TRUE)                            # prediction for the model
-   # odd: 10 cores uses 3x memory, but takes twice as long as 1 core. 2 cores isn't really better than 1 core either.
-   # cores = cores  ############### ******************************************** need to get the number of cores from call!
-   
+                          cores = 1, na.rm = TRUE)                            # prediction for the model. 1 core seems optimal here.
+
    writeRaster(pred, f0, overwrite = TRUE, datatype = 'INT1U', progress = 1, 
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    

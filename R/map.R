@@ -10,6 +10,7 @@
 #'   model was built on, or the model was built on mutiple sites, `site` is
 #'   required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
+#' @param result Optional result name. Default is `map_<site>_[clip_<size>_ha]`
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
 #'   These take priority over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
@@ -21,8 +22,8 @@
 #' @export
 
 
-map <- function(fit, site = NULL, clip = NULL, resources = NULL, local = FALSE, 
-                trap = FALSE, comment = NULL) {
+map <- function(fit, site = NULL, clip = NULL, result = NULL,
+                resources = NULL, local = FALSE, trap = FALSE, comment = NULL) {
    
    
    if(is.list(fit)) {                                                                  # if fit is a list, it's (1) fit object,
@@ -78,7 +79,8 @@ map <- function(fit, site = NULL, clip = NULL, resources = NULL, local = FALSE,
    
    
    launch('do_map', 
-          moreargs = list(site = site, fitid = fitid, fitfile = fitfile, clip = clip), 
+          moreargs = list(site = site, fitid = fitid, fitfile = fitfile, 
+                          clip = clip, result = result), 
           finish = 'map_finish', 
           #################callerid = the$mdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)        # launch it

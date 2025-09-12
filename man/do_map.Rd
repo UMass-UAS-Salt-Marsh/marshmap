@@ -4,7 +4,7 @@
 \alias{do_map}
 \title{Produce geoTIFF maps of predicted vegetation cover from fitted models}
 \usage{
-do_map(site, fitid, fitfile, clip, rep = NULL)
+do_map(site, fitid, fitfile, clip, result, rep = NULL)
 }
 \arguments{
 \item{site}{Three letter site code. If fitting from a fit id that was built
@@ -18,6 +18,8 @@ required.}
 \item{fitfile}{Full specification of an RDS file with the fit object}
 
 \item{clip}{Optional clip, vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
+
+\item{result}{Optional result name}
 
 \item{rep}{Throwaway argument to make \code{slurmcollie} happy}
 }

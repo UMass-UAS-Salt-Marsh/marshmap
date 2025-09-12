@@ -8,6 +8,7 @@ map(
   fit,
   site = NULL,
   clip = NULL,
+  result = NULL,
   resources = NULL,
   local = FALSE,
   trap = FALSE,
@@ -25,6 +26,8 @@ model was built on, or the model was built on mutiple sites, \code{site} is
 required.}
 
 \item{clip}{Optional clip, vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
+
+\item{result}{Optional result name. Default is \verb{map_<site>_[clip_<size>_ha]}}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}.
 These take priority over the function's defaults.}
