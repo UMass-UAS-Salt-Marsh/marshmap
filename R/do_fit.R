@@ -30,9 +30,9 @@
 #' @export
 
 
-do_fit <- function(fitid, sites, name, method = 'rf', 
-                   vars = NULL, exclude = NULL, years = NULL, maxmissing = 0.05, 
-                   top_importance = 20, holdout = 0.2, auc = TRUE, hyper, rep = NULL) {
+do_fit <- function(fitid, sites, name, method, 
+                   vars, exclude, years, maxmissing, 
+                   top_importance, holdout, auc, hyper, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -92,11 +92,11 @@ do_fit <- function(fitid, sites, name, method = 'rf',
    }
    
    
-   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= maxmissing)]                   # drop variables with too many missing values
+   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= maxmissing)]                     # drop variables with too many missing values
    
    
    if(auc)                                                                                # if preparing data for AUC, 
-      r$subclass <- as.factor(paste0('class', r$subclass))                                #    we can't use numbers for factors when doing classProbs in training
+      r$subclass <- factor(r$subclass, labels = paste0('class', sort(unique(r$subclass))))#    we can't use numbers for factors when doing classProbs in training. Keep sorted order.
    
    
    n_partitions <- switch(method, 

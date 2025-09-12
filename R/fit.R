@@ -35,8 +35,8 @@
 
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
-                vars = '{*}', exclude = '', years = NULL, maxmissing = 0.05, 
-                top_importance = 20, holdout = 0.2, auc = TRUE, hyper = NULL,
+                vars = '{*}', exclude = '', years = NULL, maxmissing = 0.20, 
+                top_importance = 20, holdout = 0.2, auc = FALSE, hyper = NULL,
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
