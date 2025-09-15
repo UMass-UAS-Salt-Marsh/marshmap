@@ -45,6 +45,8 @@
 <span>  p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  d <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  minscore <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  maxmissing <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  balance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  balance_excl <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  result <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,6 +91,17 @@ for details. The default is <code>{*}</code>, which will include all variables.<
 <dt id="arg-classes">classes<a class="anchor" aria-label="anchor" href="#arg-classes"></a></dt>
 <dd><p>Class or vector of classes in transects to sample. Default is all
 classes.</p></dd>
+
+
+<dt id="arg-minscore">minscore<a class="anchor" aria-label="anchor" href="#arg-minscore"></a></dt>
+<dd><p>Minimum score for orthos. Files with a minimum score of less than
+this are excluded from results. Default is 0, but rejected orthos are always
+excluded.</p></dd>
+
+
+<dt id="arg-maxmissing">maxmissing<a class="anchor" aria-label="anchor" href="#arg-maxmissing"></a></dt>
+<dd><p>Maximum percent missing in orthos. Files with percent missing greater
+than this are excluded.</p></dd>
 
 
 <dt id="arg-balance">balance<a class="anchor" aria-label="anchor" href="#arg-balance"></a></dt>

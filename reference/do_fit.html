@@ -46,7 +46,9 @@
 <span>  <span class="va">vars</span>,</span>
 <span>  <span class="va">exclude</span>,</span>
 <span>  <span class="va">years</span>,</span>
+<span>  <span class="va">minscore</span>,</span>
 <span>  <span class="va">maxmissing</span>,</span>
+<span>  <span class="va">max_miss_train</span>,</span>
 <span>  <span class="va">top_importance</span>,</span>
 <span>  <span class="va">holdout</span>,</span>
 <span>  <span class="va">auc</span>,</span>
@@ -93,7 +95,18 @@ these must match portable names in any site, which will be used for all sites.</
 <dd><p>An optional vector of years to restrict variables to</p></dd>
 
 
+<dt id="arg-minscore">minscore<a class="anchor" aria-label="anchor" href="#arg-minscore"></a></dt>
+<dd><p>Minimum score for orthos. Files with a minimum score of less than
+this are excluded from results. Default is 0, but rejected orthos are always
+excluded.</p></dd>
+
+
 <dt id="arg-maxmissing">maxmissing<a class="anchor" aria-label="anchor" href="#arg-maxmissing"></a></dt>
+<dd><p>Maximum percent missing in orthos. Files with percent missing greater
+than this are excluded.</p></dd>
+
+
+<dt id="arg-max-miss-train">max_miss_train<a class="anchor" aria-label="anchor" href="#arg-max-miss-train"></a></dt>
 <dd><p>Maximum proportion of missing training points allowed before a
 variable is dropped</p></dd>
 
