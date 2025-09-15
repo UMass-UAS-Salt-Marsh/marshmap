@@ -4,7 +4,7 @@
 \alias{resolve_dir}
 \title{Resolve directory with embedded \verb{<site>}, \verb{<SITE>}, \verb{<site_name>}, or \verb{<share>}}
 \usage{
-resolve_dir(dir, site, share = site_name)
+resolve_dir(dir, site, share = "")
 }
 \arguments{
 \item{dir}{Directory path}

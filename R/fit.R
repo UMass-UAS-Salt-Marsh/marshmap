@@ -9,7 +9,7 @@
 #'   shared among sites, or a vector matching site.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
-#' @param vars An optional vector of variables to restrict analysis to. Default = {*}, 
+#' @param vars An optional vector of variables to restrict analysis to. Default = `{*}`, 
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude An optional vector of variables to exclude. As with `vars`, variables
@@ -123,7 +123,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
-                          vars = vars, exclude = exclude, years = years, 
+                          vars = vars, exclude = exclude, years = years, minscore, maxmissing,
                           max_miss_train = max_miss_train, top_importance = top_importance,
                           holdout = holdout, auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 

@@ -36,7 +36,7 @@ shared among sites, or a vector matching site.}
 
 \item{method}{One of \code{rf} for Random Forest, \code{boost} for AdaBoost. Default = \code{rf}.}
 
-\item{vars}{An optional vector of variables to restrict analysis to. Default = {*},
+\item{vars}{An optional vector of variables to restrict analysis to. Default = \verb{\{*\}},
 all variables. \code{vars} is processed by \code{find_orthos}, and may include file names,
 portable names, search names and regular expressions of file and portable names.}
 

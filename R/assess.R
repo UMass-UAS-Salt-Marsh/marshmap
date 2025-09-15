@@ -107,7 +107,8 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL,
    if(!is.null(newdata)) {                                           # if new data have been passed,
       y <- stats::predict(model, newdata = newdata)                  #    we'l work with it
       model$nvalidate <- nrow(newdata)                               #    update number of validation cases
-      confuse <- help(newdata$subclass, y)                           #    and build the new confusion matrix
+      confuse <- unconfuse(confusionMatrix(newdata$subclass, y, 
+                                           mode = 'prec_recall'))    #    and build the new confusion matrix
    }
    
    info <- paste0('Model ', model$id, ifelse(nchar(model$name) > 0, paste0(' (', model$name, ')'), ''))

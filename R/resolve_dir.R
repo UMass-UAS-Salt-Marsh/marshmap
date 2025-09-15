@@ -8,7 +8,7 @@
 #' @keywords internal
 
 
-resolve_dir <- function(dir, site, share = site_name) {
+resolve_dir <- function(dir, site, share = '') {
    
    
    sites <- read_pars_table('sites')
