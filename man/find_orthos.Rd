@@ -4,7 +4,7 @@
 \alias{find_orthos}
 \title{Find orthophotos for a site}
 \usage{
-find_orthos(site, descrip)
+find_orthos(site, descrip, minscore = 0, maxmissing = 20)
 }
 \arguments{
 \item{site}{Vector of one or more site names}
@@ -19,6 +19,13 @@ applied to both file names and portable names. Regular expressions
 are case-insensitive.}
 \item{search name}{a search string (see \code{search_names} for details)}
 }}
+
+\item{minscore}{Minimum score for orthos. Files with a minimum score of less than
+this are excluded from results. Default is 0, but rejected orthos are always
+excluded.}
+
+\item{maxmissing}{Maximum percent missing for orthos. Files with percent missing greater
+than this are excluded.}
 }
 \value{
 Data frame with

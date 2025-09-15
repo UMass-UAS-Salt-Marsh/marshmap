@@ -15,6 +15,11 @@
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
 #' @param classes Class or vector of classes in transects to sample. Default is all
 #'    classes.
+#' @param minscore Minimum score for orthos. Files with a minimum score of less than
+#'    this are excluded from results. Default is 0, but rejected orthos are always 
+#'    excluded.
+#' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
+#'    than this are excluded.
 #' @param balance If TRUE, balance number of samples for each class. Points will be randomly
 #'    selected to match the sparsest class.
 #' @param balance_excl Vector of classes to exclude when determining sample size when 
@@ -34,9 +39,8 @@
 #' @keywords internal
 
 
-do_sample <- function(site, pattern, n, p, d, 
-                      classes, balance, balance_excl, result, 
-                      transects, drop_corr, reuse) {
+do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, 
+                      balance, balance_excl, result, transects, drop_corr, reuse) {
    
    
    message('')
@@ -76,7 +80,7 @@ do_sample <- function(site, pattern, n, p, d,
       
       
       fl <- resolve_dir(the$flightsdir, tolower(site))
-      x <- find_orthos(site, pattern)                                               # find matching files
+      x <- find_orthos(site, pattern, minscore, maxmissing)                         # find matching files
       xvars <- x$portable                                                           # we'll use the portable name as the variable name
       xfiles <- x$file                                                              # and here are the files for reading and writing to <result>_vars.txt 
       

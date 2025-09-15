@@ -78,6 +78,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
          year = integer(),
          season = character(),
          bands = integer(),                                             # bands is calulated when we load images
+         pct_missing = double(),                                        # pct_missing is calculated by assess_flights
          score = integer(),                                             # score, repair flag, and comment are entered by user
          repair = logical(),
          comment = character(),
@@ -93,6 +94,8 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    db <- db[match(unique(db$name), db$name), ]  #****************************** fix dups in db *************************************
    cat(site, ': AFTER FIX: db has ', nrow(db), ' rows\n\n', sep = '')
   ### -----------------------
+  ### 
+
    
    
    db$score[is.na(db$score)] <- 0                                       # NAs here wreak havoc
@@ -140,6 +143,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       db$year[i] <- s$year
       db$season[i] <- s$season
       db$score[i] <- 0                                                  #    score starts with 0 = not scored
+      db$pct_missing[i] <- NA                                           #    pct_missing is resolved by assess_flights
       db$repair[i] <- FALSE
       db$comment[i] <- ''
       db$deleted[i] <- FALSE

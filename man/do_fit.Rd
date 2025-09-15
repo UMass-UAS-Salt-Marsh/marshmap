@@ -12,7 +12,9 @@ do_fit(
   vars,
   exclude,
   years,
+  minscore,
   maxmissing,
+  max_miss_train,
   top_importance,
   holdout,
   auc,
@@ -41,7 +43,14 @@ these must match portable names in any site, which will be used for all sites.}
 
 \item{years}{An optional vector of years to restrict variables to}
 
-\item{maxmissing}{Maximum proportion of missing training points allowed before a
+\item{minscore}{Minimum score for orthos. Files with a minimum score of less than
+this are excluded from results. Default is 0, but rejected orthos are always
+excluded.}
+
+\item{maxmissing}{Maximum percent missing in orthos. Files with percent missing greater
+than this are excluded.}
+
+\item{max_miss_train}{Maximum proportion of missing training points allowed before a
 variable is dropped}
 
 \item{top_importance}{Number of variables to keep for variable importance}

@@ -13,7 +13,12 @@
 #' @param exclude An optional vector of variables to exclude. Names are specified as for 
 #'    `vars`.
 #' @param years An optional vector of years to restrict variables to
-#' @param maxmissing Maximum proportion of missing training points allowed before a 
+#' @param minscore Minimum score for orthos. Files with a minimum score of less than
+#'    this are excluded from results. Default is 0, but rejected orthos are always 
+#'    excluded.
+#' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
+#'    than this are excluded.
+#' @param max_miss_train Maximum proportion of missing training points allowed before a 
 #'    variable is dropped
 #' @param top_importance Number of variables to keep for variable importance
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
@@ -31,7 +36,7 @@
 
 
 do_fit <- function(fitid, sites, name, method, 
-                   vars, exclude, years, maxmissing, 
+                   vars, exclude, years, minscore, maxmissing, max_miss_train, 
                    top_importance, holdout, auc, hyper, rep = NULL) {
    
    
@@ -49,8 +54,13 @@ do_fit <- function(fitid, sites, name, method,
    for(i in seq_len(nrow(sites)))                                                         # read data files and merge them
       r[[i]] <- readRDS(sites$datafile[i])
    names(r) <- sites$site
+
    r <- bind_rows(r, .id = 'site')
-   r$subclass <- as.factor(r$subclass)                                                    # we want subclass to be factor, not numeric
+   l <- 1:max(r$subclass)                                                                 # make sure all subclasses are represented in factor so value = subclass
+   if(auc)                                                                                # if preparing data for AUC, 
+      r$subclass <- factor(r$subclass, levels = l, labels = paste0('class', l))           #    we can't use numbers for factors when doing classProbs in training
+   else                                                                                   # else, no AUC,
+      r$subclass <- factor(r$subclass, levels = l)                                        #    we want subclass to be factor
    
    
    # want to assess how much of a mess we've made by combining sites. I guess we'll drop stuff with too many missing as usual
@@ -60,7 +70,8 @@ do_fit <- function(fitid, sites, name, method,
    message('\nFitting for site', ifelse(nrow(sites) != 1, 's', ''), ' = ', paste(sites$site, collapse = ', '))
    
    
-   v <- unique(gsub('-', '_', find_orthos(sites$site, vars)$portable))                    # portable names from vars (replace dash with underscore to match var names)
+   v <- unique(gsub('-', '_', find_orthos(sites$site, vars, 
+                                          minscore, maxmissing)$portable))                # portable names from vars (replace dash with underscore to match var names)
    if(!is.null(v)) {                                                                      # if restricting to selected variables,
       r <- r[, sub('_\\d$', '', names(r)) %in% c('site', 'subclass', v)]
       if(vars != '{*}')
@@ -68,7 +79,8 @@ do_fit <- function(fitid, sites, name, method,
                  ' selected variables')
    }
    
-   e <- unique(gsub('-', '_', find_orthos(sites$site, exclude)$portable))                 # portable names from exclude
+   e <- unique(gsub('-', '_', find_orthos(sites$site, exclude, 
+                                          minscore = 0, maxmissing = 100)$portable))      # portable names from exclude (don't exclude any!)
    if(!is.null(exclude)) {                                                                # if excluding variables,
       r <- r[, !sub('_\\d$', '', names(r)) %in% e] 
       if(exclude != '')
@@ -92,11 +104,9 @@ do_fit <- function(fitid, sites, name, method,
    }
    
    
-   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= maxmissing)]                     # drop variables with too many missing values
+   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train)]                     # drop variables with too many missing values
    
    
-   if(auc)                                                                                # if preparing data for AUC, 
-      r$subclass <- factor(r$subclass, labels = paste0('class', sort(unique(r$subclass))))#    we can't use numbers for factors when doing classProbs in training. Keep sorted order.
    
    
    n_partitions <- switch(method, 
@@ -149,7 +159,7 @@ do_fit <- function(fitid, sites, name, method,
    
    a <- Sys.time()
    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
-
+   
    ####   z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, , importance = "permutation", local.importance = TRUE)             #---train the model     ***************************** with local importance**********************
    
    #    z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity', tuneGrid = expand.grid(.mtry = 1, .splitrule = 'gini', .min.node.size = c(10, 20)))

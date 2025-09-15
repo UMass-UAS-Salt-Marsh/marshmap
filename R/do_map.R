@@ -83,6 +83,8 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    writeRaster(pred, f0, overwrite = TRUE, datatype = 'INT1U', progress = 1, 
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    
+#   browser() ######################## STOP HERE ############################
+   
    levs <- terra::levels(pred$class)[[1]]                                     # get class levels from prediction
    levs$class <- as.numeric(sub('^class', '', levs$class))                    # make sure they're numeric with no "class"
    names(levs)[2] <- target                                                   # use target (e.g., 'subclass') as class name                                                                                 

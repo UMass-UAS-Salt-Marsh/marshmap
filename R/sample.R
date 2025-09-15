@@ -37,6 +37,11 @@
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
 #' @param classes Class or vector of classes in transects to sample. Default is all
 #'    classes.
+#' @param minscore Minimum score for orthos. Files with a minimum score of less than
+#'    this are excluded from results. Default is 0, but rejected orthos are always 
+#'    excluded.
+#' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
+#'    than this are excluded.
 #' @param balance If TRUE, balance number of samples for each class. Points will be randomly
 #'    selected to match the sparsest class.
 #' @param balance_excl Vector of classes to exclude when determining sample size when 
@@ -60,9 +65,10 @@
 
 
 sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL, 
-                   classes = NULL, balance = TRUE, balance_excl = NULL, result = NULL, 
-                   transects = NULL, drop_corr = NULL, reuse = FALSE, resources = NULL, 
-                   local = FALSE, trap = TRUE, comment = NULL) {
+                   classes = NULL, minscore = 0, maxmissing = 20, balance = TRUE, 
+                   balance_excl = NULL, result = NULL, transects = NULL, 
+                   drop_corr = NULL, reuse = FALSE, 
+                   resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    site <- get_sites(site)$site

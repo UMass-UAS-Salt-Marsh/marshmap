@@ -11,6 +11,8 @@ do_sample(
   p,
   d,
   classes,
+  minscore,
+  maxmissing,
   balance,
   balance_excl,
   result,
@@ -35,6 +37,13 @@ for details.W}
 
 \item{classes}{Class or vector of classes in transects to sample. Default is all
 classes.}
+
+\item{minscore}{Minimum score for orthos. Files with a minimum score of less than
+this are excluded from results. Default is 0, but rejected orthos are always
+excluded.}
+
+\item{maxmissing}{Maximum percent missing in orthos. Files with percent missing greater
+than this are excluded.}
 
 \item{balance}{If TRUE, balance number of samples for each class. Points will be randomly
 selected to match the sparsest class.}

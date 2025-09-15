@@ -28,6 +28,11 @@
 #'       are case-insensitive.}
 #'    \item{search name}{a search string (see `search_names` for details)}
 #' }
+#' @param minscore Minimum score for orthos. Files with a minimum score of less than
+#'    this are excluded from results. Default is 0, but rejected orthos are always 
+#'    excluded.
+#' @param maxmissing Maximum percent missing for orthos. Files with percent missing greater
+#'    than this are excluded.
 #' @returns Data frame with
 #' \describe{
 #'    \item{row}{row numbers in `flights<site>.txt`}
@@ -38,7 +43,7 @@
 #' @export
 
 
-find_orthos <- function(site, descrip) {
+find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20) {
    
    
    depth <- function(this)                                                             # get depth of a list
@@ -108,6 +113,9 @@ find_orthos <- function(site, descrip) {
    }
    
    z <- unique(z)
+   
+   z <- z[(db$score[z] >= minscore) & (db$score[z] != 1)]                              # drop orthos with score < minscore and always drop rejected orthos
+   z <- z[is.na(db$pct_missing[z]) | (db$pct_missing[z] > maxmissing)]                 # drop orthos with pct_missing > maxmissing
    
    data.frame(row = z, file = db$name[z], portable = db$portable[z])                   # return data frame of rows, file names, and portable names
 }

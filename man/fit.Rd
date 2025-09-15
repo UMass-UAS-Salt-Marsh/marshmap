@@ -12,7 +12,9 @@ fit(
   vars = "{*}",
   exclude = "",
   years = NULL,
-  maxmissing = 0.2,
+  minscore = 0,
+  maxmissing = 20,
+  max_miss_train = 0.2,
   top_importance = 20,
   holdout = 0.2,
   auc = FALSE,
@@ -24,7 +26,7 @@ fit(
 )
 }
 \arguments{
-\item{site}{Three letter site code, or vector of site names if fitting multiple sites.}
+\item{site}{Three letter site code, or vector of site names if fitting multiple sites}
 
 \item{datafile}{Name of data file. It must be an \code{.RDS} file, but exclude the
 extension. If fitting multiple sites, either use a single datafile name
@@ -39,12 +41,19 @@ all variables. \code{vars} is processed by \code{find_orthos}, and may include f
 portable names, search names and regular expressions of file and portable names.}
 
 \item{exclude}{An optional vector of variables to exclude. As with \code{vars}, variables
-are processed by \code{find_orthos}.}
+are processed by \code{find_orthos}}
 
-\item{years}{An optional vector of years to restrict variables to.}
+\item{years}{An optional vector of years to restrict variables to}
 
-\item{maxmissing}{Maximum proportion of missing training points allowed before a
-variable is dropped.}
+\item{minscore}{Minimum score for orthos. Files with a minimum score of less than
+this are excluded from results. Default is 0, but rejected orthos are always
+excluded.}
+
+\item{maxmissing}{Maximum percent missing in orthos. Files with percent missing greater
+than this are excluded.}
+
+\item{max_miss_train}{Maximum proportion of missing training points allowed before a
+variable is dropped}
 
 \item{top_importance}{Number of variables to keep for variable importance}
 
@@ -52,7 +61,7 @@ variable is dropped.}
 the size of the single validation set, while for boosting, it is the size of each
 of the testing and validation sets.}
 
-\item{auc}{If TRUE, calculate class probabilities so we can calculate AUC.}
+\item{auc}{If TRUE, calculate class probabilities so we can calculate AUC}
 
 \item{hyper}{Hyperparameters. \emph{\strong{To be defined.}}}
 

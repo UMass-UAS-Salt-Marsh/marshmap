@@ -3,7 +3,7 @@
 #' Given one or more sites and a model specification, builds a model of vegetation
 #' cover and report model assessment.
 #' 
-#' @param site Three letter site code, or vector of site names if fitting multiple sites.
+#' @param site Three letter site code, or vector of site names if fitting multiple sites
 #' @param datafile Name of data file. It must be an `.RDS` file, but exclude the
 #'   extension. If fitting multiple sites, either use a single datafile name
 #'   shared among sites, or a vector matching site.
@@ -13,15 +13,20 @@
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude An optional vector of variables to exclude. As with `vars`, variables
-#'    are processed by `find_orthos`.
-#' @param years An optional vector of years to restrict variables to.
-#' @param maxmissing Maximum proportion of missing training points allowed before a 
-#'    variable is dropped.
+#'    are processed by `find_orthos`
+#' @param years An optional vector of years to restrict variables to
+#' @param minscore Minimum score for orthos. Files with a minimum score of less than
+#'    this are excluded from results. Default is 0, but rejected orthos are always 
+#'    excluded.
+#' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
+#'    than this are excluded.
+#' @param max_miss_train Maximum proportion of missing training points allowed before a 
+#'    variable is dropped
 #' @param top_importance Number of variables to keep for variable importance
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
-#' @param auc If TRUE, calculate class probabilities so we can calculate AUC.
+#' @param auc If TRUE, calculate class probabilities so we can calculate AUC
 #' @param hyper Hyperparameters. ***To be defined.***
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
 #'   These take priority over the function's defaults.
@@ -35,8 +40,9 @@
 
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
-                vars = '{*}', exclude = '', years = NULL, maxmissing = 0.20, 
-                top_importance = 20, holdout = 0.2, auc = FALSE, hyper = NULL,
+                vars = '{*}', exclude = '', years = NULL, minscore = 0, 
+                maxmissing = 20, max_miss_train = 0.20, top_importance = 20, 
+                holdout = 0.2, auc = FALSE, hyper = NULL,
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
@@ -118,7 +124,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
                           vars = vars, exclude = exclude, years = years, 
-                          maxmissing = maxmissing, top_importance = top_importance,
+                          max_miss_train = max_miss_train, top_importance = top_importance,
                           holdout = holdout, auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
