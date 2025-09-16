@@ -89,10 +89,10 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
 
    
    
-   ### ---delete this crap---
-   cat(site, ': BEFORE FIX: db has ', nrow(db), ' rows\n', sep = '')                # ******************************** this is temporary code in case duplicated name bug reappears
-   db <- db[match(unique(db$name), db$name), ]  #****************************** fix dups in db *************************************
-   cat(site, ': AFTER FIX: db has ', nrow(db), ' rows\n\n', sep = '')
+   # ### ---delete this crap---
+   # cat(site, ': BEFORE FIX: db has ', nrow(db), ' rows\n', sep = '')                # ******************************** this is temporary code in case duplicated name bug reappears
+   # db <- db[match(unique(db$name), db$name), ]  #****************************** fix dups in db *************************************
+   # cat(site, ': AFTER FIX: db has ', nrow(db), ' rows\n\n', sep = '')
   ### -----------------------
   ### 
 

@@ -60,7 +60,8 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    x <- names(model$trainingData)[-1]                                         # get source raster names from bands
    y <- sub('_\\d+$', '', x)                                                  # drop band number
-   files <- find_orthos(site, paste(y, collapse = '+'))$file                  # get file names to read
+   files <- find_orthos(site, paste(y, collapse = '+'), 
+                        minscore = 0, maxmissing = 100)$file                  # get file names to read
    
    files <- unique(files)                                                     # and remove dups
    
@@ -70,7 +71,6 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    names(rasters) <- x
    
    
-   rasters <- rasters[[names(rasters) %in% names(model$trainingData)[-1]]]    # drop bands we don't want - now we have target bands
    
    if(!is.null(clip))                                                         # if clip is provided,
       rasters <- crop(rasters, ext(clip))                                     #    clip result
@@ -83,7 +83,10 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    writeRaster(pred, f0, overwrite = TRUE, datatype = 'INT1U', progress = 1, 
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    
-#   browser() ######################## STOP HERE ############################
+   
+   # pred <<- pred; target <<- target; f0 <<- f0; f <<- f
+   # browser() ######################## STOP HERE ############################
+   
    
    levs <- terra::levels(pred$class)[[1]]                                     # get class levels from prediction
    levs$class <- as.numeric(sub('^class', '', levs$class))                    # make sure they're numeric with no "class"
@@ -96,6 +99,15 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    names(vat) <- c('value', target, 'name', 'color')                          # drop back to generic names, except for target
    vat[, target] <- as.integer(vat[, target])                                 # force this to be integer
    
+   
+   
+   v <- data.frame(matrix(NA, 1:max(vat$value), ncol(vat)))                   # clean up for non-consecutive values   *** this may not be necessary if there aren't bad classes - fix PEG and retry
+   names(v) <- names(vat)
+   v[vat$value, ] <- vat
+   v$value <- 1:max(vat$value)
+   vat <- v
+   
+   
    vat2 <- vat[, c('value', 'color')]                                         # make a version of the vat for addColorTable
    vat2$category <-  paste0('[', vat[, target], '] ', vat$name)               # with labels that include numeric class and name, as e.g. [1] Low marsh
    vrt.file <- addColorTable(f0, table = vat2)                                # and add the standard colors
@@ -106,4 +118,5 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    unlink(f0x)                                                                # delete preliminary files
    
+   message('do_map is finished; results writen to ', f)
 }
