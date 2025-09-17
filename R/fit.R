@@ -12,8 +12,9 @@
 #' @param vars An optional vector of variables to restrict analysis to. Default = `{*}`, 
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
-#' @param exclude An optional vector of variables to exclude. As with `vars`, variables
+#' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
+#' @param exclude_classes An optionial numeric vector of subclasses to exclude
 #' @param years An optional vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
 #'    this are excluded from results. Default is 0, but rejected orthos are always 
@@ -40,8 +41,8 @@
 
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
-                vars = '{*}', exclude = '', years = NULL, minscore = 0, 
-                maxmissing = 20, max_miss_train = 0.20, top_importance = 20, 
+                vars = '{*}', exclude_vars = '', exclude_classes = NULL, years = NULL, 
+                minscore = 0, maxmissing = 20, max_miss_train = 0.20, top_importance = 20, 
                 holdout = 0.2, auc = FALSE, hyper = NULL,
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
@@ -76,7 +77,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    
    
-   load_database('fdb')                                  # Create new database
+   load_database('fdb')                                  # Get fit database
    the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add rows to database 
    
    the$fdb$id[i] <- the$last_fit_id + 1                  # model id
@@ -123,9 +124,9 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
-                          vars = vars, exclude = exclude, years = years, minscore, maxmissing,
-                          max_miss_train = max_miss_train, top_importance = top_importance,
-                          holdout = holdout, auc = auc, hyper = hyper),
+                          vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
+                          years = years, minscore, maxmissing, max_miss_train = max_miss_train, 
+                          top_importance = top_importance, holdout = holdout, auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
 }

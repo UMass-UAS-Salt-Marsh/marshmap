@@ -44,3 +44,7 @@ map(185) # oth    running
 map(182) # sor    TERRIBLE!
 
 map(186) # oth, new one
+
+
+
+fit('peg', exclude_classes = 28, comment = 'PEG fit without bogus class 28')   # job 179, fit 187

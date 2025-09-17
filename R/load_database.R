@@ -4,7 +4,7 @@
 #' 
 #' For the model fit database, `fdb`, the file `last_fit_id.txt` is read to get model 
 #' sequence for empty databases, as these ids are *never* reused. If the file isn't 
-#' found, use the max id from `fdb` or 0 as a last resort, and display a warning.
+#' found, use the max id from `fdb` or 1000 as a last resort, and display a warning.
 #' 
 #' @param database Name of database (should be `fdb` for the model fit database, or 
 #'    `mdb` for the map database)
@@ -26,7 +26,7 @@ load_database <- function(database) {
       if(file.exists(f))
          the$last_fit_id <- as.numeric(readLines(f))
       else {                                                      #    if there is no last_fit_id.txt,
-         the$last_fit_id <- max(the$fdb$id, 0)                    #       use the max in the database or 0. This shouldn't happen except early in development.
+         the$last_fit_id <- max(the$fdb$id, 1000)                 #       use the max in the database or 1000. This shouldn't happen except early in development.
          warning('last_fit_id.txt not found. Using ', the$last_fit_id, ' as last fit. Make sure fit ids aren\'t being reused!')
       }
    }

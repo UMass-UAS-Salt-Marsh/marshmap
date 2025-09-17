@@ -6,12 +6,12 @@
 #'    are vetted by fit - there's no checking here.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
-#' @param vars An optional vector of variables to restrict analysis to. Default = NULL, 
-#'    all variables. You may use portable names (in full or via regex), file names (in
-#'    full or via regex), or search names. If you use file names, with multiple sites,
-#'    these must match portable names in any site, which will be used for all sites.
-#' @param exclude An optional vector of variables to exclude. Names are specified as for 
-#'    `vars`.
+#' @param vars An optional vector of variables to restrict analysis to. Default = `{*}`, 
+#'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
+#'    portable names, search names and regular expressions of file and portable names.
+#' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
+#'    are processed by `find_orthos`
+#' @param exclude_classes An optionial numeric vector of subclasses to exclude
 #' @param years An optional vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
 #'    this are excluded from results. Default is 0, but rejected orthos are always 
@@ -36,8 +36,8 @@
 
 
 do_fit <- function(fitid, sites, name, method, 
-                   vars, exclude, years, minscore, maxmissing, max_miss_train, 
-                   top_importance, holdout, auc, hyper, rep = NULL) {
+                   vars, exclude_vars, exclude_classes, years, minscore, maxmissing, 
+                   max_miss_train, top_importance, holdout, auc, hyper, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -54,7 +54,7 @@ do_fit <- function(fitid, sites, name, method,
    for(i in seq_len(nrow(sites)))                                                         # read data files and merge them
       r[[i]] <- readRDS(sites$datafile[i])
    names(r) <- sites$site
-
+   
    r <- bind_rows(r, .id = 'site')
    l <- 1:max(r$subclass)                                                                 # make sure all subclasses are represented in factor so value = subclass
    if(auc)                                                                                # if preparing data for AUC, 
@@ -79,14 +79,18 @@ do_fit <- function(fitid, sites, name, method,
                  ' selected variables')
    }
    
-   e <- unique(gsub('-', '_', find_orthos(sites$site, exclude, 
-                                          minscore = 0, maxmissing = 100)$portable))      # portable names from exclude (don't exclude any!)
-   if(!is.null(exclude)) {                                                                # if excluding variables,
+   e <- unique(gsub('-', '_', find_orthos(sites$site, exclude_vars, 
+                                          minscore = 0, maxmissing = 100)$portable))      # portable names from exclude_vars (don't exclude any!)
+   if(!is.null(exclude_vars)) {                                                           # if excluding variables,
       r <- r[, !sub('_\\d$', '', names(r)) %in% e] 
-      if(exclude != '')
+      if(exclude_vars != '')
          message('Analysis limited to ', sum(!names(r) %in% c('site', 'subclass')), 
                  ' variables after exclusions')
    }
+   
+   if(!is.null(exclude_classes))                                                          # if exclude_classes, drop these from dataset
+      r <- r[!r$subclass %in% exclude_classes, ]
+   
    
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
       stop('Analysis doesn\'t include any orthoimage variables')
@@ -141,7 +145,7 @@ do_fit <- function(fitid, sites, name, method,
    
    # tuning ...
    
-   training <- training[complete.cases(training), ]                                       # only use complete cases   ....................... 
+   training <- training[complete.cases(training), ]                                       # only use complete cases   ....................... *** Sep 2025: try dropping this and see if na.action = 'na.learn' works now
    # na.action = 'na.omit' fails, but na.learn fails. Maybe impute values? Some vars are missing for half of site. Some subclasses have no complete rows.
    # all I can make work so far is using complete cases
    # training <- training[!training$subclass %in% c(7, 10, 11, 26, 33), ]     # try this. Nope.
