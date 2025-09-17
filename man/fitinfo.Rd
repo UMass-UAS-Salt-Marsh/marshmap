@@ -4,7 +4,15 @@
 \alias{fitinfo}
 \title{Display information on model fits}
 \usage{
-fitinfo(rows = "all", cols = "normal", report = TRUE)
+fitinfo(
+  rows = "all",
+  cols = "normal",
+  report = TRUE,
+  sort = "id",
+  decreasing = FALSE,
+  nrows = NA,
+  timezone = "America/New_York"
+)
 }
 \arguments{
 \item{rows}{Selected rows in the fits database. Use one of
@@ -22,20 +30,12 @@ values) for logical or numeric fields.
 \item \emph{normal} (2)
 \item \emph{long} (3)
 \item \emph{all} (4)
-\item \emph{report}
 \item 1, 2, 3, or 4 is a shortcut for the above column sets
 \item A vector of column names to include
 }}
 
 \item{report}{If TRUE, give a report (on a single fit); otherwise, list info on fits.
-If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE}
-
-\item{score}{Set the subjective model score in the fits database. This may be numeric
-or character; it'll be treated as a character.}
-
-\item{assess}{Sets the assessment comment in the fits database.}
-
-\item{map}{Sets the map comment in the fits database.}
+If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.}
 
 \item{sort}{The name of the column to be used to sort the table}
 
@@ -45,9 +45,16 @@ or character; it'll be treated as a character.}
 display the first \emph{n} rows, and negative numbers display the last \emph{n} rows.
 Use \code{nrows = NA} to display all rows.}
 
-\item{quiet}{If TRUE, doesn't print anything, just returns values}
-
 \item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
+
+\item{score}{Set the subjective model score in the fits database. This may be numeric
+or character; it'll be treated as a character.}
+
+\item{assess}{Sets the assessment comment in the fits database.}
+
+\item{map}{Sets the map comment in the fits database.}
+
+\item{quiet}{If TRUE, doesn't print anything, just returns values}
 }
 \value{
 The fit table or assessment, invisibly

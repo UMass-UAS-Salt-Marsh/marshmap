@@ -30,12 +30,12 @@
 #'   - *normal* (2)
 #'   - *long* (3)
 #'   - *all* (4)
-#'   - *report*
 #'   - 1, 2, 3, or 4 is a shortcut for the above column sets
 #'   - A vector of column names to include
 #'   
+#'   
 #' @param report If TRUE, give a report (on a single fit); otherwise, list info on fits. 
-#'    If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE
+#'    If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.
 #' @param score Set the subjective model score in the fits database. This may be numeric 
 #'    or character; it'll be treated as a character.
 #' @param assess Sets the assessment comment in the fits database.
@@ -52,10 +52,12 @@
 #' @export
 
 
-fitinfo <- function(rows = 'all', cols = 'normal', report = TRUE) {
+fitinfo <- function(rows = 'all', cols = 'normal', report = TRUE,
+                    sort = 'id', decreasing = FALSE, nrows = NA, 
+                    timezone = 'America/New_York') {
    
-   load_database('fdb')
    
+   load_database('fdb')                                  # Get fit database
    
    if(dim(the$fdb)[1] == 0) {
       message('No fits in database')
@@ -63,33 +65,9 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = TRUE) {
    }
    
    
-   
-   
-   
-   
-   
-   # ----------------------- THIS IS ALL from slurmcollie::info. Use it as a starting point ------------------------------
-   
-   if(summary) {
-      x <- data.frame(table(slu$jdb$status))
-      x <- data.frame(cbind(status = as.character(x[, 1]), jobs = x[, 2]))
-      ordering <- data.frame(status = c('pending', 'queued', 'running', 'finished', 'error', 'killed', 'timeout', 'failed'), order = 1:8)
-      y <- x[order(merge(x, ordering, by = 'status')$order), ]
-      
-      if(any(!slu$jdb$done))
-         message(sum(!slu$jdb$done), ' job', ifelse(sum(!slu$jdb$done) != 1, 's', ''), ' not done\n')
-      else
-         message('All jobs done\n')
-      
-      print(y, row.names = FALSE)
-   }
-   
-   # Now put together jobs table, whether we print it or not, as it's also returned
-   
-   z <- slu$jdb[filter_jobs(filter), ]                                                                # jobs database, filtered
+   z <- the$fdb[filter_fits(filter), ]                                                                # fits, filtered
    z <- z[order(z[, sort], decreasing = decreasing), ]                                                # and sorted
    
-   z$mem_gb <- round(z$mem_gb, 3)
    
    if(!is.na(nrows)) {                                                                                # display just selected rows
       if(nrows > 0)
@@ -98,33 +76,47 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = TRUE) {
          z <- z[(dim(z)[1] + nrows + 1):(dim(z)[1]), ] 
    }
    
-   
    if(!is.null(timezone))                                                                             # if time zone supplied,
       z$launched <- with_tz(z$launched, timezone)                                                     #    format launch time in eastern time zone
    
    
-   z$local <- ifelse(is.na(z$local), '', ifelse(z$local, 'local', 'remote'))                          # prettier formatting for local, error, and done
-   z$error <- ifelse(is.na(z$error), '', ifelse(z$error, 'error', 'ok'))  
-   z$done <- ifelse(is.na(z$done), '', ifelse(z$done, 'done', '...'))  
+   z$error <- ifelse(is.na(z$error), '', ifelse(z$error, 'error', 'ok'))                              # prettier formatting
+   z$message <- ifelse(is.na(z$message), '', z$message)
+   z$vars <- ifelse(is.na(z$vars), '', z$vars)
+   
+   z$cases <- prettyNum(z$cases, big.mark = ',')
+   z$CCR <- ifelse(is.na(z$CCR), '', paste0(formatC(round(z$CCR * 100, 2), format = 'f', digits = 1), '%'))
+   z$kappa <- ifelse(is.na(z$kappa), '', formatC(round(z$kappa, 3), format = 'f', digits = 3))
+   z$cases <- ifelse(z$cases == 'NA', '', z$cases)
+   
+   z$cores <- ifelse(is.na(z$cores), '', z$cores)
+   z$mem_req <- ifelse(is.na(z$mem_req), '', z$mem_req)
+   z$mem_gb <- ifelse(is.na(z$mem_gb), '', formatC(z$mem_gb, format = 'f', digits = 3))
    
    
-   if(is.numeric(columns))                                                                            # print only requested columns
-      if(columns %in% 1:4)
-         columns <- c('brief', 'normal', 'long', 'all')[columns]
-   if(columns != 'all') {
-      co <- switch(columns,
-                   brief = c('jobid', 'status', 'error', 'comment'),
-                   normal = c('jobid', 'launched', 'call', 'rep', 'local', 'status', 'error', 'cores', 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment'),
-                   long = c('jobid', 'launched', 'call', 'rep', 'local', 'sjobid', 'status', 'state', 'reason', 'error', 'message', 'done', 'cores', 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'log', 'comment')
-      )
-      z <- z[, co]
+   
+   if(is.numeric(cols))                                                                            # print only requested columns
+      if(cols %in% 1:4)
+         cols <- c('brief', 'normal', 'long', 'all')[cols]
+   if(cols[1] != 'all') {
+      if(cols[1] %in% c('brief', 'normal', 'long', 'all'))
+         cols <- switch(cols,
+                        brief = c('id', 'name', 'site', 'status', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'comment_launch'),
+                        normal = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
+                                   'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'comment_assess', 'comment_map'),
+                        long = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
+                                 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'comment_assess', 'comment_map', 'call'),
+                        all = names(z)[!names(z) %in% c('model', 'full_model', 'hyper')]
+         )
+      z <- z[, cols]
    }
    
-   if(summary & table)
-      cat('\n')
    
-   if(table)
-      print(z, row.names = FALSE, na.print = '')
+   mp <- getOption('max.print')
+   on.exit(options(max.print = mp))
+   options(max.print = 20000)
+   
+   print(z, row.names = FALSE, na.print = '')
    
    return(invisible(z))
 }
