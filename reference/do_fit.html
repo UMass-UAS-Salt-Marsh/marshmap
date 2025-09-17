@@ -44,7 +44,8 @@
 <span>  <span class="va">name</span>,</span>
 <span>  <span class="va">method</span>,</span>
 <span>  <span class="va">vars</span>,</span>
-<span>  <span class="va">exclude</span>,</span>
+<span>  <span class="va">exclude_vars</span>,</span>
+<span>  <span class="va">exclude_classes</span>,</span>
 <span>  <span class="va">years</span>,</span>
 <span>  <span class="va">minscore</span>,</span>
 <span>  <span class="va">maxmissing</span>,</span>
@@ -80,15 +81,18 @@ are vetted by fit - there's no checking here.</p></dd>
 
 
 <dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
-<dd><p>An optional vector of variables to restrict analysis to. Default = NULL,
-all variables. You may use portable names (in full or via regex), file names (in
-full or via regex), or search names. If you use file names, with multiple sites,
-these must match portable names in any site, which will be used for all sites.</p></dd>
+<dd><p>An optional vector of variables to restrict analysis to. Default = <code>{*}</code>,
+all variables. <code>vars</code> is processed by <code>find_orthos</code>, and may include file names,
+portable names, search names and regular expressions of file and portable names.</p></dd>
 
 
-<dt id="arg-exclude">exclude<a class="anchor" aria-label="anchor" href="#arg-exclude"></a></dt>
-<dd><p>An optional vector of variables to exclude. Names are specified as for
-<code>vars</code>.</p></dd>
+<dt id="arg-exclude-vars">exclude_vars<a class="anchor" aria-label="anchor" href="#arg-exclude-vars"></a></dt>
+<dd><p>An optional vector of variables to exclude. As with <code>vars</code>, variables
+are processed by <code>find_orthos</code></p></dd>
+
+
+<dt id="arg-exclude-classes">exclude_classes<a class="anchor" aria-label="anchor" href="#arg-exclude-classes"></a></dt>
+<dd><p>An optionial numeric vector of subclasses to exclude</p></dd>
 
 
 <dt id="arg-years">years<a class="anchor" aria-label="anchor" href="#arg-years"></a></dt>

@@ -47,7 +47,8 @@ cover and report model assessment.</p>
 <span>  name <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"rf"</span>,</span>
 <span>  vars <span class="op">=</span> <span class="st">"{*}"</span>,</span>
-<span>  exclude <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  exclude_vars <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  exclude_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  minscore <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  maxmissing <span class="op">=</span> <span class="fl">20</span>,</span>
@@ -91,9 +92,13 @@ all variables. <code>vars</code> is processed by <code>find_orthos</code>, and m
 portable names, search names and regular expressions of file and portable names.</p></dd>
 
 
-<dt id="arg-exclude">exclude<a class="anchor" aria-label="anchor" href="#arg-exclude"></a></dt>
+<dt id="arg-exclude-vars">exclude_vars<a class="anchor" aria-label="anchor" href="#arg-exclude-vars"></a></dt>
 <dd><p>An optional vector of variables to exclude. As with <code>vars</code>, variables
 are processed by <code>find_orthos</code></p></dd>
+
+
+<dt id="arg-exclude-classes">exclude_classes<a class="anchor" aria-label="anchor" href="#arg-exclude-classes"></a></dt>
+<dd><p>An optionial numeric vector of subclasses to exclude</p></dd>
 
 
 <dt id="arg-years">years<a class="anchor" aria-label="anchor" href="#arg-years"></a></dt>
