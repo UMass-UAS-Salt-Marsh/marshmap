@@ -72,7 +72,7 @@ fitinfo(rows = <a single row>, assess = 'an assessment comment')
 fitinfo(rows = <a single row>, map = 'a map comment')
 }\if{html}{\out{</div>}}
 
-sets the subjective model fit score, the assessment comment, or the map
+sets the subjective model fit score, the assessment. comment, or the map
 comment. Any of these may be combined in a single call.
 }
 }

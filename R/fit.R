@@ -84,10 +84,15 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    the$fdb$name[i] <- name                               # optional model name
    the$fdb$site[i] <- paste(sites$site, collapse = ', ') # site (or sites) model is fit to
    
-   if(is.null(comment))                                  # now that we know some stuff, make up default comment
-      comment <- paste0('fit ', the$fdb$id[i], 
-                        ifelse(nchar(name) > 0, paste0(' (', name, ')'), ''), 
-                        ', site: ', paste(site, collapse = ', '))
+   
+   com <- paste0('fit ', the$fdb$id[i], 
+                 ifelse(nchar(name) > 0, paste0(' (', name, ')'), ''), 
+                 ', site: ', paste(site, collapse = ', '))
+   if(!is.null(comment))                                 # if comment supplied,
+      comment <- paste0(comment, ' (', com, ')')         #    user comment, with default comment in parentheses
+   else
+      comment <- com                                     #    use default comment
+   
    
    the$fdb$method[i] <- method                           # modeling approach used (rf[i] <- random forest, ab[i] <- AdaBoost, perhaps others)
    the$fdb$success[i] <- NA                              # run success; NA = not run yet

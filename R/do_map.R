@@ -101,11 +101,11 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    
    
-   v <- data.frame(matrix(NA, 1:max(vat$value), ncol(vat)))                   # clean up for non-consecutive values   *** this may not be necessary if there aren't bad classes - fix PEG and retry
-   names(v) <- names(vat)
-   v[vat$value, ] <- vat
-   v$value <- 1:max(vat$value)
-   vat <- v
+   # v <- data.frame(matrix(NA, 1:max(vat$value), ncol(vat)))                   # clean up for non-consecutive values   *** this may not be necessary if there aren't bad classes - fix PEG and retry
+   # names(v) <- names(vat)
+   # v[vat$value, ] <- vat
+   # v$value <- 1:max(vat$value)
+   # vat <- v
    
    
    vat2 <- vat[, c('value', 'color')]                                         # make a version of the vat for addColorTable

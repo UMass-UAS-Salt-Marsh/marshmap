@@ -60,10 +60,12 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
       stop('map requires exactly one site')
    
    
-   if(is.null(comment))
-      comment <- paste0('map', 
-                        ifelse(is.null(fitid), '', paste0(' (fit id ', fitid, ')')), 
-                        ', site: ', site)
+   com <- paste0(ifelse(is.null(fitid), '', paste0('map, fit id ', fitid)), 
+                 ', site: ', site)
+   if(!is.null(comment))                                                               # if comment supplied,
+      comment <- paste0(comment, ' (', com, ')')                                       #    user comment, with default comment in parentheses
+   else
+      comment <- com                                                                   #    use default comment
    
    
    if(!is.null(fitid))                                                                 # if we're getting model from fit database,

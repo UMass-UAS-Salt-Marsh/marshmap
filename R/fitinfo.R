@@ -16,7 +16,7 @@
 #'    fitinfo(rows = <a single row>, assess = 'an assessment comment')
 #'    fitinfo(rows = <a single row>, map = 'a map comment')
 #'    ```
-#'    sets the subjective model fit score, the assessment comment, or the map
+#'    sets the subjective model fit score, the assessment. comment, or the map
 #'    comment. Any of these may be combined in a single call.
 #'    
 #' @param rows Selected rows in the fits database. Use one of
