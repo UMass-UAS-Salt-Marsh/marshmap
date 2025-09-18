@@ -7,6 +7,7 @@
 #'    where `<value>` is a regex for character fields, or an actual value (or vector of 
 #'    values) for logical or numeric fields.
 #' @returns A vector of rows numbers in `the$fdb`
+#' @keywords internal
 
 
 filter_fits <- function(filter) {

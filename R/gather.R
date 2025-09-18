@@ -122,6 +122,6 @@ gather <- function(site, pattern = '',
    
    launch('do_gather', reps = site, repname = 'site', 
           moreargs = list(pattern = pattern, update = update, check = check, field = field), 
-          finish = 'salt-marsh-mapping::gather_finish',
+          finish = 'saltmarsh::gather_finish',
           local = local, trap = trap, resources = resources, comment = comment)
 }

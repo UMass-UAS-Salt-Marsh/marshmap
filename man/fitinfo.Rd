@@ -7,7 +7,7 @@
 fitinfo(
   rows = "all",
   cols = "normal",
-  report = TRUE,
+  report = NULL,
   sort = "id",
   decreasing = FALSE,
   nrows = NA,

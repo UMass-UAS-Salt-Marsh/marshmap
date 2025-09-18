@@ -22,3 +22,4 @@ A vector of rows numbers in \code{the$fdb}
 \description{
 Filter fits database
 }
+\keyword{internal}

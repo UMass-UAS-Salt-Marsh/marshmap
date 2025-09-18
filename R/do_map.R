@@ -84,10 +84,6 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    
    
-   # pred <<- pred; target <<- target; f0 <<- f0; f <<- f
-   # browser() ######################## STOP HERE ############################
-   
-   
    levs <- terra::levels(pred$class)[[1]]                                     # get class levels from prediction
    levs$class <- as.numeric(sub('^class', '', levs$class))                    # make sure they're numeric with no "class"
    names(levs)[2] <- target                                                   # use target (e.g., 'subclass') as class name                                                                                 
@@ -98,15 +94,6 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    vat <- vat[, c(2, 1, 3:ncol(vat))]                                         # back to proper, with value first
    names(vat) <- c('value', target, 'name', 'color')                          # drop back to generic names, except for target
    vat[, target] <- as.integer(vat[, target])                                 # force this to be integer
-   
-   
-   
-   # v <- data.frame(matrix(NA, 1:max(vat$value), ncol(vat)))                   # clean up for non-consecutive values   *** this may not be necessary if there aren't bad classes - fix PEG and retry
-   # names(v) <- names(vat)
-   # v[vat$value, ] <- vat
-   # v$value <- 1:max(vat$value)
-   # vat <- v
-   
    
    vat2 <- vat[, c('value', 'color')]                                         # make a version of the vat for addColorTable
    vat2$category <-  paste0('[', vat[, target], '] ', vat$name)               # with labels that include numeric class and name, as e.g. [1] Low marsh
