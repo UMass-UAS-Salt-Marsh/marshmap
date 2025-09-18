@@ -83,7 +83,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
    launch('do_map', 
           moreargs = list(site = site, fitid = fitid, fitfile = fitfile, 
                           clip = clip, result = result), 
-          finish = 'map_finish', 
+          finish = 'salt-marsh-mapping::map_finish', 
           #################callerid = the$mdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)        # launch it
 }
