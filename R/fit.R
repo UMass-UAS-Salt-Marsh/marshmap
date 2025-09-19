@@ -132,6 +132,6 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
                           vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
                           years = years, minscore, maxmissing, max_miss_train = max_miss_train, 
                           top_importance = top_importance, holdout = holdout, auc = auc, hyper = hyper),
-          finish = 'saltmarsh::fit_finish', callerid = the$fdb$id[i], 
+          finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
 }

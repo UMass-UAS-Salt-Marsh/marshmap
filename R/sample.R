@@ -93,5 +93,5 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
           moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, 
                           balance = balance, balance_excl = balance_excl, result = result, 
                           transects = transects, drop_corr = drop_corr, reuse = reuse), 
-          finish = 'saltmarsh::sample_finish', local = local, trap = trap, resources = resources, comment = comment)
+          finish = 'sample_finish', local = local, trap = trap, resources = resources, comment = comment)
 }
