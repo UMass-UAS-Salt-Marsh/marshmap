@@ -14,4 +14,3 @@ gather_finish(jobid, status)
 \description{
 Copies the log file to the flights directory
 }
-\keyword{internal}

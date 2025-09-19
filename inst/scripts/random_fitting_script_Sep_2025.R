@@ -48,3 +48,6 @@ map(186) # oth, new one
 
 
 fit('peg', exclude_classes = 28, comment = 'PEG fit without bogus class 28')   # job 179, fit 187
+
+fit('peg', exclude_class = 28)                     # fit 193, job 185         # for these, I've only rejected the very worst images
+fit('peg', exclude_class = c(28, 27))              # fit 194, job 186         # only 1 poly of 27 unvegetated bank; massively overpredicts

@@ -19,4 +19,3 @@ Finish a fit run:
 \item Copy the log file to the models directory
 }
 }
-\keyword{internal}

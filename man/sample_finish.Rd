@@ -14,4 +14,3 @@ sample_finish(jobid, status)
 \description{
 Copies the log file to the samples directory
 }
-\keyword{internal}

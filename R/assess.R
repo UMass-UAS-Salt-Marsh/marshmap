@@ -78,7 +78,7 @@
 #'   \describe{
 #'     \item{confusion}{Confusion matrix and complete statistics}
 #'     \item{importance}{Variable importance data frame}
-#'  }
+#' }
 #' @importFrom stats predict
 #' @export
 

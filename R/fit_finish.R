@@ -8,7 +8,7 @@
 #' @param jobid Job id to finish for
 #' @param status Job status
 #' @importFrom slurmcollie logfile slu
-#' @keywords internal
+#' @export
 
 
 fit_finish <- function(jobid, status) {

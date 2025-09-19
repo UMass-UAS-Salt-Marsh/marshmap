@@ -5,7 +5,7 @@
 #' @param jobid Job ids to finish for
 #' @param status Job status
 #' @importFrom slurmcollie logfile slu
-#' @keywords internal
+#' @export
 
 
 sample_finish <- function(jobid, status) {
