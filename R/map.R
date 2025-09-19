@@ -10,7 +10,11 @@
 #'   model was built on, or the model was built on mutiple sites, `site` is
 #'   required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
-#' @param result Optional result name. Default is `map_<site>_[clip_<size>_ha]`
+#' @param result Optional result name. Default is 
+#'    `map_<site>_<fit id>_[clip_<size>_ha]`; if a result name is specified, 
+#'    the result will be `map_<result>_<site>_<fit id>_[clip_<size>_ha]`,
+#'    retaining the site and fit id, as omiting these breaks your ability to
+#'    track maps back to the fits they're based on.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
 #'   These take priority over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity

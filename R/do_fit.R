@@ -88,9 +88,11 @@ do_fit <- function(fitid, sites, name, method,
                  ' variables after exclusions')
    }
    
-   if(!is.null(exclude_classes))                                                          # if exclude_classes, drop these from dataset
+   if(!is.null(exclude_classes)) {                                                         # if exclude_classes, drop these from dataset
+      t <- nrow(r)
       r <- r[!r$subclass %in% exclude_classes, ]
-   
+      message('Excluding classes ', exclude_classes, '; dropped ', t - nrow(r), ' cases')
+   }
    
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
       stop('Analysis doesn\'t include any orthoimage variables')

@@ -52,5 +52,7 @@ fit('peg', exclude_classes = 28, comment = 'PEG fit without bogus class 28')   #
 fit('peg', exclude_class = 28, comment = 'fewer rejected orthos')                     # fit 193, job 185         # for these, I've only rejected the very worst images
 fit('peg', exclude_class = c(28, 27), comment = 'and drop 27 unveg bank')              # fit 194, job 186         # only 1 poly of 27 unvegetated bank; massively overpredicts
 
-map(193, comment = 'fewer rejected orthos')
-map(194, comment = 'and drop 27 unveg bank')
+map(1001, comment = 'fewer rejected orthos')
+map(1002, comment = 'and drop 27 unveg bank')
+
+map(1002, clip = c(-70.72179818, -70.72164328, 42.18346811, 42.19229167), local = TRUE)

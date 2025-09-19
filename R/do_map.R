@@ -21,7 +21,11 @@
 #'   model was built on, or the model was built on mutiple sites, `site` is
 #'   required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
-#' @param result Optional result name
+#' @param result Optional result name. Default is 
+#'    `map_<site>_<fit id>_[clip_<size>_ha]`; if a result name is specified, 
+#'    the result will be `map_<result>_<site>_<fit id>_[clip_<size>_ha]`,
+#'    retaining the site and fit id, as omiting these breaks your ability to
+#'    track maps back to the fits they're based on.
 #' @param rep Throwaway argument to make `slurmcollie` happy
 #' @importFrom peakRAM peakRAM
 #' @importFrom terra ext predict levels writeRaster ncell
@@ -34,13 +38,14 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    
    if(!is.null(clip))                                                         # if there's a clip, modify result name
-      cr <- paste0('_clip_', round(extent_area(clip)), '_ha')
+      cr <- paste0('clip_', round(extent_area(clip)), '_ha')
    else
       cr <- ''
    
-   if(is.null(result))                                                        # if result isn't supplied,
-      result <- paste0('map_', site, cr)                                      #    make result name, sans extension
-
+   result <- paste('map', result, site, fitid, cr, sep = '_')                 # make result name, sans extension
+   result <- gsub('_$', '', gsub('__', '_', result))                          # clean up from missing result, fitid, or cr
+   
+   
    if(!dir.exists(dirname(result)))                                           # make sure result directory exists
       dir.create(dirname(result), recursive = TRUE)
    
@@ -79,7 +84,7 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    cat('Predicting...\n')
    pred <- terra::predict(rasters, model, cpkgs = model$method, 
                           cores = 1, na.rm = TRUE)                            # prediction for the model. 1 core seems optimal here.
-
+   
    writeRaster(pred, f0, overwrite = TRUE, datatype = 'INT1U', progress = 1, 
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    
