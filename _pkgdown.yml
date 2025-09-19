@@ -52,5 +52,6 @@ reference:
   - sample_finish
   - fit_finish
   - map_finish
+  - resolve_dir
   - the
   - .onLoad
