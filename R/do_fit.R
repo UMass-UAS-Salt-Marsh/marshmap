@@ -91,7 +91,7 @@ do_fit <- function(fitid, sites, name, method,
    if(!is.null(exclude_classes)) {                                                         # if exclude_classes, drop these from dataset
       t <- nrow(r)
       r <- r[!r$subclass %in% exclude_classes, ]
-      message('Excluding classes ', exclude_classes, '; dropped ', t - nrow(r), ' cases')
+      message('Excluding classes ', paste(exclude_classes, collapse = ', '), '; dropped ', t - nrow(r), ' cases')
    }
    
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
