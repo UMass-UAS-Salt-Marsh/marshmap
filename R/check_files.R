@@ -7,7 +7,7 @@
 #'    - `sftp`           `list(url, user)`
 #' @param sourcedir Origin directory of files
 #' @param resultdir Target directory of files - see if origin files are here and up to date
-#' @returns A vector corresponding to files, TRUE for those that are up to date
+#' @returns A vector corresponding to files, TRUE for those that exist and are up to date
 #' @importFrom googledrive drive_reveal
 #' @keywords internal
 

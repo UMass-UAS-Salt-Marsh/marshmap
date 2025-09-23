@@ -62,3 +62,11 @@ fit('peg', exclude_class = c(28, 27), comment = 'drop 27 unveg bank again')     
 
 
 map(1003, clip = c(-70.72179818, -70.72164328, 42.18346811, 42.19229167), local = TRUE)   # test: do I get proper result name and attributes?                     ***** this crashes with names mismatch
+
+
+
+
+
+
+fit('peg', exclude_class = c(28, 27), comment = 'drop 27 and one more rejected ortho')              # fit 1004, job 196         # only 1 poly of 27 unvegetated bank; massively overpredicts
+map(1004)

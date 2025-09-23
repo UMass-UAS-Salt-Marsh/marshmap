@@ -88,6 +88,9 @@
 #'    cache or process anything
 #' @param field If TRUE, download and process the field transects if they don't already exist. 
 #'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
+#' @param ignore_bad_classes If TRUE, don't throw an error if there are classes in the ground
+#'    truth shapefile that don't occur in `classes.txt`. Only use this if you're paying careful
+#'    attention, because bad classes will crash `do_map` down the line.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #' #'    over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
@@ -100,8 +103,8 @@
 
 
 gather <- function(site, pattern = '', 
-                   update = TRUE, check = FALSE, field = TRUE, resources = NULL, local = FALSE, 
-                   trap = TRUE, comment = NULL) {
+                   update = TRUE, check = FALSE, field = TRUE, ignore_bad_classes = FALSE,
+                   resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    if(!check)                                         # make sure scratch directory exists if we're going to use it
@@ -121,7 +124,8 @@ gather <- function(site, pattern = '',
       comment <- paste0('gather ', site)
    
    launch('do_gather', reps = site, repname = 'site', 
-          moreargs = list(pattern = pattern, update = update, check = check, field = field), 
+          moreargs = list(pattern = pattern, update = update, check = check, field = field, 
+                          ignore_bad_classes), 
           finish = 'gather_finish',
           local = local, trap = trap, resources = resources, comment = comment)
 }
