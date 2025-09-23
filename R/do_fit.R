@@ -80,7 +80,7 @@ do_fit <- function(fitid, sites, name, method,
    }
    
    e <- unique(gsub('-', '_', find_orthos(sites$site, exclude_vars, 
-                                          minscore = 0, maxmissing = 100)$portable))      # portable names from exclude_vars (don't exclude any!)
+                                          screen = FALSE)$portable))                      # portable names from exclude_vars (don't exclude any!)
    if(!is.null(exclude_vars)) {                                                           # if excluding variables,
       r <- r[, !sub('_\\d$', '', names(r)) %in% e] 
       if(exclude_vars != '')

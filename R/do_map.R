@@ -64,13 +64,11 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    
    x <- names(model$trainingData)[-1]                                         # get source raster names from bands
-   y <- sub('_\\d+$', '', x)                                                  # drop band number
+   y <- unique(sub('_\\d+$', '', x))                                          # drop band number and drop duplicates
    files <- find_orthos(site, paste(y, collapse = '+'), 
-                        minscore = 0, maxmissing = 100)$file                  # get file names to read
+                        screen = FALSE)$file                                  # get file names to read - include all files in model, despite score/missing
    
-   files <- unique(files)                                                     # and remove dups
-   
-   
+  
    sourcedir <- resolve_dir(the$flightsdir, site)
    rasters <- rast(file.path(sourcedir, files))                               # get rasters with our bands
    names(rasters) <- x
