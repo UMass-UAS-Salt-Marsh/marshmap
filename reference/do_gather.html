@@ -41,7 +41,7 @@ called by gather.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_gather</span><span class="op">(</span><span class="va">site</span>, pattern <span class="op">=</span> <span class="st">""</span>, <span class="va">update</span>, <span class="va">check</span>, <span class="va">field</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_gather</span><span class="op">(</span><span class="va">site</span>, pattern <span class="op">=</span> <span class="st">""</span>, <span class="va">update</span>, <span class="va">check</span>, <span class="va">field</span>, <span class="va">ignore_bad_classes</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,6 +75,12 @@ cache or process anything</p></dd>
 <dd><p>If TRUE, download and process the field transects if they don't already exist.
 Deal with overlaps in the shapefile–those with more than one subclass will be erased.
 The shapefile is downloaded for reference, and a raster corresponding to <code>standard</code> is created.</p></dd>
+
+
+<dt id="arg-ignore-bad-classes">ignore_bad_classes<a class="anchor" aria-label="anchor" href="#arg-ignore-bad-classes"></a></dt>
+<dd><p>If TRUE, don't throw an error if there are classes in the ground
+truth shapefile that don't occur in <code>classes.txt</code>. Only use this if you're paying careful
+attention, because bad classes will crash <code>do_map</code> down the line.</p></dd>
 
 </dl></div>
     <div class="section level2">

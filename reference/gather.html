@@ -56,6 +56,7 @@ re-processed unless <code>update = TRUE</code> or <code>replace = TRUE</code>.</
 <span>  update <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  field <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ignore_bad_classes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  local <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  trap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -94,6 +95,12 @@ cache or process anything</p></dd>
 <dt id="arg-field">field<a class="anchor" aria-label="anchor" href="#arg-field"></a></dt>
 <dd><p>If TRUE, download and process the field transects if they don't already exist.
 The shapefile is downloaded for reference, and a raster corresponding to <code>standard</code> is created.</p></dd>
+
+
+<dt id="arg-ignore-bad-classes">ignore_bad_classes<a class="anchor" aria-label="anchor" href="#arg-ignore-bad-classes"></a></dt>
+<dd><p>If TRUE, don't throw an error if there are classes in the ground
+truth shapefile that don't occur in <code>classes.txt</code>. Only use this if you're paying careful
+attention, because bad classes will crash <code>do_map</code> down the line.</p></dd>
 
 
 <dt id="arg-resources">resources<a class="anchor" aria-label="anchor" href="#arg-resources"></a></dt>

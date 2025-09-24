@@ -47,7 +47,7 @@ used internally, but you may use this to test and refine orthoimage designations
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">find_orthos</span><span class="op">(</span><span class="va">site</span>, <span class="va">descrip</span>, minscore <span class="op">=</span> <span class="fl">0</span>, maxmissing <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">find_orthos</span><span class="op">(</span><span class="va">site</span>, <span class="va">descrip</span>, minscore <span class="op">=</span> <span class="fl">0</span>, maxmissing <span class="op">=</span> <span class="fl">20</span>, screen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -87,6 +87,12 @@ excluded.</p></dd>
 <dt id="arg-maxmissing">maxmissing<a class="anchor" aria-label="anchor" href="#arg-maxmissing"></a></dt>
 <dd><p>Maximum percent missing for orthos. Files with percent missing greater
 than this are excluded.</p></dd>
+
+
+<dt id="arg-screen">screen<a class="anchor" aria-label="anchor" href="#arg-screen"></a></dt>
+<dd><p>If TRUE, use <code>minscore</code> and <code>maxmissing</code> to screen results; ignore them
+if FALSE (this is needed for do_map, as we <em>always</em> want to use all variables that
+were included in the model, even if scores have changed)</p></dd>
 
 </dl></div>
     <div class="section level2">
