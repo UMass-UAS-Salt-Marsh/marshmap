@@ -256,6 +256,9 @@ do_gather <- function(site, pattern = '',
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
+      
+      flights_prep(site)                                                            #    now count missing values and cache images for screen
+      
       message('Finished with site ', sites$site[i])
    }
    d <- as.duration(interval(start, Sys.time()))

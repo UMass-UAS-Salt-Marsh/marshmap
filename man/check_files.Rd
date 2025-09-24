@@ -21,7 +21,7 @@ check_files(files, gd, sourcedir, resultdir)
 \item{resultdir}{Target directory of files - see if origin files are here and up to date}
 }
 \value{
-A vector corresponding to files, TRUE for those that are up to date
+A vector corresponding to files, TRUE for those that exist and are up to date
 }
 \description{
 Check that each source file exists on the result directory and is up to date

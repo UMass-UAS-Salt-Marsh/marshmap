@@ -4,7 +4,7 @@
 \alias{do_gather}
 \title{Collect raster data for each site}
 \usage{
-do_gather(site, pattern = "", update, check, field)
+do_gather(site, pattern = "", update, check, field, ignore_bad_classes)
 }
 \arguments{
 \item{site}{site, using 3 letter abbreviation}
@@ -27,6 +27,10 @@ cache or process anything}
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
 Deal with overlaps in the shapefile--those with more than one subclass will be erased.
 The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
+
+\item{ignore_bad_classes}{If TRUE, don't throw an error if there are classes in the ground
+truth shapefile that don't occur in \code{classes.txt}. Only use this if you're paying careful
+attention, because bad classes will crash \code{do_map} down the line.}
 }
 \description{
 Clip to site boundary, resample and align to standard resolution. This is an internal function,

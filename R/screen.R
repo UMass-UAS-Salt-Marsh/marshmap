@@ -208,7 +208,7 @@ screen <- function() {
         
         observeEvent(input$inset, {                                                                         # --- requested inset
             sensor <- session$userData$db$sensor[session$userData$sel[session$userData$index]]
-            bands <- nlyr(session$userData$full)
+      ###      bands <- nlyr(session$userData$full)                                                 #### now we do this in flights_prep, so I can drop this once I'm sure it works
             
             session$userData$inset1 <- center_zoom(session$userData$full, 0.20)
             output$inset1 <- screen_plot('inset1', sensor, bands, input, output, 

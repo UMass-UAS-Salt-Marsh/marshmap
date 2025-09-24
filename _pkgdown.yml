@@ -44,6 +44,7 @@ reference:
 - title: internal
   contents:
   - do_gather
+  - flights_prep
   - do_derive
   - do_sample
   - do_fit

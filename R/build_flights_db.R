@@ -78,24 +78,28 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
          year = integer(),
          season = character(),
          bands = integer(),                                             # bands is calulated when we load images
-         pct_missing = double(),                                        # pct_missing is calculated by assess_flights
          score = integer(),                                             # score, repair flag, and comment are entered by user
          repair = logical(),
          comment = character(),
          deleted = logical(),
-         filestamp = ymd_hms()                                          # filestamps are used to check for changed files
+         filestamp = ymd_hms(),                                         # filestamps are used to check for changed files
+         pct_missing = double(),                                        # pct_missing is calculated by flights_prep
+         missing_filestamp = ymd_hms()                                  # filestamp for percent missing
       )
-
-
    
+   
+   # if(!'missing_filestamp' %in% names(db)) {        # temp to add new column
+   #    db <- cbind(db, NA)
+   #    names(db)[ncol(db)] <- 'missing_filestamp'
+   # }
    
    # ### ---delete this crap---
    # cat(site, ': BEFORE FIX: db has ', nrow(db), ' rows\n', sep = '')                # ******************************** this is temporary code in case duplicated name bug reappears
    # db <- db[match(unique(db$name), db$name), ]  #****************************** fix dups in db *************************************
    # cat(site, ': AFTER FIX: db has ', nrow(db), ' rows\n\n', sep = '')
-  ### -----------------------
-  ### 
-
+   ### -----------------------
+   ### 
+   
    
    
    db$score[is.na(db$score)] <- 0                                       # NAs here wreak havoc
@@ -143,11 +147,12 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       db$year[i] <- s$year
       db$season[i] <- s$season
       db$score[i] <- 0                                                  #    score starts with 0 = not scored
-      db$pct_missing[i] <- NA                                           #    pct_missing is resolved by assess_flights
       db$repair[i] <- FALSE
       db$comment[i] <- ''
       db$deleted[i] <- FALSE
       db$filestamp[i] <- as.character(ymd_hms(round(file.mtime(file.path(dir, db$name[i])))))
+      db$pct_missing[i] <- NA                                           #    pct_missing is resolved by flights_prep
+      db$missing_filestamp[i] <- NA                                     #    this is resolved by flights_prep too
       
       
       # Create portable names

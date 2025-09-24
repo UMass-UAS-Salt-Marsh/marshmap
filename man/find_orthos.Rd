@@ -4,7 +4,7 @@
 \alias{find_orthos}
 \title{Find orthophotos for a site}
 \usage{
-find_orthos(site, descrip, minscore = 0, maxmissing = 20)
+find_orthos(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE)
 }
 \arguments{
 \item{site}{Vector of one or more site names}
@@ -26,6 +26,10 @@ excluded.}
 
 \item{maxmissing}{Maximum percent missing for orthos. Files with percent missing greater
 than this are excluded.}
+
+\item{screen}{If TRUE, use \code{minscore} and \code{maxmissing} to screen results; ignore them
+if FALSE (this is needed for do_map, as we \emph{always} want to use all variables that
+were included in the model, even if scores have changed)}
 }
 \value{
 Data frame with
