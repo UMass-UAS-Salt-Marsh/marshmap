@@ -31,7 +31,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    
    find_targets <- function(targets, names) {                           # find targets as substrings in names
       names <- fix_names(names)                                         #    clean up naming errors
-      names <- gsub('.', '_', names)                                    #    treat modifiers are separate names here
+      names <- gsub('.', '_', names, fixed = TRUE)                      #    treat modifiers are separate names here
       z <- rep(NA, length(names))
       
       for(j in targets) {

@@ -54,7 +54,7 @@ flights_prep <- function(site) {
          
          if(update[i]) {                                                #       if this file needs updating,
             db$db$pct_missing[i] <- 
-               (global(x, 'sum', na.rm = TRUE)) / fp * 100              #          get percent missing
+               (global(!is.na(x), 'sum')) / fp * 100                    #          get percent missing
             db$db$bands <- nlyr(rast(file.path(dir, db$db$name[i])))    #          get number of bands
          }
       }
