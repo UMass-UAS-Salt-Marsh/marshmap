@@ -70,6 +70,7 @@
 #'  }
 #' @param newdata An alternate validation set (e.g., from a different site). Variables
 #'    must conform with the original dataset.
+#' @param site One or more site names, for display only
 #' @param top_importance Number of variables to keep for variable importance
 #' @param summary Print model summary info if TRUE
 #' @param confusion Print the confusion matrix and complete statistics if TRUE, and skip if FALSE
@@ -83,7 +84,7 @@
 #' @export
 
 
-assess <- function(fitid = NULL, model = NULL, newdata = NULL,
+assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
                    top_importance = 20, summary = TRUE, confusion = TRUE, importance = TRUE) {
    
    
@@ -112,6 +113,8 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL,
    }
    
    info <- paste0('Model ', model$id, ifelse(nchar(model$name) > 0, paste0(' (', model$name, ')'), ''))
+   if(!is.null(site))
+      info <- paste0(info, ', site', ifelse(length(site) > 1, 's', ''), ': ', paste(toupper(site), collapse = ', '))
    lines <- strrep('-', nchar(info))
    info <- paste('\n', lines, info, lines, sep = '\n')
    info <- paste0(info, '\n', sum(!names(model$fit$train) %in% c('site', 'subclass', '.outcome')), ' variables')

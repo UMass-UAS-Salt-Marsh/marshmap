@@ -122,7 +122,7 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    
    if(report) {                                                                           # if we're asking for a report,
     #  print(full_z[c('model', 'full_model', 'hyper')])                                   #    this stuff is too awful to print
-      x <- assess(z$id[1])                                                                #    display assessment for a single model
+      x <- assess(z$id[1], site = z$site[1])                                              #    display assessment for a single model
       return(invisible(x))                                                                #    and silently return assessment
    }
    else {

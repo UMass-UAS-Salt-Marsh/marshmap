@@ -183,7 +183,7 @@ do_fit <- function(fitid, sites, name, method,
    confuse <- unconfuse(confusionMatrix(validate$subclass, y, mode = 'prec_recall'))
    
    f <- assess(model = list(fit = z, confuse = confuse, nvalidate = dim(validate)[1], 
-                            id = fitid, name = name),
+                            id = fitid, name = name, site = sites),
                top_importance = top_importance)                                           # --- model assessment
    
    
