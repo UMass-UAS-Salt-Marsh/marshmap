@@ -54,28 +54,26 @@ screen_plot <- function(extent, sensor, bands, input, output, session) {
          }
       })
    else {      
-      pixels <- 800                                         # maximum extent in pixels - sets image resolution
-      if(extent == 'full') {   
-         s <- c(ncol(data), nrow(data))
-         size <- s / max(s) * pixels
-      }
-      else
-         size <- pixels / rep(2, 2)
-      print(size)
-      png(cache, width = size[1], height = size[2])
-      if(bands == 1)
-         plot(data, col = map.pal('viridis'), breaks = 10, breakby = 'cases', legend = FALSE, axes = FALSE, mar = 0.5)
-      else
-         plotRGB(data, rgb[1], rgb[2], rgb[3], stretch = 'lin', mar = 0.5)
-      if(extent == 'full')
-         lines(session$userData$footprint, lwd = 3, col = 'red')
-      dev.off()
+      
+      # ### THIS CODE will move to flights_images
+      # ### 
+      # if(!file.exists(cache))
+      #    flights_image(cache, extent, pixels = 1200)
+      # 
+      # 
+      # if(bands == 1)
+      #    plot(data, col = map.pal('viridis'), breaks = 10, breakby = 'cases', legend = FALSE, axes = FALSE, mar = 0.5)
+      # else
+      #    plotRGB(data, rgb[1], rgb[2], rgb[3], stretch = 'lin', mar = 0.5)
+      # if(extent == 'full')
+      #    lines(session$userData$footprint, lwd = 3, col = 'red')
+      # dev.off()
+      # 
+      ###
       
       renderImage({
          list(src = cache,
               contentType = 'image/png')
-            #  width = 376,
-            #  height = 800)
       }, 
       deleteFile = FALSE)
    }
