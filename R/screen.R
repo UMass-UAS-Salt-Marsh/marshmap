@@ -58,7 +58,7 @@
 screen <- function() {
   
   sites <- read_pars_table('sites')
-  sites$footprint <- basename(sites$footprint)
+ # sites$footprint <- basename(sites$footprint)
   
   score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'very good', 'excellent')
   
@@ -83,13 +83,8 @@ screen <- function() {
           class = 'fullheight',
           
           column(6, class = 'col-fullheight',
-                 # tags$style(HTML("#full img { width: 100% !important; 
-                 #      height: auto !important; 
-                 #      max-height: 100vh !important;
-                 #      object-fit: contain; }")),
                  tags$style(HTML(paste0('#full ', img_css))), 
                  imageOutput('full')
-                 ##    plotOutput('full', height = '100%')
           ),
           
           column(3, class = 'col-fullheight',
@@ -98,13 +93,11 @@ screen <- function() {
                      div(class = 'center-inset',
                          tags$style(HTML("#inset1 img { width: 100% !important; height: auto !important; }")),
                          imageOutput('inset1')
-                         ##  plotOutput('inset1', height = '100%')
                      ),
                      
                      div(class = 'center-inset',
                          tags$style(HTML("#inset2 img { width: 100% !important; height: auto !important; }")),
                          imageOutput('inset2')
-                         ##  plotOutput('inset2', height = '100%')
                      )
                  )
           ),
@@ -137,7 +130,11 @@ screen <- function() {
                      actionButton('first', '<<'),
                      actionButton('previous', '<'),
                      actionButton('next_', '>'),
-                     actionButton('last', '>>')
+                     actionButton('last', '>>'),
+                     
+                     hr(),
+                     
+                     actionButton('inset', 'Show zooms', width = '115px')
                    ),
                  ),
                  
@@ -154,8 +151,7 @@ screen <- function() {
                    checkboxInput('repair', 'Flag for repair'),
                    
                    textAreaInput('comment', HTML('<h6 style="display: inline-block;">Comments</h6>'), value = '',
-                                 width = '100%', rows = 3),
-                   actionButton('inset', 'Show zooms', width = '115px')
+                                 width = '100%', rows = 3)
                  ),
                  
                  card(
@@ -192,10 +188,6 @@ screen <- function() {
         
         output$site_info <- screen_site_info(sites, input, output, session)
         
-        footfile <- file.path(resolve_dir(the$shapefilesdir, input$site), 
-                              sites$footprint[sites$site == input$site])
-        session$userData$footprint <- st_read(footfile, quiet = TRUE)                               #    get site footprint
-        
         screen_filter(input, output, session)                                                       #    initial filtering
         session$userData$index <- 1                                                                 #    start with first image for site
         screen_image(score_choices, input, output, session = getDefaultReactiveDomain())            #    display the first image
@@ -221,15 +213,10 @@ screen <- function() {
     
     
     observeEvent(input$inset, {                                                                         # --- requested inset
-      sensor <- session$userData$db$sensor[session$userData$sel[session$userData$index]]
-      ###      bands <- nlyr(session$userData$full)                                                 #### now we do this in flights_prep, so I can drop this once I'm sure it works
-      
-      session$userData$inset1 <- center_zoom(session$userData$full, 0.20)
-      output$inset1 <- screen_plot('inset1', sensor, bands, input, output, 
+      output$inset1 <- screen_plot('inset1', input, output, 
                                    session = getDefaultReactiveDomain())
       
-      session$userData$inset2 <- center_zoom(session$userData$full, 0.05)
-      output$inset2 <- screen_plot('inset2', sensor, bands, input, output, 
+      output$inset2 <- screen_plot('inset2', input, output, 
                                    session = getDefaultReactiveDomain())
     })
     

@@ -81,5 +81,7 @@ flights_prep <- function(site) {
    else
       message('Missing value counts are all up-to-date')
    
-   save_flights_db(db$db, db$db_name)
+   save_flights_db(db$db, db$db_name)                                         # save the flights database
+   
+   flights_cache(site)                                                        # cache missing or outdated ortho images for screen
 }

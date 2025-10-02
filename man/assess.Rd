@@ -8,6 +8,7 @@ assess(
   fitid = NULL,
   model = NULL,
   newdata = NULL,
+  site = NULL,
   top_importance = 20,
   summary = TRUE,
   confusion = TRUE,
@@ -29,6 +30,8 @@ this info will be extracted from the database.}
 
 \item{newdata}{An alternate validation set (e.g., from a different site). Variables
 must conform with the original dataset.}
+
+\item{site}{One or more site names, for display only}
 
 \item{top_importance}{Number of variables to keep for variable importance}
 

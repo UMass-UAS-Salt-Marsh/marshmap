@@ -31,10 +31,9 @@ screen_image <- function(score_choices, input, output, session) {
       updateTextInput(inputId = 'comment', 
                       value = session$userData$db$comment[row])
       
-      session$userData$full <- rast(file.path(session$userData$dir, session$userData$db$name[row]))
       sensor <- session$userData$db$sensor[row]
-      bands <- nlyr(session$userData$full)
-      session$userData$db$bands[row] <- bands
+      # bands <- nlyr(session$userData$full)
+      bands <- session$userData$db$bands[row]
       
       output$portable_name <- renderText(paste0(session$userData$db$portable[row], 
                                                 ifelse(session$userData$db$dups[row] > 1,
@@ -57,6 +56,6 @@ screen_image <- function(score_choices, input, output, session) {
       
       output$inset1 <- NULL
       output$inset2 <- NULL
-      output$full <- screen_plot('full', sensor, bands, input, output, session = getDefaultReactiveDomain())
+      output$full <- screen_plot('full', input, output, session = getDefaultReactiveDomain())
    }
 }
