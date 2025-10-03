@@ -7,6 +7,7 @@
 #' @param extent Extent of image; one of `full`, `inset1`, or `inset2`
 #' @param footprint footprint shapefile object
 #' @param pixels Maximum resolution in pixels
+#' @importFrom grDevices dev.off png
 #' @keywords internal
 
 
