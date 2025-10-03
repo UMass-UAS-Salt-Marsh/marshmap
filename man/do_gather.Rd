@@ -4,7 +4,15 @@
 \alias{do_gather}
 \title{Collect raster data for each site}
 \usage{
-do_gather(site, pattern = "", update, check, field, ignore_bad_classes)
+do_gather(
+  site,
+  pattern = "",
+  update,
+  check,
+  field,
+  ignore_bad_classes,
+  replace_caches
+)
 }
 \arguments{
 \item{site}{site, using 3 letter abbreviation}
@@ -31,6 +39,8 @@ The shapefile is downloaded for reference, and a raster corresponding to \code{s
 \item{ignore_bad_classes}{If TRUE, don't throw an error if there are classes in the ground
 truth shapefile that don't occur in \code{classes.txt}. Only use this if you're paying careful
 attention, because bad classes will crash \code{do_map} down the line.}
+
+\item{replace_caches}{If TRUE, all cached images (used for \code{screen}) are replaced}
 }
 \description{
 Clip to site boundary, resample and align to standard resolution. This is an internal function,

@@ -57,5 +57,7 @@ screen_image <- function(score_choices, input, output, session) {
       output$inset1 <- NULL
       output$inset2 <- NULL
       output$full <- screen_plot('full', input, output, session = getDefaultReactiveDomain())
+      if(input$insets_always)
+         screen_insets(input, output, session = getDefaultReactiveDomain())
    }
 }

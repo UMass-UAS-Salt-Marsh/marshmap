@@ -42,8 +42,9 @@
 #'   remove these). Images flagged for repair will be hidden unless **Revisit images** is
 #'   selected.
 #' - **Comments**
-#' - **Show zooms** shows a 10x and 100x zoom of the center of the image for up-close 
+#' - **Show zooms** shows a 5x and 20x zoom of the center of the image for up-close 
 #'   quality inspection. It takes a moment.
+#' - **Always show zooms** turn this on to always show zoomed insets.
 #' - **Exit** saves the flights database for the current site and exits (flights databases
 #'   are also saved when switching sites).
 #' @import shiny
@@ -58,7 +59,7 @@
 screen <- function() {
   
   sites <- read_pars_table('sites')
- # sites$footprint <- basename(sites$footprint)
+  # sites$footprint <- basename(sites$footprint)
   
   score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'very good', 'excellent')
   
@@ -134,7 +135,10 @@ screen <- function() {
                      
                      hr(),
                      
-                     actionButton('inset', 'Show zooms', width = '115px')
+                     actionButton('inset', 'Show zooms', width = '115px'),
+                     tags$div(style = "height: 20px;"),
+                     materialSwitch(inputId = 'insets_always', label = 'Always show zooms', value = FALSE, 
+                                    status = 'default')
                    ),
                  ),
                  
@@ -167,10 +171,10 @@ screen <- function() {
   # Server -----------------------------
   server <- function(input, output, session) {
     
-    # bs_themer()                                                                                       # uncomment to select a new theme
+    # bs_themer()                                                                                     # uncomment to select a new theme
     
     
-    observeEvent(input$site, {                                                                          # --- picked a site   
+    observeEvent(input$site, {                                                                        # --- picked a site   
       save_flights_db(session$userData$db, session$userData$db_name)                                  #    save database for previous site
       
       session$userData$dir <- resolve_dir(the$flightsdir, input$site)
@@ -183,41 +187,40 @@ screen <- function() {
       }
       else
       {
-        session$userData$db <- screen$db                                                            #    Get the database for this site
+        session$userData$db <- screen$db                                                              #    Get the database for this site
         session$userData$db_name <- screen$db_name
         
         output$site_info <- screen_site_info(sites, input, output, session)
         
-        screen_filter(input, output, session)                                                       #    initial filtering
-        session$userData$index <- 1                                                                 #    start with first image for site
-        screen_image(score_choices, input, output, session = getDefaultReactiveDomain())            #    display the first image
+        screen_filter(input, output, session)                                                         #    initial filtering
+        session$userData$index <- 1                                                                   #    start with first image for site
+        screen_image(score_choices, input, output, session = getDefaultReactiveDomain())              #    display the first image
       }
     })
     
     
-    observeEvent(input$score, {                                                                         # --- image score
+    observeEvent(input$score, {                                                                       # --- image score
       session$userData$db$score[session$userData$sel[session$userData$index]] <- 
         match(input$score, score_choices) - 1
       output$site_info <- screen_site_info(sites, input, output, session)
     })
     
-    observeEvent(input$repair, {                                                                        # --- flag for repair
+    observeEvent(input$repair, {                                                                      # --- flag for repair
       session$userData$db$repair[session$userData$sel[session$userData$index]] <- 
         input$repair
     })
     
-    observeEvent(input$comment, {                                                                       # --- image comment
+    observeEvent(input$comment, {                                                                     # --- image comment
       session$userData$db$comment[session$userData$sel[session$userData$index]] <- 
         input$comment
     })
     
     
-    observeEvent(input$inset, {                                                                         # --- requested inset
-      output$inset1 <- screen_plot('inset1', input, output, 
-                                   session = getDefaultReactiveDomain())
-      
-      output$inset2 <- screen_plot('inset2', input, output, 
-                                   session = getDefaultReactiveDomain())
+    observeEvent(c(input$inset, input$insets_always), {                                                      # --- requested inset
+      if(input$inset | input$insets_always) {
+        
+        screen_insets(input, output, session = getDefaultReactiveDomain())
+      }
     })
     
     
@@ -235,31 +238,31 @@ screen <- function() {
     })
     
     
-    observeEvent(input$first, {                                                                         # --- First image
+    observeEvent(input$first, {                                                                       # --- First image
       session$userData$index <- 1
       screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
     })
     
     
-    observeEvent(input$previous, {                                                                      # --- Previous image
+    observeEvent(input$previous, {                                                                    # --- Previous image
       session$userData$index <- max(session$userData$index - 1, 1)
       screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
     })
     
     
-    observeEvent(input$next_, {                                                                         # --- Next image
+    observeEvent(input$next_, {                                                                       # --- Next image
       session$userData$index <- min(session$userData$index + 1, length(session$userData$sel))
       screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
     })
     
     
-    observeEvent(input$last, {                                                                         # --- Last image
+    observeEvent(input$last, {                                                                        # --- Last image
       session$userData$index <- length(session$userData$sel)
       screen_image(score_choices, input, output, session = getDefaultReactiveDomain())  
     })
     
     
-    observeEvent(input$exit, {                                                                         # --- Exit
+    observeEvent(input$exit, {                                                                        # --- Exit
       save_flights_db(session$userData$db, session$userData$db_name)
       message('Flights database saved')
       stopApp()

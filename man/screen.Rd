@@ -50,8 +50,9 @@ to cloud cover on interleaved transects; image processing software can sometimes
 remove these). Images flagged for repair will be hidden unless \strong{Revisit images} is
 selected.
 \item \strong{Comments}
-\item \strong{Show zooms} shows a 10x and 100x zoom of the center of the image for up-close
+\item \strong{Show zooms} shows a 5x and 20x zoom of the center of the image for up-close
 quality inspection. It takes a moment.
+\item \strong{Always show zooms} turn this on to always show zoomed insets.
 \item \strong{Exit} saves the flights database for the current site and exits (flights databases
 are also saved when switching sites).
 }

@@ -11,12 +11,13 @@
 #' The flights database is updated accordingly.
 #'
 #' @param site site, using 3 letter abbreviation
+#' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @importFrom terra rast setValues writeRaster
 #' @importFrom rasterPrep makeNiceTif assessType
 #' @importFrom lubridate now
 #' @keywords internal
 
-flights_prep <- function(site) {
+flights_prep <- function(site, replace_caches = FALSE) {
    
    
    message('\nRunning flights_prep...')
@@ -40,8 +41,6 @@ flights_prep <- function(site) {
       footprint <- vect(file.path(resolve_dir(the$shapefilesdir, site), fp))
       
       for(i in seq_len(nrow(db$db))) {                                        #    for each ortho,
-         
-         print(i)
          
          x <- rast(file.path(dir, db$db$name[i]))[[1]]                        #       read raster (* we assume NAs are shared across all bands)
          if(i == 1) {                                                         #       if first one,
@@ -79,9 +78,9 @@ flights_prep <- function(site) {
       unlink(paste0(am, '000.*'))
    }
    else
-      message('Missing value counts are all up-to-date')
+      message('   Missing value counts are all up-to-date')
    
    save_flights_db(db$db, db$db_name)                                         # save the flights database
    
-   flights_cache(site)                                                        # cache missing or outdated ortho images for screen
+   flights_cache(site, replace_caches = replace_caches)                       # cache missing or outdated ortho images for screen
 }

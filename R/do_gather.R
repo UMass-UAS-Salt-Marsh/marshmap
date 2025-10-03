@@ -28,6 +28,7 @@
 #' @param ignore_bad_classes If TRUE, don't throw an error if there are classes in the ground
 #'    truth shapefile that don't occur in `classes.txt`. Only use this if you're paying careful
 #'    attention, because bad classes will crash `do_map` down the line.
+#' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
 #' @importFrom sf st_read st_write
 #' @importFrom lubridate as.duration interval
@@ -38,7 +39,7 @@
 
 
 do_gather <- function(site, pattern = '', 
-                      update, check, field, ignore_bad_classes) {
+                      update, check, field, ignore_bad_classes, replace_caches) {
    
    
    start <- Sys.time()
@@ -170,44 +171,46 @@ do_gather <- function(site, pattern = '',
             dir.create(fd, recursive = TRUE)
          
          
-         if(!check_files(sites$transects[i], gd, tp, sf) ) {                         #       if we don't already have transect results or they're outdated,
-            message(' Processing field transect shapefile')
-            
-            tp <- file.path(the$gather$sourcedir, the$gather$transects)
-            
-            if(the$gather$sourcedrive %in% c('google', 'sftp'))                     #       if reading from Google Drive or SFTP,
-               get_sidecars(tp, sites$transects[i], gd)                             #       load three sidecar files (include .dbf) for shapefile into cache
-            
-            tpath <- get_file(file.path(tp, sites$transects[i]), gd)                #       path and name of transects shapefile
-            
-            
-            shp <- st_read(tpath)                                                   #       read transects shapefile
-            u <- sort(unique(shp$Subclass))
-            bad <- u[!u %in% read_pars_table('classes')$subclass]
-            if(length(bad) > 0) {
-               if(ignore_bad_classes)
-                  message('***** Ground truth shapefile has bad classes ', paste(bad, collapse = ', '))
-               else
-                  stop('Ground truth shapefile has bad classes ', paste(bad, collapse = ', '))
+         if(sites$transects[i] != '')                                               #       if we have transects for this site,
+            if(!check_files(sites$transects[i], gd, tp, sf) ) {                     #          if we don't already have transect results or they're outdated,
+               message(' Processing field transect shapefile')
+               
+               tp <- file.path(the$gather$sourcedir, the$gather$transects)
+               
+               if(the$gather$sourcedrive %in% c('google', 'sftp'))                  #       if reading from Google Drive or SFTP,
+                  get_sidecars(tp, sites$transects[i], gd)                          #       load three sidecar files (include .dbf) for shapefile into cache
+               
+               tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
+               
+               
+               shp <- st_read(tpath)                                                #       read transects shapefile
+               u <- sort(unique(shp$Subclass))
+               bad <- u[!u %in% read_pars_table('classes')$subclass]
+               if(length(bad) > 0) {
+                  if(ignore_bad_classes)
+                     message('***** Ground truth shapefile has bad classes ', paste(bad, collapse = ', '))
+                  else
+                     stop('Ground truth shapefile has bad classes ', paste(bad, collapse = ', '))
+               }
+               
+               
+               overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
+               gt <- overlaps(shp, 'Subclass')                                      #       get the shapefile and process overlaps
+               st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile as *_final
+               
+               suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
+                                   rasterize(vect(overlaps), standard, 
+                                             field = 'Subclass')$Subclass |>        #       convert it to raster and pull SubCl, numeric version of subclass
+                                   crop(footprint) |>                               #       crop, mask, and write
+                                   mask(footprint) |>
+                                   writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
+                                               datatype = type, NAflag = missing))
+               
+               shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
+               for(f in shps)
+                  file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
+               count$transect <- count$transect + 1
             }
-            
-            
-            overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
-            gt <- overlaps(shp, 'Subclass')                                         #       get the shapefile and process overlaps
-            st_write(gt, overlaps, append = FALSE)                                  #       save the overlapped shapefile as *_final
-            
-            suppressWarnings(transects <-                                           #       mask gives a bogus warning that CRS do not match
-                                rasterize(vect(overlaps), standard, field = 'Subclass')$Subclass |>  #       convert it to raster and pull SubCl, numeric version of subclass
-                                crop(footprint) |>                                                   #       crop, mask, and write
-                                mask(footprint) |>
-                                writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                                            datatype = type, NAflag = missing))
-            
-            shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
-            for(f in shps)
-               file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
-            count$transect <- count$transect + 1
-         }
       }
       
       
@@ -257,7 +260,7 @@ do_gather <- function(site, pattern = '',
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
       
-      flights_prep(site)                                                            #    now count missing values and cache images for screen
+      flights_prep(site, replace_caches = replace_caches)                           #    now count missing values and cache images for screen
       
       message('Finished with site ', sites$site[i])
    }

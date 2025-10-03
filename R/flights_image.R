@@ -18,27 +18,28 @@ flights_image <- function(data, cdir, file, rgb, extent, footprint, pixels = 120
    cache <- file.path(cdir, paste0(file_path_sans_ext(file), '_', extent, '.png'))
    
    
-   if(extent == 'full') {                                      # figure out the extent
+   if(extent == 'full') {                                         # figure out the extent
       s <- c(ncol(data), nrow(data))
       size <- s / max(s) * pixels
    }
    else
       size <- pixels / rep(2, 2)
-
-   
-   png(cache, width = size[1], height = size[2])               # open up .png output
    
    
-   if(nlyr(data) == 1)
-      plot(data, col = map.pal('viridis'), breaks = 10, 
-           breakby = 'cases', legend = FALSE, axes = FALSE, 
-           mar = 0.5)                                          # single band images
-   else
-      plotRGB(data, rgb[1], rgb[2], rgb[3], stretch = 'lin', 
-              mar = 0.5)                                       # RGBs
+   png(cache, width = size[1], height = size[2])                  # open up .png output
+   
+   if(!all(is.na(as.vector(data)))) {                             # if data (presumably an inset) isn't all nodata
+      if(nlyr(data) == 1)
+         plot(data, col = map.pal('viridis'), breaks = 10, 
+              breakby = 'cases', legend = FALSE, axes = FALSE, 
+              mar = 0.5)                                          # single band images
+      else
+         plotRGB(data, rgb[1], rgb[2], rgb[3], stretch = 'lin', 
+                 mar = 0.5)                                       # RGBs
+   }
    
    if(extent == 'full')
-      lines(footprint, lwd = 3, col = 'red')                   # and the boundary
+      lines(footprint, lwd = 3, col = 'red')                      # and the boundary
    
    dev.off()
 }

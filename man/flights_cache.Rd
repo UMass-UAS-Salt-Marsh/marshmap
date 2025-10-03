@@ -4,10 +4,12 @@
 \alias{flights_cache}
 \title{Create missing our outdated cached images for screen()}
 \usage{
-flights_cache(site)
+flights_cache(site, replace_caches = FALSE)
 }
 \arguments{
 \item{site}{site, using 3 letter abbreviation}
+
+\item{replace_caches}{If TRUE, all cached images (used for \code{screen}) are replaced}
 }
 \description{
 Create missing our outdated cached images for screen()
