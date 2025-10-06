@@ -75,6 +75,7 @@
 #' @param summary Print model summary info if TRUE
 #' @param confusion Print the confusion matrix and complete statistics if TRUE, and skip if FALSE
 #' @param importance Print variable importance if TRUE, and skip printing if FALSE
+#' @param quiet If TRUE, don't print anything; just silently return stuff
 #' @returns Invisibly, a named list of
 #'   \describe{
 #'     \item{confusion}{Confusion matrix and complete statistics}
@@ -85,7 +86,8 @@
 
 
 assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
-                   top_importance = 20, summary = TRUE, confusion = TRUE, importance = TRUE) {
+                   top_importance = 20, summary = TRUE, confusion = TRUE, 
+                   importance = TRUE, quiet = FALSE) {
    
    
    if(!is.null(fitid)) {
@@ -122,10 +124,10 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    info <- paste0(info, '\nCorrect classification rate (CCR) = ', round(confuse$overall['Accuracy'] * 100, 2), '%')  
    info <- paste0(info, '\nKappa = ', round(confuse$overall['Kappa'], 4), '\n\n')
    
-   if(summary)
+   if(summary & !quiet)
       cat(info)
    
-   if(confusion)
+   if(confusion & !quiet)
       print(confuse)
    
    varimp <- varImp(model$fit)$importance
@@ -133,7 +135,7 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    varimp <- varimp[order(varimp$Importance, decreasing = TRUE), , drop = FALSE][1:min(top_importance, nrow(varimp)), , drop = FALSE]
    varimp <- round(varimp, 2)
    
-   if(importance) {
+   if(importance & !quiet) {
       cat('\nVariable importance\n')
       print(varimp)
    }

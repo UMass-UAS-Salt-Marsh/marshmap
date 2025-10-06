@@ -1,24 +1,14 @@
 #' Display information on model fits
 #' 
-#' Display model specification, assessment, 
-#' and run statistics *or* display a model assessment *or* set model scores or
-#' comments.
+#' Display model specification, assessment, and run statistics.
 #' 
 #' `fitinfo` works in three different modes:
 #'  - `fitinfo(rows = <selected rows>, cols = <selected columns>)` displays a table 
 #'     of selected rows and columns
-#'  - `fitinfo(rows = <a single row>, cols = 'report')` displays a report for the 
-#'    selected fit id, focusing on the model assessment (the same information in 
-#'    the `fit` log)
-#'  - Any of
-#'    ```
-#'    fitinfo(rows = <a single row>, score = <fit score>)
-#'    fitinfo(rows = <a single row>, assess = 'an assessment comment')
-#'    fitinfo(rows = <a single row>, map = 'a map comment')
-#'    ```
-#'    sets the subjective model fit score, the assessment. comment, or the map
-#'    comment. Any of these may be combined in a single call.
-#'    
+#'  - `fitinfo(rows = <a single row>)` *or* `fitinfo(rows = ..., report = TRUE)` displays 
+#'    a report for the selected fit id, focusing on the model assessment (the same 
+#'    information in the `fit` log)
+#'
 #' @param rows Selected rows in the fits database. Use one of
 #'  - a vector of `fitids`
 #'  - 'all' for all fits
@@ -35,10 +25,7 @@
 #'
 #' @param report If TRUE, give a report (on a single fit); otherwise, list info on fits. 
 #'    If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.
-#' @param score Set the subjective model score in the fits database. This may be numeric 
-#'    or character; it'll be treated as a character.
-#' @param assess Sets the assessment comment in the fits database.
-#' @param map Sets the map comment in the fits database.
+
 #' @param sort The name of the column to be used to sort the table
 #' @param decreasing If TRUE, sort in descending order
 #' @param nrows Number of rows to display in the table. Positive numbers
@@ -53,7 +40,7 @@
 
 fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
                     sort = 'id', decreasing = FALSE, nrows = NA, 
-                    timezone = 'America/New_York') {
+                    quiet = FALSE,timezone = 'America/New_York') {
    
    
    load_database('fdb')                                                                   # Get fit database
@@ -100,6 +87,8 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    z$mem_req <- ifelse(is.na(z$mem_req), '', z$mem_req)
    z$mem_gb <- ifelse(is.na(z$mem_gb), '', formatC(z$mem_gb, format = 'f', digits = 3))
    
+   z$score <- ifelse(is.na(z$score), '', z$score)
+   
    
    full_z <- z
    if(is.numeric(cols))                                                                # print only requested columns
@@ -110,22 +99,24 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
          cols <- switch(cols,
                         brief = c('id', 'name', 'site', 'status', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'comment_launch'),
                         normal = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
-                                   'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'comment_assess', 'comment_map'),
+                                   'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map'),
                         long = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
-                                 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'comment_assess', 'comment_map', 'call'),
+                                 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map', 'call'),
          )
       z <- z[, cols]
    }
    
-   y <- z[!names(z) %in% c('model', 'full_model', 'hyper')]
-   print(y, row.names = FALSE, na.print = '')                                             # print everything but the super-long stuff, which still gets returned
+   if(!quiet) {
+      y <- z[!names(z) %in% c('model', 'full_model', 'hyper')]
+      print(y, row.names = FALSE, na.print = '')                                       # print everything but the super-long stuff, which still gets returned
+   }
    
-   if(report) {                                                                           # if we're asking for a report,
-    #  print(full_z[c('model', 'full_model', 'hyper')])                                   #    this stuff is too awful to print
-      x <- assess(z$id[1], site = z$site[1])                                              #    display assessment for a single model
-      return(invisible(x))                                                                #    and silently return assessment
+   if(report) {                                                                        # if we're asking for a report,
+      #  print(full_z[c('model', 'full_model', 'hyper')])                              #    this stuff is too awful to print
+      x <- assess(z$id[1], site = z$site[1], quiet = quiet)                            #    display assessment for a single model
+      return(invisible(x))                                                             #    and silently return assessment
    }
    else {
-      return(invisible(z))                                                                # otherwise, silently return fit info
+      return(invisible(z))                                                             # otherwise, silently return fit info
    }
 }

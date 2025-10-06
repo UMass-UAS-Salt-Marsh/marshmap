@@ -20,6 +20,7 @@ reference:
   desc: These functions report data and model status.
 - contents:
   - fitinfo
+  - fitset
 #  - mapinfo
   - assess
   - flights_report
