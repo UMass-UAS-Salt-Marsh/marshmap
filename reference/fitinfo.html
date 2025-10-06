@@ -45,6 +45,7 @@
 <span>  sort <span class="op">=</span> <span class="st">"id"</span>,</span>
 <span>  decreasing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  nrows <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  include_model <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  timezone <span class="op">=</span> <span class="st">"America/New_York"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -70,7 +71,9 @@ values) for logical or numeric fields.</p></li>
 <li><p><em>all</em> (4)</p></li>
 <li><p>1, 2, 3, or 4 is a shortcut for the above column sets</p></li>
 <li><p>A vector of column names to include</p></li>
-</ul></dd>
+</ul><p>Note that <code>model</code>, <code>full_model</code>, and <code>hyper</code> are normally omitted from display, as
+they tend to be really long and uninformative. If you want to see them, include them
+explicitly in <code>cols</code>, or use <code>cols = 'all'</code> and <code>include_model = TRUE</code> to include all three of these.</p></dd>
 
 
 <dt id="arg-report">report<a class="anchor" aria-label="anchor" href="#arg-report"></a></dt>
@@ -92,6 +95,11 @@ display the first <em>n</em> rows, and negative numbers display the last <em>n</
 Use <code>nrows = NA</code> to display all rows.</p></dd>
 
 
+<dt id="arg-include-model">include_model<a class="anchor" aria-label="anchor" href="#arg-include-model"></a></dt>
+<dd><p>if TRUE, don't explicitly exclude <code>model</code>, <code>full_model</code>, and
+<code>hyper</code> when <code>cols = 'all'</code></p></dd>
+
+
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
 <dd><p>If TRUE, doesn't print anything, just returns values</p></dd>
 
@@ -106,7 +114,7 @@ Use <code>nrows = NA</code> to display all rows.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>fitinfo</code> works in three different modes:</p><ul><li><p><code>fitinfo(rows = &lt;selected rows&gt;, cols = &lt;selected columns&gt;)</code> displays a table
+    <p><code>fitinfo</code> works in two different modes:</p><ul><li><p><code>fitinfo(rows = &lt;selected rows&gt;, cols = &lt;selected columns&gt;)</code> displays a table
 of selected rows and columns</p></li>
 <li><p><code>fitinfo(rows = &lt;a single row&gt;)</code> <em>or</em> <code>fitinfo(rows = ..., report = TRUE)</code> displays
 a report for the selected fit id, focusing on the model assessment (the same
