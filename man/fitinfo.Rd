@@ -11,6 +11,7 @@ fitinfo(
   sort = "id",
   decreasing = FALSE,
   nrows = NA,
+  include_model = FALSE,
   quiet = FALSE,
   timezone = "America/New_York"
 )
@@ -33,7 +34,11 @@ values) for logical or numeric fields.
 \item \emph{all} (4)
 \item 1, 2, 3, or 4 is a shortcut for the above column sets
 \item A vector of column names to include
-}}
+}
+
+Note that \code{model}, \code{full_model}, and \code{hyper} are normally omitted from display, as
+they tend to be really long and uninformative. If you want to see them, include them
+explicitly in \code{cols}, or use \code{cols = 'all'} and \code{include_model = TRUE} to include all three of these.}
 
 \item{report}{If TRUE, give a report (on a single fit); otherwise, list info on fits.
 If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.}
@@ -46,6 +51,9 @@ If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.}
 display the first \emph{n} rows, and negative numbers display the last \emph{n} rows.
 Use \code{nrows = NA} to display all rows.}
 
+\item{include_model}{if TRUE, don't explicitly exclude \code{model}, \code{full_model}, and
+\code{hyper} when \code{cols = 'all'}}
+
 \item{quiet}{If TRUE, doesn't print anything, just returns values}
 
 \item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
@@ -57,7 +65,7 @@ The fit table or assessment, invisibly
 Display model specification, assessment, and run statistics.
 }
 \details{
-\code{fitinfo} works in three different modes:
+\code{fitinfo} works in two different modes:
 \itemize{
 \item \verb{fitinfo(rows = <selected rows>, cols = <selected columns>)} displays a table
 of selected rows and columns

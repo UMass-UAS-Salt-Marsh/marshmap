@@ -2,7 +2,7 @@
 #' 
 #' Display model specification, assessment, and run statistics.
 #' 
-#' `fitinfo` works in three different modes:
+#' `fitinfo` works in two different modes:
 #'  - `fitinfo(rows = <selected rows>, cols = <selected columns>)` displays a table 
 #'     of selected rows and columns
 #'  - `fitinfo(rows = <a single row>)` *or* `fitinfo(rows = ..., report = TRUE)` displays 
@@ -22,6 +22,10 @@
 #'   - *all* (4)
 #'   - 1, 2, 3, or 4 is a shortcut for the above column sets
 #'   - A vector of column names to include
+#'   
+#' Note that `model`, `full_model`, and `hyper` are normally omitted from display, as 
+#' they tend to be really long and uninformative. If you want to see them, include them
+#' explicitly in `cols`, or use `cols = 'all'` and `include_model = TRUE` to include all three of these.
 #'
 #' @param report If TRUE, give a report (on a single fit); otherwise, list info on fits. 
 #'    If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.
@@ -31,6 +35,8 @@
 #' @param nrows Number of rows to display in the table. Positive numbers
 #'   display the first *n* rows, and negative numbers display the last *n* rows.
 #'   Use `nrows = NA` to display all rows.
+#' @param include_model if TRUE, don't explicitly exclude `model`, `full_model`, and
+#'    `hyper` when `cols = 'all'`
 #' @param quiet If TRUE, doesn't print anything, just returns values
 #' @param timezone Time zone for launch time; use NULL to leave times in native UTC
 #' @returns The fit table or assessment, invisibly
@@ -40,7 +46,8 @@
 
 fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
                     sort = 'id', decreasing = FALSE, nrows = NA, 
-                    quiet = FALSE,timezone = 'America/New_York') {
+                    include_model = FALSE, quiet = FALSE,
+                    timezone = 'America/New_York') {
    
    
    load_database('fdb')                                                                   # Get fit database
@@ -103,16 +110,19 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
                         long = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
                                  'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map', 'call'),
          )
-      z <- z[, cols]
+      z <- z[, c(setdiff(c('id', 'site'), cols), cols), drop = FALSE]                  # always include id and site
    }
    
    if(!quiet) {
-      y <- z[!names(z) %in% c('model', 'full_model', 'hyper')]
+      if(include_model)                                                                # if include_model, include horribly long columns
+         y <- z
+      else
+         y <- z[!names(z) %in% setdiff(c('model', 'full_model', 'hyper'), cols)]       #    otherwise,don't display these columns unless specifically requested
       print(y, row.names = FALSE, na.print = '')                                       # print everything but the super-long stuff, which still gets returned
    }
    
    if(report) {                                                                        # if we're asking for a report,
-      #  print(full_z[c('model', 'full_model', 'hyper')])                              #    this stuff is too awful to print
+      #   print(full_z[c('model', 'full_model', 'hyper')])                                #    this stuff is too awful to print
       x <- assess(z$id[1], site = z$site[1], quiet = quiet)                            #    display assessment for a single model
       return(invisible(x))                                                             #    and silently return assessment
    }
