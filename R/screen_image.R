@@ -51,7 +51,10 @@ screen_image <- function(score_choices, input, output, session) {
       
       fi <- fi[!(is.na(fi) | fi == '')]
       
-      image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), '<br>', paste(fi, collapse = ' | '))
+      image_info <- paste0(bands, ' band', ifelse(bands > 1, 's', ''), ', ', 
+                           session$userData$db$pct_missing[row], '% missing',
+                           '<br>', 
+                           paste(fi, collapse = ' | '))
       output$image_info <- renderUI(HTML(image_info))
       
       output$inset1 <- NULL

@@ -28,11 +28,13 @@
 flights_report <- function() {
    
    
-   freq_table <- function(col, title, classes = NULL) {                                      # make a frequency table for a column, sorted to match classes
-      x <- as.data.frame(table(db[, col], useNA = 'ifany'))
-      names(x) <- c(col, 'count')
-      if(!is.null(classes))
-         x <- x[order(match(x[, col], c(classes, '', NA))), ]
+   freq_table <- function(col = NULL, title, classes = NULL, x) {                                      # make a frequency table for a column, sorted to match classes
+      if(!is.null(col)) {
+         x <- as.data.frame(table(db[, col], useNA = 'ifany'))
+         names(x) <- c(col, 'count')
+         if(!is.null(classes))
+            x <- x[order(match(x[, col], c(classes, '', NA))), ]
+      }
       x <- paste(capture.output(print(x, row.names = FALSE, right = FALSE)), collapse = '\n')
       z <- paste0('\n\n', title, '\n\n', x, '\n')
    }
@@ -77,13 +79,20 @@ flights_report <- function() {
          x <- paste0(x, freq_table('season', 'Distribution of seasons', seasons))
          x <- paste0(x, freq_table('year', 'Distribution of years'))
          
+         p <- db$pct_missing[!is.na(db$pct_missing)]
+         if(length(p) > 0) {
+            h <- hist(p, breaks = seq(0, 100, 10), plot = FALSE)
+            h$labels <- paste0(paste(h$breaks[-length(h$breaks)], h$breaks[-1], sep = '-'), '%')
+            m <- data.frame(range = h$labels, count = h$counts)
+            x <- paste0(x, freq_table(x = m, title = 'Distribution of missing values'))
+         }
          
          z_summary <- c(z_summary, x)
          
          
          repair <- db[db$repair == TRUE, ]                                                   # 2. list of files flagged for repair
          if(nrow(repair) >= 1) {
-            repair <- repair[, c('site', 'name', 'score', 'comment')]
+            repair <- repair[, c('site', 'name', 'pct_missing', 'score', 'comment')]
             if(is.null(z_repair))
                z_repair <- repair
             else
@@ -96,7 +105,8 @@ flights_report <- function() {
          dups$pick <- ''
          dups$pick[sapply(unique(dups$portable), function(x) pick(x, dups))] <- '*'
          dups <- dups[order(dups$portable, dups$pick != '*'), ]
-         dups <- dups[, c('site', 'portable', 'name', 'pick', 'dups', 'season', 'score')]
+         dups <- dups[, c('site', 'portable', 'name', 'pick', 'dups', 
+                          'season', 'pct_missing', 'score')]
          row.names(dups) <- NULL                                                             # reset row numbers
          
          if(is.null(z_dups))
@@ -108,7 +118,7 @@ flights_report <- function() {
       all <- db[order(db$sensor, db$type, db$derive, db$window, db$tide, db$tidemod, 
                       db$season, db$year, db$score, db$repair), ]                            # 4. list all orthos
       all <- db[, c('site', 'portable', 'name', 'sensor', 'type', 'derive', 'window', 'tide', 'tidemod',
-                    'season', 'year', 'score', 'repair')]
+                    'season', 'year', 'pct_missing', 'score', 'repair')]
       
       if(is.null(z_all))
          z_all <- all

@@ -13,8 +13,9 @@
 screen_plot <- function(extent, input, output, session) {
    
    
+   row <- session$userData$sel[session$userData$index]
    cachedir <- file.path(session$userData$dir, 'cache')
-   cache <- file.path(cachedir, paste0(file_path_sans_ext(session$userData$db$name[session$userData$index]), '_', extent, '.png'))
+   cache <- file.path(cachedir, paste0(file_path_sans_ext(session$userData$db$name[row]), '_', extent, '.png'))
    
    renderImage({
       list(src = cache,

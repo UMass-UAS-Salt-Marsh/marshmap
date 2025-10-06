@@ -25,7 +25,7 @@ flights_cache <- function(site, replace_caches = FALSE) {
                          cached, sep = '_'))
    cd <- file.mtime(cn)                                                 # cached image dates on disk
    
-   good <- (!is.na(cd) & cd > fd) & !replace_caches                     # these cached files exist and are up-to-date
+   good <- (!is.na(cd) & !is.na(fd) & cd > fd) & !replace_caches        # these cached files exist and are up-to-date
    
    if(all(good)) {                                                      # if they're all good, we're done
       message('   All cached images are up-to-date')

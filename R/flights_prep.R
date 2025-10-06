@@ -64,7 +64,7 @@ flights_prep <- function(site, replace_caches = FALSE) {
       
       rd <- resolve_dir(the$reportsdir, site)
       all_miss <- mask(all_miss, footprint)
-      am <- file.path(rd, paste0('all_miss_', toupper(site)))
+      am <- file.path(rd, 'all_missing', paste0('all_miss_', toupper(site)))
       
       writeRaster(all_miss, paste0(am, '000.tif'), overwrite = TRUE,
                   datatype = 'INT2S', 
