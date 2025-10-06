@@ -12,7 +12,8 @@ assess(
   top_importance = 20,
   summary = TRUE,
   confusion = TRUE,
-  importance = TRUE
+  importance = TRUE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ must conform with the original dataset.}
 \item{confusion}{Print the confusion matrix and complete statistics if TRUE, and skip if FALSE}
 
 \item{importance}{Print variable importance if TRUE, and skip printing if FALSE}
+
+\item{quiet}{If TRUE, don't print anything; just silently return stuff}
 }
 \value{
 Invisibly, a named list of

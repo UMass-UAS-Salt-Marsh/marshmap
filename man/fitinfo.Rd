@@ -11,6 +11,7 @@ fitinfo(
   sort = "id",
   decreasing = FALSE,
   nrows = NA,
+  quiet = FALSE,
   timezone = "America/New_York"
 )
 }
@@ -45,41 +46,23 @@ If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.}
 display the first \emph{n} rows, and negative numbers display the last \emph{n} rows.
 Use \code{nrows = NA} to display all rows.}
 
-\item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
-
-\item{score}{Set the subjective model score in the fits database. This may be numeric
-or character; it'll be treated as a character.}
-
-\item{assess}{Sets the assessment comment in the fits database.}
-
-\item{map}{Sets the map comment in the fits database.}
-
 \item{quiet}{If TRUE, doesn't print anything, just returns values}
+
+\item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
 }
 \value{
 The fit table or assessment, invisibly
 }
 \description{
-Display model specification, assessment,
-and run statistics \emph{or} display a model assessment \emph{or} set model scores or
-comments.
+Display model specification, assessment, and run statistics.
 }
 \details{
 \code{fitinfo} works in three different modes:
 \itemize{
 \item \verb{fitinfo(rows = <selected rows>, cols = <selected columns>)} displays a table
 of selected rows and columns
-\item \verb{fitinfo(rows = <a single row>, cols = 'report')} displays a report for the
-selected fit id, focusing on the model assessment (the same information in
-the \code{fit} log)
-\item Any of
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{fitinfo(rows = <a single row>, score = <fit score>)
-fitinfo(rows = <a single row>, assess = 'an assessment comment')
-fitinfo(rows = <a single row>, map = 'a map comment')
-}\if{html}{\out{</div>}}
-
-sets the subjective model fit score, the assessment. comment, or the map
-comment. Any of these may be combined in a single call.
+\item \verb{fitinfo(rows = <a single row>)} \emph{or} \code{fitinfo(rows = ..., report = TRUE)} displays
+a report for the selected fit id, focusing on the model assessment (the same
+information in the \code{fit} log)
 }
 }
