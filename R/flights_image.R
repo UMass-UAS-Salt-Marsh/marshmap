@@ -31,7 +31,7 @@ flights_image <- function(data, cdir, file, rgb, extent, footprint, pixels = 120
    
    if(!all(is.na(as.vector(data)))) {                             # if data (presumably an inset) isn't all nodata
       if(nlyr(data) == 1)
-         plot(data, col = map.pal('viridis'), breaks = 10, 
+         plot(data, col = map.pal('viridis'), breaks = 25, 
               breakby = 'cases', legend = FALSE, axes = FALSE, 
               mar = 0.5)                                          # single band images
       else

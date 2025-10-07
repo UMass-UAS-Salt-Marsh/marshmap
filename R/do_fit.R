@@ -202,7 +202,7 @@ do_fit <- function(fitid, sites, name, method,
    saveRDS(r, file.path(the$modelsdir, paste0('zz_', fitid, '_fit.RDS')))
    
    
-   # --- write info that doesn't fit in a table (and more importantly, is BIG) to <id>_extra.RDS
+   # --- write info that doesn't fit in a table (and more importantly, is BIG) to fit_<id>_extra.RDS
    
    r <- list()
    
@@ -210,7 +210,7 @@ do_fit <- function(fitid, sites, name, method,
    r$confuse <- f$confusion                                                               # confusion matrix                        
    r$varimp <- f$importance                                                               # variable importance
    
-   saveRDS(r, file.path(the$modelsdir, paste0(fitid, '_extra.RDS')))
+   saveRDS(r, file.path(the$modelsdir, paste0('fit_', fitid, '_extra.RDS')))
    
    message('Model fit finished; results written to temporary and extra files')
 }

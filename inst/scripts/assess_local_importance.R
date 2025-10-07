@@ -12,7 +12,7 @@
 v <- list()
 
 for(i in 137:142) {
-   v[[i - 136]] <- varImp(readRDS(file.path(the$modelsdir, paste0(i, '_extra.RDS')))$model_object)$importance
+   v[[i - 136]] <- varImp(readRDS(file.path(the$modelsdir, paste0('fit_', i, '_extra.RDS')))$model_object)$importance
     #  v[[i - 136]] <- cbind(rownames(t), t)
 }
 
@@ -29,7 +29,7 @@ points(1:nrow(x), x$local3, pch = 19, cex = 0.75, col = 'purple')
 
 
 
-x <-readRDS(file.path(the$modelsdir, paste0(140, '_extra.RDS')))$model_object
+x <-readRDS(file.path(the$modelsdir, paste0('fit_', 140, '_extra.RDS')))$model_object
 subclass <- as.numeric(sub('^class', '', x$trainingData$.outcome))                            # get classes for training data
 v <- data.frame(cbind(subclass, x$finalModel$variable.importance.local))
 

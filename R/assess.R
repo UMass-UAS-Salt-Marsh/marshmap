@@ -96,7 +96,7 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
       if(is.na(frow))
          stop('Fit id ', fitid, ' is not present in the fits database')
       
-      extra <- readRDS(file.path(the$modelsdir, paste0(fitid, '_extra.RDS')))
+      extra <- readRDS(file.path(the$modelsdir, paste0('fit_', fitid, '_extra.RDS')))
       
       model <- list(fit = extra$model_object, 
                     confuse = extra$confuse, 

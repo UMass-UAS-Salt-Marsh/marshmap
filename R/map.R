@@ -33,7 +33,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
    if(is.list(fit)) {                                                                  # if fit is a list, it's (1) fit object,
       fitid <- NULL
       fitfile <- paste0('zz_', as.character(round(as.numeric(Sys.time())), '.RDS'))    #  make up a file name for the fit object to pass to do_fit
-      saveRDS(fit, file.path(the$modelsdir, paste0('zz', fitid, '_extra.RDS')))        #       and save it the model                        ************** what is this?
+      saveRDS(fit, file.path(the$modelsdir, paste0('zz', fitid, 'fit_', '_extra.RDS')))#       and save it the model                        ************** what is this?
    }
    else {                                                                              # else, one of
       if(is.character(fit)) {                                                          #    if it's a character, it's (2) file name,
@@ -74,7 +74,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
    
    if(!is.null(fitid))                                                                 # if we're getting model from fit database,
       fitfile <- file.path(resolve_dir(the$modelsdir, site),
-                           paste0(fitid, '_extra.RDS'))                                #       we'll pull fit from the database in do_fit
+                           paste0('fit_', fitid, '_extra.RDS'))                        #       we'll pull fit from the database in do_fit
    
    
    resources <- get_resources(resources, list(                                         # define resources
