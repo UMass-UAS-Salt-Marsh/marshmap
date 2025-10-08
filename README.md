@@ -23,6 +23,7 @@ This documentation is a work in progress.
 # install.packages("devtools")
 devtools::install_github('UMass-UAS-Salt-Marsh/salt-marsh-mapping')
 devtools::install_github('UMassCDS/slurmcollie')                                    # a companion package required for running batch jobs on Unity
+devtools::install_github('rspatial/terra')                                          # need this until 1.8-73 is released on CRAN
 devtools::install_github('bwcompton/batchtools', ref = 'bwcompton-robust-sbatch')   # while waiting for pull request
 
 ```

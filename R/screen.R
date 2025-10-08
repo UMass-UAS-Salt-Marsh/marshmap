@@ -216,7 +216,7 @@ screen <- function() {
     })
     
     
-    observeEvent(c(input$inset, input$insets_always), {                                                      # --- requested inset
+    observeEvent(c(input$inset, input$insets_always), {                                               # --- requested inset
       if(input$inset | input$insets_always) {
         
         screen_insets(input, output, session = getDefaultReactiveDomain())
