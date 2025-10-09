@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_map</span><span class="op">(</span><span class="va">site</span>, <span class="va">fitid</span>, <span class="va">fitfile</span>, <span class="va">clip</span>, <span class="va">result</span>, rep <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_map</span><span class="op">(</span><span class="va">site</span>, <span class="va">fitid</span>, <span class="va">fitfile</span>, <span class="va">clip</span>, <span class="va">result</span>, <span class="va">mapid</span>, rep <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,11 +66,11 @@ required.</p></dd>
 
 
 <dt id="arg-result">result<a class="anchor" aria-label="anchor" href="#arg-result"></a></dt>
-<dd><p>Optional result name. Default is
-<code>map_&lt;site&gt;_&lt;fit id&gt;_[clip_&lt;size&gt;_ha]</code>; if a result name is specified,
-the result will be <code>map_&lt;result&gt;_&lt;site&gt;_&lt;fit id&gt;_[clip_&lt;size&gt;_ha]</code>,
-retaining the site and fit id, as omiting these breaks your ability to
-track maps back to the fits they're based on.</p></dd>
+<dd><p>Result file name</p></dd>
+
+
+<dt id="arg-mapid">mapid<a class="anchor" aria-label="anchor" href="#arg-mapid"></a></dt>
+<dd><p>Id in maps database</p></dd>
 
 
 <dt id="arg-rep">rep<a class="anchor" aria-label="anchor" href="#arg-rep"></a></dt>

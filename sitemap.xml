@@ -14,11 +14,12 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/do_fit.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/do_gather.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/do_map.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/do_mosaic.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/do_sample.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/dot-onLoad.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/drive_walk_path.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/extent_area.html</loc></url>
-<url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/filter_fits.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/filter_db.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/find_orthos.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/fit.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/fit_finish.html</loc></url>
@@ -42,6 +43,8 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/load_database.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/map.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/map_finish.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/mapinfo.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/mosaic.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/new_db.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/overlaps.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference/pick.html</loc></url>
