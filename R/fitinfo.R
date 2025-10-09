@@ -29,7 +29,6 @@
 #'
 #' @param report If TRUE, give a report (on a single fit); otherwise, list info on fits. 
 #'    If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.
-
 #' @param sort The name of the column to be used to sort the table
 #' @param decreasing If TRUE, sort in descending order
 #' @param nrows Number of rows to display in the table. Positive numbers
@@ -50,7 +49,7 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
                     timezone = 'America/New_York') {
    
    
-   load_database('fdb')                                                                   # Get fit database
+   load_database('fdb')                                                                # Get fit database
    
    if(dim(the$fdb)[1] == 0) {
       message('No fits in database')
@@ -58,13 +57,13 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    }
    
    
-   op <- sapply(c('max.print', 'scipen'), getOption)                                      # set printing options  
+   op <- sapply(c('max.print', 'scipen'), getOption)                                   # set printing options  
    on.exit(options(max.print = op[1], scipen = op[2]))
    options(max.print = 20000, scipen = 5)
    
    
-   z <- the$fdb[filter_fits(rows), ]                                                      # fits, filtered
-   z <- z[order(z[, sort], decreasing = decreasing), ]                                    # and sorted
+   z <- the$fdb[filter_db(rows, 'fdb'), ]                                              # fits, filtered
+   z <- z[order(z[, sort], decreasing = decreasing), ]                                 # and sorted
    
    if(is.null(report))
       report <- nrow(z) == 1
@@ -85,10 +84,9 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    z$message <- ifelse(is.na(z$message), '', z$message)
    z$vars <- ifelse(is.na(z$vars), '', z$vars)
    
-   z$cases <- prettyNum(z$cases, big.mark = ',')
+   z$cases <- ifelse(z$cases == 'NA', '', prettyNum(z$cases, big.mark = ','))
    z$CCR <- ifelse(is.na(z$CCR), '', paste0(formatC(round(z$CCR * 100, 2), format = 'f', digits = 1), '%'))
    z$kappa <- ifelse(is.na(z$kappa), '', formatC(round(z$kappa, 3), format = 'f', digits = 3))
-   z$cases <- ifelse(z$cases == 'NA', '', z$cases)
    
    z$cores <- ifelse(is.na(z$cores), '', z$cores)
    z$mem_req <- ifelse(is.na(z$mem_req), '', z$mem_req)
@@ -122,7 +120,6 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    }
    
    if(report) {                                                                        # if we're asking for a report,
-      #   print(full_z[c('model', 'full_model', 'hyper')])                                #    this stuff is too awful to print
       x <- assess(z$id[1], site = z$site[1], quiet = quiet)                            #    display assessment for a single model
       return(invisible(x))                                                             #    and silently return assessment
    }

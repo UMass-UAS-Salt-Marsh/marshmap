@@ -58,10 +58,21 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
          stop('site must be supplied when fit is not from fits database')
    }
    else {
-      site <- get_sites(site)                                                          # get one or more sites
+      site <- get_sites(site)$site                                                     # get one or more sites
    }
    if(length(site) != 1)
       stop('map requires exactly one site')
+   
+   
+   if(!is.null(clip)) {                                                                # if there's a clip, modify result name
+      clip_area <- round(extent_area(clip))
+      cr <- paste0('clip_', clip_area, '_ha')
+   }
+   else
+      cr <- ''
+   
+   result <- paste('map', result, site, fitid, cr, sep = '_')                          # make result name, sans extension
+   result <- gsub('_$', '', gsub('__', '_', result))                                   # clean up from missing result, fitid, or cr
    
    
    com <- paste0(ifelse(is.null(fitid), '', paste0('map, fit id ', fitid)), 
@@ -84,10 +95,40 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
    ))
    
    
+   
+   load_database('mdb')                                                                # Get map database
+   the$mdb[i <- nrow(the$mdb) + 1, ] <- NA                                             # add row to database 
+   
+   the$mdb$mapid[i] <- max(the$mdb$mapid, 9000, na.rm = TRUE) + 1                      # mapids start at 9000
+   the$mdb$fitid[i] <- fitid                                                           # id of fit map was based on (if known)
+   the$mdb$site[i] <- site                                                             # site (or sites) model is fit to
+   the$mdb$model[i] <- fitfile                                                         # full path to fit object, if not from the fits database
+   the$mdb$result[i] <- file.path(resolve_dir(the$mapsdir, site), 
+                                  paste0(result, '.tif'))                              # full path to resulting geoTIFF
+   if(!is.null(clip)) {
+      the$mdb$clip[i] <- list(clip)                                                    # clip vector or NA if not clipped 
+      the$mdb$clip_area[i] <- list(clip_area)                                          # area of clip in ha or NA if not clipped
+   }
+   the$mdb$mpix[i] <- NA                                                               # megapixels of result file, resolved in map_finish
+   the$mdb$success[i] <- NA                                                            # run success; NA = not run yet
+   the$mdb$status[i] <- ''                                                             # final slurmcollie status, resolved in map_finish
+   the$mdb$error[i] <- NA                                                              # TRUE if error, resolved in map_finish
+   the$mdb$message[i] <- ''                                                            # error message if any, resolved in map_finish
+   the$mdb$cores[i] <- NA                                                              # cores requested, resolved in map_finish
+   the$mdb$cpu[i] <- ''                                                                # CPU time, resolved in map_finish
+   the$mdb$cpu_pct[i] <- ''                                                            # percent CPU used, resolved in map_finish
+   the$mdb$mem_req[i] <- NA                                                            # memory requested (GB), resolved in map_finish
+   the$mdb$mem_gb[i] <- NA                                                             # memory used (GB), resolved in map_finish
+   the$mdb$walltime[i] <-  ''                                                          # elapsed run time, resolved in map_finish
+   
+   the$mdb$launched[i] <- now()                                                        # date and time launched (may disagree with slurmcollie by second or two)
+   save_database('mdb')
+   
+   
+   
    launch('do_map', 
           moreargs = list(site = site, fitid = fitid, fitfile = fitfile, 
-                          clip = clip, result = result), 
-          finish = 'map_finish', 
-          #################callerid = the$mdb$id[i], 
+                          clip = clip, result = result, mapid = the$mdb$mapid[i]), 
+          finish = 'map_finish', callerid = the$mdb$mapid[i], 
           local = local, trap = trap, resources = resources, comment = comment)        # launch it
 }

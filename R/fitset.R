@@ -35,7 +35,7 @@ fitset <- function(rows, score = NULL, assess = NULL, map = NULL, multiple = FAL
       return(invisible())
    }
    
-   sel <- filter_fits(rows)                     # Selected rows
+   sel <- filter_db(rows, 'fdb')                # Selected rows
    
    if(length(sel) == 0)
       stop('No fits selected')

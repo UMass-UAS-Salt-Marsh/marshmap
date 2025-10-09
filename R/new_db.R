@@ -20,8 +20,12 @@ new_db <- function(database, really = FALSE) {
    switch(database,
           'fdb' = {
              the$fdb <- data.frame(
-                id = integer(),                       # model id, sequential integers. This is fixed for each model and not reused. Refer to models by id or name. When predicting for a model, result geoTIFF is named either id.tif or name_id.tif. Assigned by fit
-                name = character(),                   # model name. This is optional, may be added later, and may be changed. May refer to models by permanent id or by name if present. Predicted grids will always include the model id, as well as the current name if set. passed by fit
+                id = integer(),                       # model id, sequential integers starting with 1000. This is fixed for each model and not reused. 
+                #                                       Refer to models by id or name. When predicting for a model, result geoTIFF is named either id.tif or 
+                #                                       name_id.tif. Assigned by fit
+                name = character(),                   # model name. This is optional, may be added later, and may be changed. May refer to models by permanent 
+                #                                       id or by name if present. Predicted grids will always include the model id, as well as the current 
+                #                                       name if set. passed by fit
                 site = character(),                   # site (or sites) model is fit to
                 method = character(),                 # modeling approach used (rf = random forest, ab = AdaBoost, perhaps others)
                 success = logical(),                  # TRUE if the model ran successfully, FALSE if it failed, or NA if a run hasn't been competed yet
@@ -51,16 +55,36 @@ new_db <- function(database, really = FALSE) {
                 datafile = character(),               # name of data file used
                 hyper = character()                   # hyperparameters specification. Either full spec or the name of a text file (w/o .txt) with the full spec.
              )  
-             
-             unlink(file.path(the$dbdir, paste0(database, '*.RDS')))             # delete old database and backups
           },
           
           'mdb' = {
              the$mdb <- data.frame(
+                mapid = integer(),                    # map id, sequential integers starting with 9000
+                fitid = integer(),                    # id of fit map was based on (if known)
+                site = character(),                   # site (or sites) model is fit to
+                model = character(),                  # full path to fit object, if not from the fits database
+                result = character(),                 # full path to resulting geoTIFF
+                clip = integer(),                     # clip vector or NA if not clipped 
+                clip_area = integer(),                # area of clip in ha or NA if not clipped
+                mpix = double(),                      # megapixels of result file
+                success = logical(),                  # TRUE if the model ran successfully, FALSE if it failed, or NA if a run hasn't been competed yet
+                launched = as.POSIXct(character()),   # date and time launched
+                status = character(),                 # final slurmcollie status
+                error = character(),                  # TRUE if error
+                message = character(),                # error message if any
+                cores = integer(),                    # cores requested
+                cpu = character(),                    # CPU time
+                cpu_pct = character(),                # percent CPU used
+                mem_req = double(),                   # memory requested (GB)
+                mem_gb = double(),                    # memory used (GB)
+                walltime = character()                # elapsed run time
              )
           },
           stop('Database must be one of "fdb" or "mdb"')
    )
+   
+   # unlink(file.path(the$dbdir, paste0(database, '*.RDS')))             # delete old database and backups  Not sure I want to do this!
+   
    save_database(database)
    message('New database ', database, ' created')
    

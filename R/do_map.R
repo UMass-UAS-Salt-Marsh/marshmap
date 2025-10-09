@@ -21,29 +21,17 @@
 #'   model was built on, or the model was built on mutiple sites, `site` is
 #'   required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
-#' @param result Optional result name. Default is 
-#'    `map_<site>_<fit id>_[clip_<size>_ha]`; if a result name is specified, 
-#'    the result will be `map_<result>_<site>_<fit id>_[clip_<size>_ha]`,
-#'    retaining the site and fit id, as omiting these breaks your ability to
-#'    track maps back to the fits they're based on.
+#' @param result Result file name
+#' @param mapid Id in maps database
 #' @param rep Throwaway argument to make `slurmcollie` happy
 #' @importFrom peakRAM peakRAM
-#' @importFrom terra ext predict levels writeRaster ncell
+#' @importFrom terra ext predict levels writeRaster values
 #' @importFrom rasterPrep addColorTable makeNiceTif addVat
 #' @importFrom lubridate as.duration seconds
 #' @export
 
 
-do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
-   
-   
-   if(!is.null(clip))                                                         # if there's a clip, modify result name
-      cr <- paste0('clip_', round(extent_area(clip)), '_ha')
-   else
-      cr <- ''
-   
-   result <- paste('map', result, site, fitid, cr, sep = '_')                 # make result name, sans extension
-   result <- gsub('_$', '', gsub('__', '_', result))                          # clean up from missing result, fitid, or cr
+do_map <- function(site, fitid, fitfile, clip, result, mapid, rep = NULL) {
    
    
    if(!dir.exists(dirname(result)))                                           # make sure result directory exists
@@ -77,7 +65,6 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    
    if(!is.null(clip))                                                         # if clip is provided,
       rasters <- crop(rasters, ext(clip))                                     #    clip result
-   mpix <- ncell(rasters)
    
    cat('Predicting...\n')
    pred <- terra::predict(rasters, model, cpkgs = model$method, 
@@ -86,6 +73,7 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    writeRaster(pred, f0, overwrite = TRUE, datatype = 'INT1U', progress = 1, 
                memfrac = 0.8)                                                 # save the preliminary prediction as a geoTIFF
    
+   mpix <- sum(!is.na(values(pred))) / 1e6                                    # non-missing megapixels in result
    
    levs <- terra::levels(pred$class)[[1]]                                     # get class levels from prediction
    levs$class <- as.numeric(sub('^class', '', levs$class))                    # make sure they're numeric with no "class"
@@ -107,6 +95,12 @@ do_map <- function(site, fitid, fitfile, clip, result, rep = NULL) {
    addVat(f, attributes = vat)                    
    
    unlink(f0x)                                                                # delete preliminary files
+   
+   
+   r <- list(mpix = mpix)                                                     # save megapixels to temporary file for map_finish
+   saveRDS(r, file.path(resolve_dir(the$mapsdir, site), 
+                        paste0('zz_', mapid, '_map.RDS')))
+   
    
    message('do_map is finished; results writen to ', f)
 }

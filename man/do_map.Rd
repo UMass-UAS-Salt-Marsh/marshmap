@@ -4,7 +4,7 @@
 \alias{do_map}
 \title{Produce geoTIFF maps of predicted vegetation cover from fitted models}
 \usage{
-do_map(site, fitid, fitfile, clip, result, rep = NULL)
+do_map(site, fitid, fitfile, clip, result, mapid, rep = NULL)
 }
 \arguments{
 \item{site}{Three letter site code. If fitting from a fit id that was built
@@ -19,11 +19,9 @@ required.}
 
 \item{clip}{Optional clip, vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
 
-\item{result}{Optional result name. Default is
-\verb{map_<site>_<fit id>_[clip_<size>_ha]}; if a result name is specified,
-the result will be \verb{map_<result>_<site>_<fit id>_[clip_<size>_ha]},
-retaining the site and fit id, as omiting these breaks your ability to
-track maps back to the fits they're based on.}
+\item{result}{Result file name}
+
+\item{mapid}{Id in maps database}
 
 \item{rep}{Throwaway argument to make \code{slurmcollie} happy}
 }

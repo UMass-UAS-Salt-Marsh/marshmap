@@ -70,7 +70,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
                  collapse = ', '))
    
    resources <- get_resources(resources, list(
-      ncpus = 10,                                        # ************ NEED TO TUNE THESE
+      ncpus = 10,                                        
       memory = 200,
       walltime = '05:00:00'
    ))
@@ -78,7 +78,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    
    load_database('fdb')                                  # Get fit database
-   the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add rows to database 
+   the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add row to database 
    
    the$fdb$id[i] <- the$last_fit_id + 1                  # model id
    the$fdb$name[i] <- name                               # optional model name
