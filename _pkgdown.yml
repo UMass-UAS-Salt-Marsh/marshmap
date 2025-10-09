@@ -15,6 +15,7 @@ reference:
   - sample
   - fit
   - map
+  - mosaic
   
 - title: Reporting functions
   desc: These functions report data and model status.
@@ -50,6 +51,7 @@ reference:
   - do_sample
   - do_fit
   - do_map
+  - do_mosaic
   - gather_finish
   - sample_finish
   - fit_finish
