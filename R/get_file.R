@@ -16,6 +16,7 @@
 #'   is renamed after completion.
 #' - when reading from SFTP, the entire file must be able to fit in memory. There should be plenty
 #'   of room for the files in the salt marsh project.
+#' - files on the remote drive are treated as case-insensitive
 #'       
 #' @param name File path and name
 #' @param gd Source drive info, named list of 
@@ -39,10 +40,12 @@
    if(gd$sourcedrive == 'local')                                                    # if the file is on the local drive, simply return the path and name
       return(name)
    else {                                                                           # else, it's on the Google Drive or SFTP, so we'll deal with caching
-      sname <- gd$dir[gd$dir$name == basename(name), ]                              #    name and id on Google Drive
+      sname <- gd$dir[tolower(gd$dir$name) == tolower(basename(name)), ]            #    name and id on Google Drive (case-insensitive)
+      
       if(dim(sname)[1] != 1)
          stop('File occurs in ', dim(sname)[1], 
               ' places on drive; rename duplicates to "bad_<filename>"')
+         
       cname <- file.path(gd$cachedir, basename(name))                               #    name in cache
       
       if(file.exists(cname)) {                                                      #    if the file exists in the cache,
@@ -50,7 +53,7 @@
             sdate <- drive_reveal(sname, what = 'modified_time')$modified_time      #          get last modified date 
          }
          else {                                                                     #       else, it's on SFTP
-            sdate <- gd$dir$date[gd$dir$name == name]                               #          last modified date on the server   ************** make sure time is in UTC when updating ****************
+            sdate <- gd$dir$date[gd$dir$name == name]                               #          last modified date on the server   ************** make sure time is in UTC when updating once we get our SFTP server ****************
          }
          cdate <- lubridate::with_tz(file.mtime(cname), tzone = 'UTC')              #       last modified date in cache
          if(cdate >= sdate)                                                         #       if the cached version is up-to-date,

@@ -45,7 +45,8 @@
 #' @param balance If TRUE, balance number of samples for each class. Points will be randomly
 #'    selected to match the sparsest class.
 #' @param balance_excl Vector of classes to exclude when determining sample size when 
-#'    balancing. Include classes with low samples we don't care much about.
+#'    balancing. Include classes with low samples we don't care much about. Overrides 
+#'    `balance_exclude` from `sites.txt` if supplied.
 #' @param drop_corr Drop one of any pair of variables with correlation more than `drop_corr`.
 #' @param reuse Reuse the named file (ending in `_all.txt`) from previous run, rather
 #'    than resampling. Saves a whole lot of time if you're changing `n`, `p`, `d`, `balance`, 
@@ -71,13 +72,20 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
                    resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
-   site <- get_sites(site)$site
+   site <- get_sites(site)
    
    if(all(c(is.null(n), is.null(p), is.null(d))))  # if n, p, and d are all omitted, default to p = 0.25, a quarter of data
       p <- 0.25
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)
       stop('You must choose exactly one of the n, p, and d options')
+   
+   
+   if(is.null(balance_excl)) {                                             # if balance_excl is supplied, use it
+      x <- as.numeric(unlist(strsplit(site$balance_exclude, ',')))         #    otherwise, get it from sites.txt
+      if(length(x) != 0)
+         balance_excl <- x
+   }
    
    
    resources <- get_resources(resources, list(
@@ -87,11 +95,11 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
    ))
    
    if(is.null(comment))
-      comment <- paste0('sample ', site)
+      comment <- paste0('sample ', site$site)
    
-   launch('do_sample', reps = site, repname = 'site', 
-          moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, 
-                          balance = balance, balance_excl = balance_excl, result = result, 
-                          transects = transects, drop_corr = drop_corr, reuse = reuse), 
+   launch('do_sample', reps = site$site, repname = 'site', 
+          moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, minscore = minscore,
+                          maxmissing = maxmissing, balance = balance, balance_excl = balance_excl, 
+                          result = result, transects = transects, drop_corr = drop_corr, reuse = reuse), 
           finish = 'sample_finish', local = local, trap = trap, resources = resources, comment = comment)
 }

@@ -15,6 +15,7 @@
 check_files <- function(files, gd, sourcedir, resultdir) {
    
    
+   files <- tolower(files)                                                                # case-insensitive on source drive
    z <- rep(FALSE, length(files))
    
    for(i in seq_along(files)) {                                                           # for each file,
@@ -22,10 +23,12 @@ check_files <- function(files, gd, sourcedir, resultdir) {
       if(file.exists(f)) {                                                                #    if the file exists in the results directory,
          sdate <- switch(gd$sourcedrive,                                                  #       get last modified date on source drive
                          'local' = file.mtime(f),
-                         'google' = drive_reveal(gd$dir[gd$dir$name == files[i], ],
+                         'google' = drive_reveal(gd$dir[tolower(gd$dir$name) == files[i], ],
                                                  what = 'modified_time')$modified_time,
-                         'sftp' = gd$dir$date[basename(gd$dir$name) == basename(files[i])]
+                         'sftp' = gd$dir$date[basename(tolower(gd$dir$name)) == basename(files[i])]
          )
+         if(length(sdate) == 0)
+            stop('File ', files[i], ' doesn\'t exist on source drive')
          rdate <- file.mtime(f)                                                           #   date on result drive
          z[i] <- rdate >= sdate                                                           #   TRUE if it's present and up to date
       }

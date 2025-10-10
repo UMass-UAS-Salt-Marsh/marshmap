@@ -25,7 +25,7 @@ filter_db <- function(filter, database) {
       return(seq_len(dim(db)[1]))
    
    if(is.numeric(filter)) {                                       # if we have supplied ids,
-      z <- match(filter, db[id])
+      z <- match(filter, db[[id]])
       if(any(m <- is.na(z))) {
          message('Note: ids ', paste(filter[m], collapse = ', '), ' don\'t exist')
          z <- z[!m]
