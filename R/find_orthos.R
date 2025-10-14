@@ -119,7 +119,7 @@ find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = T
    
    if(screen) {
       z <- z[(db$score[z] >= minscore) & (db$score[z] != 1)]                              # drop orthos with score < minscore and always drop rejected orthos
-      z <- z[is.na(db$pct_missing[z]) | (db$pct_missing[z] > maxmissing)]                 # drop orthos with pct_missing > maxmissing
+      z <- z[is.na(db$pct_missing[z]) | (db$pct_missing[z] < maxmissing)]                 # drop orthos with pct_missing > maxmissing
    }
    
    data.frame(row = z, file = db$name[z], portable = db$portable[z])                   # return data frame of rows, file names, and portable names
