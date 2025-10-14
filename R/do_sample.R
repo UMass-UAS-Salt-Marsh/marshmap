@@ -55,11 +55,13 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing,
       message('p = ', p)
    if(!is.null(d))
       message('d = ', d)
+   if(!is.null(balance_excl))
+      message('Excluding cases ', paste(balance_excl, collapse = ', '))
    
    
    if(is.null(result))
       result <- 'data'
-      
+   
    sd <- resolve_dir(the$samplesdir, site)
    
    if(reuse) {
@@ -73,7 +75,6 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing,
       if(is.null(transects))
          transects <- 'transects.tif'
       field <- rast(file.path(f, transects))
-      
       
       if(!is.null(classes))
          field <- subst(field, from = classes, to = classes, others = NA)           # select classes in transect
@@ -116,7 +117,9 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing,
    
    if(balance) {                                                                    # if balancing samples,
       counts <- table(z$subclass)
-      counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classe in balance_ex,l
+      if(!is.null(balance_excl))
+         message('Excluding ', length(balance_excl), ' classes from balancing')
+      counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classes in balance_excl
       target_n <- min(counts)
       
       z <- group_by(z, subclass) |>

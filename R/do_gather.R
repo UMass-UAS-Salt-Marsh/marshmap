@@ -30,7 +30,7 @@
 #'    attention, because bad classes will crash `do_map` down the line.
 #' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
-#' @importFrom sf st_read st_write
+#' @importFrom sf st_read st_write st_transform
 #' @importFrom lubridate as.duration interval
 #' @importFrom pkgcond suppress_warnings
 #' @importFrom tools file_path_sans_ext
@@ -41,6 +41,9 @@
 do_gather <- function(site, pattern = '', 
                       update, check, field, ignore_bad_classes, replace_caches) {
    
+   
+   message('terra version is ', packageVersion('terra'), '; should be 1.8.73 or higher')
+
    
    start <- Sys.time()
    count <- NULL
@@ -157,6 +160,11 @@ do_gather <- function(site, pattern = '',
       footprint <- st_read(get_file(file.path(dir, sites$footprint[i]), 
                                     gd), quiet = TRUE)                              #    read footprint shapefile (we always do this 'cuz it's cheap)
       
+      if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
+         message('         !!! Reprojecting ', basename(sites$footprint[i]))
+         footprint <- st_transform(footprint, crs = 4326)
+      }
+      
       sf <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
       if(!dir.exists(sf))
          dir.create(sf, recursive = TRUE)
@@ -184,6 +192,13 @@ do_gather <- function(site, pattern = '',
                
                
                shp <- st_read(tpath)                                                #       read transects shapefile
+               
+               if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
+                  message('         !!! Reprojecting ', basename(tpath))
+                  shp <- st_transform(shp, crs = 4326)
+               }
+                  
+               
                u <- sort(unique(shp$Subclass))
                bad <- u[!u %in% read_pars_table('classes')$subclass]
                if(length(bad) > 0) {
@@ -198,6 +213,7 @@ do_gather <- function(site, pattern = '',
                gt <- overlaps(shp, 'Subclass')                                      #       get the shapefile and process overlaps
                st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile as *_final
                
+               
                suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
                                    rasterize(vect(overlaps), standard, 
                                              field = 'Subclass')$Subclass |>        #       convert it to raster and pull SubCl, numeric version of subclass
@@ -205,6 +221,11 @@ do_gather <- function(site, pattern = '',
                                    mask(footprint) |>
                                    writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
                                                datatype = type, NAflag = missing))
+               
+               if(all(is.na(values(transects)))) {
+                  message('*** Ground truth data are all missing!!')
+                  unlink(file.path(fd, 'transects.tif'))
+               }
                
                shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
                for(f in shps)

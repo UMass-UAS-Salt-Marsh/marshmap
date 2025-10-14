@@ -2,3 +2,4 @@ launch('flights_prep', reps = 'nor', repname = 'site', resources = list(memory =
 
 
 
+launch('server_test')

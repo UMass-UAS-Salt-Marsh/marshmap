@@ -4,7 +4,7 @@
 #' @returns site Data frame with one or more rows of:
 #' \item{site}{Standard 3 letter site abbreviation}
 #' \item{site_name}{Site name}
-#' \item{share}{Share name on Google Drive [obsolete?]}
+#' \item{share}{Share name on Google Drive   obsolete?}
 #' \item{transects}{name of ground truth shapefile}
 #' \item{balance_exclude}{list of classes to exclude from balancing in `sample` (comma-separated)}
 #' \item{fit_exclude}{list of classes to exclude in `fit` (comma-separated)}

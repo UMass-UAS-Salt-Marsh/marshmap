@@ -38,6 +38,7 @@ have < 1 TB of data. Again, IF REPURPOSING, beware!
 is renamed after completion.
 \item when reading from SFTP, the entire file must be able to fit in memory. There should be plenty
 of room for the files in the salt marsh project.
+\item files on the remote drive are treated as case-insensitive
 }
 }
 \keyword{internal}

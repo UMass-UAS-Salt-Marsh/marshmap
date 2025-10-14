@@ -54,7 +54,8 @@ than this are excluded.}
 selected to match the sparsest class.}
 
 \item{balance_excl}{Vector of classes to exclude when determining sample size when
-balancing. Include classes with low samples we don't care much about.}
+balancing. Include classes with low samples we don't care much about. Overrides
+\code{balance_exclude} from \code{sites.txt} if supplied.}
 
 \item{result}{Name of result file. If not specified, file will be constructed from
 site, number of X vars, and strategy.}

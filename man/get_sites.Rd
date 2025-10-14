@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_sites.R
 \name{get_sites}
 \alias{get_sites}
-\title{Get names of one or more sites}
+\title{Get info for one or more sites}
 \usage{
 get_sites(site)
 }
@@ -13,8 +13,15 @@ get_sites(site)
 site Data frame with one or more rows of:
 \item{site}{Standard 3 letter site abbreviation}
 \item{site_name}{Site name}
+\item{share}{Share name on Google Drive   obsolete?}
+\item{transects}{name of ground truth shapefile}
+\item{balance_exclude}{list of classes to exclude from balancing in \code{sample} (comma-separated)}
+\item{fit_exclude}{list of classes to exclude in \code{fit} (comma-separated)}
+\item{footprint}{path and name to footprint shapefile}
+\item{standard}{path and name of orthophoto standard (use \if{html}{\out{<SITE>}} as a variable
+to include site name in path)}
 }
 \description{
-Get names of one or more sites
+Get info for one or more sites
 }
 \keyword{internal}
