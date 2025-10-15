@@ -88,10 +88,18 @@ do_fit <- function(fitid, sites, name, method,
                  ' variables after exclusions')
    }
    
+   
+   if(is.null(exclude_classes)) {                        # if exclude_classes is supplied, use it
+      x <- as.numeric(unlist
+                      (strsplit(sites$fit_exclude, ','))) #    otherwise, get it from sites.txt
+      if(length(x) != 0)
+         exclude_classes <- x
+   }
+   
    if(!is.null(exclude_classes)) {                                                         # if exclude_classes, drop these from dataset
       t <- nrow(r)
       r <- r[!r$subclass %in% exclude_classes, ]
-      message('Excluding classes ', paste(exclude_classes, collapse = ', '), '; dropped ', t - nrow(r), ' cases')
+      message('Excluding classes ', paste(exclude_classes, collapse = ', '), '; dropped ', format(t - nrow(r), big.mark = ','), ' cases')
    }
    
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
@@ -160,7 +168,7 @@ do_fit <- function(fitid, sites, name, method,
    
    model <- reformulate(names(training)[-1], 'subclass')
    
-   message('Training set has ', dim(training)[2] - 1, ' predictor variables and ', dim(training)[1], ' cases')
+   message('Training set has ', dim(training)[2] - 1, ' predictor variables and ', format(dim(training)[1], big.mark = ','), ' cases')
    
    
    a <- Sys.time()

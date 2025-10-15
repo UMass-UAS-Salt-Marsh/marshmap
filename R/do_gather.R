@@ -235,7 +235,6 @@ do_gather <- function(site, pattern = '',
       }
       
       
-      
       rd <- resolve_dir(the$flightsdir, tolower(sites$site[i]))                     #    prepare result directory
       if(!dir.exists(rd))
          dir.create(rd, recursive = TRUE)

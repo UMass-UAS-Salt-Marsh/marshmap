@@ -56,7 +56,7 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing,
    if(!is.null(d))
       message('d = ', d)
    if(!is.null(balance_excl))
-      message('Excluding cases ', paste(balance_excl, collapse = ', '))
+      message('Excluding subclasses ', paste(balance_excl, collapse = ', '), ' from balancing')
    
    
    if(is.null(result))
