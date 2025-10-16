@@ -103,19 +103,26 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
       if(cols[1] %in% c('brief', 'normal', 'long', 'all'))
          cols <- switch(cols,
                         brief = c('id', 'name', 'site', 'status', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'comment_launch'),
-                        normal = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
+                        normal = c('id', 'name', 'site', 'status', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
                                    'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map'),
                         long = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
                                  'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map', 'call'),
          )
       z <- z[, c(setdiff(c('id', 'site'), cols), cols), drop = FALSE]                  # always include id and site
    }
-   
+  
    if(!quiet) {
       if(include_model)                                                                # if include_model, include horribly long columns
          y <- z
       else
          y <- z[!names(z) %in% setdiff(c('model', 'full_model', 'hyper'), cols)]       #    otherwise,don't display these columns unless specifically requested
+
+      if(all(y$comment_assess == ''))
+         y <- y[, !names(y) %in% 'comment_assess']
+      
+      if(all(y$comment_map == ''))
+         y <- y[, !names(y) %in% 'comment_map']
+      
       print(y, row.names = FALSE, na.print = '')                                       # print everything but the super-long stuff, which still gets returned
    }
    
