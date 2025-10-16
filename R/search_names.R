@@ -82,8 +82,10 @@ search_names <- function(descrip) {
       }
    }
    
-   if(length(unlist(errs)) > 0)                                                  # if any errors,
+   if(length(unlist(errs)) > 0) {                                                # if any errors,
       message('Errors in search name: ', paste(unlist(errs), collapse = ' | '))
-   
-   z
+      return(NULL)
+   }
+   else
+      z
 }

@@ -49,6 +49,11 @@
 find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE) {
    
    
+   descrip <- gsub('high_spring', 'high.spring', descrip)         # ******************** TEMPORARY FOR LEGACY FITS
+   descrip <- gsub('mid_in', 'mid.in', descrip)
+   descrip <- gsub('mid_out', 'mid.out', descrip)
+      
+   
    depth <- function(this)                                                             # get depth of a list
       ifelse(is.list(this), 1L + max(sapply(this, depth)), 0L)
    
@@ -73,6 +78,7 @@ find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = T
    name <- name[name != '']
    z <- integer(0)                                                                     # we'll match an unknown number of names
    
+   err <- FALSE
    for(n in name) {                                                                    # for each name,
       if(!grepl('.tif$', n, ignore.case = TRUE))                                       #    filenames end in optional .tif
          m <- paste0(n, '.tif')
@@ -88,26 +94,31 @@ find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = T
             z <- c(z, pick(db$portable[i], db))                                        #          pick from among dups and we're done
          else {                                                                        #       else
             a <- search_names(n)                                                       #          treat it as a search name
-            b <- rep(length(a) != 0, nrow(db))                                         #          start with a vector of TRUE unless we found nothing in search_names
-            for(j in seq_along(a)) {                                                   #          for each search name part,
-               c <- rep(FALSE, nrow(db))
-               for(k in seq_along(a[[j]])) {                                           #             for each category,
-                  if(depth(a[[j]]) < 1)                                                #                if not nested, it's a regular category, like sensor = mica  
-                     c <- c | db[, names(a)[j]] == a[[j]][k]                           #                   match category value
-                  else {                                                               #                else, nested list, so category-modifier, like tide = high & tidemod = spring
-                     t <- db[, names(a)[j]] == a[[j]][[k]][[1]]
-                     if(length(a[[j]][[k]]) > 1)                                       #                   if this one has a mod,
-                        t <- t & (db[, mods(names(a)[j])] == a[[j]][[k]][[2]])         #                      need both category and modifier values
-                     c <- c | t               
+            if(is.null(a))
+               err <- TRUE
+            else {
+               b <- rep(length(a) != 0, nrow(db))                                      #          start with a vector of TRUE unless we found nothing in search_names
+               for(j in seq_along(a)) {                                                #          for each search name part,
+                  c <- rep(FALSE, nrow(db))
+                  for(k in seq_along(a[[j]])) {                                        #             for each category,
+                     if(depth(a[[j]]) < 1)                                             #                if not nested, it's a regular category, like sensor = mica  
+                        c <- c | db[, names(a)[j]] == a[[j]][k]                        #                   match category value
+                     else {                                                            #                else, nested list, so category-modifier, like tide = high & tidemod = spring
+                        t <- db[, names(a)[j]] == a[[j]][[k]][[1]]
+                        if(length(a[[j]][[k]]) > 1)                                    #                   if this one has a mod,
+                           t <- t & (db[, mods(names(a)[j])] == a[[j]][[k]][[2]])      #                      need both category and modifier values
+                        c <- c | t               
+                     }
                   }
+                  b <- b & c
                }
-               b <- b & c
+               z <- c(z, seq_along(db$name)[b])
             }
-            z <- c(z, seq_along(db$name)[b])
          }
       }
    }
-   
+   if(err)
+      stop('Can\'t continue because of bad search names')
    
    for(r in regex) {                                                                   # for each regex,
       s <- grepl(r, db$name, ignore.case = TRUE) |                                     #    match either file name or portable name
@@ -118,8 +129,8 @@ find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = T
    z <- unique(z)
    
    if(screen) {
-      z <- z[(db$score[z] >= minscore) & (db$score[z] != 1)]                              # drop orthos with score < minscore and always drop rejected orthos
-      z <- z[is.na(db$pct_missing[z]) | (db$pct_missing[z] < maxmissing)]                 # drop orthos with pct_missing > maxmissing
+      z <- z[(db$score[z] >= minscore) & (db$score[z] != 1)]                           # drop orthos with score < minscore and always drop rejected orthos
+      z <- z[is.na(db$pct_missing[z]) | (db$pct_missing[z] < maxmissing)]              # drop orthos with pct_missing > maxmissing
    }
    
    data.frame(row = z, file = db$name[z], portable = db$portable[z])                   # return data frame of rows, file names, and portable names
