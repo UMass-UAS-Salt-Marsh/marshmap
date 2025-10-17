@@ -6,6 +6,8 @@
 #' must choose exactly one. `n` samples the total number of points provided. 
 #' `p` samples the proportion of total points (after balancing, if `balance` is 
 #' selected. `d` samples points with a mean (but not guaranteed) minimum distance.
+#' If `n`, `p`, and `d` are all omitted, the default is `p = 0.05`, for 5% of 
+#' the data.
 #' 
 #' Portable names are used for variable names in the resulting data files. Dashes
 #' from modifications are changed to underscore to avoid causing trouble.
@@ -72,8 +74,8 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
    
    site <- get_sites(site)
    
-   if(all(c(is.null(n), is.null(p), is.null(d))))                          # if n, p, and d are all omitted, default to p = 0.25, a quarter of data
-      p <- 0.25
+   if(all(c(is.null(n), is.null(p), is.null(d))))                          # if n, p, and d are all omitted, default to p = 0.05, 5% of data
+      p <- 0.05
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)
       stop('You must choose exactly one of the n, p, and d options')

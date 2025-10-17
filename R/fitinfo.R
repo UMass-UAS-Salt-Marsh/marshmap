@@ -49,7 +49,7 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
                     timezone = 'America/New_York') {
    
    
-   load_database('fdb')                                                                # Get fit database
+   load_database('fdb')                                                                # Get fits database
    
    if(dim(the$fdb)[1] == 0) {
       message('No fits in database')

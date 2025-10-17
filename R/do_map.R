@@ -89,9 +89,10 @@ do_map <- function(site, fitid, fitfile, clip, result, mapid, rep = NULL) {
    vat2 <- vat[, c('value', 'color')]                                         # make a version of the vat for addColorTable
    vat2$category <-  paste0('[', vat[, target], '] ', vat$name)               # with labels that include numeric class and name, as e.g. [1] Low marsh
    vrt.file <- addColorTable(f0, table = vat2)                                # and add the standard colors
-   
+
    makeNiceTif(source = vrt.file, destination = f, overwrite = TRUE,          # make a nice TIFF with colors and overviews and add the VAT
                overviewResample = 'nearest', stats = FALSE, vat = TRUE)
+   
    addVat(f, attributes = vat)                    
    
    unlink(f0x)                                                                # delete preliminary files

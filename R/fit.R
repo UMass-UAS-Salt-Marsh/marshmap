@@ -74,7 +74,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    resources <- get_resources(resources, list(
       ncpus = 10,                                        
       memory = 200,
-      walltime = '08:00:00'                              # I timed out a couple at 5 hours
+      walltime = '05:00:00'                              # I timed out a couple at 5 hours, but that was with 250k cases--way too many
    ))
    
    
@@ -132,7 +132,8 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
                           vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
-                          years = years, minscore, maxmissing, max_miss_train = max_miss_train, 
+                          max_samples = max_samples, years = years, minscore = minscore, 
+                          maxmissing = maxmissing, max_miss_train = max_miss_train, 
                           top_importance = top_importance, holdout = holdout, auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
