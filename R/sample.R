@@ -12,19 +12,17 @@
 #' 
 #' Results are saved in four files, plus a metadata file:
 #' 
-#' 1. <result>_all.txt - A text version of the full dataset (selected by `pattern` 
+#' 1. `<result>_all.txt` - A text version of the full dataset (selected by `pattern` 
 #'    but not subsetted by `n`, `p`, `d`, `balance`, or `drop_corr`). Readable by
 #'    any software.
-#' 2. <result>_all.RDS - An RDS version of the full dataset; far faster to read 
+#' 2. `<result>_all.RDS` - An RDS version of the full dataset; far faster to read 
 #'    than a text file in R (1.1 s vs. 14.4 s in one example).
-#' 3. <result>.txt - A text version of the final selected and subsetted dataset,
+#' 3. `<result>.txt` - A text version of the final selected and subsetted dataset,
 #'    as a text file.
-#' 4. <result>.RDS - An RDS version of the final dataset.
-#' 5. <result>_vars.txt - Lists the portable names used for variables in the sample
+#' 4. `<result>.RDS` - An RDS version of the final dataset.
+#' 5. `<result>_vars.txt` - Lists the portable names used for variables in the sample
 #'    alongside the file names on disk. This disambiguates when there are duplicate
 #'    portable names in a flights directory.
-#' 
-#' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
 #'    In batch mode, each named site will be run in a separate job.
@@ -74,7 +72,7 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
    
    site <- get_sites(site)
    
-   if(all(c(is.null(n), is.null(p), is.null(d))))  # if n, p, and d are all omitted, default to p = 0.25, a quarter of data
+   if(all(c(is.null(n), is.null(p), is.null(d))))                          # if n, p, and d are all omitted, default to p = 0.25, a quarter of data
       p <- 0.25
    
    if(sum(!is.null(n), !is.null(p), !is.null(d)) != 1)

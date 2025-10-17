@@ -93,18 +93,16 @@ from modifications are changed to underscore to avoid causing trouble.
 
 Results are saved in four files, plus a metadata file:
 \enumerate{
-\item \if{html}{\out{<result>}}_all.txt - A text version of the full dataset (selected by \code{pattern}
+\item \verb{<result>_all.txt} - A text version of the full dataset (selected by \code{pattern}
 but not subsetted by \code{n}, \code{p}, \code{d}, \code{balance}, or \code{drop_corr}). Readable by
 any software.
-\item \if{html}{\out{<result>}}_all.RDS - An RDS version of the full dataset; far faster to read
+\item \verb{<result>_all.RDS} - An RDS version of the full dataset; far faster to read
 than a text file in R (1.1 s vs. 14.4 s in one example).
-\item \if{html}{\out{<result>}}.txt - A text version of the final selected and subsetted dataset,
+\item \verb{<result>.txt} - A text version of the final selected and subsetted dataset,
 as a text file.
-\item \if{html}{\out{<result>}}.RDS - An RDS version of the final dataset.
-\item \if{html}{\out{<result>}}_vars.txt - Lists the portable names used for variables in the sample
+\item \verb{<result>.RDS} - An RDS version of the final dataset.
+\item \verb{<result>_vars.txt} - Lists the portable names used for variables in the sample
 alongside the file names on disk. This disambiguates when there are duplicate
 portable names in a flights directory.
 }
-
-\strong{Memory requirements: I've measured up to 28.5 GB.}
 }

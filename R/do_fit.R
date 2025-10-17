@@ -11,7 +11,8 @@
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
-#' @param exclude_classes An optionial numeric vector of subclasses to exclude
+#' @param exclude_classes An optional numeric vector of subclasses to exclude
+#' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years An optional vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
 #'    this are excluded from results. Default is 0, but rejected orthos are always 
@@ -35,9 +36,9 @@
 #' @export
 
 
-do_fit <- function(fitid, sites, name, method, 
-                   vars, exclude_vars, exclude_classes, years, minscore, maxmissing, 
-                   max_miss_train, top_importance, holdout, auc, hyper, rep = NULL) {
+do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_classes, 
+                   max_samples, years, minscore, maxmissing, max_miss_train, 
+                   top_importance, holdout, auc, hyper, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -55,6 +56,7 @@ do_fit <- function(fitid, sites, name, method,
       r[[i]] <- readRDS(sites$datafile[i])
    names(r) <- sites$site
    
+    
    r <- bind_rows(r, .id = 'site')
    l <- 1:max(r$subclass)                                                                 # make sure all subclasses are represented in factor so value = subclass
    if(auc)                                                                                # if preparing data for AUC, 
@@ -118,9 +120,12 @@ do_fit <- function(fitid, sites, name, method,
    }
    
    
-   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train)]                     # drop variables with too many missing values
+   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train)]                 # drop variables with too many missing values
    
    
+   if(!is.null(max_samples))                                                              # if max_samples,
+      if(dim(r)[1] > max_samples)                                                         #    and dataset is more than max_samples,
+         r <- r[base::sample(dim(r)[1], size = max_samples, replace = FALSE), ]           #       subsample points
    
    
    n_partitions <- switch(method, 

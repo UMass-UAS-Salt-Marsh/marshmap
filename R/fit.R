@@ -15,6 +15,7 @@
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
 #' @param exclude_classes An optionial numeric vector of subclasses to exclude
+#' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years An optional vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
 #'    this are excluded from results. Default is 0, but rejected orthos are always 
@@ -41,10 +42,11 @@
 
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
-                vars = '{*}', exclude_vars = '', exclude_classes = NULL, years = NULL, 
-                minscore = 0, maxmissing = 20, max_miss_train = 0.20, top_importance = 20, 
-                holdout = 0.2, auc = FALSE, hyper = NULL,
-                resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+                vars = '{*}', exclude_vars = '', exclude_classes = NULL, 
+                max_samples = NULL, years = NULL, minscore = 0, maxmissing = 20, 
+                max_miss_train = 0.20, top_importance = 20, holdout = 0.2, 
+                auc = FALSE, hyper = NULL, resources = NULL, local = FALSE, 
+                trap = TRUE, comment = NULL) {
    
    
    sites <- get_sites(site)                              # get one or more sites
@@ -72,7 +74,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    resources <- get_resources(resources, list(
       ncpus = 10,                                        
       memory = 200,
-      walltime = '05:00:00'
+      walltime = '08:00:00'                              # I timed out a couple at 5 hours
    ))
    
    

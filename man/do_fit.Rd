@@ -12,6 +12,7 @@ do_fit(
   vars,
   exclude_vars,
   exclude_classes,
+  max_samples,
   years,
   minscore,
   maxmissing,
@@ -41,7 +42,9 @@ portable names, search names and regular expressions of file and portable names.
 \item{exclude_vars}{An optional vector of variables to exclude. As with \code{vars}, variables
 are processed by \code{find_orthos}}
 
-\item{exclude_classes}{An optionial numeric vector of subclasses to exclude}
+\item{exclude_classes}{An optional numeric vector of subclasses to exclude}
+
+\item{max_samples}{Maximum number of samples to use - subsample if necessary}
 
 \item{years}{An optional vector of years to restrict variables to}
 
