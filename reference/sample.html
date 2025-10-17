@@ -161,19 +161,18 @@ must choose exactly one. <code>n</code> samples the total number of points provi
 selected. <code>d</code> samples points with a mean (but not guaranteed) minimum distance.</p>
 <p>Portable names are used for variable names in the resulting data files. Dashes
 from modifications are changed to underscore to avoid causing trouble.</p>
-<p>Results are saved in four files, plus a metadata file:</p><ol><li><p><result>_all.txt - A text version of the full dataset (selected by <code>pattern</code>
+<p>Results are saved in four files, plus a metadata file:</p><ol><li><p><code>&lt;result&gt;_all.txt</code> - A text version of the full dataset (selected by <code>pattern</code>
 but not subsetted by <code>n</code>, <code>p</code>, <code>d</code>, <code>balance</code>, or <code>drop_corr</code>). Readable by
-any software.</result></p></li>
-<li><p><result>_all.RDS - An RDS version of the full dataset; far faster to read
-than a text file in R (1.1 s vs. 14.4 s in one example).</result></p></li>
-<li><p><result>.txt - A text version of the final selected and subsetted dataset,
-as a text file.</result></p></li>
-<li><p><result>.RDS - An RDS version of the final dataset.</result></p></li>
-<li><p><result>_vars.txt - Lists the portable names used for variables in the sample
+any software.</p></li>
+<li><p><code>&lt;result&gt;_all.RDS</code> - An RDS version of the full dataset; far faster to read
+than a text file in R (1.1 s vs. 14.4 s in one example).</p></li>
+<li><p><code>&lt;result&gt;.txt</code> - A text version of the final selected and subsetted dataset,
+as a text file.</p></li>
+<li><p><code>&lt;result&gt;.RDS</code> - An RDS version of the final dataset.</p></li>
+<li><p><code>&lt;result&gt;_vars.txt</code> - Lists the portable names used for variables in the sample
 alongside the file names on disk. This disambiguates when there are duplicate
-portable names in a flights directory.</result></p></li>
-</ol><p><strong>Memory requirements: I've measured up to 28.5 GB.</strong></p>
-    </div>
+portable names in a flights directory.</p></li>
+</ol></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
