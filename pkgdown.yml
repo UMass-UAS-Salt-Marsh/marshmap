@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-10-17T16:52Z
+last_built: 2025-10-17T21:06Z
 urls:
   reference: https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/reference
   article: https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/articles
