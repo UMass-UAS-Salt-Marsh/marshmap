@@ -12,7 +12,8 @@ save_database(database)
 }
 \description{
 Saves the database in directory \code{the$dbdir}. Previous versions are renamed e.g., \code{fdb_1.RDS},
-\code{fdb_2.RDS}, etc. Will need a mechanism to delete databases more than a week old (or something).
+\code{fdb_2.RDS}, etc and moved to \verb{backups/}. Everything in \verb{backups/} is save to purge if you're
+hurting for disk space.
 }
 \details{
 For the model fit database, \code{fdb}, \code{the$last_fit_id} is written to \code{last_fit_id.txt} to track

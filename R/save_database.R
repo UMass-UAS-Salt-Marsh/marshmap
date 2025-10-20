@@ -1,7 +1,8 @@
 #' Save the specified database 
 #' 
 #' Saves the database in directory `the$dbdir`. Previous versions are renamed e.g., `fdb_1.RDS`,
-#' `fdb_2.RDS`, etc. Will need a mechanism to delete databases more than a week old (or something).
+#' `fdb_2.RDS`, etc and moved to `backups/`. Everything in `backups/` is save to purge if you're
+#' hurting for disk space.
 #' 
 #' For the model fit database, `fdb`, `the$last_fit_id` is written to `last_fit_id.txt` to track
 #' the highest fit id used, as these ids are *never* reused.
@@ -27,7 +28,7 @@ save_database <- function(database) {
       else {                                                                                 #    else, rename it as a backup
          l <- file_path_sans_ext(list.files(the$dbdir, pattern = database))                  #       database filenames
          n <- max(c(0, as.numeric(sub(paste0(database, '_*'), '', l))), na.rm = TRUE) + 1    #       backup file number
-         file.rename(f, file.path(the$dbdir, paste0(database, '_', n, '.RDS')))
+         file.rename(f, file.path(the$dbdir, paste0('backups/', database, '_', n, '.RDS')))
       }
    }
    

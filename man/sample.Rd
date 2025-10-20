@@ -87,6 +87,8 @@ There are three mutually exclusive sampling strategies (n, p, and d). You
 must choose exactly one. \code{n} samples the total number of points provided.
 \code{p} samples the proportion of total points (after balancing, if \code{balance} is
 selected. \code{d} samples points with a mean (but not guaranteed) minimum distance.
+If \code{n}, \code{p}, and \code{d} are all omitted, the default is \code{p = 0.05}, for 5\% of
+the data.
 
 Portable names are used for variable names in the resulting data files. Dashes
 from modifications are changed to underscore to avoid causing trouble.
