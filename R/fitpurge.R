@@ -1,11 +1,14 @@
 #' Purge selected fits from fits database
 #' 
 #' Cleans up the fits database of unwanted fits, as well as cleaning up sidecar
-#' files. Fits are always reversible. 
+#' files. Purges are always reversible. 
 #' 
 #' Purged rows in the fits database are saved to `databases/purged/fdb_purged.RDS`, 
 #' and associated files are moved to `databases/purged/`. Any stray fit sidecar 
-#' files (fit_0000_extra.RDS, fit_0000.log, and zz_0000_fit.RDS) are always purged.
+#' files (fit_0000_extra.RDS, fit_0000.log, and zz_0000_fit.RDS) are also purged.
+#' 
+#' You can undo previous purges or unpurge specific fits with `undo`. Use 
+#' `fitinfo(..., purged = TRUE)` to view purged fits.
 #' 
 #' If you're hurting for disk space, it's fair game to delete 
 #' `databases/purged/fdb_purged.RDS` and files in `databases/purged/`. Doing so
@@ -29,6 +32,10 @@
 #' @export
 
 
+## * finish move_sidecars and call it properly
+## * write clean_up_strays
+## * write undo
+##
 ## X don't allow purging running jobs!
 ## X need to be robust to missing files in models/ in fitinfo and wherever else
 ## * fitinfo(purged = TRUE) if TRUE, queries the purged database rather than the active one.
@@ -48,6 +55,28 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
    }
    
    
+   move_sidecars <- function(ids, from, to) {                                          # --- move sidecar files
+      files <- list.files(from)
+      
+      x <- files[unlist(c(sapply(ids, function(x) grep(paste0('fit_', x, '_extra.RDS'), files)),
+                          sapply(ids, function(x) grep(paste0('fit_', x, '.log'), files)),
+                          sapply(ids, function(x) grep(paste0('zz_', x, '_fit.RDS'), files))))]   
+      
+      file.copy(from, to, overwrite = TRUE, copy.date = TRUE)
+      unlink(from)
+   }
+   
+   clean_up_strays <- function() {                                                     # ----- clean up stray sidecar files ----- 
+      md <- the$modelsdir
+      files <- list.files(md) 
+      
+      if(!dir.exists(pd <- file.path(md, 'purged')))
+         dir.create(pd)
+      
+      
+   }
+   
+   
    if(sum(!is.null(rows), failed, !is.null(undo)) != 1)
       stop('You may not supply more than one of rows, failed, or undo')
    
@@ -60,18 +89,35 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       
       # --------------UNDO PURGE here------------------------
       
+      # read fits database
+      # read purged database
+      # if 'last', find rows
+      # otherwise, use supplied ids to get rows
+      # pull these rows
+      # insert them into fits database (dropping purgegroup)
+      # remove duplicates in fits database
+      # delete them from purged database
+      # save purged database
+      # save fits database
+      # move sidecar files back to where they belong
+      
    }
    else
    {
-      if(dim(the$fdb)[1] == 0)                                                            # make sure there's something to purge
-         stop('No fits in database')
-      
+      if(dim(the$fdb)[1] == 0) {                                                          # make sure there's something to purge
+         clean_up_strays()
+         message('No fits in database')
+         return()
+      }
       
       if(failed) {                                                                        # ----- failed: purge failed jobs -----
          rows <- seq_along(the$fdb$id)[!the$fdb$status %in% 'finished']
          rows <- rows[!running(the$fdb$id[rows])]                                         # exclude running jobs ... now purge rows will handle these
-         if(length(rows) == 0)
+         if(length(rows) == 0) {
+            clean_up_strays()
             stop('No failed jobs to purge')
+            return()
+         }
       }
       
       
@@ -86,8 +132,12 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
          message('Can\'t purge running fits ', paste(the$fdb$id[rows[r]], collapse = ', '))
       rows <- rows[!r]
       
-      if(length(rows) == 0)
-         stop('No fits to purge')
+      if(length(rows) == 0) {
+         clean_up_strays()
+         message('No fits to purge')
+         return()
+      }
+      
       
       
       if(file.exists(pf <- file.path(the$dbdir, 'purged', 'fdb_purged.RDS'))) {           # get max purged group
@@ -97,7 +147,7 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       else
          max_pg <- 0
       
-
+      
       purge <- the$fdb[rows, ]                                                            # pull out purged rows
       the$fdb <- the$fdb[!seq_along(the$fdb$id) %in% rows, ]
       
@@ -124,13 +174,15 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       
       if(!dir.exists(pd <- file.path(md, 'purged')))
          dir.create(pd)
-
+      
       x <- files[unlist(c(sapply(purged$id, function(x) grep(paste0('fit_', x, '_extra.RDS'), files)),
                           sapply(purged$id, function(x) grep(paste0('fit_', x, '.log'), files)),
                           sapply(purged$id, function(x) grep(paste0('zz_', x, '_fit.RDS'), files))))]   
       
       file.copy(file.path(md, x), file.path(pd, x), overwrite = TRUE, copy.date = TRUE)
       unlink(file.path(md, x))
+      
+      clean_up_strays()
       
       message(nrow(purge), ' fit', ifelse(nrow(purge) == 1, '', 's'), ' purged')
    }
