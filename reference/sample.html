@@ -158,7 +158,9 @@ no effect if local = FALSE.</p></dd>
     <p>There are three mutually exclusive sampling strategies (n, p, and d). You
 must choose exactly one. <code>n</code> samples the total number of points provided.
 <code>p</code> samples the proportion of total points (after balancing, if <code>balance</code> is
-selected. <code>d</code> samples points with a mean (but not guaranteed) minimum distance.</p>
+selected. <code>d</code> samples points with a mean (but not guaranteed) minimum distance.
+If <code>n</code>, <code>p</code>, and <code>d</code> are all omitted, the default is <code>p = 0.05</code>, for 5% of
+the data.</p>
 <p>Portable names are used for variable names in the resulting data files. Dashes
 from modifications are changed to underscore to avoid causing trouble.</p>
 <p>Results are saved in four files, plus a metadata file:</p><ol><li><p><code>&lt;result&gt;_all.txt</code> - A text version of the full dataset (selected by <code>pattern</code>
