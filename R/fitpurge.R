@@ -97,8 +97,9 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       else
          max_pg <- 0
       
+
       purge <- the$fdb[rows, ]                                                            # pull out purged rows
-      the$fdb <- the$fdb[!rows, ]
+      the$fdb <- the$fdb[!seq_along(the$fdb$id) %in% rows, ]
       
       purge$purgegroup <- max_pg + 1
       
@@ -112,6 +113,7 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       
       if(!dir.exists(dirname(pf))) 
          dir.create(dirname(pf))
+      
       
       saveRDS(purged, pf)                                                                 # save the purged database
       save_database('fdb')                                                                # finally save the fits database once we're all done
@@ -130,6 +132,6 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       file.copy(file.path(md, x), file.path(pd, x), overwrite = TRUE, copy.date = TRUE)
       unlink(file.path(md, x))
       
-      message(length(purg), ' fits purged')
+      message(nrow(purge), ' fit', ifelse(nrow(purge) == 1, '', 's'), ' purged')
    }
 }
