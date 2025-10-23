@@ -54,12 +54,14 @@
 #'     about the performance of the probabilities produced by the model.
 #'     
 #' ***5. Variable importance***
-#' - Scaled from 0 to 100, gives the relative contribution of each variable to the model fit. Less-important variables
-#'   will be trimmed based on the top_importance option. Note that variables are imagery bands, not an entire orthoimage;
-#'   thus, for instance, an RGB true color image represents three varaibles, any of which may come into the model separately.
+#' - Scaled from 0 to 100, gives the relative contribution of each variable to the model fit.
+#'   Less-important variables will be trimmed based on the top_importance option.
+#'   Note that variables are imagery bands, not an entire orthoimage; thus, for
+#'   instance, an RGB true color image represents three varaibles, any of which
+#'   may come into the model separately.
 #' 
-#' @param fitid id of a model in the fits database. If using this, omit `model`, as 
-#' this info will be extracted from the database.
+#' @param fitid id of a model in the fits database. If using this, omit `model`, as the model info will be 
+#'    extracted from the database.
 #' @param model Only when called by do_fit; named list of:
 #'  \describe{
 #'    \item{fit}{model fit oject}
@@ -96,7 +98,10 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
       if(is.na(frow))
          stop('Fit id ', fitid, ' is not present in the fits database')
       
-      extra <- readRDS(file.path(the$modelsdir, paste0('fit_', fitid, '_extra.RDS')))
+      ef <- file.path(the$modelsdir, paste0('fit_', fitid, '_extra.RDS'))
+      if(!file.exists(ef))
+         stop('Sidecar file ', ef, ' for fit ', fitid, ' is missing. You could try fitpurge(undo = ', fitid, ')') 
+      extra <- readRDS(ef)
       
       model <- list(fit = extra$model_object, 
                     confuse = extra$confuse, 

@@ -35,15 +35,21 @@ filter_db <- function(filter, database) {
    
    if(any(n <- !names(filter) %in% names(db)))                    # else, it's a named list of field = value
       stop('Fields not in fits database: ', paste(names(filter)[n], collapse = ', '))
+   
+   if(any(is.character(col)))
+      col <- as.character(col)
+   
    z <- rep(TRUE, dim(db)[1])
+   
+   
    for(i in seq_along(filter)) {
       col <- db[, names(filter)[i]]
       val <- filter[[i]]
-      if(is.character(col[i]))
-         z <- z & ((1:length(col)) %in% grep(val, col))
+      
+      if(is.character(col[1]))
+         z <- z & ((1:length(col)) %in% sapply(val, function(x) grep(x, col)))
       else
-         z <- z & (col == val)
-   }
+         z <- z & (col %in% val)  }
    
    (seq_len(dim(db)[1]))[z]
 }

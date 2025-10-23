@@ -33,7 +33,6 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
    if(is.list(fit)) {                                                                  # if fit is a list, it's (1) fit object,
       fitid <- NULL
       fitfile <- paste0('zz_', as.character(round(as.numeric(Sys.time())), '.RDS'))    #  make up a file name for the fit object to pass to do_fit
-      saveRDS(fit, file.path(the$modelsdir, paste0('zz', fitid, 'fit_', '_extra.RDS')))#       and save it the model                        ************** what is this?
    }
    else {                                                                              # else, one of
       if(is.character(fit)) {                                                          #    if it's a character, it's (2) file name,

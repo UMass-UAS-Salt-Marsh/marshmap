@@ -22,6 +22,7 @@ reference:
 - contents:
   - fitinfo
   - fitset
+  - fitpurge
   - mapinfo
   - assess
   - flights_report
