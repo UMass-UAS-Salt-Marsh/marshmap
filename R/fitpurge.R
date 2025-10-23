@@ -29,7 +29,7 @@
 #' @export
 
 
-## * don't allow purging running jobs!
+## X don't allow purging running jobs!
 ## X need to be robust to missing files in models/ in fitinfo and wherever else
 ## * fitinfo(purged = TRUE) if TRUE, queries the purged database rather than the active one.
 ## * when purging fits, add purgegroup to data frame, incrementing with each call
@@ -42,9 +42,9 @@ fitpurge <- function(rows = '', failed = FALSE, undo = FALSE) {
    
    
    running <- function(x) {                                                         # TRUE for fitids that are still running
-      identical(TRUE, 
-                info(list(callerid = x), table = FALSE, summary = FALSE)$status 
-                %in% c('pending', 'queued', 'running'))
+      z <- info(list(callerid = x), cols = c('callerid', 'status'), 
+                table = FALSE, summary = FALSE)
+      x %in% z$callerid[z$status %in% c('pending', 'queued', 'running')]
    }
    
    
@@ -67,29 +67,26 @@ fitpurge <- function(rows = '', failed = FALSE, undo = FALSE) {
          stop('No fits in database')
       
       
-      if(failed) {                                                                     # ----- failed -----
+      if(failed) {                                                                     # ----- failed: purge failed jobs -----
          rows <- seq_along(the$fdb$id)[!the$fdb$status %in% 'finished']
-                                       #  c('error', 'killed', 'timeout', 'failed')]   # get failed rows
-         rows <- rows[!running(the$fdb$id[rows])]                                                     # exclude running jobs
-         
-         
+         rows <- rows[!running(the$fdb$id[rows])]                                      # exclude running jobs ... now purge rows will handle these
       }
       
-      
+
       if(!is.null(rows))
          if(rows == 'all')
             stop('fitpurge(rows = \'all\' is not allowed')
-         
-         rows <- filter_db(rows, 'fdb')                                                   # fits, filtered
-         
-         
-         
-         
-         # PURGE ROWS
-         # pull rows out of fdb.RDS
-         # add them to purged/fdb.RDS
-         # save both files
-         # then move stray files to models/purged/   *** always do this, so fitpurge() purges stray files
-         
+      
+      rows <- filter_db(rows, 'fdb')                                                   # fits, filtered
+      
+      
+      
+      
+      # PURGE ROWS
+      # pull rows out of fdb.RDS
+      # add them to purged/fdb.RDS
+      # save both files
+      # then move stray files to models/purged/   *** always do this, so fitpurge() purges stray files
+      
    }
 }
