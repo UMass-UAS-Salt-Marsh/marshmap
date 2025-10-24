@@ -33,7 +33,6 @@
 
 
 
-## * write undo
 ## * generalize this to also use for maps database (but no sidecars)
 
 
@@ -70,7 +69,7 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       if(length(x) == 0)
          return()
       
-      message('Purging ', length(x), ifelse(keep, ' stray', ''), ' sidecar files...')
+      message('Moving ', length(x), ifelse(keep, ' stray', ''), ' sidecar files...')
       
       file.copy(file.path(from, files[x]), file.path(to, files[x]), 
                 overwrite = TRUE, copy.date = TRUE)
@@ -85,6 +84,7 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       stop('You may not supply more than one of rows, failed, or undo')
    
    
+   pf <- file.path(the$dbdir, 'purged', 'fdb_purged.RDS')                                 # purged database
    md <- the$modelsdir                                                                    # models dir
    pd <- file.path(md, 'purged')                                                          # purged models dir
    
@@ -100,21 +100,33 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
    
    if(!is.null(undo)) {                                                                   # ----- undo -----
       
+      if(!file.exists(pf)) {
+         message('There are no purged fits')
+         return(invisible())
+      }
       
-      # --------------UNDO PURGE here------------------------
+      purged <- readRDS(pf)                                                               # get purged database
+      if(nrow(purged) == 0){
+         message('There are no purged fits')
+         return(invisible())
+      }
       
-      # read fits database
-      # read purged database
-      # if 'last', find rows
-      # otherwise, use supplied ids to get rows
-      # pull these rows
-      # insert them into fits database (dropping purgegroup)
-      # remove duplicates in fits database
-      # delete them from purged database
-      # save purged database
-      # save fits database
-      # move sidecar files back to where they belong
+      if(undo == 'last')                                                                  # get binary vector of selected fits to unpurge
+         these <- purged$purgegroup == max(purged$purgegroup)                             #    either last purgegroup
+      else
+         these <- purged$id %in% undo                                                     #    or supplied list of ids
       
+      the$fdb <- rbind(the$fdb, purged[these, setdiff(names(purged), 'purgegroup')])      # restore fits
+      the$fdb <- the$fdb[!duplicated(the$fdb$id), ]                                       # for robustness, make sure fits haven't gotten duplicated
+      
+      move_sidecars(purged$id[these], pd, md)                                             # restore sidecar files
+      
+      purged <- purged[!these,]                                                           # drop from purged
+      
+      saveRDS(purged, pf)                                                                 # save the purged database
+      save_database('fdb')                                                                # finally save the fits database once we're all done
+      
+      message('Restored ', sum(these), ' fits')
    }
    else
    {
@@ -127,6 +139,7 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       if(failed) {                                                                        # ----- failed: purge failed jobs -----
          rows <- seq_along(the$fdb$id)[!the$fdb$status %in% 'finished']
          rows <- rows[!running(the$fdb$id[rows])]                                         # exclude running jobs ... now purge rows will handle these
+         rows <- the$fdb$id[rows]
          if(length(rows) == 0) {
             move_sidecars(the$fdb$id, md, pd, keep = TRUE)                                # clean up stray sidecar files
             stop('No failed jobs to purge')
@@ -142,7 +155,7 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
          if(identical(rows, 'all'))
             stop('fitpurge(rows = \'all\' is not allowed')
       
-
+      
       rows <- filter_db(rows, 'fdb')                                                      # fits to purge, filtered
       
       r <- running(the$fdb$id[rows])
@@ -158,9 +171,9 @@ fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
       
       
       
-      if(file.exists(pf <- file.path(the$dbdir, 'purged', 'fdb_purged.RDS'))) {           # get max purged group
+      if(file.exists(pf)) {                                                               # get max purged group
          purged <- readRDS(pf)
-         max_pg <- max(purged$purgegroup)
+         max_pg <- max(purged$purgegroup, 0)
       }
       else
          max_pg <- 0
