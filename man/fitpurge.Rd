@@ -4,7 +4,7 @@
 \alias{fitpurge}
 \title{Purge selected fits from fits database}
 \usage{
-fitpurge(rows = "", failed = FALSE, undo = FALSE)
+fitpurge(rows = NULL, failed = FALSE, undo = NULL)
 }
 \arguments{
 \item{rows}{Selected rows in the fits database. Use one of
@@ -16,7 +16,7 @@ where \verb{<value>} is a regex for character fields, or an actual value (or vec
 values) for logical or numeric fields.
 }}
 
-\item{failed}{If TRUE, all fits where \code{success} is \code{FALSE} or \code{NA} are purged. ***************** but not running jobs!!!!
+\item{failed}{If TRUE, all fits where \code{success} is \code{FALSE} or \code{NA} are purged.
 This is an alternative to specifying \code{rows}.}
 
 \item{undo}{Undo previous purges. There is no time limit on undoing, and it doesn't
@@ -26,17 +26,21 @@ matter whether you've run more fits since a purge. You may suppy either:
 database and associated files are restored. Call \code{fitpurge(undo = 'last')} repeatedly to roll
 back farther.
 \item a vector of fit ids corresponding to previously purged fits.
-Note that you may view purged fits with \verb{fitinfo(..., purged = TRUE}.
+Note that you may view purged fits with \verb{fitinfo(..., purged = TRUE}).
 }}
 }
 \description{
 Cleans up the fits database of unwanted fits, as well as cleaning up sidecar
-files. Fits are always reversible. Purged rows in the fits database are saved to
-\code{databases/purged/fdb_purged.RDS}, and associated files are moved to
-\verb{databases/purged/}. Any stray files fit sidecar files (fit_0000_extra.RDS,
-fit_0000.log, and zz_0000_fit.RDS) are always purged.
+files. Purges are always reversible.
 }
 \details{
+Purged rows in the fits database are saved to \code{databases/purged/fdb_purged.RDS},
+and associated files are moved to \verb{databases/purged/}. Any stray fit sidecar
+files (fit_0000_extra.RDS, fit_0000.log, and zz_0000_fit.RDS) are also purged.
+
+You can undo previous purges or unpurge specific fits with \code{undo}. Use
+\code{fitinfo(..., purged = TRUE)} to view purged fits.
+
 If you're hurting for disk space, it's fair game to delete
 \code{databases/purged/fdb_purged.RDS} and files in \verb{databases/purged/}. Doing so
 will prevent you from recovering purged fits, of course.

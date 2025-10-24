@@ -17,8 +17,8 @@ assess(
 )
 }
 \arguments{
-\item{fitid}{id of a model in the fits database. If using this, omit \code{model}, as
-this info will be extracted from the database.}
+\item{fitid}{id of a model in the fits database. If using this, omit \code{model}, as the model info will be
+extracted from the database.}
 
 \item{model}{Only when called by do_fit; named list of:
 \describe{
@@ -117,8 +117,10 @@ about the performance of the probabilities produced by the model.
 
 \emph{\strong{5. Variable importance}}
 \itemize{
-\item Scaled from 0 to 100, gives the relative contribution of each variable to the model fit. Less-important variables
-will be trimmed based on the top_importance option. Note that variables are imagery bands, not an entire orthoimage;
-thus, for instance, an RGB true color image represents three varaibles, any of which may come into the model separately.
+\item Scaled from 0 to 100, gives the relative contribution of each variable to the model fit.
+Less-important variables will be trimmed based on the top_importance option.
+Note that variables are imagery bands, not an entire orthoimage; thus, for
+instance, an RGB true color image represents three varaibles, any of which
+may come into the model separately.
 }
 }
