@@ -35,6 +35,7 @@
 #' @importFrom pkgcond suppress_warnings
 #' @importFrom tools file_path_sans_ext
 #' @importFrom googledrive drive_auth
+#' @importFrom utils packageVersion
 #' @export
 
 

@@ -37,7 +37,7 @@
 #' @param include_model if TRUE, don't explicitly exclude `model`, `full_model`, and
 #'    `hyper` when `cols = 'all'`
 #' @param quiet If TRUE, doesn't print anything, just returns values
-#' @paream purged If TRUE, display info for the purged database rather than the live one
+#' @param purged If TRUE, display info for the purged database rather than the live one
 #' @param timezone Time zone for launch time; use NULL to leave times in native UTC
 #' @returns The fit table or assessment, invisibly
 #' @importFrom lubridate with_tz

@@ -10,7 +10,7 @@ do_map(site, fitid, fitfile, clip, result, mapid, rep = NULL)
 \item{site}{Three letter site code. If fitting from a fit id that was built
 on a single site, you may omit \code{site} to map the same site (this is the
 most common situation). If you want to map sites other than the site the
-model was built on, or the model was built on mutiple sites, \code{site} is
+model was built on, or the model was built on multiple sites, \code{site} is
 required.}
 
 \item{fitid}{id in the fits database (NULL if not specified)}

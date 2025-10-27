@@ -1,5 +1,7 @@
 # Run this as a batch job with 
 #    launch('server_test')
+#    
+library(utils)
 
 server_test <- function(rep = NULL) {
    

@@ -22,6 +22,7 @@
 #' @importFrom grDevices pdf
 #' @importFrom lubridate stamp now with_tz
 #' @importFrom utils capture.output
+#' @importFrom graphics hist
 #' @export
 
 

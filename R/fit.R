@@ -14,7 +14,7 @@
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
-#' @param exclude_classes An optionial numeric vector of subclasses to exclude
+#' @param exclude_classes An optional numeric vector of subclasses to exclude
 #' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years An optional vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than

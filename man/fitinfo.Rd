@@ -13,6 +13,7 @@ fitinfo(
   nrows = NA,
   include_model = FALSE,
   quiet = FALSE,
+  purged = FALSE,
   timezone = "America/New_York"
 )
 }
@@ -55,6 +56,8 @@ Use \code{nrows = NA} to display all rows.}
 \code{hyper} when \code{cols = 'all'}}
 
 \item{quiet}{If TRUE, doesn't print anything, just returns values}
+
+\item{purged}{If TRUE, display info for the purged database rather than the live one}
 
 \item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
 }

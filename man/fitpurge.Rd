@@ -20,11 +20,11 @@ values) for logical or numeric fields.
 This is an alternative to specifying \code{rows}.}
 
 \item{undo}{Undo previous purges. There is no time limit on undoing, and it doesn't
-matter whether you've run more fits since a purge. You may suppy either:
+matter whether you've run more fits since a purge. You may supply either:
 \itemize{
 \item \code{undo = 'last'}, reverses the previous purge call, and the
-database and associated files are restored. Call \code{fitpurge(undo = 'last')} repeatedly to roll
-back farther.
+database and associated files are restored. Call \code{fitpurge(undo = 'last')}
+repeatedly to roll back farther.
 \item a vector of fit ids corresponding to previously purged fits.
 Note that you may view purged fits with \verb{fitinfo(..., purged = TRUE}).
 }}
@@ -35,13 +35,13 @@ files. Purges are always reversible.
 }
 \details{
 Purged rows in the fits database are saved to \code{databases/purged/fdb_purged.RDS},
-and associated files are moved to \verb{databases/purged/}. Any stray fit sidecar
-files (fit_0000_extra.RDS, fit_0000.log, and zz_0000_fit.RDS) are also purged.
+and associated files are moved to \verb{models/purged/}. Any stray fit sidecar
+files (\code{fit_0000_extra.RDS}, \code{fit_0000.log}, and \code{zz_0000_fit.RDS}) are also purged.
 
 You can undo previous purges or unpurge specific fits with \code{undo}. Use
 \code{fitinfo(..., purged = TRUE)} to view purged fits.
 
 If you're hurting for disk space, it's fair game to delete
-\code{databases/purged/fdb_purged.RDS} and files in \verb{databases/purged/}. Doing so
+\code{databases/purged/fdb_purged.RDS} and files in \verb{models/purged/}. Doing so
 will prevent you from recovering purged fits, of course.
 }

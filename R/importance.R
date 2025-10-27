@@ -20,7 +20,7 @@ importance <- function(ids = NULL) {
    
    z <- list()
    for(i in seq_along(ids)) {                                           # for each fit,
-      x <- assess(ids[i], top = 999, quiet = TRUE)$importance           #    get variable importance
+      x <- assess(ids[i], top_importance = 999, quiet = TRUE)$importance           #    get variable importance
       x$portable <- rownames(x)
       z[[i]] <- x
    }

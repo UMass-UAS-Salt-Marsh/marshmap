@@ -22,7 +22,7 @@ fit object}
 \item{site}{Three letter site code. If fitting from a fit id that was built
 on a single site, you may omit \code{site} to map the same site (this is the
 most common situation). If you want to map sites other than the site the
-model was built on, or the model was built on mutiple sites, \code{site} is
+model was built on, or the model was built on multiple sites, \code{site} is
 required.}
 
 \item{clip}{Optional clip, vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
@@ -30,7 +30,7 @@ required.}
 \item{result}{Optional result name. Default is
 \verb{map_<site>_<fit id>_[clip_<size>_ha]}; if a result name is specified,
 the result will be \verb{map_<result>_<site>_<fit id>_[clip_<size>_ha]},
-retaining the site and fit id, as omiting these breaks your ability to
+retaining the site and fit id, as omitting these breaks your ability to
 track maps back to the fits they're based on.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}.

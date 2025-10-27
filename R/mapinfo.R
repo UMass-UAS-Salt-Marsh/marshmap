@@ -22,7 +22,7 @@
 #'   display the first *n* rows, and negative numbers display the last *n* rows.
 #'   Use `nrows = NA` to display all rows.
 #' @param quiet If TRUE, doesn't print anything, just returns values
-#' @paream purged If TRUE, display info for the purged database rather than the live one
+#' @param purged If TRUE, display info for the purged database rather than the live one
 #' @param timezone Time zone for launch time; use NULL to leave times in native UTC
 #' @returns The model table, invisibly
 #' @importFrom lubridate with_tz

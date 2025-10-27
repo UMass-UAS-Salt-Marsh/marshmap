@@ -17,13 +17,14 @@ reference:
   - map
   - mosaic
   
-- title: Reporting functions
+- title: Reporting  and management functions
   desc: These functions report data and model status.
 - contents:
   - fitinfo
   - fitset
   - fitpurge
   - mapinfo
+  - mappurge
   - assess
   - flights_report
   - sample_freq
@@ -58,5 +59,6 @@ reference:
   - fit_finish
   - map_finish
   - resolve_dir
+  - db_purge
   - the
   - .onLoad

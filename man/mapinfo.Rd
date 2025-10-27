@@ -11,6 +11,7 @@ mapinfo(
   decreasing = FALSE,
   nrows = NA,
   quiet = FALSE,
+  purged = FALSE,
   timezone = "America/New_York"
 )
 }
@@ -43,6 +44,8 @@ display the first \emph{n} rows, and negative numbers display the last \emph{n} 
 Use \code{nrows = NA} to display all rows.}
 
 \item{quiet}{If TRUE, doesn't print anything, just returns values}
+
+\item{purged}{If TRUE, display info for the purged database rather than the live one}
 
 \item{timezone}{Time zone for launch time; use NULL to leave times in native UTC}
 }

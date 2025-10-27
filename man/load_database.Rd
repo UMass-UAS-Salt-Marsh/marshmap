@@ -4,11 +4,15 @@
 \alias{load_database}
 \title{Load the specified database unless we've already got it}
 \usage{
-load_database(database)
+load_database(database, purged = FALSE, lock = TRUE)
 }
 \arguments{
 \item{database}{Name of database (should be \code{fdb} for the model fit database, or
 \code{mdb} for the map database)}
+
+\item{purged}{If TRUE, loads the purged version of the database}
+
+\item{lock}{If TRUE, gets a lock on the database (*** to be implemented)}
 }
 \description{
 Loads the database from directory \code{the$dbdir} into environment \code{the}.

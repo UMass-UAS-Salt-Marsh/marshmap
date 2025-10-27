@@ -7,13 +7,13 @@
 #' @param site Three letter site code. If fitting from a fit id that was built
 #'   on a single site, you may omit `site` to map the same site (this is the
 #'   most common situation). If you want to map sites other than the site the
-#'   model was built on, or the model was built on mutiple sites, `site` is
+#'   model was built on, or the model was built on multiple sites, `site` is
 #'   required.
 #' @param clip Optional clip, vector of `xmin`, `xmax`, `ymin`, `ymax`
 #' @param result Optional result name. Default is 
 #'    `map_<site>_<fit id>_[clip_<size>_ha]`; if a result name is specified, 
 #'    the result will be `map_<result>_<site>_<fit id>_[clip_<size>_ha]`,
-#'    retaining the site and fit id, as omiting these breaks your ability to
+#'    retaining the site and fit id, as omitting these breaks your ability to
 #'    track maps back to the fits they're based on.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
 #'   These take priority over the function's defaults.

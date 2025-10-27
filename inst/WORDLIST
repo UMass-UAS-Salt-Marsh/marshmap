@@ -1,9 +1,13 @@
+marshmap
+slurmcollie
 ArcGIS
 DEMs
 EPSG
 FileZilla
 geoTIFF
 geoTIFFs
+TIFF
+TIFFs
 orthophoto
 orthos
 QGIS
@@ -23,7 +27,6 @@ Slurm
 vectorize
 vectorized
 GiB
-slurmcollie
 SWIR
 NDVI
 NDRE
@@ -37,6 +40,7 @@ upscale
 upscaled
 dropdown
 McFeeter's
+McNemar's
 Gao's
 unscored
 filestamp
@@ -44,3 +48,10 @@ timestamp
 disambiguates
 README
 unformatted
+CCR
+fdb
+mdb
+multipolys
+ortho
+subclasses
+unpurge
