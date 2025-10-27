@@ -62,7 +62,7 @@ extracted from the database.</p></dd>
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
 <dd><p>Only when called by do_fit; named list of:</p><dl><dt>fit</dt>
-<dd><p>model fit oject</p></dd>
+<dd><p>model fit object</p></dd>
 
 <dt>confuse</dt>
 <dd><p>Confusion matrix</p></dd>
@@ -123,7 +123,7 @@ must conform with the original dataset.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Called by <code>do_fit</code>, but also may be called by the user. Either provide <code>fitid</code> for
 the model you want to assess (the normal approach), or <code>model</code>, a list with necessary
-arguments (the approach used by <code>do_fit</code>, becaue the model is not yet in the database).
+arguments (the approach used by <code>do_fit</code>, because the model is not yet in the database).
 When you call <code>assess</code> from the console, the fits database is not updated with the new
 assessment.</p>
 <p>You may supply <code>newdata</code> to assess a model on sites different from what the model
@@ -142,8 +142,8 @@ derived from the holdout set.</p></li>
 the diagonal in the confusion matrix.</p></li>
 <li><p>The <em>No Information Rate</em> is the CCR you'd get if you always bet the majority class.</p></li>
 <li><p><em>Kappa</em> is a refined version of the CCR that takes the probability of chance agreement into account.</p></li>
-<li><p><em>Mcnemar's test</em> only applies to two-class data.</p></li>
-</ul><p><em><strong>4. Statistics by class</strong></em></p><ul><li><p>Lists the follwing statistics for each of the subclasses.
+<li><p><em>McNemar's test</em> only applies to two-class data.</p></li>
+</ul><p><em><strong>4. Statistics by class</strong></em></p><ul><li><p>Lists the following statistics for each of the subclasses.
 These all scale from 0 to 1, with 1 generally indicating higher performance (except for prevalence,
 detection rate, and detection prevalence).</p><ul><li><p><em>Precision</em>, the proportion of cases predicted to be in the class that actually were (true positives /
 (true positives + false positives))</p></li>
@@ -156,13 +156,13 @@ detection rate, and detection prevalence).</p><ul><li><p><em>Precision</em>, the
 <li><p><em>Balanced Accuracy</em>, mean of true positive rate and true negative rate; a combined metric of model performance</p></li>
 <li><p><em>AUC</em> (Area Under the Curve) is the probability that the model, for a particular class, when given a
 random case in the class and a random case from another class, will rate the case in the class higher.
-Unlike the other statistics, AUC is independent of the particluar cutpoint chosen, and is telling us
+Unlike the other statistics, AUC is independent of the particular cutpoint chosen, and is telling us
 about the performance of the probabilities produced by the model.</p></li>
 </ul></li>
 </ul><p><em><strong>5. Variable importance</strong></em></p><ul><li><p>Scaled from 0 to 100, gives the relative contribution of each variable to the model fit.
 Less-important variables will be trimmed based on the top_importance option.
 Note that variables are imagery bands, not an entire orthoimage; thus, for
-instance, an RGB true color image represents three varaibles, any of which
+instance, an RGB true color image represents three variables, any of which
 may come into the model separately.</p></li>
 </ul></div>
 

@@ -64,9 +64,9 @@ This is an alternative to specifying <code>rows</code>.</p></dd>
 
 <dt id="arg-undo">undo<a class="anchor" aria-label="anchor" href="#arg-undo"></a></dt>
 <dd><p>Undo previous purges. There is no time limit on undoing, and it doesn't
-matter whether you've run more fits since a purge. You may suppy either:</p><ul><li><p><code>undo = 'last'</code>, reverses the previous purge call, and the
-database and associated files are restored. Call <code>fitpurge(undo = 'last')</code> repeatedly to roll
-back farther.</p></li>
+matter whether you've run more fits since a purge. You may supply either:</p><ul><li><p><code>undo = 'last'</code>, reverses the previous purge call, and the
+database and associated files are restored. Call <code>fitpurge(undo = 'last')</code>
+repeatedly to roll back farther.</p></li>
 <li><p>a vector of fit ids corresponding to previously purged fits.
 Note that you may view purged fits with <code>fitinfo(..., purged = TRUE</code>).</p></li>
 </ul></dd>
@@ -75,12 +75,12 @@ Note that you may view purged fits with <code>fitinfo(..., purged = TRUE</code>)
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Purged rows in the fits database are saved to <code>databases/purged/fdb_purged.RDS</code>,
-and associated files are moved to <code>databases/purged/</code>. Any stray fit sidecar
-files (fit_0000_extra.RDS, fit_0000.log, and zz_0000_fit.RDS) are also purged.</p>
+and associated files are moved to <code>models/purged/</code>. Any stray fit sidecar
+files (<code>fit_0000_extra.RDS</code>, <code>fit_0000.log</code>, and <code>zz_0000_fit.RDS</code>) are also purged.</p>
 <p>You can undo previous purges or unpurge specific fits with <code>undo</code>. Use
 <code>fitinfo(..., purged = TRUE)</code> to view purged fits.</p>
 <p>If you're hurting for disk space, it's fair game to delete
-<code>databases/purged/fdb_purged.RDS</code> and files in <code>databases/purged/</code>. Doing so
+<code>databases/purged/fdb_purged.RDS</code> and files in <code>models/purged/</code>. Doing so
 will prevent you from recovering purged fits, of course.</p>
     </div>
 

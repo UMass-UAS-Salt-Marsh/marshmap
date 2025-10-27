@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_database</span><span class="op">(</span><span class="va">database</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_database</span><span class="op">(</span><span class="va">database</span>, purged <span class="op">=</span> <span class="cn">FALSE</span>, lock <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -48,6 +48,14 @@
 <dl><dt id="arg-database">database<a class="anchor" aria-label="anchor" href="#arg-database"></a></dt>
 <dd><p>Name of database (should be <code>fdb</code> for the model fit database, or
 <code>mdb</code> for the map database)</p></dd>
+
+
+<dt id="arg-purged">purged<a class="anchor" aria-label="anchor" href="#arg-purged"></a></dt>
+<dd><p>If TRUE, loads the purged version of the database</p></dd>
+
+
+<dt id="arg-lock">lock<a class="anchor" aria-label="anchor" href="#arg-lock"></a></dt>
+<dd><p>If TRUE, gets a lock on the database (*** to be implemented)</p></dd>
 
 </dl></div>
     <div class="section level2">
