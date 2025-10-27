@@ -22,7 +22,7 @@ In batch mode, each named site will be run in a separate job.}
 
 \item{pattern1}{File names, portable names, regex matching either, or search names
 selecting source for derived variables. See Image naming in
-\href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
+\href{https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md}{README}
 for details. See details.}
 
 \item{pattern2}{A second pattern or vector of layer names, used for bivariate metrics. See details.}

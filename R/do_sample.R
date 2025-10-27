@@ -8,7 +8,7 @@
 #' @param site site, using 3 letter abbreviation
 #' @param pattern File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
-#'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
+#'    [README](https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md) 
 #'    for details.W
 #' @param n Number of total samples to return.
 #' @param p Proportion of total samples to return. Use p = 1 to sample all.

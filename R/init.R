@@ -1,16 +1,16 @@
-#' Initialize salt-marsh-mapping with user parameters
+#' Initialize marshmap with user parameters
 #' 
-#' Reads user-set parameters for package saltmarsh.
+#' Reads user-set parameters for package marshmap.
 #' 
 #' User parameters are set in two distinct locations:
 #' 
-#' 1. The initialization file, in the user's home directory, `~/saltmarsh.yml`. 
+#' 1. The initialization file, in the user's home directory, `~/marshmap.yml`. 
 #' This file should contain five lines:
 #' 
-#'    `basedir: c:/Work/etc/saltmarsh` \cr
+#'    `basedir: c:/Work/etc/marshmap` \cr
 #'    `parsdir: pars` \cr
 #'    `parsfile: pars.yml` \cr
-#'    `scratchdir: c:/Work/etc/saltmarsh/data/scratch` \cr
+#'    `scratchdir: c:/Work/etc/marshmap/data/scratch` \cr
 #' 
 #'    a. `basedir` points to the base directory
 #'    
@@ -33,7 +33,7 @@
 #'    the standard structure--you can change names here but not paths.
 #' - `gather` a block of parameters for [gather()]
 #' 
-#' This approach splits the user- and platform-dependent parameters (`saltmarsh.yml`)
+#' This approach splits the user- and platform-dependent parameters (`marshmap.yml`)
 #' from parameters that are likely to be shared among users and across platforms (those in
 #' `parsdir`). It allows multiple users on a shared machine (such as Unity cluster)
 #' to set user-specific parameters if need be, while sharing other parameters.
@@ -77,7 +77,7 @@ init <- function() {
    if(Sys.getenv('GITHUB_ACTIONS') == 'true')                                          # DON'T RUN THIS FROM GITHUB BECAUSE IT BREAKS PKGDOWN!
       return()
    
-   f <- file.path(path.expand('~'), 'saltmarsh.yml')
+   f <- file.path(path.expand('~'), 'marshmap.yml')
    if(!file.exists(f))
       stop('User parameter file ', f, ' not found')
    x <- yaml::read_yaml(f)
@@ -97,5 +97,5 @@ init <- function() {
    
    set_dirs()                                                                         # and create all full paths
    
-   packageStartupMessage('saltmarsh parameters initialized\n')
+   packageStartupMessage('marshmap parameters initialized\n')
 }

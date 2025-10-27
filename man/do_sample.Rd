@@ -26,7 +26,7 @@ do_sample(
 
 \item{pattern}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
-\href{https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md}{README}
+\href{https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md}{README}
 for details.W}
 
 \item{n}{Number of total samples to return.}
