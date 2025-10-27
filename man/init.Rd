@@ -2,23 +2,23 @@
 % Please edit documentation in R/init.R
 \name{init}
 \alias{init}
-\title{Initialize salt-marsh-mapping with user parameters}
+\title{Initialize marshmap with user parameters}
 \usage{
 init()
 }
 \description{
-Reads user-set parameters for package saltmarsh.
+Reads user-set parameters for package marshmap.
 }
 \details{
 User parameters are set in two distinct locations:
 \enumerate{
-\item The initialization file, in the user's home directory, \verb{~/saltmarsh.yml}.
+\item The initialization file, in the user's home directory, \verb{~/marshmap.yml}.
 This file should contain five lines:
 
-\verb{basedir: c:/Work/etc/saltmarsh} \cr
+\verb{basedir: c:/Work/etc/marshmap} \cr
 \code{parsdir: pars} \cr
 \code{parsfile: pars.yml} \cr
-\verb{scratchdir: c:/Work/etc/saltmarsh/data/scratch} \cr
+\verb{scratchdir: c:/Work/etc/marshmap/data/scratch} \cr
 
 a. \code{basedir} points to the base directory
 
@@ -42,7 +42,7 @@ the standard structure--you can change names here but not paths.
 \item \code{gather} a block of parameters for \code{\link[=gather]{gather()}}
 }
 
-This approach splits the user- and platform-dependent parameters (\code{saltmarsh.yml})
+This approach splits the user- and platform-dependent parameters (\code{marshmap.yml})
 from parameters that are likely to be shared among users and across platforms (those in
 \code{parsdir}). It allows multiple users on a shared machine (such as Unity cluster)
 to set user-specific parameters if need be, while sharing other parameters.

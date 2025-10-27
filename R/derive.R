@@ -27,7 +27,7 @@
 #'    In batch mode, each named site will be run in a separate job.
 #' @param pattern1 File names, portable names, regex matching either, or search names
 #'    selecting source for derived variables. See Image naming in
-#'    [README](https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/blob/main/README.md) 
+#'    [README](https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md) 
 #'    for details. See details.
 #' @param pattern2 A second pattern or vector of layer names, used for bivariate metrics. See details.
 #' @param metrics A list of metrics to apply. Univariate metrics include:

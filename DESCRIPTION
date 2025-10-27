@@ -6,8 +6,8 @@ Version: 0.0.0.9000
 Authors@R: 
     person('Bradley', 'Compton', email = 'bcompton@umass.edu', role = c('aut', 'cre'), 
        comment = c(ORCID = '0009-0002-2375-8116'))
-URL: https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping, https://umass-uas-salt-marsh.github.io/salt-marsh-mapping/
-BugReports: https://github.com/UMass-UAS-Salt-Marsh/salt-marsh-mapping/issues
+URL: https://github.com/UMass-UAS-Salt-Marsh/marshmap
+BugReports: https://github.com/UMass-UAS-Salt-Marsh/marshmap/issues
 Imports:
     terra,
     sf,
