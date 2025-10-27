@@ -37,6 +37,7 @@
 #' @param include_model if TRUE, don't explicitly exclude `model`, `full_model`, and
 #'    `hyper` when `cols = 'all'`
 #' @param quiet If TRUE, doesn't print anything, just returns values
+#' @paream purged If TRUE, display info for the purged database rather than the live one
 #' @param timezone Time zone for launch time; use NULL to leave times in native UTC
 #' @returns The fit table or assessment, invisibly
 #' @importFrom lubridate with_tz
@@ -45,11 +46,11 @@
 
 fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
                     sort = 'id', decreasing = FALSE, nrows = NA, 
-                    include_model = FALSE, quiet = FALSE,
+                    include_model = FALSE, quiet = FALSE, purged = FALSE,
                     timezone = 'America/New_York') {
    
    
-   load_database('fdb')                                                                # Get fits database
+   load_database('fdb', purged = purged)                                               # Get fits database
    
    if(dim(the$fdb)[1] == 0) {
       message('No fits in database')
@@ -126,7 +127,7 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
       print(y, row.names = FALSE, na.print = '')                                       # print everything but the super-long stuff, which still gets returned
    }
    
-   if(report) {                                                                        # if we're asking for a report,
+   if(report & !purged) {                                                              # if we're asking for a report,
       x <- assess(z$id[1], site = z$site[1], quiet = quiet)                            #    display assessment for a single model
       return(invisible(x))                                                             #    and silently return assessment
    }
