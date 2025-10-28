@@ -5,6 +5,7 @@
 #' @param rows Selected rows in the maps database. Use one of
 #'  - a vector of `mapids`
 #'  - 'all' for all maps
+#'  - a vector of one or more sites
 #'  - a named list to filter maps. List items are `<field in mdb> = <value>`, 
 #'    where `<value>` is a regex for character fields, or an actual value (or vector of 
 #'    values) for logical or numeric fields.
@@ -50,6 +51,10 @@ mapinfo <- function(rows = 'all', cols = 'normal', sort = 'mapid',
    z <- the$mdb[filter_db(rows, 'mdb'), ]                                              # maps, filtered
    z <- z[order(z[, sort], decreasing = decreasing), ]                                 # and sorted
    
+   if(nrow(z) == 0) {
+      message('No matching maps')
+      return(invisible())
+   }
    
    if(!is.na(nrows)) {                                                                 # display just selected rows
       if(nrows > 0)

@@ -33,6 +33,11 @@ filter_db <- function(filter, database) {
       return(z)
    }
    
+   
+   if(!is.list(filter))                                           # if it's not a list at this point, it's a vector of site names
+      filter <- list(site = paste(filter, collapse = '|'))        #    pass list(site = 'this|that') on
+   
+   
    if(any(n <- !names(filter) %in% names(db)))                    # else, it's a named list of field = value
       stop('Fields not in fits database: ', paste(names(filter)[n], collapse = ', '))
    

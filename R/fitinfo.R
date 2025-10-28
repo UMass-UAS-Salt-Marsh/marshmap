@@ -12,6 +12,7 @@
 #' @param rows Selected rows in the fits database. Use one of
 #'  - a vector of `fitids`
 #'  - 'all' for all fits
+#'  - a vector of one or more sites
 #'  - a named list to filter fits. List items are `<field in fdb> = <value>`, 
 #'    where `<value>` is a regex for character fields, or an actual value (or vector of 
 #'    values) for logical or numeric fields.
@@ -65,6 +66,11 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    
    z <- the$fdb[filter_db(rows, 'fdb'), ]                                              # fits, filtered
    z <- z[order(z[, sort], decreasing = decreasing), ]                                 # and sorted
+   
+   if(nrow(z) == 0) {
+      message('No matching fits')
+      return(invisible())
+   }
    
    if(is.null(report))
       report <- nrow(z) == 1
