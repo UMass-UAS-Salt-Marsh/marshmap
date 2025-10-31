@@ -6,14 +6,16 @@
 #'    are vetted by fit - there's no checking here.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
-#' @param vars An optional vector of variables to restrict analysis to. Default = `{*}`, 
+#' @param vars Vector of variables to restrict analysis to. Default = `{*}`, 
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
-#' @param exclude_classes An optional numeric vector of subclasses to exclude
+#' @param exclude_classes Numeric vector of subclasses to exclude
+#' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
+#'    would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.
 #' @param max_samples Maximum number of samples to use - subsample if necessary
-#' @param years An optional vector of years to restrict variables to
+#' @param years Vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
 #'    this are excluded from results. Default is 0, but rejected orthos are always 
 #'    excluded.
@@ -37,7 +39,7 @@
 
 
 do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_classes, 
-                   max_samples, years, minscore, maxmissing, max_miss_train, 
+                   reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
                    top_importance, holdout, auc, hyper, rep = NULL) {
    
    
@@ -56,8 +58,16 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
       r[[i]] <- readRDS(sites$datafile[i])
    names(r) <- sites$site
    
-    
    r <- bind_rows(r, .id = 'site')
+   
+   if(!is.null(reclass)) {                                                                # if reclassifying,
+      rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
+      for(i in nrow(rcl)) {
+         r$subclass[r$subclass == rcl[i, 1]] <- rcl[i, 2]
+         message('Subclass ', rcl[i, 1], ' reclassified as ', rcl[i, 2])
+      }
+   }
+
    l <- 1:max(r$subclass)                                                                 # make sure all subclasses are represented in factor so value = subclass
    if(auc)                                                                                # if preparing data for AUC, 
       r$subclass <- factor(r$subclass, levels = l, labels = paste0('class', l))           #    we can't use numbers for factors when doing classProbs in training

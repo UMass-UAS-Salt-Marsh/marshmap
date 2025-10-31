@@ -46,27 +46,27 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
    move_sidecars <- function(ids, from, to, keep = FALSE) {                               # --- move sidecar files
       
       if(which == 'fit') {                                                                #    only do stuff for fits
-      files <- list.files(from)
-      
-      x <- unlist(c(sapply(ids, function(x) grep(paste0('fit_', x, '_extra.RDS'), files)),
-                    sapply(ids, function(x) grep(paste0('fit_', x, '.log'), files)),
-                    sapply(ids, function(x) grep(paste0('zz_', x, '_fit.RDS'), files))))
-      
-      if(keep) {                                                                          #    if keep, we're keeping all x files and moving the rest of them
-         y <- c(grep('fit_\\d*_extra.RDS', files),
-                grep('fit_\\d*.log', files),
-                grep('zz_\\d*_fit.RDS', files))
-         x <- setdiff(y, x)
-      }
-      
-      if(length(x) == 0)
-         return()
-      
-      message('Moving ', length(x), ifelse(keep, ' stray', ''), ' sidecar files...')
-      
-      file.copy(file.path(from, files[x]), file.path(to, files[x]), 
-                overwrite = TRUE, copy.date = TRUE)
-      unlink(file.path(from, files[x]))
+         files <- list.files(from)
+         
+         x <- unlist(c(sapply(ids, function(x) grep(paste0('fit_', x, '_extra.RDS'), files)),
+                       sapply(ids, function(x) grep(paste0('fit_', x, '.log'), files)),
+                       sapply(ids, function(x) grep(paste0('zz_', x, '_fit.RDS'), files))))
+         
+         if(keep) {                                                                          #    if keep, we're keeping all x files and moving the rest of them
+            y <- c(grep('fit_\\d*_extra.RDS', files),
+                   grep('fit_\\d*.log', files),
+                   grep('zz_\\d*_fit.RDS', files))
+            x <- setdiff(y, x)
+         }
+         
+         if(length(x) == 0)
+            return()
+         
+         message('Moving ', length(x), ifelse(keep, ' stray', ''), ' sidecar files...')
+         
+         file.copy(file.path(from, files[x]), file.path(to, files[x]), 
+                   overwrite = TRUE, copy.date = TRUE)
+         unlink(file.path(from, files[x]))
       }
    }
    
@@ -91,6 +91,7 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
    load_database(db_name)                                                                 # Get database
    db <- the[[db_name]]
    
+   
    if(!is.null(undo)) {                                                                   # ----- undo -----
       
       if(!file.exists(pf)) {
@@ -108,7 +109,7 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
          these <- purged$purgegroup == max(purged$purgegroup)                             #    either last purgegroup
       else
          these <- purged[[id_name]] %in% undo                                             #    or supplied list of ids
-
+      
       restored <- purged[[id_name]][these]
       
       db <- rbind(db, purged[these, setdiff(names(purged), 'purgegroup')])                # restore rows
@@ -134,7 +135,7 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
          return(invisible())
       }
       
-
+      
       if(failed) {                                                                        # ----- failed: purge failed jobs -----
          rows <- seq_along(db[[id_name]])[!db$status %in% 'finished']
          rows <- rows[!running(db[[id_name]][rows])]                                      # exclude running jobs ... now purge rows will handle these
@@ -145,7 +146,7 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
             return(invisible())
          }
       }
-     
+      
       
       if(is.null(rows)) {                                                                 # if rows is NULL, 
          move_sidecars(db[[id_name]], md, pd, keep = TRUE)                                # just clean up stray sidecar files
@@ -154,14 +155,15 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
       else
          if(identical(rows, 'all'))
             stop(which, 'purge(rows = \'all\' is not allowed')
+
       
-      
-      rows <- filter_db(rows, db_name)                                                    # rows to purge, filtered
+      rows <- filter_db(rows, db_name)                                                    # ----- rows to purge, filtered -----
       
       r <- running(db[[id_name]][rows])
       if(any(r))
          message('Can\'t purge running ', which, 's', paste(db[[id_name]][rows[r]], collapse = ', '))
-      rows <- rows[!r]
+      if(length(r) != 0)
+         rows <- rows[!r]
       
       if(length(rows) == 0) {
          move_sidecars(db[[id_name]], md, pd, keep = TRUE)                                # clean up stray sidecar files
@@ -178,7 +180,7 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
       else
          max_pg <- 0
       
-
+      
       purge <- db[rows, ]                                                                 # pull out purged rows
       db <- db[!seq_along(db[[id_name]]) %in% rows, ]
       

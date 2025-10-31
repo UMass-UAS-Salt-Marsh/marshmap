@@ -13,6 +13,7 @@ sample(
   classes = NULL,
   minscore = 0,
   maxmissing = 20,
+  reclass = NULL,
   balance = TRUE,
   balance_excl = NULL,
   result = NULL,
@@ -49,6 +50,9 @@ excluded.}
 
 \item{maxmissing}{Maximum percent missing in orthos. Files with percent missing greater
 than this are excluded.}
+
+\item{reclass}{Vector of paired classes to reclassify, e.g., \code{reclass = c(13, 2, 3, 4)}
+would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.}
 
 \item{balance}{If TRUE, balance number of samples for each class. Points will be randomly
 selected to match the sparsest class.}

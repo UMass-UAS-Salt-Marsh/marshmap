@@ -35,5 +35,5 @@
 fitpurge <- function(rows = NULL, failed = FALSE, undo = NULL) {
    
    
-   db_purge(which = 'fit', db_name = 'fdb', id_name = 'fitid', rows = rows, failed = failed, undo = undo)
+   db_purge(which = 'fit', db_name = 'fdb', id_name = 'id', rows = rows, failed = failed, undo = undo)
 }

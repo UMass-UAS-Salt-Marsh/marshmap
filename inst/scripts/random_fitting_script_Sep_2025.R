@@ -37,6 +37,7 @@ fit('oth', maxmissing = 10)  # job 170, fit 181
 fit('sor', maxmissing = 20)  # job 171, fit 182
 fit('sor', maxmissing = 10)  # job 172, fit 183
 
+
 map(178, clip = c(-70.72179818, -70.72164328, 42.18346811, 42.19229167), local = TRUE)
 
 
@@ -70,3 +71,11 @@ map(1003, clip = c(-70.72179818, -70.72164328, 42.18346811, 42.19229167), local 
 
 fit('peg', exclude_class = c(28, 27), comment = 'drop 27 and one more rejected ortho')              # fit 1004, job 196         # only 1 poly of 27 unvegetated bank; massively overpredicts
 map(1004)
+
+
+
+
+# lumping 2 and 13
+
+fit('peg', data = 'data_all', max_samples = 15000, reclass = c(13, 2), comment = 'lump 13 with 2')  # job 219, fit 1037
+sample('peg', reclass = c(13, 2))   # job 220

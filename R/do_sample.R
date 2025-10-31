@@ -20,6 +20,8 @@
 #'    excluded.
 #' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
 #'    than this are excluded.
+#' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
+#'    would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.
 #' @param balance If TRUE, balance number of samples for each class. Points will be randomly
 #'    selected to match the sparsest class.
 #' @param balance_excl Vector of classes to exclude when determining sample size when 
@@ -39,7 +41,7 @@
 #' @keywords internal
 
 
-do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, 
+do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, reclass,
                       balance, balance_excl, result, transects, drop_corr, reuse) {
    
    
@@ -104,6 +106,15 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing,
       
       names(z) <- sub('^(\\d)', 'X\\1', names(z))                                   # add an X to the start of names that begin with a digit
       z <- round(z, 2)                                                              # round to 2 digits, which seems like plenty
+      
+      
+      if(!is.null(reclass)) {                                                       # if reclassifying,
+         rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
+         for(i in nrow(rcl)) {
+            z$subclass[r$subclass == rcl[i, 1]] <- rcl[i, 2]
+            message('Subclass ', rcl[i, 1], ' reclassified as ', rcl[i, 2])
+         }
+      }
       
       
       if(!dir.exists(sd))

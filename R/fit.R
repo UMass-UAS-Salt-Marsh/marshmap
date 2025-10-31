@@ -9,14 +9,16 @@
 #'   shared among sites, or a vector matching site.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
-#' @param vars An optional vector of variables to restrict analysis to. Default = `{*}`, 
+#' @param vars Vector of variables to restrict analysis to. Default = `{*}`, 
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
-#' @param exclude_classes An optional numeric vector of subclasses to exclude
+#' @param exclude_classes Numeric vector of subclasses to exclude
+#' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
+#'    would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.
 #' @param max_samples Maximum number of samples to use - subsample if necessary
-#' @param years An optional vector of years to restrict variables to
+#' @param years Vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
 #'    this are excluded from results. Default is 0, but rejected orthos are always 
 #'    excluded.
@@ -43,10 +45,10 @@
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
                 vars = '{*}', exclude_vars = '', exclude_classes = NULL, 
-                max_samples = NULL, years = NULL, minscore = 0, maxmissing = 20, 
-                max_miss_train = 0.20, top_importance = 20, holdout = 0.2, 
-                auc = FALSE, hyper = NULL, resources = NULL, local = FALSE, 
-                trap = TRUE, comment = NULL) {
+                reclass = c(13, 2), max_samples = NULL, years = NULL, 
+                minscore = 0, maxmissing = 20, max_miss_train = 0.20, 
+                top_importance = 20, holdout = 0.2, auc = FALSE, hyper = NULL, 
+                resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    sites <- get_sites(site)                              # get one or more sites
@@ -110,12 +112,12 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    the$fdb$CCR[i] <- NA                                  # correct classification rate, resolved in fit_finish
    the$fdb$kappa[i] <- NA                                # Kappa, resolved in fit_finish
    the$fdb$predicted[i] <- ''                            # name of predicted geoTIFF, added by map
-   the$fdb$score[i] <- NA                                # subjective scoring field, *** added with function TBD ***
+   the$fdb$score[i] <- NA                                # subjective scoring field, may be added with fitinfo
    the$fdb$comment_launch[i] <- comment                  # comment set at launch
-   the$fdb$comment_assess[i] <- ''                       # comment based on assessment, *** added with function TBD ***
-   the$fdb$comment_map[i] <- ''                          # comment based on final map, *** added with function TBD ***
+   the$fdb$comment_assess[i] <- ''                       # comment based on assessment, may be added with fitinfo
+   the$fdb$comment_map[i] <- ''                          # comment based on final map, may be added with fitinfo
    the$fdb$call[i] <- 
-      gsub('\\"', '\'', deparse(sys.calls()[[sys.nframe()]]))   # grab function call
+      gsub('\\"', '\'', gsub('[ ]+', ' ', paste(deparse(sys.calls()[[sys.nframe()]]), collapse = ' ')))    # grab function call
    the$fdb$model[i] <- ''                                # user-specified model, set in do_fit, resolved in fit_finish
    the$fdb$full_model[i] <- ''                           # complete model specification, set in do_fit, resolved in fit_finish
    the$fdb$datafile[i] <- datafile                       # name of data file used
@@ -132,7 +134,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
                           vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
-                          max_samples = max_samples, years = years, minscore = minscore, 
+                          reclass = reclass, max_samples = max_samples, years = years, minscore = minscore, 
                           maxmissing = maxmissing, max_miss_train = max_miss_train, 
                           top_importance = top_importance, holdout = holdout, auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 

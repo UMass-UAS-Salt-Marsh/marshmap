@@ -12,6 +12,7 @@ fit(
   vars = "{*}",
   exclude_vars = "",
   exclude_classes = NULL,
+  reclass = c(13, 2),
   max_samples = NULL,
   years = NULL,
   minscore = 0,
@@ -38,18 +39,21 @@ shared among sites, or a vector matching site.}
 
 \item{method}{One of \code{rf} for Random Forest, \code{boost} for AdaBoost. Default = \code{rf}.}
 
-\item{vars}{An optional vector of variables to restrict analysis to. Default = \verb{\{*\}},
+\item{vars}{Vector of variables to restrict analysis to. Default = \verb{\{*\}},
 all variables. \code{vars} is processed by \code{find_orthos}, and may include file names,
 portable names, search names and regular expressions of file and portable names.}
 
 \item{exclude_vars}{An optional vector of variables to exclude. As with \code{vars}, variables
 are processed by \code{find_orthos}}
 
-\item{exclude_classes}{An optional numeric vector of subclasses to exclude}
+\item{exclude_classes}{Numeric vector of subclasses to exclude}
+
+\item{reclass}{Vector of paired classes to reclassify, e.g., \code{reclass = c(13, 2, 3, 4)}
+would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.}
 
 \item{max_samples}{Maximum number of samples to use - subsample if necessary}
 
-\item{years}{An optional vector of years to restrict variables to}
+\item{years}{Vector of years to restrict variables to}
 
 \item{minscore}{Minimum score for orthos. Files with a minimum score of less than
 this are excluded from results. Default is 0, but rejected orthos are always

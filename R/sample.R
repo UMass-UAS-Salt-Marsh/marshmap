@@ -42,6 +42,8 @@
 #'    excluded.
 #' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
 #'    than this are excluded.
+#' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
+#'    would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.
 #' @param balance If TRUE, balance number of samples for each class. Points will be randomly
 #'    selected to match the sparsest class.
 #' @param balance_excl Vector of classes to exclude when determining sample size when 
@@ -66,9 +68,9 @@
 
 
 sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL, 
-                   classes = NULL, minscore = 0, maxmissing = 20, balance = TRUE, 
-                   balance_excl = NULL, result = NULL, transects = NULL, 
-                   drop_corr = NULL, reuse = FALSE, 
+                   classes = NULL, minscore = 0, maxmissing = 20, reclass = NULL,
+                   balance = TRUE, balance_excl = NULL, result = NULL, 
+                   transects = NULL, drop_corr = NULL, reuse = FALSE, 
                    resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
@@ -99,7 +101,7 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
    
    launch('do_sample', reps = site$site, repname = 'site', 
           moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, minscore = minscore,
-                          maxmissing = maxmissing, balance = balance, balance_excl = balance_excl, 
+                          maxmissing = maxmissing, reclass = reclass, balance = balance, balance_excl = balance_excl, 
                           result = result, transects = transects, drop_corr = drop_corr, reuse = reuse), 
           finish = 'sample_finish', local = local, trap = trap, resources = resources, comment = comment)
 }

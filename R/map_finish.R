@@ -17,6 +17,10 @@ map_finish <- function(jobid, status) {
    load_database('mdb')
    mrow <- match(slu$jdb$callerid[jrow], the$mdb$mapid)           # find our row in the map database
    
+   if(is.na(mrow))
+      stop('Map id ', slu$jdb$callerid[jrow], ' (job ', jobid, ') is missing from the maps database')
+   
+   
    dir <- resolve_dir(the$mapsdir, the$mdb$site[mrow])            # maps directory for this site
    
    # Copy log file

@@ -19,6 +19,9 @@ fit_finish <- function(jobid, status) {
    load_database('fdb')
    frow <- match(slu$jdb$callerid[jrow], the$fdb$id)              # find our row in the fit database
    
+   if(is.na(frow))
+      stop('Fit id ', slu$jdb$callerid[jrow], ' (job ', jobid, ') is missing from the fits database')
+   
    
    # Copy log file
    if(!dir.exists(the$modelsdir))
@@ -40,7 +43,6 @@ fit_finish <- function(jobid, status) {
    the$fdb$mem_req[frow] <- slu$jdb$mem_req[jrow]                 # memory requested (GB)
    the$fdb$mem_gb[frow] <- slu$jdb$mem_gb[jrow]                   # memory used (GB)
    the$fdb$walltime[frow] <- slu$jdb$walltime[jrow]               # elapsed run time
-   
    
    if(the$fdb$success[frow]) {                                    # If job was successful, get stuff from zz_<id>_fit.RDS, written by do_fit
       

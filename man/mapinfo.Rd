@@ -20,6 +20,7 @@ mapinfo(
 \itemize{
 \item a vector of \code{mapids}
 \item 'all' for all maps
+\item a vector of one or more sites
 \item a named list to filter maps. List items are \verb{<field in mdb> = <value>},
 where \verb{<value>} is a regex for character fields, or an actual value (or vector of
 values) for logical or numeric fields.
