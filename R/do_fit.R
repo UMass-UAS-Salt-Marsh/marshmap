@@ -203,7 +203,20 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    message('Elapsed time for training = ',  as.duration(round(interval(a, Sys.time()))))
    
    
-   confuse <- unconfuse(confusionMatrix(validate$subclass, y, mode = 'prec_recall'))
+   levs <- union(levels(y), levels(validate$subclass))                                    # --- confusion matrix. Make sure both groups share factor levels!
+   levs <- levs[order(as.numeric(levs))]
+   
+   pred <- factor(validate$subclass, levels = levs)
+   test <- factor(y, levels = levs)
+   
+   confuse <- unconfuse(confusionMatrix(pred, test, mode = 'prec_recall'))
+   
+   # xxx <<- validate
+   # yyy <<- y
+   # 
+   # browser()
+   # confuse <- unconfuse(confusionMatrix(validate$subclass, y, mode = 'prec_recall'))
+   
    
    f <- assess(model = list(fit = z, confuse = confuse, nvalidate = dim(validate)[1], 
                             id = fitid, name = name, site = sites),

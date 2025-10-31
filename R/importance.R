@@ -1,9 +1,20 @@
+#' Produce a summary of variable importance across multiple fits
+#'
+#' 
+#' @param ids Vector of fit ids, or NULL to run for all finished fits
+#' @param constrain A list of attributes to constrain images, e.g., 
+#'    `contrain = list(season = 'summer', tide = c('low', 'mid'))`. This would
+#'    only include images captured in summer with low or mid-tide.
+#' @export
+
+
+# result is a text file in reports/ with header info, then for each attribute (sensor, type, derive, tide, season),
+# a table of variables and importance stats
+
 # I think I want to normalize importance by kappa (option normalize = TRUE)
 # Summaries by type, sensor, season, and tide (pull these out before summazing so means are correct)
 #    be careful about high.spring vs. the season spring
 #    pull these from pars.yml and seasons.txt
-
-
 
 
 importance <- function(ids = NULL) {

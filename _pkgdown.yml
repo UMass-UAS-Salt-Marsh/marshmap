@@ -28,6 +28,7 @@ reference:
   - assess
   - flights_report
   - sample_freq
+  - importance
   
 - title: Utility functions
   desc: Uncommonly-used utility functions.

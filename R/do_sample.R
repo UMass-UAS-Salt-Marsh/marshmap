@@ -111,7 +111,7 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       if(!is.null(reclass)) {                                                       # if reclassifying,
          rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
          for(i in nrow(rcl)) {
-            z$subclass[r$subclass == rcl[i, 1]] <- rcl[i, 2]
+            z$subclass[z$subclass == rcl[i, 1]] <- rcl[i, 2]
             message('Subclass ', rcl[i, 1], ' reclassified as ', rcl[i, 2])
          }
       }
