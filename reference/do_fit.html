@@ -46,6 +46,7 @@
 <span>  <span class="va">vars</span>,</span>
 <span>  <span class="va">exclude_vars</span>,</span>
 <span>  <span class="va">exclude_classes</span>,</span>
+<span>  <span class="va">reclass</span>,</span>
 <span>  <span class="va">max_samples</span>,</span>
 <span>  <span class="va">years</span>,</span>
 <span>  <span class="va">minscore</span>,</span>
@@ -82,7 +83,7 @@ are vetted by fit - there's no checking here.</p></dd>
 
 
 <dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
-<dd><p>An optional vector of variables to restrict analysis to. Default = <code>{*}</code>,
+<dd><p>Vector of variables to restrict analysis to. Default = <code>{*}</code>,
 all variables. <code>vars</code> is processed by <code>find_orthos</code>, and may include file names,
 portable names, search names and regular expressions of file and portable names.</p></dd>
 
@@ -93,7 +94,12 @@ are processed by <code>find_orthos</code></p></dd>
 
 
 <dt id="arg-exclude-classes">exclude_classes<a class="anchor" aria-label="anchor" href="#arg-exclude-classes"></a></dt>
-<dd><p>An optional numeric vector of subclasses to exclude</p></dd>
+<dd><p>Numeric vector of subclasses to exclude</p></dd>
+
+
+<dt id="arg-reclass">reclass<a class="anchor" aria-label="anchor" href="#arg-reclass"></a></dt>
+<dd><p>Vector of paired classes to reclassify, e.g., <code>reclass = c(13, 2, 3, 4)</code>
+would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.</p></dd>
 
 
 <dt id="arg-max-samples">max_samples<a class="anchor" aria-label="anchor" href="#arg-max-samples"></a></dt>
@@ -101,7 +107,7 @@ are processed by <code>find_orthos</code></p></dd>
 
 
 <dt id="arg-years">years<a class="anchor" aria-label="anchor" href="#arg-years"></a></dt>
-<dd><p>An optional vector of years to restrict variables to</p></dd>
+<dd><p>Vector of years to restrict variables to</p></dd>
 
 
 <dt id="arg-minscore">minscore<a class="anchor" aria-label="anchor" href="#arg-minscore"></a></dt>

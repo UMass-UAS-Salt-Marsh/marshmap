@@ -47,6 +47,7 @@
 <span>  classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  minscore <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  maxmissing <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  reclass <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  balance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  balance_excl <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  result <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -102,6 +103,11 @@ excluded.</p></dd>
 <dt id="arg-maxmissing">maxmissing<a class="anchor" aria-label="anchor" href="#arg-maxmissing"></a></dt>
 <dd><p>Maximum percent missing in orthos. Files with percent missing greater
 than this are excluded.</p></dd>
+
+
+<dt id="arg-reclass">reclass<a class="anchor" aria-label="anchor" href="#arg-reclass"></a></dt>
+<dd><p>Vector of paired classes to reclassify, e.g., <code>reclass = c(13, 2, 3, 4)</code>
+would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.</p></dd>
 
 
 <dt id="arg-balance">balance<a class="anchor" aria-label="anchor" href="#arg-balance"></a></dt>

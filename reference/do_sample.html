@@ -50,6 +50,7 @@ fitting. This is an internal function, called by sample.</p>
 <span>  <span class="va">classes</span>,</span>
 <span>  <span class="va">minscore</span>,</span>
 <span>  <span class="va">maxmissing</span>,</span>
+<span>  <span class="va">reclass</span>,</span>
 <span>  <span class="va">balance</span>,</span>
 <span>  <span class="va">balance_excl</span>,</span>
 <span>  <span class="va">result</span>,</span>
@@ -100,6 +101,11 @@ excluded.</p></dd>
 <dt id="arg-maxmissing">maxmissing<a class="anchor" aria-label="anchor" href="#arg-maxmissing"></a></dt>
 <dd><p>Maximum percent missing in orthos. Files with percent missing greater
 than this are excluded.</p></dd>
+
+
+<dt id="arg-reclass">reclass<a class="anchor" aria-label="anchor" href="#arg-reclass"></a></dt>
+<dd><p>Vector of paired classes to reclassify, e.g., <code>reclass = c(13, 2, 3, 4)</code>
+would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.</p></dd>
 
 
 <dt id="arg-balance">balance<a class="anchor" aria-label="anchor" href="#arg-balance"></a></dt>
