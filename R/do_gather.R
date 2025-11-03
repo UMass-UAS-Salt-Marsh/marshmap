@@ -44,7 +44,7 @@ do_gather <- function(site, pattern = '',
    
    
    message('terra version is ', packageVersion('terra'), '; should be 1.8.73 or higher')
-
+   
    
    start <- Sys.time()
    count <- NULL
@@ -198,7 +198,7 @@ do_gather <- function(site, pattern = '',
                   message('         !!! Reprojecting ', basename(tpath))
                   shp <- st_transform(shp, crs = 4326)
                }
-                  
+               
                
                u <- sort(unique(shp$Subclass))
                bad <- u[!u %in% read_pars_table('classes')$subclass]
@@ -234,6 +234,31 @@ do_gather <- function(site, pattern = '',
                count$transect <- count$transect + 1
             }
       }
+      
+      
+      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                   #----Read blocks shapefiles from local drive, correct projection assumed
+      if(dir.exists(bd)) {                                                       #    if the blocks directory exists, have a look
+         
+         blocks <- file.path(bd, list.files(bd, pattern = '.shp$', 
+                                            ignore.case = TRUE))
+         for(block in blocks) {                                                  #    for each blocks shapefile, see if raster exists and is up to date,
+            print('checking')
+            s <- file.mtime(block)
+            skip <- FALSE
+            if(exists(gn <- paste0(file_path_sans_ext(block), '.tif')))
+               if(s <= file.mtime(gn))
+                  skip <- TRUE
+               if(!skip) {                                                       #    if not, process it
+                  message('Processing blocks file ', block, '...')
+                  suppressWarnings(rasterize(vect(block), standard,              #       mask gives a bogus warning that CRS do not match
+                                             field = 'block')$block |>           #       convert it to raster
+                                   crop(footprint) |>                            #       crop, mask, and write
+                                   mask(footprint) |>
+                                   writeRaster(gn, overwrite = TRUE,
+                                               datatype = type, NAflag = missing))
+               }
+               }
+         }
       
       
       rd <- resolve_dir(the$flightsdir, tolower(sites$site[i]))                     #    prepare result directory
@@ -284,8 +309,8 @@ do_gather <- function(site, pattern = '',
       flights_prep(site, replace_caches = replace_caches)                           #    now count missing values and cache images for screen
       
       message('Finished with site ', sites$site[i])
-   }
+      }
    d <- as.duration(interval(start, Sys.time()))
    message('Run finished. ', count$tiff,' geoTIFFs and ', count$transect, ' transect shapefiles processed in ', round(d), ifelse(count$tiff == 0, '', paste0('; ', round(d / count$tiff), ' per geoTIFF.')))
-}
+   }
 
