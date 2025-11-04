@@ -85,24 +85,40 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       fl <- resolve_dir(the$flightsdir, tolower(site))
       x <- find_orthos(site, pattern, minscore, maxmissing)                         # find matching files
       xvars <- x$portable                                                           # we'll use the portable name as the variable name
-      xfiles <- x$file                                                              # and here are the files for reading and writing to <result>_vars.txt 
+      xfiles <- file.path(fl, x$file)                                               # and here are the files for reading and writing to <result>_vars.txt 
+      
+      message('Sampling ', length(xvars), ' variables...')
       
       
-      message('Sampling ', length(xvars), ' variables')
+      bl <- resolve_dir(the$blocksdir, tolower(site))                               # look for blocks files
+      blocks <- list.files(bl, pattern = '.tif')
+      if(length(blocks) > 0) {                                                      # if there are any blocks files
+         xvars <- c(paste0('_', tolower(file_path_sans_ext(blocks))), xvars)        #    block var names start with underscore
+         xfiles <- c(file.path(bl, blocks), xfiles)
+         message('and sampling ', length(blocks), ' block files...')
+      }
+      
       
       sel <- !is.na(field)                                                          # cells with field samples
       nrows <- as.numeric(global(sel, fun = 'sum', na.rm = TRUE))                   # total sample size
       z <- data.frame(field[sel])                                                   # result is expected to be ~4 GB for 130 variables
       names(z)[1] <- 'subclass'
       
+      
       for(i in seq_along(xfiles)) {                                                 # for each predictor variable,
-         x <- rast(file.path(fl, xfiles[i]))                                        #    get the raster
-         names(x) <- paste0(xvars[i], '_', 1:length(names(x)))                      #    variable names with _<band number>
+         x <- rast(file.path(xfiles[i]))                                            #    get the raster
+         
+         if(nlyr(x) == 1)                                                           #    if one layer,
+            names(x) <- xvars[i]                                                    #       just use name
+         else                                                                       #    else, multiple bands in layer,
+            names(x) <- paste0(xvars[i], '_', 1:length(names(x)))                   #       so add _<band number> to variable names
+         
          y <- x[sel]
-         if(dim(y)[2] == 1)                                                         #    if the variable has one band, vectorize to avoid making a mess
+         if(nlyr(x) == 1)                                                           #    if the variable has one band, vectorize to avoid making a mess
             y <- as.vector(y)
          z[, names(x)] <- y                                                         #    sample selected values
       }
+      
       
       names(z) <- sub('^(\\d)', 'X\\1', names(z))                                   # add an X to the start of names that begin with a digit
       z <- round(z, 2)                                                              # round to 2 digits, which seems like plenty
@@ -133,9 +149,12 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classes in balance_excl
       target_n <- min(counts)
       
+      
       z <- group_by(z, subclass) |>
          slice_sample(n = target_n) |>                                              #    take minimum subclass n for every class
          data.frame()                                                               #    and cure tidyverse infection
+      
+      names(z) <- sub('^X_', '_', names(z))                                         #    undo tidyverse shitting on my column names
    }
    
    if(!is.null(d))                                                                  #    if sampling by mean distance,

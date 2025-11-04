@@ -244,7 +244,6 @@ do_gather <- function(site, pattern = '',
          blocks <- file.path(bd, list.files(bd, pattern = '.shp$', 
                                             ignore.case = TRUE))
          for(block in blocks) {                                                  #    for each blocks shapefile, see if raster exists and is up to date,
-            print('checking')
             s <- file.mtime(block)
             skip <- FALSE
             if(exists(gn <- paste0(file_path_sans_ext(block), '.tif')))
