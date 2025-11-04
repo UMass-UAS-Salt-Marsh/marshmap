@@ -49,9 +49,11 @@ map_finish <- function(jobid, status) {
       the$mdb$error[mrow] <- FALSE                                #    since we're here, we know there wasn't an error
       the$mdb$message <- ''                                       #    and no error message
       
-      x <- readRDS(f <- file.path(dir, paste0('zz_', slu$jdb$callerid[jrow], '_map.RDS')))
-      
-      the$mdb$mpix <- x$mpix                                      # non-missing megapixels in result
+      f <- file.path(dir, paste0('zz_', slu$jdb$callerid[jrow], '_map.RDS'))
+      if(file.exists(f)) {                                        #    if temp file with megapixels exists,
+         x <- readRDS(f)
+         the$mdb$mpix <- x$mpix                                   #       get non-missing megapixels
+      }
    }
    
    save_database('mdb')                                           # save the database

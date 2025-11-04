@@ -200,7 +200,9 @@ do_gather <- function(site, pattern = '',
                }
                
                
-               u <- sort(unique(shp$Subclass))
+               names(shp)[grep('subclass', names(shp), ignore.case = TRUE)] <- 'subclass'       # make subclass lower-case, no matter what it is
+               
+               u <- sort(unique(shp$subclass))
                bad <- u[!u %in% read_pars_table('classes')$subclass]
                if(length(bad) > 0) {
                   if(ignore_bad_classes)
@@ -211,13 +213,13 @@ do_gather <- function(site, pattern = '',
                
                
                overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
-               gt <- overlaps(shp, 'Subclass')                                      #       get the shapefile and process overlaps
+               gt <- overlaps(shp, 'subclass')                                      #       get the shapefile and process overlaps
                st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile as *_final
                
                
                suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
                                    rasterize(vect(overlaps), standard, 
-                                             field = 'Subclass')$Subclass |>        #       convert it to raster and pull SubCl, numeric version of subclass
+                                             field = 'subclass')$subclass |>        #       convert it to raster and pull SubCl, numeric version of subclass
                                    crop(footprint) |>                               #       crop, mask, and write
                                    mask(footprint) |>
                                    writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
@@ -248,17 +250,17 @@ do_gather <- function(site, pattern = '',
             if(exists(gn <- paste0(file_path_sans_ext(block), '.tif')))
                if(s <= file.mtime(gn))
                   skip <- TRUE
-               if(!skip) {                                                       #    if not, process it
-                  message('Processing blocks file ', block, '...')
-                  suppressWarnings(rasterize(vect(block), standard,              #       mask gives a bogus warning that CRS do not match
-                                             field = 'block')$block |>           #       convert it to raster
+            if(!skip) {                                                       #    if not, process it
+               message('Processing blocks file ', block, '...')
+               suppressWarnings(rasterize(vect(block), standard,              #       mask gives a bogus warning that CRS do not match
+                                          field = 'block')$block |>           #       convert it to raster
                                    crop(footprint) |>                            #       crop, mask, and write
                                    mask(footprint) |>
                                    writeRaster(gn, overwrite = TRUE,
                                                datatype = type, NAflag = missing))
-               }
-               }
+            }
          }
+      }
       
       
       rd <- resolve_dir(the$flightsdir, tolower(sites$site[i]))                     #    prepare result directory
@@ -309,8 +311,8 @@ do_gather <- function(site, pattern = '',
       flights_prep(site, replace_caches = replace_caches)                           #    now count missing values and cache images for screen
       
       message('Finished with site ', sites$site[i])
-      }
+   }
    d <- as.duration(interval(start, Sys.time()))
    message('Run finished. ', count$tiff,' geoTIFFs and ', count$transect, ' transect shapefiles processed in ', round(d), ifelse(count$tiff == 0, '', paste0('; ', round(d / count$tiff), ' per geoTIFF.')))
-   }
+}
 
