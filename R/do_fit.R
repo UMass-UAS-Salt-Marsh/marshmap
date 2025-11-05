@@ -27,6 +27,12 @@
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
+#' @param holdout_block An alternative to holding out random points. Specify a named list 
+#'    with `block = <name of block column>, classes = <vector of block classes to hold out>`.
+#'    Set this up by creating a shapefile corresponding to ground truth data with a variable
+#'    `block` that contains integer block classes, and placing it in the `blocks/` directory
+#'    for the site. `gather` and `sample` will collect and process block data for you to 
+#'    use here.    
 #' @param auc If TRUE, calculate class probabilities so we can calculate AUC
 #' @param hyper Hyperparameters ***To be defined***
 #' @param rep Throwaway argument to make `slurmcollie` happy
@@ -40,7 +46,7 @@
 
 do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_classes, 
                    reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
-                   top_importance, holdout, auc, hyper, rep = NULL) {
+                   top_importance, holdout, holdout_block, auc, hyper, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -60,6 +66,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    
    r <- bind_rows(r, .id = 'site')
    
+   
    if(!is.null(reclass)) {                                                                # if reclassifying,
       rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
       for(i in nrow(rcl)) {
@@ -67,7 +74,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
          message('Subclass ', rcl[i, 1], ' reclassified as ', rcl[i, 2])
       }
    }
-
+   
    l <- 1:max(r$subclass)                                                                 # make sure all subclasses are represented in factor so value = subclass
    if(auc)                                                                                # if preparing data for AUC, 
       r$subclass <- factor(r$subclass, levels = l, labels = paste0('class', l))           #    we can't use numbers for factors when doing classProbs in training
@@ -82,17 +89,25 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    message('\nFitting for site', ifelse(nrow(sites) != 1, 's', ''), ' = ', paste(sites$site, collapse = ', '))
    
    
+   browser()
+   
+   
    v <- unique(gsub('-', '_', find_orthos(sites$site, vars, 
                                           minscore, maxmissing)$portable))                # portable names from vars (replace dash with underscore to match var names)
-   if(!is.null(v)) {                                                                      # if restricting to selected variables,
-      r <- r[, sub('_\\d$', '', names(r)) %in% c('site', 'subclass', v)]
-      if(vars != '{*}')
-         message('Analysis limited to ', sum(!names(r) %in% c('site', 'subclass')), 
-                 ' selected variables')
-   }
+   
+   if(length(v) == 0)
+      stop('No variables are selected')
+   
+   r <- r[, (sub('_\\d$', '', names(r)) %in% c('site', 'subclass', v)) | 
+             grepl('^_', names(r))]                                                       # include only selected vars, site, subclass, and _block vars
+   if(vars != '{*}')
+      message('Analysis limited to ', sum(!names(r) %in% c('site', 'subclass')), 
+              ' selected variables')
+   
    
    e <- unique(gsub('-', '_', find_orthos(sites$site, exclude_vars, 
                                           screen = FALSE)$portable))                      # portable names from exclude_vars (don't exclude any!)
+   
    if(!is.null(exclude_vars)) {                                                           # if excluding variables,
       r <- r[, !sub('_\\d$', '', names(r)) %in% e] 
       if(exclude_vars != '')
@@ -108,7 +123,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
          exclude_classes <- x
    }
    
-   if(!is.null(exclude_classes)) {                                                         # if exclude_classes, drop these from dataset
+   if(!is.null(exclude_classes)) {                                                        # if exclude_classes, drop these from dataset
       t <- nrow(r)
       r <- r[!r$subclass %in% exclude_classes, ]
       message('Excluding classes ', paste(exclude_classes, collapse = ', '), '; dropped ', format(t - nrow(r), big.mark = ','), ' cases')
@@ -138,16 +153,34 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
          r <- r[base::sample(dim(r)[1], size = max_samples, replace = FALSE), ]           #       subsample points
    
    
+   
+   
+   browser()   # ------------------------------------------------------------------------------------------------------------------
+   
+   blocks <- r[, b <- grepl('^_', names(r))]                                              # pull out any blocks vars
+   r <- r[, !b]
+   
+   
+   
    n_partitions <- switch(method, 
                           'rf' = 1,                                                       # random forest uses a single validation set,
-                          'boost' = 2)                                                    # and AdaBoost uses a test and a validation set
-   parts <- createDataPartition(r$subclass, p = holdout, times = n_partitions)            # create holdout sets
+                          'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
-   training <- r[-unlist(parts), ]
-   validate <- r[parts[[1]], ]
-   if(method == 'boost')
-      test <- r[parts[[2]], ]
    
+   if(!is.null(holdout_block)) {                                                          # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
+      nb <- !grepl('^_', names(r))
+      validate <- r[b <- r[[holdout_block$block]] %in% holdout_block$classes, nb]         #    pull out selected blocks for validation and drop block variables
+      training <- r[!b, nb]
+   }
+   else                                                                                   # else, select holdout sets based on holdout proportion
+   {
+      parts <- createDataPartition(r$subclass, p = holdout, times = n_partitions)         # create holdout sets
+      
+      training <- r[-unlist(parts), ]
+      validate <- r[parts[[1]], ]
+      if(method == 'boost')
+         test <- r[parts[[2]], ]
+   }
    
    
    switch(method, 
