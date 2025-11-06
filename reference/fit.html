@@ -57,6 +57,7 @@ cover and report model assessment.</p>
 <span>  max_miss_train <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  top_importance <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  holdout <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  blocks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auc <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  hyper <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -140,6 +141,15 @@ variable is dropped</p></dd>
 <dd><p>Proportion of points to hold out. For Random Forest, this specifies
 the size of the single validation set, while for boosting, it is the size of each
 of the testing and validation sets.</p></dd>
+
+
+<dt id="arg-blocks">blocks<a class="anchor" aria-label="anchor" href="#arg-blocks"></a></dt>
+<dd><p>An alternative to holding out random points. Specify a named list
+with <code>block = &lt;name of block column&gt;, classes = &lt;vector of block classes to hold out&gt;</code>.
+Set this up by creating a shapefile corresponding to ground truth data with a variable
+<code>block</code> that contains integer block classes, and placing it in the <code>blocks/</code> directory
+for the site. <code>gather</code> and <code>sample</code> will collect and process block data for you to
+use here.</p></dd>
 
 
 <dt id="arg-auc">auc<a class="anchor" aria-label="anchor" href="#arg-auc"></a></dt>
