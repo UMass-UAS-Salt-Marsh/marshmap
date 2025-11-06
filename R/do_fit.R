@@ -27,7 +27,7 @@
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
-#' @param holdout_block An alternative to holding out random points. Specify a named list 
+#' @param blocks An alternative to holding out random points. Specify a named list 
 #'    with `block = <name of block column>, classes = <vector of block classes to hold out>`.
 #'    Set this up by creating a shapefile corresponding to ground truth data with a variable
 #'    `block` that contains integer block classes, and placing it in the `blocks/` directory
@@ -46,7 +46,7 @@
 
 do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_classes, 
                    reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
-                   top_importance, holdout, holdout_block, auc, hyper, rep = NULL) {
+                   top_importance, holdout, blocks, auc, hyper, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -87,9 +87,6 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    
    
    message('\nFitting for site', ifelse(nrow(sites) != 1, 's', ''), ' = ', paste(sites$site, collapse = ', '))
-   
-   
-   browser()
    
    
    v <- unique(gsub('-', '_', find_orthos(sites$site, vars, 
@@ -155,9 +152,8 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    
    
    
-   browser()   # ------------------------------------------------------------------------------------------------------------------
    
-   blocks <- r[, b <- grepl('^_', names(r))]                                              # pull out any blocks vars
+   blks <- r[, b <- grepl('^_', names(r))]                                                # pull out any blocks vars
    r <- r[, !b]
    
    
@@ -167,10 +163,13 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
    
-   if(!is.null(holdout_block)) {                                                          # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
-      nb <- !grepl('^_', names(r))
-      validate <- r[b <- r[[holdout_block$block]] %in% holdout_block$classes, nb]         #    pull out selected blocks for validation and drop block variables
-      training <- r[!b, nb]
+   if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
+      blocks$block <- paste0('_', sub('^_', '', blocks$block))                                #    be agnostic to leading underscores in block names
+      validate <- r[b <- blks[[blocks$block]] %in% blocks$classes, ]                      #    pull out selected blocks for validation and drop block variables
+      training <- r[!b, ]
+      message('Using block holdouts: ', nrow(training), ' cases in training set and ', nrow(validate), ' cases in validation set')
+      if(nrow(validate) == 0 | nrow(training) == 0)
+         stop('Block validation leaves 0 cases in set')
    }
    else                                                                                   # else, select holdout sets based on holdout proportion
    {
@@ -178,8 +177,15 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
       
       training <- r[-unlist(parts), ]
       validate <- r[parts[[1]], ]
-      if(method == 'boost')
+      if(method == 'boost') {
          test <- r[parts[[2]], ]
+         message('Using random holdouts: ', nrow(training), ' cases in training set, ', 
+                 nrow(validate), ' cases in validation set, and ', 
+                 nrow(test), ' cases in test set')
+      }
+      else
+         message('Using random holdouts: ', nrow(training), ' cases in training set and ',
+                 nrow(validate), ' cases in validation set')
    }
    
    

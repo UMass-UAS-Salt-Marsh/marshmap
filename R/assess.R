@@ -75,8 +75,9 @@
 #' @param site One or more site names, for display only
 #' @param top_importance Number of variables to keep for variable importance
 #' @param summary Print model summary info if TRUE
-#' @param confusion Print the confusion matrix and complete statistics if TRUE, and skip if FALSE
-#' @param importance Print variable importance if TRUE, and skip printing if FALSE
+#' @param confusion Print the confusion matrix and complete statistics if TRUE
+#' @param importance Print variable importance if TRUE
+#' @param freq Print class frequency table if TRUE
 #' @param quiet If TRUE, don't print anything; just silently return stuff
 #' @returns Invisibly, a named list of
 #'   \describe{
@@ -89,7 +90,7 @@
 
 assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
                    top_importance = 20, summary = TRUE, confusion = TRUE, 
-                   importance = TRUE, quiet = FALSE) {
+                   importance = TRUE, freq = TRUE, quiet = FALSE) {
    
    
    if(!is.null(fitid)) {
@@ -97,6 +98,8 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
       frow <- match(fitid, the$fdb$id)              # find our row in the fit database
       if(is.na(frow))
          stop('Fit id ', fitid, ' is not present in the fits database')
+      
+      site <- the$fdb$site[frow]
       
       ef <- file.path(the$modelsdir, paste0('fit_', fitid, '_extra.RDS'))
       if(!file.exists(ef))
@@ -129,21 +132,35 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    info <- paste0(info, '\nCorrect classification rate (CCR) = ', round(confuse$overall['Accuracy'] * 100, 2), '%')  
    info <- paste0(info, '\nKappa = ', round(confuse$overall['Kappa'], 4), '\n\n')
    
+   
+   varimp <- varImp(model$fit)$importance                            # variable importance
+   names(varimp) <- 'Importance'
+   varimp <- varimp[order(varimp$Importance, decreasing = TRUE), , drop = FALSE][1:min(top_importance, nrow(varimp)), , drop = FALSE]
+   varimp <- round(varimp, 2)
+   
+
+   train <- table(model$fit$trainingData$.outcome)                   # class frequencies
+   validate <- colSums(confuse$table)
+   tr <- data.frame(subclass = as.numeric(names(train)), training = as.vector(train))
+   va <- data.frame(subclass = as.numeric(names(validate)), validation = as.vector(validate))
+   classfreq <- merge(tr, va)
+   
+   
    if(summary & !quiet)
       cat(info)
    
    if(confusion & !quiet)
       print(confuse)
    
-   varimp <- varImp(model$fit)$importance
-   names(varimp) <- 'Importance'
-   varimp <- varimp[order(varimp$Importance, decreasing = TRUE), , drop = FALSE][1:min(top_importance, nrow(varimp)), , drop = FALSE]
-   varimp <- round(varimp, 2)
-   
    if(importance & !quiet) {
       cat('\nVariable importance\n')
       print(varimp)
    }
    
-   invisible(list(confusion = confuse, importance = varimp))
+   if(freq & !quiet) {
+      cat('\nClass frequencies\n')
+      print(classfreq, row.names = FALSE)
+      }
+   
+   invisible(list(confusion = confuse, importance = varimp, classfreq = classfreq))
 }

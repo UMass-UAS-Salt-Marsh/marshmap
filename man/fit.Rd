@@ -20,6 +20,7 @@ fit(
   max_miss_train = 0.2,
   top_importance = 20,
   holdout = 0.2,
+  blocks = NULL,
   auc = FALSE,
   hyper = NULL,
   resources = NULL,
@@ -70,6 +71,13 @@ variable is dropped}
 \item{holdout}{Proportion of points to hold out. For Random Forest, this specifies
 the size of the single validation set, while for boosting, it is the size of each
 of the testing and validation sets.}
+
+\item{blocks}{An alternative to holding out random points. Specify a named list
+with \verb{block = <name of block column>, classes = <vector of block classes to hold out>}.
+Set this up by creating a shapefile corresponding to ground truth data with a variable
+\code{block} that contains integer block classes, and placing it in the \verb{blocks/} directory
+for the site. \code{gather} and \code{sample} will collect and process block data for you to
+use here.}
 
 \item{auc}{If TRUE, calculate class probabilities so we can calculate AUC}
 

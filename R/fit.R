@@ -30,7 +30,7 @@
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
-#' @param holdout_block An alternative to holding out random points. Specify a named list 
+#' @param blocks An alternative to holding out random points. Specify a named list 
 #'    with `block = <name of block column>, classes = <vector of block classes to hold out>`.
 #'    Set this up by creating a shapefile corresponding to ground truth data with a variable
 #'    `block` that contains integer block classes, and placing it in the `blocks/` directory
@@ -53,7 +53,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
                 vars = '{*}', exclude_vars = '', exclude_classes = NULL, 
                 reclass = c(13, 2), max_samples = NULL, years = NULL, 
                 minscore = 0, maxmissing = 20, max_miss_train = 0.20, 
-                top_importance = 20, holdout = 0.2, holdout_block = NULL,
+                top_importance = 20, holdout = 0.2, blocks = NULL,
                 auc = FALSE, hyper = NULL, 
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
@@ -143,7 +143,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
                           vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
                           reclass = reclass, max_samples = max_samples, years = years, minscore = minscore, 
                           maxmissing = maxmissing, max_miss_train = max_miss_train, 
-                          top_importance = top_importance, holdout = holdout, holdout_block = holdout_block,
+                          top_importance = top_importance, holdout = holdout, blocks = blocks,
                           auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)

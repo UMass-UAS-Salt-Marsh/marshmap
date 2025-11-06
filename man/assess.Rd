@@ -13,6 +13,7 @@ assess(
   summary = TRUE,
   confusion = TRUE,
   importance = TRUE,
+  freq = TRUE,
   quiet = FALSE
 )
 }
@@ -38,9 +39,11 @@ must conform with the original dataset.}
 
 \item{summary}{Print model summary info if TRUE}
 
-\item{confusion}{Print the confusion matrix and complete statistics if TRUE, and skip if FALSE}
+\item{confusion}{Print the confusion matrix and complete statistics if TRUE}
 
-\item{importance}{Print variable importance if TRUE, and skip printing if FALSE}
+\item{importance}{Print variable importance if TRUE}
+
+\item{freq}{Print class frequency table if TRUE}
 
 \item{quiet}{If TRUE, don't print anything; just silently return stuff}
 }
