@@ -13,6 +13,7 @@
 
 fit_finish <- function(jobid, status) {
    
+   print(paste0('Finishing ', jobid, ', ', status))
    
    jrow <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database (it's been loaded by info)
    
@@ -30,7 +31,7 @@ fit_finish <- function(jobid, status) {
                      file.path(the$modelsdir, 
                                paste0('fit_', the$fdb$id[frow], '.log')),
                      overwrite = TRUE)
-
+   
    
    # Get stuff from slurmcollie jobs database
    the$fdb$success[frow] <- slu$jdb$status[jrow] == 'finished'    # run success
@@ -49,18 +50,22 @@ fit_finish <- function(jobid, status) {
       the$fdb$error[frow] <- FALSE                                #    since we're here, we know there wasn't an error
       the$fdb$message <- ''                                       #    and no error message
       
-      x <- readRDS(f <- file.path(the$modelsdir, paste0('zz_', slu$jdb$callerid[jrow], '_fit.RDS')))
-      
-      the$fdb$vars[frow] <- x$vars                                      # number of variables
-      the$fdb$cases[frow] <- x$cases                                    # sample size   
-      the$fdb$holdout[frow] <- x$holdout                                # holdout sample size
-      the$fdb$CCR[frow] <- x$CCR                                  # correct classification rate
-      the$fdb$kappa[frow] <- x$kappa                              # Kappa
-      
-      the$fdb$model[frow] <- x$model                              # user-specified model, set in do_fit, resolved in fit_finish
-      the$fdb$full_model[frow] <- x$full_model                    # complete model specification, set in do_fit, resolved in fit_finish
-      the$fdb$hyper[frow] <- x$hyper                              # hyperparameters, set in do_fit, resolved in fit_finish
+      f <- file.path(the$modelsdir, paste0('zz_', slu$jdb$callerid[jrow], '_fit.RDS'))
+      if(file.exists(f)) {                                        #    if temp fit file exists,
+         x <- readRDS(f)
+         
+         the$fdb$vars[frow] <- x$vars                             # number of variables
+         the$fdb$cases[frow] <- x$cases                           # sample size   
+         the$fdb$holdout[frow] <- x$holdout                       # holdout sample size
+         the$fdb$CCR[frow] <- x$CCR                               # correct classification rate
+         the$fdb$kappa[frow] <- x$kappa                           # Kappa
+         
+         the$fdb$model[frow] <- x$model                           # user-specified model, set in do_fit, resolved in fit_finish
+         the$fdb$full_model[frow] <- x$full_model                 # complete model specification, set in do_fit, resolved in fit_finish
+         the$fdb$hyper[frow] <- x$hyper                           # hyperparameters, set in do_fit, resolved in fit_finish
+      }
    }
+   
    
    save_database('fdb')                                           # save the database
    
