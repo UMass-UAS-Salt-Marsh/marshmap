@@ -43,7 +43,8 @@ must conform with the original dataset.}
 
 \item{importance}{Print variable importance if TRUE}
 
-\item{freq}{Print class frequency table if TRUE}
+\item{freq}{Print empirical class frequency table (number of cases from training
+and holdout data by class) if TRUE}
 
 \item{quiet}{If TRUE, don't print anything; just silently return stuff}
 }

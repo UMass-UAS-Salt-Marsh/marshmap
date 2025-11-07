@@ -71,7 +71,7 @@ the Appendix for a list of all 27 subclasses.
   diagonal were predicted correctly.
 - *Accuracy* is the correct classification rate (also known as CCR), the proportion of cases that fall on 
   the diagonal in the confusion matrix.
-- The *No Information Rate* is the CCR you'd get if you always bet the majority class. In this particular 
+- The *No Information Rate* is the CCR (expressed as a proportion) you'd get if you always bet the majority class. In this particular 
   example, I've balanced the samples (subject to random sampling), so the NIR isn't particularly relevant.
 - *Kappa* is a refined version of the CCR that takes the probability of chance agreement into account.
 - *Mcnemar's test* only applies to two-class data.

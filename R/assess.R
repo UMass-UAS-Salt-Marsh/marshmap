@@ -77,7 +77,8 @@
 #' @param summary Print model summary info if TRUE
 #' @param confusion Print the confusion matrix and complete statistics if TRUE
 #' @param importance Print variable importance if TRUE
-#' @param freq Print class frequency table if TRUE
+#' @param freq Print empirical class frequency table (number of cases from training
+#'    and holdout data by class) if TRUE
 #' @param quiet If TRUE, don't print anything; just silently return stuff
 #' @returns Invisibly, a named list of
 #'   \describe{
@@ -114,11 +115,18 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    }
    
    confuse <- model$confuse
-   browser()
-   if(!is.null(newdata)) {                                           # if new data have been passed,        ----this section hasn't been tested yet----
-      y <- stats::predict(model, newdata = newdata)                  #    we'l work with it
+
+   if(!is.null(newdata)) {                                           # if new data have been passed,
+      y <- stats::predict(model$fit, newdata = newdata)              #    we'l work with it
       model$nvalidate <- nrow(newdata)                               #    update number of validation cases
-      confuse <- unconfuse(confusionMatrix(y, newdata$subclass, 
+      
+      levs <- union(levels(droplevels(y)), levels(droplevels(newdata$subclass)))
+      levs <- levs[order(as.numeric(levs))]
+      
+      valid <- factor(newdata$subclass, levels = levs)               # validation data
+      test <- factor(y, levels = levs)                               # predictions
+
+      confuse <- unconfuse(confusionMatrix(test, valid, 
                                            mode = 'prec_recall'))    #    and build the new confusion matrix
    }
    
@@ -138,12 +146,13 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    varimp <- varimp[order(varimp$Importance, decreasing = TRUE), , drop = FALSE][1:min(top_importance, nrow(varimp)), , drop = FALSE]
    varimp <- round(varimp, 2)
    
-
+   
    train <- table(model$fit$trainingData$.outcome)                   # class frequencies
    validate <- colSums(confuse$table)
    tr <- data.frame(subclass = as.numeric(names(train)), training = as.vector(train))
    va <- data.frame(subclass = as.numeric(names(validate)), validation = as.vector(validate))
-   classfreq <- merge(tr, va)
+   classfreq <- merge(tr, va, all = TRUE)
+   classfreq[is.na(classfreq)] <- 0
    
    
    if(summary & !quiet)
@@ -158,9 +167,9 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    }
    
    if(freq & !quiet) {
-      cat('\nClass frequencies\n')
+      cat('\nEmpirical class frequencies\n')
       print(classfreq, row.names = FALSE)
-      }
+   }
    
    invisible(list(confusion = confuse, importance = varimp, classfreq = classfreq))
 }

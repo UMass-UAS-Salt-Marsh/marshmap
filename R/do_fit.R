@@ -160,7 +160,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
    
-   browser()
+#   browser()
 
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
       blocks$block <- paste0('_', sub('^_', '', blocks$block))                            #    be agnostic to leading underscores in block names
@@ -242,16 +242,14 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    message('Elapsed time for training = ',  as.duration(round(interval(a, Sys.time()))))
    
    
-   levs <- union(levels(y), levels(validate$subclass))                                    # --- confusion matrix. Make sure both groups share factor levels!
+   levs <- union(levels(droplevels(y)), levels(droplevels(validate$subclass)))            # --- confusion matrix. Make sure both groups share factor levels!
    levs <- levs[order(as.numeric(levs))]
    
-   pred <- factor(validate$subclass, levels = levs)
-   test <- factor(y, levels = levs)
+   valid <- factor(validate$subclass, levels = levs)                                      # validation data
+   test <- factor(y, levels = levs)                                                       # predictions
    
    
-   browser()
-   
-   confuse <- unconfuse(confusionMatrix(test, pred, mode = 'prec_recall'))
+   confuse <- unconfuse(confusionMatrix(test, valid, mode = 'prec_recall'))
    
    
    f <- assess(model = list(fit = z, confuse = confuse, nvalidate = dim(validate)[1], 
