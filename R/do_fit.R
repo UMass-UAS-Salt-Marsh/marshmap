@@ -75,6 +75,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
       }
    }
    
+   
    l <- 1:max(r$subclass)                                                                 # make sure all subclasses are represented in factor so value = subclass
    if(auc)                                                                                # if preparing data for AUC, 
       r$subclass <- factor(r$subclass, levels = l, labels = paste0('class', l))           #    we can't use numbers for factors when doing classProbs in training
@@ -150,21 +151,19 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
          r <- r[base::sample(dim(r)[1], size = max_samples, replace = FALSE), ]           #       subsample points
    
    
-   
-   
-   
-   blks <- r[, b <- grepl('^_', names(r))]                                                # pull out any blocks vars
+      blks <- r[, b <- grepl('^_', names(r))]                                                # pull out any blocks vars
    r <- r[, !b]
    
-   
-   
+
    n_partitions <- switch(method, 
                           'rf' = 1,                                                       # random forest uses a single validation set,
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
    
+   browser()
+
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
-      blocks$block <- paste0('_', sub('^_', '', blocks$block))                                #    be agnostic to leading underscores in block names
+      blocks$block <- paste0('_', sub('^_', '', blocks$block))                            #    be agnostic to leading underscores in block names
       validate <- r[b <- blks[[blocks$block]] %in% blocks$classes, ]                      #    pull out selected blocks for validation and drop block variables
       training <- r[!b, ]
       message('Using block holdouts: ', nrow(training), ' cases in training set and ', nrow(validate), ' cases in validation set')
@@ -207,6 +206,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
           }
    )  
    
+   
    # tuning ...
    
    training <- training[complete.cases(training), ]                                       # only use complete cases   ....................... *** Sep 2025: try dropping this and see if na.action = 'na.learn' works now
@@ -248,13 +248,10 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    pred <- factor(validate$subclass, levels = levs)
    test <- factor(y, levels = levs)
    
-   confuse <- unconfuse(confusionMatrix(pred, test, mode = 'prec_recall'))
    
-   # xxx <<- validate
-   # yyy <<- y
-   # 
-   # browser()
-   # confuse <- unconfuse(confusionMatrix(validate$subclass, y, mode = 'prec_recall'))
+   browser()
+   
+   confuse <- unconfuse(confusionMatrix(test, pred, mode = 'prec_recall'))
    
    
    f <- assess(model = list(fit = z, confuse = confuse, nvalidate = dim(validate)[1], 

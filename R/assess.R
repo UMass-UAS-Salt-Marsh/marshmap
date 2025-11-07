@@ -114,11 +114,11 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
    }
    
    confuse <- model$confuse
-   
-   if(!is.null(newdata)) {                                           # if new data have been passed,
+   browser()
+   if(!is.null(newdata)) {                                           # if new data have been passed,        ----this section hasn't been tested yet----
       y <- stats::predict(model, newdata = newdata)                  #    we'l work with it
       model$nvalidate <- nrow(newdata)                               #    update number of validation cases
-      confuse <- unconfuse(confusionMatrix(newdata$subclass, y, 
+      confuse <- unconfuse(confusionMatrix(y, newdata$subclass, 
                                            mode = 'prec_recall'))    #    and build the new confusion matrix
    }
    

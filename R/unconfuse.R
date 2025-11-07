@@ -27,11 +27,11 @@ unconfuse <- function(confuse, auc = TRUE, fit = NULL) {
       n <- as.numeric(sub('[a-zA-Z]*(\\d+)$', '\\1', classes))                   #    pull the numbers
       s <- order(n)
       
-      colnames(confuse$table) <- n                                           #    use numbers for names in confusion matrix
+      colnames(confuse$table) <- n                                               #    use numbers for names in confusion matrix
       rownames(confuse$table) <- n
-      confuse$table <- confuse$table[s, s]                               #    and sort it numerically
+      confuse$table <- confuse$table[s, s]                                       #    and sort it numerically
    
-      rownames(confuse$byClass) <- paste0('Class ', n)                       #    use numbers in byClass table
+      rownames(confuse$byClass) <- paste0('Class ', n)                           #    use numbers in byClass table
       confuse$byClass <- confuse$byClass[s, ]
    }
    
