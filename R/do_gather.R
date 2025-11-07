@@ -238,22 +238,22 @@ do_gather <- function(site, pattern = '',
       }
       
       
-      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                   #----Read blocks shapefiles from local drive, correct projection assumed
-      if(dir.exists(bd)) {                                                       #    if the blocks directory exists, have a look
+      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                      #----Read blocks shapefiles from local drive, correct projection assumed
+      if(dir.exists(bd)) {                                                          #    if the blocks directory exists, have a look
          
          blocks <- file.path(bd, list.files(bd, pattern = '.shp$', 
                                             ignore.case = TRUE))
-         for(block in blocks) {                                                  #    for each blocks shapefile, see if raster exists and is up to date,
+         for(block in blocks) {                                                     #    for each blocks shapefile, see if raster exists and is up to date,
             s <- file.mtime(block)
             skip <- FALSE
             if(exists(gn <- paste0(file_path_sans_ext(block), '.tif')))
                if(s <= file.mtime(gn))
                   skip <- TRUE
-            if(!skip) {                                                       #    if not, process it
+            if(!skip) {                                                             #    if not, process it
                message('Processing blocks file ', block, '...')
-               suppressWarnings(rasterize(vect(block), standard,              #       mask gives a bogus warning that CRS do not match
-                                          field = 'block')$block |>           #       convert it to raster
-                                   crop(footprint) |>                            #       crop, mask, and write
+               suppressWarnings(rasterize(vect(block), standard,                    #       mask gives a bogus warning that CRS do not match
+                                          field = 'block')$block |>                 #       convert it to raster
+                                   crop(footprint) |>                               #       crop, mask, and write
                                    mask(footprint) |>
                                    writeRaster(gn, overwrite = TRUE,
                                                datatype = type, NAflag = missing))
