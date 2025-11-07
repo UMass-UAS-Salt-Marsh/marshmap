@@ -1,0 +1,126 @@
+# Fit models
+
+Fit models
+
+## Usage
+
+``` r
+do_fit(
+  fitid,
+  sites,
+  name,
+  method,
+  vars,
+  exclude_vars,
+  exclude_classes,
+  reclass,
+  max_samples,
+  years,
+  minscore,
+  maxmissing,
+  max_miss_train,
+  top_importance,
+  holdout,
+  blocks,
+  auc,
+  hyper,
+  rep = NULL
+)
+```
+
+## Arguments
+
+- fitid:
+
+  Fit id in the fits database
+
+- sites:
+
+  Data frame with `site` (3 letter code), `site_name` (long name), and
+  `datafile` (resolved path and filename of datafile). Sites, paths, and
+  filenames are vetted by fit - there's no checking here.
+
+- name:
+
+  Optional model name
+
+- method:
+
+  One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
+
+- vars:
+
+  Vector of variables to restrict analysis to. Default = `{*}`, all
+  variables. `vars` is processed by `find_orthos`, and may include file
+  names, portable names, search names and regular expressions of file
+  and portable names.
+
+- exclude_vars:
+
+  An optional vector of variables to exclude. As with `vars`, variables
+  are processed by `find_orthos`
+
+- exclude_classes:
+
+  Numeric vector of subclasses to exclude
+
+- reclass:
+
+  Vector of paired classes to reclassify, e.g.,
+  `reclass = c(13, 2, 3, 4)` would reclassify all 13s to 2 and 4s to 3,
+  lumping each pair of classes.
+
+- max_samples:
+
+  Maximum number of samples to use - subsample if necessary
+
+- years:
+
+  Vector of years to restrict variables to
+
+- minscore:
+
+  Minimum score for orthos. Files with a minimum score of less than this
+  are excluded from results. Default is 0, but rejected orthos are
+  always excluded.
+
+- maxmissing:
+
+  Maximum percent missing in orthos. Files with percent missing greater
+  than this are excluded.
+
+- max_miss_train:
+
+  Maximum proportion of missing training points allowed before a
+  variable is dropped
+
+- top_importance:
+
+  Number of variables to keep for variable importance
+
+- holdout:
+
+  Proportion of points to hold out. For Random Forest, this specifies
+  the size of the single validation set, while for boosting, it is the
+  size of each of the testing and validation sets.
+
+- blocks:
+
+  An alternative to holding out random points. Specify a named list with
+  `block = <name of block column>, classes = <vector of block classes to hold out>`.
+  Set this up by creating a shapefile corresponding to ground truth data
+  with a variable `block` that contains integer block classes, and
+  placing it in the `blocks/` directory for the site. `gather` and
+  `sample` will collect and process block data for you to use here.
+
+- auc:
+
+  If TRUE, calculate class probabilities so we can calculate AUC
+
+- hyper:
+
+  Hyperparameters ***To be defined***
+
+- rep:
+
+  Throwaway argument to make `slurmcollie` happy
