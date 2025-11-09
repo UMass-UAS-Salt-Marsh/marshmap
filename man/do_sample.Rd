@@ -30,7 +30,7 @@ selecting files to sample. See Image naming in
 \href{https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md}{README}
 for details.W}
 
-\item{n}{Number of total samples to return.}
+\item{n}{Number of total samples to return (up to number available).}
 
 \item{p}{Proportion of total samples to return. Use p = 1 to sample all.}
 

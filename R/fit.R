@@ -82,7 +82,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    resources <- get_resources(resources, list(
       ncpus = 10,                                        
-      memory = 200,
+      memory = 16,
       walltime = '05:00:00'                              # I timed out a couple at 5 hours, but that was with 250k cases--way too many
    ))
    

@@ -10,7 +10,7 @@
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md) 
 #'    for details.W
-#' @param n Number of total samples to return.
+#' @param n Number of total samples to return (up to number available).
 #' @param p Proportion of total samples to return. Use p = 1 to sample all.
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
 #' @param classes Class or vector of classes in transects to sample. Default is all
@@ -138,7 +138,7 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       write.table(z, f <- file.path(sd, paste0(result, '_all.txt')), 
                   sep = '\t', quote = FALSE, row.names = FALSE, na = '')
       saveRDS(z, f2 <- file.path(sd, paste0(result, '_all.RDS')))
-      message('Complete dataset saved to ', f, ' and ', f2)
+      message('Complete dataset saved to ', f, ' and ', f2, ' (n = ', format(nrow(z), big.mark = ','), ')')
    }
    
    
@@ -146,6 +146,10 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       counts <- table(z$subclass)
       if(!is.null(balance_excl))
          message('Excluding ', length(balance_excl), ' classes from balancing')
+      else
+         message('Balance exclusion is off. Minimum class sample size is ', min(counts), '.')
+      message('Cases by class')
+      print(counts)
       counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classes in balance_excl
       target_n <- min(counts)
       
@@ -155,6 +159,8 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
          data.frame()                                                               #    and cure tidyverse infection
       
       names(z) <- sub('^X_', '_', names(z))                                         #    undo tidyverse shitting on my column names
+      
+      message('Balancing has reduced dataset from ', format(sum(counts), big.mark = ','), ' cases to ', format(nrow(z), big.mark = ','), ' cases')
    }
    
    if(!is.null(d))                                                                  #    if sampling by mean distance,
@@ -163,12 +169,13 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
    if(!is.null(p))                                                                  #    if sampling by proportion,
       n <- p * dim(z)[1]                                                            #       set n to proportion
    
-   z <- z[base::sample(dim(z)[1], size = n, replace = FALSE), ]                     #    sample points
+
+   z <- z[base::sample(nrow(z), size = min(n, nrow(z)), replace = FALSE), ]         #    sample up to n points
    
    
    if(!is.null(drop_corr)) {                                                        #----drop_corr option: drop correlated variables
       cat('Correlations before applying drop_corr:\n')
-      corr <- cor(z, use = 'pairwise.complete.obs')
+      corr <- cor(z, use = 'pairwise.compldim(ete.obs')
       print(summary(corr[upper.tri(corr)]))
       c <- findCorrelation(corr, cutoff = drop_corr)
       z <- z[, -c]
@@ -188,5 +195,5 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
    write.table(x, file.path(sd, paste0(result, '_vars.txt')), 
                sep = '\t', quote = FALSE, row.names = FALSE, na  = '')
    
-   message('Sampled dataset saved to ', f, ' and ', f2)
+   message('Sampled dataset saved to ', f, ' and ', f2, ' (n = ', format(nrow(z), big.mark = ','), ')')
 }

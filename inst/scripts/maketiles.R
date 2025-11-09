@@ -16,5 +16,5 @@ tiles <- st_transform(tiles_m, crs(ground))
 
 plot(tiles)
 
-tiles$block <- seq_len(length(tiles))
+#tiles$block <- seq_len(length(tiles))
 st_write(tiles, file.path(rpath, result), append = FALSE)

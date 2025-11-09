@@ -114,9 +114,9 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    }
    
    
-   if(is.null(exclude_classes)) {                        # if exclude_classes is supplied, use it
+   if(is.null(exclude_classes)) {                                                         # if exclude_classes is supplied, use it
       x <- as.numeric(unlist
-                      (strsplit(sites$fit_exclude, ','))) #    otherwise, get it from sites.txt
+                      (strsplit(sites$fit_exclude, ',')))                                 #    otherwise, get it from sites.txt
       if(length(x) != 0)
          exclude_classes <- x
    }
@@ -159,8 +159,6 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
                           'rf' = 1,                                                       # random forest uses a single validation set,
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
-   
- # browser()
    
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
       message('Using blocks ', blocks$block, ', classes ', paste(blocks$classes, collapse = ', '), ' for holdout set')

@@ -32,7 +32,7 @@
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md) 
 #'    for details. The default is `{*}`, which will include all variables.
-#' @param n Number of total samples to return.
+#' @param n Number of total samples to return (up to number available).
 #' @param p Proportion of total samples to return. Use p = 1 to sample all.
 #' @param d Mean distance in cells between samples. No minimum spacing is guaranteed.
 #' @param classes Class or vector of classes in transects to sample. Default is all
