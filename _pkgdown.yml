@@ -36,6 +36,7 @@ reference:
   - init
   - build_flights_db
   - find_orthos
+  - maketiles
 
 - title: slurmcollie functions
   desc: These functions are part of the [slurmcollie](https://github.com/UMassCDS/slurmcollie) 
