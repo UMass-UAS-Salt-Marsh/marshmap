@@ -198,9 +198,12 @@ do_gather <- function(site, pattern = '',
                   message('         !!! Reprojecting ', basename(tpath))
                   shp <- st_transform(shp, crs = 4326)
                }
+         
                
+               names(shp)[grep('subclass', names(shp), ignore.case = TRUE)] <- 'subclass'       #       make subclass lower-case, no matter what it is
                
-               names(shp)[grep('subclass', names(shp), ignore.case = TRUE)] <- 'subclass'       # make subclass lower-case, no matter what it is
+               if(is.character(shp$subclass))                                       #       if subclass is character, turn it into damn numbers!
+                  shp$subclass <- as.numeric(shp$subclass)
                
                u <- sort(unique(shp$subclass))
                bad <- u[!u %in% read_pars_table('classes')$subclass]
@@ -246,7 +249,7 @@ do_gather <- function(site, pattern = '',
          for(block in blocks) {                                                     #    for each blocks shapefile, see if raster exists and is up to date,
             s <- file.mtime(block)
             skip <- FALSE
-            if(exists(gn <- paste0(file_path_sans_ext(block), '.tif')))
+            if(file.exists(gn <- paste0(file_path_sans_ext(block), '.tif')))
                if(s <= file.mtime(gn))
                   skip <- TRUE
             if(!skip) {                                                             #    if not, process it

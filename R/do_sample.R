@@ -150,9 +150,11 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
          message('Balance exclusion is off. Minimum class sample size is ', min(counts), '.')
       message('Cases by class')
       print(counts)
+      message('')
+      
       counts <- counts[!as.numeric(names(counts)) %in% balance_excl]                #    excluding classes in balance_excl
       target_n <- min(counts)
-      
+      message('Balancing to ', format(min(counts), big.mark = ','), ' per class')
       
       z <- group_by(z, subclass) |>
          slice_sample(n = target_n) |>                                              #    take minimum subclass n for every class
@@ -161,6 +163,7 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       names(z) <- sub('^X_', '_', names(z))                                         #    undo tidyverse shitting on my column names
       
       message('Balancing has reduced dataset from ', format(sum(counts), big.mark = ','), ' cases to ', format(nrow(z), big.mark = ','), ' cases')
+      message('')
    }
    
    if(!is.null(d))                                                                  #    if sampling by mean distance,
