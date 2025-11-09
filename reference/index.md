@@ -58,6 +58,8 @@ Uncommonly-used utility functions.
   : Build or update the flights database
 - [`find_orthos()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/find_orthos.md)
   : Find orthophotos for a site
+- [`maketiles()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/maketiles.md)
+  : Create tiles with numbered blocks
 
 ## slurmcollie functions
 

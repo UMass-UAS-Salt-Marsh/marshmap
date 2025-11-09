@@ -46,7 +46,7 @@ sample(
 
 - n:
 
-  Number of total samples to return.
+  Number of total samples to return (up to number available).
 
 - p:
 
