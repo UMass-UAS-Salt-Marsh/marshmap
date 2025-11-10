@@ -8,7 +8,7 @@ Display model specification, assessment, and run statistics.
 fitinfo(
   rows = "all",
   cols = "normal",
-  report = NULL,
+  report = FALSE,
   sort = "id",
   decreasing = FALSE,
   nrows = NA,
@@ -60,8 +60,7 @@ fitinfo(
 - report:
 
   If TRUE, give a report (on a single fit); otherwise, list info on
-  fits. If rows is a numeric scalar, report defaults to TRUE; otherwise
-  FALSE.
+  fits.
 
 - sort:
 
@@ -105,7 +104,6 @@ The fit table or assessment, invisibly
 - `fitinfo(rows = <selected rows>, cols = <selected columns>)` displays
   a table of selected rows and columns
 
-- `fitinfo(rows = <a single row>)` *or*
-  `fitinfo(rows = ..., report = TRUE)` displays a report for the
+- `fitinfo(rows = ..., report = TRUE)` displays a report for the
   selected fit id, focusing on the model assessment (the same
-  information in the `fit` log)
+  information in the `fit` log), also available with `assess(fitid)`

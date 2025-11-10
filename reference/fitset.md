@@ -5,16 +5,25 @@
       fitset(rows = <a single row>, score = <fit score>)
       fitset(rows = <a single row>, assess = 'an assessment comment')
       fitset(rows = <a single row>, map = 'a map comment')
+      fitset(rows = <a single row>, launch = 'launch comment')
 
   sets the subjective model fit score, the assessment. comment, or the
-  map comment. Any of these may be combined in a single call. Note that
-  you can use `fitset` on multiple fits, but you'll need to use
+  map comment. You can also reset the launch comment, which was set at
+  launch. Any of these may be combined in a single call. Note that you
+  can use `fitset` on multiple fits, but you'll need to use
   `multiple = TRUE`.
 
 ## Usage
 
 ``` r
-fitset(rows, score = NULL, assess = NULL, map = NULL, multiple = FALSE)
+fitset(
+  rows,
+  score = NULL,
+  assess = NULL,
+  map = NULL,
+  launch = NULL,
+  multiple = FALSE
+)
 ```
 
 ## Arguments
@@ -44,6 +53,11 @@ fitset(rows, score = NULL, assess = NULL, map = NULL, multiple = FALSE)
 - map:
 
   Sets the map comment in the fits database
+
+- launch:
+
+  Sets the launch comment in the fits database, replacing the comment
+  set at launch
 
 - multiple:
 

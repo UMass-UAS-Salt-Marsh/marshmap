@@ -240,6 +240,8 @@ These functions report data and model status.
   data
 - [`importance()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/importance.md)
   : Produce a summary of variable importance across multiple fits
+- [`sampleinfo()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/sampleinfo.md)
+  : Give summary of sample data file
 
 ## Utility functions
 

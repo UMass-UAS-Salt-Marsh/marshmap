@@ -46,9 +46,11 @@ cover and report model assessment.</p>
 <span>  datafile <span class="op">=</span> <span class="st">"data"</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"rf"</span>,</span>
+<span>  fitargs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vars <span class="op">=</span> <span class="st">"{*}"</span>,</span>
 <span>  exclude_vars <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  exclude_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  min_class <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  reclass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  max_samples <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,6 +91,10 @@ shared among sites, or a vector matching site.</p></dd>
 <dd><p>One of <code>rf</code> for Random Forest, <code>boost</code> for AdaBoost. Default = <code>rf</code>.</p></dd>
 
 
+<dt id="arg-fitargs">fitargs<a class="anchor" aria-label="anchor" href="#arg-fitargs"></a></dt>
+<dd><p>A named list of additional arguments to pass to the model (<code>ranger</code> or <code>boost</code>)</p></dd>
+
+
 <dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
 <dd><p>Vector of variables to restrict analysis to. Default = <code>{*}</code>,
 all variables. <code>vars</code> is processed by <code>find_orthos</code>, and may include file names,
@@ -104,9 +110,16 @@ are processed by <code>find_orthos</code></p></dd>
 <dd><p>Numeric vector of subclasses to exclude</p></dd>
 
 
+<dt id="arg-min-class">min_class<a class="anchor" aria-label="anchor" href="#arg-min-class"></a></dt>
+<dd><p>Minimum number of training samples to allow in a class. All classes with
+fewer samples in training set as well as all classes with zero cases in the
+validation set will be dropped from the model. Use <code>min_class = NULL</code> to prevent
+dropping any classes.</p></dd>
+
+
 <dt id="arg-reclass">reclass<a class="anchor" aria-label="anchor" href="#arg-reclass"></a></dt>
 <dd><p>Vector of paired classes to reclassify, e.g., <code>reclass = c(13, 2, 3, 4)</code>
-would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.</p></dd>
+would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.</p></dd>
 
 
 <dt id="arg-max-samples">max_samples<a class="anchor" aria-label="anchor" href="#arg-max-samples"></a></dt>

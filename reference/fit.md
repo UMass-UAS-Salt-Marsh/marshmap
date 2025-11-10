@@ -11,9 +11,11 @@ fit(
   datafile = "data",
   name = "",
   method = "rf",
+  fitargs = NULL,
   vars = "{*}",
   exclude_vars = "",
   exclude_classes = NULL,
+  min_class = 500,
   reclass = c(13, 2),
   max_samples = NULL,
   years = NULL,
@@ -53,6 +55,11 @@ fit(
 
   One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
 
+- fitargs:
+
+  A named list of additional arguments to pass to the model (`ranger` or
+  `boost`)
+
 - vars:
 
   Vector of variables to restrict analysis to. Default = `{*}`, all
@@ -69,10 +76,17 @@ fit(
 
   Numeric vector of subclasses to exclude
 
+- min_class:
+
+  Minimum number of training samples to allow in a class. All classes
+  with fewer samples in training set as well as all classes with zero
+  cases in the validation set will be dropped from the model. Use
+  `min_class = NULL` to prevent dropping any classes.
+
 - reclass:
 
   Vector of paired classes to reclassify, e.g.,
-  `reclass = c(13, 2, 3, 4)` would reclassify all 13s to 2 and 4s to 3,
+  `reclass = c(13, 2, 3, 4)` would reclassify all 13s to 2 and 3s to 4,
   lumping each pair of classes.
 
 - max_samples:

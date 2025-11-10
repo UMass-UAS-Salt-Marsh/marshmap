@@ -5,9 +5,11 @@ Any of
 fitset(rows = &amp;lt;a single row&amp;gt;, score = &amp;lt;fit score&amp;gt;)
 fitset(rows = &amp;lt;a single row&amp;gt;, assess = 'an assessment comment')
 fitset(rows = &amp;lt;a single row&amp;gt;, map = 'a map comment')
+fitset(rows = &amp;lt;a single row&amp;gt;, launch = 'launch comment')
 
 sets the subjective model fit score, the assessment. comment, or the map
-comment. Any of these may be combined in a single call. Note that you can
+comment. You can also reset the launch comment, which was set at launch.
+Any of these may be combined in a single call. Note that you can
 use fitset on multiple fits, but you'll need to use multiple = TRUE.
 
 "><meta property="og:description" content="
@@ -16,9 +18,11 @@ Any of
 fitset(rows = &amp;lt;a single row&amp;gt;, score = &amp;lt;fit score&amp;gt;)
 fitset(rows = &amp;lt;a single row&amp;gt;, assess = 'an assessment comment')
 fitset(rows = &amp;lt;a single row&amp;gt;, map = 'a map comment')
+fitset(rows = &amp;lt;a single row&amp;gt;, launch = 'launch comment')
 
 sets the subjective model fit score, the assessment. comment, or the map
-comment. Any of these may be combined in a single call. Note that you can
+comment. You can also reset the launch comment, which was set at launch.
+Any of these may be combined in a single call. Note that you can
 use fitset on multiple fits, but you'll need to use multiple = TRUE.
 
 "></head><body>
@@ -59,15 +63,24 @@ use fitset on multiple fits, but you'll need to use multiple = TRUE.
 <ul><li><p>Any of</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">fitset</span>(<span class="at">rows =</span> <span class="sc">&lt;</span>a single row<span class="sc">&gt;</span>, <span class="at">score =</span> <span class="sc">&lt;</span>fit score<span class="sc">&gt;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">fitset</span>(<span class="at">rows =</span> <span class="sc">&lt;</span>a single row<span class="sc">&gt;</span>, <span class="at">assess =</span> <span class="st">'an assessment comment'</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">fitset</span>(<span class="at">rows =</span> <span class="sc">&lt;</span>a single row<span class="sc">&gt;</span>, <span class="at">map =</span> <span class="st">'a map comment'</span>)</span></code></pre><p></p></div>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">fitset</span>(<span class="at">rows =</span> <span class="sc">&lt;</span>a single row<span class="sc">&gt;</span>, <span class="at">map =</span> <span class="st">'a map comment'</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">fitset</span>(<span class="at">rows =</span> <span class="sc">&lt;</span>a single row<span class="sc">&gt;</span>, <span class="at">launch =</span> <span class="st">'launch comment'</span>)</span></code></pre><p></p></div>
 <p>sets the subjective model fit score, the assessment. comment, or the map
-comment. Any of these may be combined in a single call. Note that you can
+comment. You can also reset the launch comment, which was set at launch.
+Any of these may be combined in a single call. Note that you can
 use <code>fitset</code> on multiple fits, but you'll need to use <code>multiple = TRUE</code>.</p></li>
 </ul></div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fitset</span><span class="op">(</span><span class="va">rows</span>, score <span class="op">=</span> <span class="cn">NULL</span>, assess <span class="op">=</span> <span class="cn">NULL</span>, map <span class="op">=</span> <span class="cn">NULL</span>, multiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fitset</span><span class="op">(</span></span>
+<span>  <span class="va">rows</span>,</span>
+<span>  score <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assess <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  map <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  launch <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  multiple <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -94,6 +107,11 @@ or character; it'll be treated as a character.</p></dd>
 
 <dt id="arg-map">map<a class="anchor" aria-label="anchor" href="#arg-map"></a></dt>
 <dd><p>Sets the map comment in the fits database</p></dd>
+
+
+<dt id="arg-launch">launch<a class="anchor" aria-label="anchor" href="#arg-launch"></a></dt>
+<dd><p>Sets the launch comment in the fits database, replacing the comment
+set at launch</p></dd>
 
 
 <dt id="arg-multiple">multiple<a class="anchor" aria-label="anchor" href="#arg-multiple"></a></dt>
