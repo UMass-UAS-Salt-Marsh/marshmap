@@ -1,6 +1,6 @@
 #' Create a frequency table of number of cells by subclass from field data
 #' 
-#' Create a frequency table of number of cells by subclass from field data for one or more
+#' Create a frequency table of number of cells by subclass in field data geoTIFF for one or more
 #' sites. Results are written to the reports directory as `sample_freq_<site>.txt`. 
 #' 
 #' Always runs locally. Takes about a minute per site.

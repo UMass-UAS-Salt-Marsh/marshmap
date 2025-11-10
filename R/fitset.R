@@ -5,9 +5,11 @@
 #'    fitset(rows = <a single row>, score = <fit score>)
 #'    fitset(rows = <a single row>, assess = 'an assessment comment')
 #'    fitset(rows = <a single row>, map = 'a map comment')
+#'    fitset(rows = <a single row>, launch = 'launch comment')
 #'    ```
 #'    sets the subjective model fit score, the assessment. comment, or the map
-#'    comment. Any of these may be combined in a single call. Note that you can
+#'    comment. You can also reset the launch comment, which was set at launch.
+#'    Any of these may be combined in a single call. Note that you can
 #'    use `fitset` on multiple fits, but you'll need to use `multiple = TRUE`.
 #' 
 #' 
@@ -21,11 +23,13 @@
 #'    or character; it'll be treated as a character.
 #' @param assess Sets the assessment comment in the fits database
 #' @param map Sets the map comment in the fits database
+#' @param launch Sets the launch comment in the fits database, replacing the comment
+#'    set at launch
 #' @param multiple If TRUE, allows applying to multiple fits
 #' @export
 
 
-fitset <- function(rows, score = NULL, assess = NULL, map = NULL, multiple = FALSE) {
+fitset <- function(rows, score = NULL, assess = NULL, map = NULL, launch = NULL, multiple = FALSE) {
    
    
    load_database('fdb')                         # Get fit database
@@ -52,6 +56,9 @@ fitset <- function(rows, score = NULL, assess = NULL, map = NULL, multiple = FAL
       
    if(!is.null(map))
       the$fdb$comment_map[sel] <- map
+   
+   if(!is.null(launch))
+      the$fdb$comment_launch[sel] <- launch
    
    save_database('fdb')
    

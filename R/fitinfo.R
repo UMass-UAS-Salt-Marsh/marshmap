@@ -109,10 +109,10 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
    if(cols[1] != 'all') {
       if(cols[1] %in% c('brief', 'normal', 'long', 'all'))
          cols <- switch(cols,
-                        brief = c('id', 'name', 'site', 'status', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'comment_launch'),
-                        normal = c('id', 'name', 'site', 'status', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
+                        brief = c('id', 'name', 'site', 'status', 'error', 'vars', 'cases', 'CCR', 'kappa', 'comment_launch'),
+                        normal = c('id', 'name', 'site', 'launched', 'status', 'error', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
                                    'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map'),
-                        long = c('id', 'name', 'site', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
+                        long = c('id', 'name', 'site', 'launched', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
                                  'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map', 'call'),
          )
       z <- z[, c(setdiff(c('id', 'site'), cols), cols), drop = FALSE]                  # always include id and site
