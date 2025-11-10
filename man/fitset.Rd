@@ -4,7 +4,14 @@
 \alias{fitset}
 \title{Set model scores and comments}
 \usage{
-fitset(rows, score = NULL, assess = NULL, map = NULL, multiple = FALSE)
+fitset(
+  rows,
+  score = NULL,
+  assess = NULL,
+  map = NULL,
+  launch = NULL,
+  multiple = FALSE
+)
 }
 \arguments{
 \item{rows}{Selected rows in the fits database. Use one of
@@ -23,6 +30,9 @@ or character; it'll be treated as a character.}
 
 \item{map}{Sets the map comment in the fits database}
 
+\item{launch}{Sets the launch comment in the fits database, replacing the comment
+set at launch}
+
 \item{multiple}{If TRUE, allows applying to multiple fits}
 }
 \description{
@@ -32,10 +42,12 @@ or character; it'll be treated as a character.}
 \if{html}{\out{<div class="sourceCode">}}\preformatted{fitset(rows = <a single row>, score = <fit score>)
 fitset(rows = <a single row>, assess = 'an assessment comment')
 fitset(rows = <a single row>, map = 'a map comment')
+fitset(rows = <a single row>, launch = 'launch comment')
 }\if{html}{\out{</div>}}
 
 sets the subjective model fit score, the assessment. comment, or the map
-comment. Any of these may be combined in a single call. Note that you can
+comment. You can also reset the launch comment, which was set at launch.
+Any of these may be combined in a single call. Note that you can
 use \code{fitset} on multiple fits, but you'll need to use \code{multiple = TRUE}.
 }
 }

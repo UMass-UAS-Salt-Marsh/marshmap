@@ -71,7 +71,7 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
    
    resources <- get_resources(resources, list(
       ncpus = 1,                                               # I'm seeing up to 17 GB, less than 3 min
-      memory = 32,
+      memory = 64,
       walltime = '02:00:00'
    ))
    

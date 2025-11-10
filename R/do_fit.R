@@ -6,14 +6,19 @@
 #'    are vetted by fit - there's no checking here.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
+#' @param fitargs A named list of additional arguments to pass to the model (`ranger` or `boost`)
 #' @param vars Vector of variables to restrict analysis to. Default = `{*}`, 
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
 #' @param exclude_classes Numeric vector of subclasses to exclude
+#' @param min_class Minimum number of training samples to allow in a class. All classes with
+#'    fewer samples in training set as well as all classes with zero cases in the
+#'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
+#'    dropping any classes.
 #' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
-#'    would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.
+#'    would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.
 #' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years Vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
@@ -44,8 +49,8 @@
 #' @export
 
 
-do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_classes, 
-                   reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
+do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, 
+                   min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
                    top_importance, holdout, blocks, auc, hyper, rep = NULL) {
    
    
@@ -69,7 +74,7 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    
    if(!is.null(reclass)) {                                                                # if reclassifying,
       rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
-      for(i in nrow(rcl)) {
+      for(i in seq_along(nrow(rcl))) {
          r$subclass[r$subclass == rcl[i, 1]] <- rcl[i, 2]
          message('Subclass ', rcl[i, 1], ' reclassified as ', rcl[i, 2])
       }
@@ -187,6 +192,20 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    }
    
    
+   if(!is.null(min_class)) {                                                              # if we're dropping depauperate classes, 
+      tt <- table(training$subclass)
+      vt <- table(validate$subclass)
+      
+      drop <- sort(union(as.numeric(names(tt[tt < min_class])), as.numeric(names(vt[vt == 0]))))
+      dropped <- setdiff(drop, as.numeric(names(tt)[tt == 0 & vt == 0]))
+      training <- training[!training$subclass %in% drop, ]
+      validate <- validate[!validate$subclass %in% drop, ]
+      
+      if(length(dropped != 0))
+         message('Dropping classes ', paste(dropped, collapse = ', '), ' thanks to min_class')
+   }
+   
+   
    switch(method, 
           'rf' = {
              meth <- 'ranger'
@@ -225,7 +244,11 @@ do_fit <- function(fitid, sites, name, method, vars, exclude_vars, exclude_class
    
    
    a <- Sys.time()
-   z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
+   #z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
+   
+   args <- list(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')            #---train the model     WILL THIS WORK???
+   do.call(train, c(args, fitargs))
+   
    
    ####   z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, , importance = "permutation", local.importance = TRUE)             #---train the model     ***************************** with local importance**********************
    

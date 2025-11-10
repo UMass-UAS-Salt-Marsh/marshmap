@@ -139,5 +139,6 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          writeRaster(z, f <- file.path(path, paste0(result, '.tif')), overwrite = TRUE, 
                      datatype = type, NAflag = missing)
          message('Saved ', f)
+         z <- x <- y <- ndvi <- NULL                                                      # free up memory
       }
 }

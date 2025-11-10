@@ -5,9 +5,9 @@
 #' `fitinfo` works in two different modes:
 #'  - `fitinfo(rows = <selected rows>, cols = <selected columns>)` displays a table 
 #'     of selected rows and columns
-#'  - `fitinfo(rows = <a single row>)` *or* `fitinfo(rows = ..., report = TRUE)` displays 
+#'  - `fitinfo(rows = ..., report = TRUE)` displays 
 #'    a report for the selected fit id, focusing on the model assessment (the same 
-#'    information in the `fit` log)
+#'    information in the `fit` log), also available with `assess(fitid)`
 #'
 #' @param rows Selected rows in the fits database. Use one of
 #'  - a vector of `fitids`
@@ -29,7 +29,6 @@
 #' explicitly in `cols`, or use `cols = 'all'` and `include_model = TRUE` to include all three of these.
 #'
 #' @param report If TRUE, give a report (on a single fit); otherwise, list info on fits. 
-#'    If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.
 #' @param sort The name of the column to be used to sort the table
 #' @param decreasing If TRUE, sort in descending order
 #' @param nrows Number of rows to display in the table. Positive numbers
@@ -45,7 +44,7 @@
 #' @export
 
 
-fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
+fitinfo <- function(rows = 'all', cols = 'normal', report = FALSE,
                     sort = 'id', decreasing = FALSE, nrows = NA, 
                     include_model = FALSE, quiet = FALSE, purged = FALSE,
                     timezone = 'America/New_York') {
@@ -72,10 +71,7 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = NULL,
       return(invisible())
    }
    
-   if(is.null(report))
-      report <- nrow(z) == 1
-   
-   
+
    if(!is.na(nrows)) {                                                                 # display just selected rows
       if(nrows > 0)
          z <- z[1:nrows, ]

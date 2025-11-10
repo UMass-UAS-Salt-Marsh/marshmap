@@ -9,14 +9,19 @@
 #'   shared among sites, or a vector matching site.
 #' @param name Optional model name
 #' @param method One of `rf` for Random Forest, `boost` for AdaBoost. Default = `rf`.
+#' @param fitargs A named list of additional arguments to pass to the model (`ranger` or `boost`)
 #' @param vars Vector of variables to restrict analysis to. Default = `{*}`, 
 #'    all variables. `vars` is processed by `find_orthos`, and may include file names, 
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
 #' @param exclude_classes Numeric vector of subclasses to exclude
+#' @param min_class Minimum number of training samples to allow in a class. All classes with
+#'    fewer samples in training set as well as all classes with zero cases in the
+#'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
+#'    dropping any classes.
 #' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
-#'    would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.
+#'    would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.
 #' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years Vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
@@ -50,8 +55,9 @@
 
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
+                fitargs = NULL,
                 vars = '{*}', exclude_vars = '', exclude_classes = NULL, 
-                reclass = c(13, 2), max_samples = NULL, years = NULL, 
+                min_class = 500, reclass = c(13, 2), max_samples = NULL, years = NULL, 
                 minscore = 0, maxmissing = 20, max_miss_train = 0.20, 
                 top_importance = 20, holdout = 0.2, blocks = NULL,
                 auc = FALSE, hyper = NULL, 
@@ -139,12 +145,12 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    
    launch('do_fit', 
-          moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method,
+          moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method, fitargs = fitargs,
                           vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
-                          reclass = reclass, max_samples = max_samples, years = years, minscore = minscore, 
-                          maxmissing = maxmissing, max_miss_train = max_miss_train, 
-                          top_importance = top_importance, holdout = holdout, blocks = blocks,
-                          auc = auc, hyper = hyper),
+                          min_class = min_class, reclass = reclass, max_samples = max_samples, 
+                          years = years, minscore = minscore, maxmissing = maxmissing, 
+                          max_miss_train = max_miss_train, top_importance = top_importance, 
+                          holdout = holdout, blocks = blocks, auc = auc, hyper = hyper),
           finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
 }

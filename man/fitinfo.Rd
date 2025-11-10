@@ -7,7 +7,7 @@
 fitinfo(
   rows = "all",
   cols = "normal",
-  report = NULL,
+  report = FALSE,
   sort = "id",
   decreasing = FALSE,
   nrows = NA,
@@ -42,8 +42,7 @@ Note that \code{model}, \code{full_model}, and \code{hyper} are normally omitted
 they tend to be really long and uninformative. If you want to see them, include them
 explicitly in \code{cols}, or use \code{cols = 'all'} and \code{include_model = TRUE} to include all three of these.}
 
-\item{report}{If TRUE, give a report (on a single fit); otherwise, list info on fits.
-If rows is a numeric scalar, report defaults to TRUE; otherwise FALSE.}
+\item{report}{If TRUE, give a report (on a single fit); otherwise, list info on fits.}
 
 \item{sort}{The name of the column to be used to sort the table}
 
@@ -73,8 +72,8 @@ Display model specification, assessment, and run statistics.
 \itemize{
 \item \verb{fitinfo(rows = <selected rows>, cols = <selected columns>)} displays a table
 of selected rows and columns
-\item \verb{fitinfo(rows = <a single row>)} \emph{or} \code{fitinfo(rows = ..., report = TRUE)} displays
+\item \code{fitinfo(rows = ..., report = TRUE)} displays
 a report for the selected fit id, focusing on the model assessment (the same
-information in the \code{fit} log)
+information in the \code{fit} log), also available with \code{assess(fitid)}
 }
 }

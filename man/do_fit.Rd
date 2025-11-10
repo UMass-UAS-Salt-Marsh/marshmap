@@ -9,9 +9,11 @@ do_fit(
   sites,
   name,
   method,
+  fitargs,
   vars,
   exclude_vars,
   exclude_classes,
+  min_class,
   reclass,
   max_samples,
   years,
@@ -37,6 +39,8 @@ are vetted by fit - there's no checking here.}
 
 \item{method}{One of \code{rf} for Random Forest, \code{boost} for AdaBoost. Default = \code{rf}.}
 
+\item{fitargs}{A named list of additional arguments to pass to the model (\code{ranger} or \code{boost})}
+
 \item{vars}{Vector of variables to restrict analysis to. Default = \verb{\{*\}},
 all variables. \code{vars} is processed by \code{find_orthos}, and may include file names,
 portable names, search names and regular expressions of file and portable names.}
@@ -46,8 +50,13 @@ are processed by \code{find_orthos}}
 
 \item{exclude_classes}{Numeric vector of subclasses to exclude}
 
+\item{min_class}{Minimum number of training samples to allow in a class. All classes with
+fewer samples in training set as well as all classes with zero cases in the
+validation set will be dropped from the model. Use \code{min_class = NULL} to prevent
+dropping any classes.}
+
 \item{reclass}{Vector of paired classes to reclassify, e.g., \code{reclass = c(13, 2, 3, 4)}
-would reclassify all 13s to 2 and 4s to 3, lumping each pair of classes.}
+would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.}
 
 \item{max_samples}{Maximum number of samples to use - subsample if necessary}
 
