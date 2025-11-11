@@ -13,15 +13,20 @@
 
 fit_finish <- function(jobid, status) {
    
-   print(paste0('Finishing ', jobid, ', ', status))
+   print(paste0('Finishing ', jobid, ', ', status))  ######### ***************************** drop this once I'm sure we're good
+   
+   
    
    jrow <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database (it's been loaded by info)
    
    load_database('fdb')
    frow <- match(slu$jdb$callerid[jrow], the$fdb$id)              # find our row in the fit database
    
-   if(is.na(frow))
-      stop('Fit id ', slu$jdb$callerid[jrow], ' (job ', jobid, ') is missing from the fits database')
+   
+   if(is.na(frow)) {
+      message('Fit id ', slu$jdb$callerid[jrow], ' (job ', jobid, ') is missing from the fits database')
+      return()
+   }
    
    
    # Copy log file

@@ -20,8 +20,11 @@
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
 #'    dropping any classes.
-#' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
-#'    would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.
+#' @param reclass Matrix or vector of paired classes to reclassify. Pass either a two column
+#'    matrix, such that values in the first column are reclassifed to the second column, or a 
+#'    vector with pairs, `reclass = c(13, 2, 3, 4)`, which would reclassify all 13s to 2 and 3s to 4, 
+#'    lumping each pair of classes. Reclassifying is not iterative, thus you could swap 
+#'    1s and 2s with `reclass = c(1, 2, 2, 1)`, not that you'd want to.
 #' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years Vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than

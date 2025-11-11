@@ -17,8 +17,11 @@
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
 #'    dropping any classes.
-#' @param reclass Vector of paired classes to reclassify, e.g., `reclass = c(13, 2, 3, 4)`
-#'    would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.
+#' @param reclass Matrix or vector of paired classes to reclassify. Pass either a two column
+#'    matrix, such that values in the first column are reclassifed to the second column, or a 
+#'    vector with pairs, `reclass = c(13, 2, 3, 4)`, which would reclassify all 13s to 2 and 3s to 4, 
+#'    lumping each pair of classes. Reclassifying is not iterative, thus you could swap 
+#'    1s and 2s with `reclass = c(1, 2, 2, 1)`, not that you'd want to.
 #' @param max_samples Maximum number of samples to use - subsample if necessary
 #' @param years Vector of years to restrict variables to
 #' @param minscore Minimum score for orthos. Files with a minimum score of less than
@@ -73,9 +76,14 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    
    if(!is.null(reclass)) {                                                                # if reclassifying,
-      rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
-      for(i in seq_along(nrow(rcl))) {
-         r$subclass[r$subclass == rcl[i, 1]] <- rcl[i, 2]
+      if(is.matrix(reclass))
+         rcl <- reclass
+      else
+         rcl <- matrix(reclass, length(reclass) / 2, 2, byrow = TRUE)
+      
+      s <- r
+      for(i in seq_len(nrow(rcl))) {
+         r$subclass[s$subclass == rcl[i, 1]] <- rcl[i, 2]
          message('Subclass ', rcl[i, 1], ' reclassified as ', rcl[i, 2])
       }
    }
@@ -93,6 +101,9 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    
    message('\nFitting for site', ifelse(nrow(sites) != 1, 's', ''), ' = ', paste(sites$site, collapse = ', '))
+   
+   if(!is.null(fitargs))
+      message('Additional fit arguments: fitargs = ', dput(fitargs))
    
    
    v <- unique(gsub('-', '_', find_orthos(sites$site, vars, 

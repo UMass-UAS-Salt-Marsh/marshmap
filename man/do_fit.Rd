@@ -55,8 +55,11 @@ fewer samples in training set as well as all classes with zero cases in the
 validation set will be dropped from the model. Use \code{min_class = NULL} to prevent
 dropping any classes.}
 
-\item{reclass}{Vector of paired classes to reclassify, e.g., \code{reclass = c(13, 2, 3, 4)}
-would reclassify all 13s to 2 and 3s to 4, lumping each pair of classes.}
+\item{reclass}{Matrix or vector of paired classes to reclassify. Pass either a two column
+matrix, such that values in the first column are reclassifed to the second column, or a
+vector with pairs, \code{reclass = c(13, 2, 3, 4)}, which would reclassify all 13s to 2 and 3s to 4,
+lumping each pair of classes. Reclassifying is not iterative, thus you could swap
+1s and 2s with \code{reclass = c(1, 2, 2, 1)}, not that you'd want to.}
 
 \item{max_samples}{Maximum number of samples to use - subsample if necessary}
 

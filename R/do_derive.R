@@ -141,4 +141,6 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          message('Saved ', f)
          z <- x <- y <- ndvi <- NULL                                                      # free up memory
       }
+   
+   flights_prep(site)
 }

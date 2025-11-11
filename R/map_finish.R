@@ -23,11 +23,12 @@ map_finish <- function(jobid, status) {
    
    dir <- resolve_dir(the$mapsdir, the$mdb$site[mrow])            # maps directory for this site
    
+
    # Copy log file
    if(!dir.exists(dir))
       dir.create(dir, recursive = TRUE, showWarnings = FALSE)
    sink <- file.copy(logfile(jobid)$done, 
-                     file.path(dir, paste0('map_', the$mdb$id[mrow], '.log')),
+                     file.path(dir, paste0('map_', the$mdb$mapid[mrow], '.log')),
                      overwrite = TRUE)
    
    
@@ -44,7 +45,7 @@ map_finish <- function(jobid, status) {
    the$mdb$walltime[mrow] <- slu$jdb$walltime[jrow]               # elapsed run time
    
    
-   if(the$mdb$success[mrow]) {                                    # If job was successful, get stuff from zz_<id>_map.RDS, written by do_map
+   if(the$mdb$success[mrow]) {                                    # If job was successful, get stuff from zz_<mapid>_map.RDS, written by do_map
       
       the$mdb$error[mrow] <- FALSE                                #    since we're here, we know there wasn't an error
       the$mdb$message <- ''                                       #    and no error message
