@@ -85,9 +85,12 @@ fit(
 
 - reclass:
 
-  Vector of paired classes to reclassify, e.g.,
-  `reclass = c(13, 2, 3, 4)` would reclassify all 13s to 2 and 3s to 4,
-  lumping each pair of classes.
+  Matrix or vector of paired classes to reclassify. Pass either a two
+  column matrix, such that values in the first column are reclassifed to
+  the second column, or a vector with pairs, `reclass = c(13, 2, 3, 4)`,
+  which would reclassify all 13s to 2 and 3s to 4, lumping each pair of
+  classes. Reclassifying is not iterative, thus you could swap 1s and 2s
+  with `reclass = c(1, 2, 2, 1)`, not that you'd want to.
 
 - max_samples:
 
