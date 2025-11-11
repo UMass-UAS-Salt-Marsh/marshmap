@@ -27,8 +27,10 @@ filter_db <- function(filter, database) {
    if(is.numeric(filter)) {                                       # if we have supplied ids,
       z <- match(filter, db[[id]])
       if(any(m <- is.na(z))) {
-         message('Note: ids ', paste(filter[m], collapse = ', '), ' don\'t exist')
          z <- z[!m]
+         if(length(m) > 10)                                       # if the list is long
+            m <- c(m[1:3], '...', m[length(m) - 2:0])             #    elide the middle
+         message('Note: ids ', paste(filter[m], collapse = ', '), ' don\'t exist')
       }
       return(z)
    }
