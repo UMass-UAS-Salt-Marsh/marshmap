@@ -247,7 +247,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    #z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
    
    args <- list(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')            #---train the model     WILL THIS WORK???
-   do.call(train, c(args, fitargs))
+   z <- do.call(train, c(args, fitargs))
    
    
    ####   z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, , importance = "permutation", local.importance = TRUE)             #---train the model     ***************************** with local importance**********************
