@@ -62,6 +62,8 @@ Uncommonly-used utility functions.
   : Find orthophotos for a site
 - [`maketiles()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/maketiles.md)
   : Create tiles with numbered blocks
+- [`refit()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/refit.md)
+  : Relaunches specified fits, purging the old job and fit
 
 ## slurmcollie functions
 
