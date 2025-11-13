@@ -13,9 +13,6 @@
 
 fit_finish <- function(jobid, status) {
    
-   print(paste0('Finishing ', jobid, ', ', status))  ######### ***************************** drop this once I'm sure we're good
-   
-   
    
    jrow <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database (it's been loaded by info)
    

@@ -30,16 +30,18 @@ unconfuse <- function(confuse, auc = TRUE, fit = NULL) {
       colnames(confuse$table) <- n                                               #    use numbers for names in confusion matrix
       rownames(confuse$table) <- n
       confuse$table <- confuse$table[s, s]                                       #    and sort it numerically
-   
-      rownames(confuse$byClass) <- paste0('Class ', n)                           #    use numbers in byClass table
-      confuse$byClass <- confuse$byClass[s, ]
+      
+      if(!is.null(confuse$byClass)) {                                            #    don't crash if there's only one class
+         rownames(confuse$byClass) <- paste0('Class ', n)                        #    use numbers in byClass table
+         confuse$byClass <- confuse$byClass[s, ]
+      }
    }
    
    confuse$byClass <- round(confuse$byClass, 4)
    
    if(auc)
       if(!is.null(auc <- aucs(fit, sort = FALSE)))
-      confuse$byClass <- cbind(confuse$byClass, AUC = auc)
-  
+         confuse$byClass <- cbind(confuse$byClass, AUC = auc)
+   
    confuse
 }

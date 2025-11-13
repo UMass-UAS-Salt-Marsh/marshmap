@@ -158,8 +158,8 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
               paste(years, collapse = ', '), ')')
    }
    
-   
-   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train)]                 # drop variables with too many missing values
+
+   r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train) | (grepl('^_', names(r)))]      # drop variables with too many missing values, but NOT from blocks!
    
    
    if(!is.null(max_samples))                                                              # if max_samples,
@@ -177,6 +177,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
+      blocks$block <- tolower(blocks$block)
       message('Using blocks ', blocks$block, ', classes ', paste(blocks$classes, collapse = ', '), ' for holdout set')
       blocks$block <- paste0('_', sub('^_', '', blocks$block))                            #    be agnostic to leading underscores in block names
       validate <- r[b <- blks[[blocks$block]] %in% blocks$classes, ]                      #    pull out selected blocks for validation and drop block variables

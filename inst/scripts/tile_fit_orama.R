@@ -38,15 +38,16 @@ fit('oth', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40',
 fit('oth', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, DERIVED')
 fit('oth', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 2)), comment = 'tiles40 1/2, 50k samples, DERIVED')
 
+
 # --- with ONLY derived vars
-fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 5)), comment = 'tiles20 1/5, 50k samples, DERIVED')
-fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 5)), comment = 'tiles40 1/5, 50k samples, DERIVED')
-fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, DERIVED')
-fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 2)), comment = 'tiles40 1/2, 50k samples, DERIVED')
-fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 5)), comment = 'tiles20 1/5, 50k samples, DERIVED')
-fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 5)), comment = 'tiles40 1/5, 50k samples, DERIVED')
-fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, DERIVED')
-fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 2)), comment = 'tiles40 1/2, 50k samples, DERIVED')
+fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 5)), comment = 'tiles20 1/5, 50k samples, DERIVED only')
+fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 5)), comment = 'tiles40 1/5, 50k samples, DERIVED only')
+fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, DERIVED only')
+fit('peg', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 2)), comment = 'tiles40 1/2, 50k samples, DERIVED only')
+fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 5)), comment = 'tiles20 1/5, 50k samples, DERIVED only')
+fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 5)), comment = 'tiles40 1/5, 50k samples, DERIVED only')
+fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, DERIVED only')
+fit('oth', vars = 'derived', max_samples = 50000, data = 'deriv', blocks = list(block = 'tiles40', classes = c(1, 2)), comment = 'tiles40 1/2, 50k samples, DERIVED only')
 
 
 
@@ -117,3 +118,24 @@ fit('oth', max_samples = 50000, blocks = list(block = 'tiles10', classes = c(1, 
 fit('oth', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples')
 fit('oth', max_samples = 50000, blocks = list(block = 'tiles40', classes = c(1, 2)), comment = 'tiles40 1/2, 50k samples')
 fit('oth', max_samples = 50000, blocks = list(block = 'tiles60', classes = c(1, 2)), comment = 'tiles60 1/2, 50k samples')
+
+
+
+
+# fit peg with 2025 samples as holdout
+fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples')
+fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 5,  comment = 'peg holdout2025, 50k, minscore5')
+fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 6,  comment = 'peg holdout2025, 50k, minscore6')
+
+fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, no deriv no high')
+fit('peg', data = 'field2025', vars = 'ortho, demr | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 5,  comment = 'peg holdout2025, 50k, minscore5, no deriv no high')
+fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 6,  comment = 'peg holdout2025, 50k, minscore6, no deriv no high')
+
+fit('peg', data = 'field2025', filter = c('ortho | low', 'dem', 'swir'), max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, no deriv')
+
+
+derive('peg', 'ortho', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 3)
+derive('peg', 'ortho', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 5)
+derive('peg', 'ortho', metrics = c('NDRE', 'NDWIg'))
+derive('peg', 'ortho', metrics = c('NDRE', 'NDWIg'))
+

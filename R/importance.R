@@ -1,10 +1,11 @@
 #' Produce a summary of variable importance across multiple fits
 #'
 #' 
-#' @param ids Vector of fit ids, or NULL to run for all finished fits
+#' @param fitids Vector of fit fitids, or NULL to run for all finished fits
 #' @param constrain A list of attributes to constrain images, e.g., 
 #'    `contrain = list(season = 'summer', tide = c('low', 'mid'))`. This would
 #'    only include images captured in summer with low or mid-tide.
+#' @param normalize If TRUE, normalize importance by Kappa, so better fits get more importance 
 #' @export
 
 
@@ -17,22 +18,26 @@
 #    pull these from pars.yml and seasons.txt
 
 
-importance <- function(ids = NULL) {
+importance <- function(fitids = NULL) {
    
    library(dplyr)
    
-   if(is.null(ids)) {
+   if(is.null(fitids)) {
       load_database('fdb')
-      ids <- the$fdb$id[the$fdb$status == 'finished']
+      fitids <- the$fdb$id[the$fdb$status == 'finished']
    }
    
    
-   ids <- ids[43:48]  ################ FOR DEBUGGING
+   fitids <- fitids[43:48]  ################ FOR DEBUGGING
+   
+   frow <- match(fitids, the$fdb$id)
    
    z <- list()
-   for(i in seq_along(ids)) {                                           # for each fit,
-      x <- assess(ids[i], top_importance = 999, quiet = TRUE)$importance           #    get variable importance
+   for(i in seq_along(fitids)) {                                           # for each fit,
+      x <- assess(fitids[i], top_importance = 999, quiet = TRUE)$importance           #    get variable importance      ** might be able to make this much faster by reading directly from extras file
       x$portable <- rownames(x)
+      if(normalize)                                                     # If normalize,
+         x$importance <- x$importance * the$fdb$kappa[frow[i]]          #    multiply importance by Kappa
       z[[i]] <- x
    }
    
