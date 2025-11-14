@@ -4,7 +4,7 @@
 \alias{importance}
 \title{Produce a summary of variable importance across multiple fits}
 \usage{
-importance(fitids = NULL, vars = NULL, normalize = TRUE)
+importance(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE)
 }
 \arguments{
 \item{fitids}{Vector of fit fitids, or NULL to run for all finished fits}
@@ -14,6 +14,8 @@ all variables. \code{vars} is processed by \code{find_orthos}, and may include f
 portable names, search names and regular expressions of file and portable names.
 For example, you could use \verb{vars = 'summer | low, mid} to look at importances
 only for summer season low and mid tides.}
+
+\item{result}{File name to write results to. If NULL, one will be constructed.}
 
 \item{normalize}{If TRUE, normalize importance by Kappa, so better fits get more importance}
 }

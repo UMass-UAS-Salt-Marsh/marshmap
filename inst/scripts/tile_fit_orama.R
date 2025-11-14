@@ -134,8 +134,22 @@ fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 500
 fit('peg', data = 'field2025', filter = c('ortho | low', 'dem', 'swir'), max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, no deriv')
 
 
-derive('peg', 'ortho | mica', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 3)
-derive('peg', 'ortho | mica', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 5)
-derive('peg', 'ortho | mica', metrics = c('NDRE', 'NDWIg'))
 
 
+
+derive('peg', 'ortho | mica', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 3, resources = list(memory = 128))
+derive('peg', 'ortho | mica', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 5, resources = list(memory = 128))
+derive('peg', 'ortho | mica', metrics = c('NDRE', 'NDWIg'), resources = list(memory = 128))
+gather('peg', update = FALSE)
+gather(c('oth', 'sor', 'wel'))
+
+
+fit('peg', data = 'field2025', include_classes = 3:5, max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples')
+fit('peg', data = 'field2025', include_classes = 3:7, max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples')
+fit('peg', data = 'field2025', include_classes = c(1, 6, 12), max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples')
+
+
+# Make 2025 blocks for oth, sor, wel
+sample(c('peg', 'oth', 'sor', 'wel'))
+#
+# now do 2025 holdout fits
