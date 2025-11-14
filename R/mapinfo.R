@@ -9,6 +9,8 @@
 #'  - a named list to filter maps. List items are `<field in mdb> = <value>`, 
 #'    where `<value>` is a regex for character fields, or an actual value (or vector of 
 #'    values) for logical or numeric fields.
+#'  - you can supply a negative number as a convenience option to display the last *n*
+#'    rows. This is equivalent to `mapinfo(rows = 'all', nrows = -n)`.
 #' @param cols Selected columns to display. Use one of 
 #'   - *brief* (1)
 #'   - *normal* (2)
@@ -21,7 +23,8 @@
 #' @param decreasing If TRUE, sort in descending order
 #' @param nrows Number of rows to display in the table. Positive numbers
 #'   display the first *n* rows, and negative numbers display the last *n* rows.
-#'   Use `nrows = NA` to display all rows.
+#'   Use `nrows = NA` to display all rows. Note that, as a convenience, you can 
+#'   supply a negative number to `rows` to set `nrows`.
 #' @param quiet If TRUE, doesn't print anything, just returns values
 #' @param purged If TRUE, display info for the purged database rather than the live one
 #' @param timezone Time zone for launch time; use NULL to leave times in native UTC
@@ -46,6 +49,12 @@ mapinfo <- function(rows = 'all', cols = 'normal', sort = 'mapid',
    op <- sapply(c('max.print', 'scipen'), getOption)                                   # set printing options  
    on.exit(options(max.print = op[1], scipen = op[2]))
    options(max.print = 20000, scipen = 5)
+   
+   
+   if(all(rows < 0)) {                                                                 # convenience: mapinfo(-5) -> mapinfo(nrows = -5)
+      nrows <- rows
+      rows <- 'all'
+   }
    
    
    z <- the$mdb[filter_db(rows, 'mdb'), ]                                              # maps, filtered

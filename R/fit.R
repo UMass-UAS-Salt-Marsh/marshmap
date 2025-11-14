@@ -15,7 +15,10 @@
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
-#' @param exclude_classes Numeric vector of subclasses to exclude
+#' @param exclude_classes Numeric vector of subclasses to exclude. This overrides `fit_exclude`
+#'    that may be included in `sites.txt`.
+#' @param include_classes Numeric vector of subclasses to include - all other classes are dropped. 
+#'    `include_classes` overrides `fit_exclude` (in `sites.txt`) and `exclude_classes`.
 #' @param min_class Minimum number of training samples to allow in a class. All classes with
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
@@ -59,7 +62,7 @@
 
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
                 fitargs = NULL,
-                vars = '{*}', exclude_vars = '', exclude_classes = NULL, 
+                vars = '{*}', exclude_vars = '', exclude_classes = NULL, include_classes = NULL, 
                 min_class = 500, reclass = c(13, 2), max_samples = NULL, years = NULL, 
                 minscore = 0, maxmissing = 20, max_miss_train = 0.20, 
                 top_importance = 20, holdout = 0.2, blocks = NULL,
@@ -149,7 +152,8 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method, fitargs = fitargs,
-                          vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes,
+                          vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes, 
+                          include_classes = include_classes,
                           min_class = min_class, reclass = reclass, max_samples = max_samples, 
                           years = years, minscore = minscore, maxmissing = maxmissing, 
                           max_miss_train = max_miss_train, top_importance = top_importance, 

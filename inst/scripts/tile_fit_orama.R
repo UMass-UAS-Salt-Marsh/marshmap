@@ -128,7 +128,7 @@ fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2
 fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 6,  comment = 'peg holdout2025, 50k, minscore6')
 
 fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, no deriv no high')
-fit('peg', data = 'field2025', vars = 'ortho, demr | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 5,  comment = 'peg holdout2025, 50k, minscore5, no deriv no high')
+fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 5,  comment = 'peg holdout2025, 50k, minscore5, no deriv no high')
 fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 6,  comment = 'peg holdout2025, 50k, minscore6, no deriv no high')
 
 fit('peg', data = 'field2025', filter = c('ortho | low', 'dem', 'swir'), max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, no deriv')

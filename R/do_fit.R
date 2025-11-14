@@ -12,7 +12,10 @@
 #'    portable names, search names and regular expressions of file and portable names.
 #' @param exclude_vars An optional vector of variables to exclude. As with `vars`, variables
 #'    are processed by `find_orthos`
-#' @param exclude_classes Numeric vector of subclasses to exclude
+#' @param exclude_classes Numeric vector of subclasses to exclude. This overrides `fit_exclude`
+#'    that may be included in `sites.txt`.
+#' @param include_classes Numeric vector of subclasses to include - all other classes are dropped. 
+#'    `include_classes` overrides `fit_exclude` (in `sites.txt`) and `exclude_classes`.
 #' @param min_class Minimum number of training samples to allow in a class. All classes with
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
@@ -52,7 +55,7 @@
 #' @export
 
 
-do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, 
+do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, include_classes,
                    min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
                    top_importance, holdout, blocks, auc, hyper, rep = NULL) {
    
@@ -131,17 +134,25 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    
    if(is.null(exclude_classes)) {                                                         # if exclude_classes is supplied, use it
-      x <- as.numeric(unlist
-                      (strsplit(sites$fit_exclude, ',')))                                 #    otherwise, get it from sites.txt
+      x <- as.numeric(unlist(strsplit(sites$fit_exclude, ',')))                           #    otherwise, get it from sites.txt
       if(length(x) != 0)
          exclude_classes <- x
    }
    
-   if(!is.null(exclude_classes)) {                                                        # if exclude_classes, drop these from dataset
+   
+   if(!is.null(exclude_classes) & is.null(include_classes)) {                             # if exclude_classes (but not include_classes), drop these from dataset
       t <- nrow(r)
       r <- r[!r$subclass %in% exclude_classes, ]
       message('Excluding classes ', paste(exclude_classes, collapse = ', '), '; dropped ', format(t - nrow(r), big.mark = ','), ' cases')
    }
+   
+   
+   if(!is.null(include_classes)) {                                                        # if include_classes is supplied, use it
+      t <- nrow(r)
+      r <- r[r$subclass %in% include_classes, ]
+      message('Including only classes ', paste(include_classes, collapse = ', '), '; all other classes dropped (', format(t - nrow(r), big.mark = ','), ' cases)')
+   }
+   
    
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
       stop('Analysis doesn\'t include any orthoimage variables')
