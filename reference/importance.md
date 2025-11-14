@@ -5,7 +5,7 @@ Produce a summary of variable importance across multiple fits
 ## Usage
 
 ``` r
-importance(fitids = NULL, vars = NULL, normalize = TRUE)
+importance(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE)
 ```
 
 ## Arguments
@@ -22,6 +22,10 @@ importance(fitids = NULL, vars = NULL, normalize = TRUE)
   and portable names. For example, you could use
   `vars = 'summer | low, mid` to look at importances only for summer
   season low and mid tides.
+
+- result:
+
+  File name to write results to. If NULL, one will be constructed.
 
 - normalize:
 
