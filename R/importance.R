@@ -8,7 +8,8 @@
 #'    only for summer season low and mid tides.
 #' @param result File name to write results to. If NULL, one will be constructed.
 #' @param normalize If TRUE, normalize importance by Kappa, so better fits get more importance 
-#' @importFrom lubridate now
+#' @importFrom lu
+#' bridate now
 #' @importFrom dplyr summarise group_by
 #' @importFrom stringr str_replace
 #' @importFrom utils capture.output
@@ -69,8 +70,14 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
    z <- list()
    for(i in seq_along(fitids)) {                                                 # for each fit,
       ef <- file.path(the$modelsdir, paste0('fit_', fitids[i], '_extra.RDS'))    #    get complete variable importance
+      
       if(!file.exists(ef)) {
          message('Sidecar file ', ef, ' for fit ', fitids[i], ' is missing. Skipping this one.') 
+         next
+      }
+      
+      if(normalize & is.na(the$fdb$kappa[frow[i]])) {
+         message('Kappa for fit ', fitids[i], ' is nodata. Skipping this one.')
          next
       }
       
@@ -80,7 +87,6 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
       rownames(x) <- NULL
       names(x)[1] <- 'importance'
       
-      
       if(!is.null(vars)) {                                                       #    if filtering for variables,
          incl <- list()
          sites <- the$fdb$site[frow[i]]                                          #       sites for this fit
@@ -89,12 +95,13 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
          x <- x[str_replace(x$portable, '_\\d*$', '') %in% unlist(incl), ]       #       filter importances
       }
       
-      
       if(normalize)                                                              #    if normalize,
          x$importance <- x$importance * the$fdb$kappa[frow[i]]                   #       multiply importance by Kappa
+      
       z[[i]] <- x
    }
    
+   z <- z[!sapply(z, is.null)]                                                   # clean up from missing sidecar files
    
    x <- do.call(rbind, z)                                                        # make them into one big happy data frame
    names(x) <- tolower(names(x))
