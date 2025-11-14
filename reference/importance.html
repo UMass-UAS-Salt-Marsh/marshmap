@@ -38,21 +38,27 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importance</span><span class="op">(</span>ids <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importance</span><span class="op">(</span>fitids <span class="op">=</span> <span class="cn">NULL</span>, vars <span class="op">=</span> <span class="cn">NULL</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-ids">ids<a class="anchor" aria-label="anchor" href="#arg-ids"></a></dt>
-<dd><p>Vector of fit ids, or NULL to run for all finished fits</p></dd>
+<dl><dt id="arg-fitids">fitids<a class="anchor" aria-label="anchor" href="#arg-fitids"></a></dt>
+<dd><p>Vector of fit fitids, or NULL to run for all finished fits</p></dd>
 
 
-<dt id="arg-constrain">constrain<a class="anchor" aria-label="anchor" href="#arg-constrain"></a></dt>
-<dd><p>A list of attributes to constrain images, e.g.,
-<code>contrain = list(season = 'summer', tide = c('low', 'mid'))</code>. This would
-only include images captured in summer with low or mid-tide.</p></dd>
+<dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
+<dd><p>Vector of variables to restrict analysis to. Default = <code>{*}</code>,
+all variables. <code>vars</code> is processed by <code>find_orthos</code>, and may include file names,
+portable names, search names and regular expressions of file and portable names.
+For example, you could use <code>vars = 'summer | low, mid</code> to look at importances
+only for summer season low and mid tides.</p></dd>
+
+
+<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
+<dd><p>If TRUE, normalize importance by Kappa, so better fits get more importance</p></dd>
 
 </dl></div>
 

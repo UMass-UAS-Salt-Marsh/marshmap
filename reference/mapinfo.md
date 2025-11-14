@@ -34,6 +34,10 @@ mapinfo(
     fields, or an actual value (or vector of values) for logical or
     numeric fields.
 
+  - you can supply a negative number as a convenience option to display
+    the last *n* rows. This is equivalent to
+    `mapinfo(rows = 'all', nrows = -n)`.
+
 - cols:
 
   Selected columns to display. Use one of
@@ -62,7 +66,8 @@ mapinfo(
 
   Number of rows to display in the table. Positive numbers display the
   first *n* rows, and negative numbers display the last *n* rows. Use
-  `nrows = NA` to display all rows.
+  `nrows = NA` to display all rows. Note that, as a convenience, you can
+  supply a negative number to `rows` to set `nrows`.
 
 - quiet:
 

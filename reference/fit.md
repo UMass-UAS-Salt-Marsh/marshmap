@@ -15,6 +15,7 @@ fit(
   vars = "{*}",
   exclude_vars = "",
   exclude_classes = NULL,
+  include_classes = NULL,
   min_class = 500,
   reclass = c(13, 2),
   max_samples = NULL,
@@ -74,7 +75,14 @@ fit(
 
 - exclude_classes:
 
-  Numeric vector of subclasses to exclude
+  Numeric vector of subclasses to exclude. This overrides `fit_exclude`
+  that may be included in `sites.txt`.
+
+- include_classes:
+
+  Numeric vector of subclasses to include - all other classes are
+  dropped. `include_classes` overrides `fit_exclude` (in `sites.txt`)
+  and `exclude_classes`.
 
 - min_class:
 

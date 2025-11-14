@@ -61,6 +61,8 @@
 <li><p>a named list to filter maps. List items are <code>&lt;field in mdb&gt; = &lt;value&gt;</code>,
 where <code>&lt;value&gt;</code> is a regex for character fields, or an actual value (or vector of
 values) for logical or numeric fields.</p></li>
+<li><p>you can supply a negative number as a convenience option to display the last <em>n</em>
+rows. This is equivalent to <code>mapinfo(rows = 'all', nrows = -n)</code>.</p></li>
 </ul></dd>
 
 
@@ -85,7 +87,8 @@ values) for logical or numeric fields.</p></li>
 <dt id="arg-nrows">nrows<a class="anchor" aria-label="anchor" href="#arg-nrows"></a></dt>
 <dd><p>Number of rows to display in the table. Positive numbers
 display the first <em>n</em> rows, and negative numbers display the last <em>n</em> rows.
-Use <code>nrows = NA</code> to display all rows.</p></dd>
+Use <code>nrows = NA</code> to display all rows. Note that, as a convenience, you can
+supply a negative number to <code>rows</code> to set <code>nrows</code>.</p></dd>
 
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>

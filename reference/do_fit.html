@@ -47,6 +47,7 @@
 <span>  <span class="va">vars</span>,</span>
 <span>  <span class="va">exclude_vars</span>,</span>
 <span>  <span class="va">exclude_classes</span>,</span>
+<span>  <span class="va">include_classes</span>,</span>
 <span>  <span class="va">min_class</span>,</span>
 <span>  <span class="va">reclass</span>,</span>
 <span>  <span class="va">max_samples</span>,</span>
@@ -101,7 +102,13 @@ are processed by <code>find_orthos</code></p></dd>
 
 
 <dt id="arg-exclude-classes">exclude_classes<a class="anchor" aria-label="anchor" href="#arg-exclude-classes"></a></dt>
-<dd><p>Numeric vector of subclasses to exclude</p></dd>
+<dd><p>Numeric vector of subclasses to exclude. This overrides <code>fit_exclude</code>
+that may be included in <code>sites.txt</code>.</p></dd>
+
+
+<dt id="arg-include-classes">include_classes<a class="anchor" aria-label="anchor" href="#arg-include-classes"></a></dt>
+<dd><p>Numeric vector of subclasses to include - all other classes are dropped.
+<code>include_classes</code> overrides <code>fit_exclude</code> (in <code>sites.txt</code>) and <code>exclude_classes</code>.</p></dd>
 
 
 <dt id="arg-min-class">min_class<a class="anchor" aria-label="anchor" href="#arg-min-class"></a></dt>

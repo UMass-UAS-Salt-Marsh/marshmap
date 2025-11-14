@@ -14,6 +14,7 @@ do_fit(
   vars,
   exclude_vars,
   exclude_classes,
+  include_classes,
   min_class,
   reclass,
   max_samples,
@@ -69,7 +70,14 @@ do_fit(
 
 - exclude_classes:
 
-  Numeric vector of subclasses to exclude
+  Numeric vector of subclasses to exclude. This overrides `fit_exclude`
+  that may be included in `sites.txt`.
+
+- include_classes:
+
+  Numeric vector of subclasses to include - all other classes are
+  dropped. `include_classes` overrides `fit_exclude` (in `sites.txt`)
+  and `exclude_classes`.
 
 - min_class:
 

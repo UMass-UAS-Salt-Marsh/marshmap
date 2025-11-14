@@ -63,6 +63,8 @@
 <li><p>a named list to filter fits. List items are <code>&lt;field in fdb&gt; = &lt;value&gt;</code>,
 where <code>&lt;value&gt;</code> is a regex for character fields, or an actual value (or vector of
 values) for logical or numeric fields.</p></li>
+<li><p>you can supply a negative number as a convenience option to display the last <em>n</em>
+rows. This is equivalent to <code>fitinfo(rows = 'all', nrows = -n)</code>.</p></li>
 </ul></dd>
 
 
@@ -93,7 +95,8 @@ explicitly in <code>cols</code>, or use <code>cols = 'all'</code> and <code>incl
 <dt id="arg-nrows">nrows<a class="anchor" aria-label="anchor" href="#arg-nrows"></a></dt>
 <dd><p>Number of rows to display in the table. Positive numbers
 display the first <em>n</em> rows, and negative numbers display the last <em>n</em> rows.
-Use <code>nrows = NA</code> to display all rows.</p></dd>
+Use <code>nrows = NA</code> to display all rows. Note that, as a convenience, you can
+supply a negative number to <code>rows</code> to set <code>nrows</code>.</p></dd>
 
 
 <dt id="arg-include-model">include_model<a class="anchor" aria-label="anchor" href="#arg-include-model"></a></dt>
