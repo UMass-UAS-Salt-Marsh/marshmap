@@ -134,8 +134,8 @@ fit('peg', data = 'field2025', vars = 'ortho, dem | low, mid', max_samples = 500
 fit('peg', data = 'field2025', filter = c('ortho | low', 'dem', 'swir'), max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, no deriv')
 
 
-derive('peg', 'ortho', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 3)
-derive('peg', 'ortho', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 5)
-derive('peg', 'ortho', metrics = c('NDRE', 'NDWIg'))
-derive('peg', 'ortho', metrics = c('NDRE', 'NDWIg'))
+derive('peg', 'ortho | mica', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 3)
+derive('peg', 'ortho | mica', metrics = c('mean', 'std', 'NDVImean', 'NDVIstd'), window = 5)
+derive('peg', 'ortho | mica', metrics = c('NDRE', 'NDWIg'))
+
 

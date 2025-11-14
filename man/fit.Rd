@@ -13,6 +13,7 @@ fit(
   vars = "{*}",
   exclude_vars = "",
   exclude_classes = NULL,
+  include_classes = NULL,
   min_class = 500,
   reclass = c(13, 2),
   max_samples = NULL,
@@ -51,7 +52,11 @@ portable names, search names and regular expressions of file and portable names.
 \item{exclude_vars}{An optional vector of variables to exclude. As with \code{vars}, variables
 are processed by \code{find_orthos}}
 
-\item{exclude_classes}{Numeric vector of subclasses to exclude}
+\item{exclude_classes}{Numeric vector of subclasses to exclude. This overrides \code{fit_exclude}
+that may be included in \code{sites.txt}.}
+
+\item{include_classes}{Numeric vector of subclasses to include - all other classes are dropped.
+\code{include_classes} overrides \code{fit_exclude} (in \code{sites.txt}) and \code{exclude_classes}.}
 
 \item{min_class}{Minimum number of training samples to allow in a class. All classes with
 fewer samples in training set as well as all classes with zero cases in the

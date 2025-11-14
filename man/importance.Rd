@@ -4,14 +4,18 @@
 \alias{importance}
 \title{Produce a summary of variable importance across multiple fits}
 \usage{
-importance(ids = NULL)
+importance(fitids = NULL, vars = NULL, normalize = TRUE)
 }
 \arguments{
-\item{ids}{Vector of fit ids, or NULL to run for all finished fits}
+\item{fitids}{Vector of fit fitids, or NULL to run for all finished fits}
 
-\item{constrain}{A list of attributes to constrain images, e.g.,
-\code{contrain = list(season = 'summer', tide = c('low', 'mid'))}. This would
-only include images captured in summer with low or mid-tide.}
+\item{vars}{Vector of variables to restrict analysis to. Default = \verb{\{*\}},
+all variables. \code{vars} is processed by \code{find_orthos}, and may include file names,
+portable names, search names and regular expressions of file and portable names.
+For example, you could use \verb{vars = 'summer | low, mid} to look at importances
+only for summer season low and mid tides.}
+
+\item{normalize}{If TRUE, normalize importance by Kappa, so better fits get more importance}
 }
 \description{
 Produce a summary of variable importance across multiple fits

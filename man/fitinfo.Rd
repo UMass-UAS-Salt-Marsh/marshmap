@@ -26,6 +26,8 @@ fitinfo(
 \item a named list to filter fits. List items are \verb{<field in fdb> = <value>},
 where \verb{<value>} is a regex for character fields, or an actual value (or vector of
 values) for logical or numeric fields.
+\item you can supply a negative number as a convenience option to display the last \emph{n}
+rows. This is equivalent to \code{fitinfo(rows = 'all', nrows = -n)}.
 }}
 
 \item{cols}{Selected columns to display. Use one of
@@ -50,7 +52,8 @@ explicitly in \code{cols}, or use \code{cols = 'all'} and \code{include_model = 
 
 \item{nrows}{Number of rows to display in the table. Positive numbers
 display the first \emph{n} rows, and negative numbers display the last \emph{n} rows.
-Use \code{nrows = NA} to display all rows.}
+Use \code{nrows = NA} to display all rows. Note that, as a convenience, you can
+supply a negative number to \code{rows} to set \code{nrows}.}
 
 \item{include_model}{if TRUE, don't explicitly exclude \code{model}, \code{full_model}, and
 \code{hyper} when \code{cols = 'all'}}

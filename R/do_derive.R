@@ -53,19 +53,19 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
       stop('Unknown metrics: ', metrics[!b])
    
    
-   path <- resolve_dir(the$flightsdir, tolower(site))                                  # flights directory
+   path <- resolve_dir(the$flightsdir, tolower(site))                                     # flights directory
    
    files <- list.files(path)
-   files <- files[grep('.tif$', tolower(files))]                                       # only want files ending in .tif
+   files <- files[grep('.tif$', tolower(files))]                                          # only want files ending in .tif
    files <- files
-   one <- find_orthos(site, pattern1)$file                                             # match user's pattern(s) for pattern1
-   one <- one[grep('__', one, invert = TRUE)]                                          # please, no derived files!
-   one <- file_path_sans_ext(one)                                                      # drop .tif here; we'll add it as needed
+   one <- find_orthos(site, pattern1)$file                                                # match user's pattern(s) for pattern1
+   one <- one[grep('__', one, invert = TRUE)]                                             # please, no derived files!
+   one <- file_path_sans_ext(one)                                                         # drop .tif here; we'll add it as needed
    
    if(!is.null(pattern2)) {
-      two <- find_orthos(site, pattern1)$file                                          # match user's pattern(s) for pattern2
-      two <- two[grep('__', two, invert = TRUE)]                                       # please, no derived files!
-      two <- file_path_sans_ext(two)                                                   # drop .tif here; we'll add it as needed
+      two <- find_orthos(site, pattern1)$file                                             # match user's pattern(s) for pattern2
+      two <- two[grep('__', two, invert = TRUE)]                                          # please, no derived files!
+      two <- file_path_sans_ext(two)                                                      # drop .tif here; we'll add it as needed
       
       if(length(pattern1) != length(pattern2))
          stop('pattern1 and pattern2 returned different numbers of files')

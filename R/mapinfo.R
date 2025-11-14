@@ -51,7 +51,8 @@ mapinfo <- function(rows = 'all', cols = 'normal', sort = 'mapid',
    options(max.print = 20000, scipen = 5)
    
    
-   if(all(rows < 0)) {                                                                 # convenience: mapinfo(-5) -> mapinfo(nrows = -5)
+   if(!is.list(rows))
+      if(all(rows < 0)) {                                                              # convenience: mapinfo(-5) -> mapinfo(nrows = -5)
       nrows <- rows
       rows <- 'all'
    }

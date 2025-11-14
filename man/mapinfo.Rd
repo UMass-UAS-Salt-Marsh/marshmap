@@ -24,6 +24,8 @@ mapinfo(
 \item a named list to filter maps. List items are \verb{<field in mdb> = <value>},
 where \verb{<value>} is a regex for character fields, or an actual value (or vector of
 values) for logical or numeric fields.
+\item you can supply a negative number as a convenience option to display the last \emph{n}
+rows. This is equivalent to \code{mapinfo(rows = 'all', nrows = -n)}.
 }}
 
 \item{cols}{Selected columns to display. Use one of
@@ -42,7 +44,8 @@ values) for logical or numeric fields.
 
 \item{nrows}{Number of rows to display in the table. Positive numbers
 display the first \emph{n} rows, and negative numbers display the last \emph{n} rows.
-Use \code{nrows = NA} to display all rows.}
+Use \code{nrows = NA} to display all rows. Note that, as a convenience, you can
+supply a negative number to \code{rows} to set \code{nrows}.}
 
 \item{quiet}{If TRUE, doesn't print anything, just returns values}
 

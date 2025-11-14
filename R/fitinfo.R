@@ -66,7 +66,8 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = FALSE,
    options(max.print = 20000, scipen = 5)
    
    
-   if(all(rows < 0)) {                                                                 # convenience: fitinfo(-5) -> fitinfo(nrows = -5)
+   if(!is.list(rows))
+      if(all(rows < 0)) {                                                              # convenience: fitinfo(-5) -> fitinfo(nrows = -5)
       nrows <- rows
       rows <- 'all'
    }
