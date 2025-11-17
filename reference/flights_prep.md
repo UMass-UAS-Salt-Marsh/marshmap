@@ -16,7 +16,7 @@ Run by `gather`, this
 ## Usage
 
 ``` r
-flights_prep(site, replace_caches = FALSE)
+flights_prep(site, replace_caches = FALSE, cache = TRUE)
 ```
 
 ## Arguments
@@ -28,3 +28,8 @@ flights_prep(site, replace_caches = FALSE)
 - replace_caches:
 
   If TRUE, all cached images (used for `screen`) are replaced
+
+- cache:
+
+  If TRUE, cache images for `screen`. If set to FALSE, these flights
+  will be blank in `screen`.

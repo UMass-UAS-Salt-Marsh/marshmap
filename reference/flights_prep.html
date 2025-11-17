@@ -65,7 +65,7 @@ The flights database is updated accordingly.</p></li>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flights_prep</span><span class="op">(</span><span class="va">site</span>, replace_caches <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flights_prep</span><span class="op">(</span><span class="va">site</span>, replace_caches <span class="op">=</span> <span class="cn">FALSE</span>, cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -78,6 +78,11 @@ The flights database is updated accordingly.</p></li>
 
 <dt id="arg-replace-caches">replace_caches<a class="anchor" aria-label="anchor" href="#arg-replace-caches"></a></dt>
 <dd><p>If TRUE, all cached images (used for <code>screen</code>) are replaced</p></dd>
+
+
+<dt id="arg-cache">cache<a class="anchor" aria-label="anchor" href="#arg-cache"></a></dt>
+<dd><p>If TRUE, cache images for <code>screen</code>. If set to FALSE, these flights
+will be blank in <code>screen</code>.</p></dd>
 
 </dl></div>
 

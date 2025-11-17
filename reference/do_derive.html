@@ -43,7 +43,8 @@
 <span>  pattern1 <span class="op">=</span> <span class="st">"mica"</span>,</span>
 <span>  pattern2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"NDRE"</span><span class="op">)</span>,</span>
-<span>  window <span class="op">=</span> <span class="fl">3</span></span>
+<span>  window <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  <span class="va">cache</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -108,6 +109,11 @@ difference between late-season and early-season DEMs to represent vegetation can
 <dt id="arg-window">window<a class="anchor" aria-label="anchor" href="#arg-window"></a></dt>
 <dd><p>Window size for <code>mean</code>, <code>std</code>, <code>NDVImean</code>, and <code>NDVIstd</code>, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.</p></dd>
+
+
+<dt id="arg-cache">cache<a class="anchor" aria-label="anchor" href="#arg-cache"></a></dt>
+<dd><p>If TRUE, cache images for <code>screen</code>. If set to FALSE, these flights
+will be blank in <code>screen</code>.</p></dd>
 
 </dl></div>
 

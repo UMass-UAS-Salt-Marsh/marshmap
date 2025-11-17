@@ -5,7 +5,13 @@ Produce a summary of variable importance across multiple fits
 ## Usage
 
 ``` r
-importance(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE)
+importance(
+  fitids = NULL,
+  vars = NULL,
+  result = NULL,
+  normalize = TRUE,
+  min_ccr = 70
+)
 ```
 
 ## Arguments
@@ -31,3 +37,8 @@ importance(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE)
 
   If TRUE, normalize importance by Kappa, so better fits get more
   importance
+
+- min_ccr:
+
+  The minimum CCR to accept (percentage) to keep from polluting
+  importance with bad fits

@@ -12,6 +12,7 @@ derive(
   pattern2 = NULL,
   metrics = c("NDVI", "NDWIg", "NDRE"),
   window = 3,
+  cache = TRUE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -94,6 +95,11 @@ derive(
   Window size for `mean`, `std`, `NDVImean`, and `NDVIstd`, in cells;
   windows are square, so just specify a single number. Bonus points if
   you remember to make it odd.
+
+- cache:
+
+  If TRUE, cache images for `screen`. If set to FALSE, these flights
+  will be blank in `screen`.
 
 - resources:
 

@@ -10,7 +10,8 @@ do_derive(
   pattern1 = "mica",
   pattern2 = NULL,
   metrics = c("NDVI", "NDRE"),
-  window = 3
+  window = 3,
+  cache
 )
 ```
 
@@ -88,3 +89,8 @@ do_derive(
   Window size for `mean`, `std`, `NDVImean`, and `NDVIstd`, in cells;
   windows are square, so just specify a single number. Bonus points if
   you remember to make it odd.
+
+- cache:
+
+  If TRUE, cache images for `screen`. If set to FALSE, these flights
+  will be blank in `screen`.

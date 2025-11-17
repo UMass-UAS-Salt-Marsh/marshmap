@@ -38,7 +38,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importance</span><span class="op">(</span>fitids <span class="op">=</span> <span class="cn">NULL</span>, vars <span class="op">=</span> <span class="cn">NULL</span>, result <span class="op">=</span> <span class="cn">NULL</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importance</span><span class="op">(</span></span>
+<span>  fitids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  result <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  min_ccr <span class="op">=</span> <span class="fl">70</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +69,11 @@ only for summer season low and mid tides.</p></dd>
 
 <dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
 <dd><p>If TRUE, normalize importance by Kappa, so better fits get more importance</p></dd>
+
+
+<dt id="arg-min-ccr">min_ccr<a class="anchor" aria-label="anchor" href="#arg-min-ccr"></a></dt>
+<dd><p>The minimum CCR to accept (percentage) to keep from polluting
+importance with bad fits</p></dd>
 
 </dl></div>
 
