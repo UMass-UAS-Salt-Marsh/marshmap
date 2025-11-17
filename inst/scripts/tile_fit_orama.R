@@ -207,3 +207,9 @@ fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks =
 fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks = list(block = 'tiles20', classes = c(2, 6)), resources = list(walltime = '12:00:00'), comment = 'tiles20 2/6, 30k samples, upscale, classes 3:7')
 fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks = list(block = 'tiles20', classes = c(4, 8)), resources = list(walltime = '12:00:00'), comment = 'tiles20 4/8, 30k samples, upscale, classes 3:7')
 
+
+
+# test new poly holdout approach
+gather('peg', replace_ground_truth = TRUE, replace_caches = FALSE)
+sample('peg', vars = 'ortho | mica | fall | mid', n = 100, result = 'zzzjunk', local = TRUE)
+

@@ -226,8 +226,10 @@ do_gather <- function(site, pattern = '',
                overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
                gt <- overlaps(shp, 'subclass')                                      #       get the shapefile and process overlaps ----
                
-               gt$row <- 1:nrow(gt)                                                 #       add unique row ids
-               gt$Year[is.na(gt$Year)] <- 0                                         #       set NA years to 0
+               gt$poly <- 1:nrow(gt)                                                #       add unique poly ids
+               
+               names(gt) <- tolower(names(gt))                                      #       we want lowercase names in ground truth shapefile
+               gt$Year[is.na(gt$year)] <- 0                                         #       set NA years to 0
                
                for(j in 1:5)                                                        #       add 5 _bypoly columns
                   gt[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(gt$subclass)
@@ -237,7 +239,7 @@ do_gather <- function(site, pattern = '',
                
                suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
                                    rasterize(vect(overlaps), standard, 
-                                             field = 'row')$row |>                  #       convert it to raster populated with unique row id
+                                             field = 'poly')$poly |>                #       convert it to raster populated with unique poly id
                                    crop(footprint) |>                               #       crop, mask, and write
                                    mask(footprint) |>
                                    writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,

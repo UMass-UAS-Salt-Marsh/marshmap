@@ -73,15 +73,11 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
    
    else {
       
-      f <- resolve_dir(the$fielddir, tolower(site))                                 # get field transects
+      f <- resolve_dir(the$fielddir, tolower(site))                                 # ---- get field transects
       if(is.null(transects))
          transects <- 'transects.tif'
-      field <- rast(file.path(f, transects))                                        # read raster of row ids for ground truth shapefile
-      
-      
-      tf <- paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp')     # transects shapefile name                                           -------------------------------------
-      ts <- file.path(resolve_dir(the$shapefilesdir, site), tf)                     # full path to transects shapefile
-      shp <- st_read(ts, quiet = TRUE)                                              # read transects shapefile
+      ft <- file.path(f, transects)                                                 # field transects raster name
+      field <- rast(ft)                                                             # read raster of row ids for ground truth shapefile
       
       
       if(!is.null(classes))
@@ -96,7 +92,7 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
       message('Sampling ', length(xvars), ' variables...')
       
       
-      bl <- resolve_dir(the$blocksdir, tolower(site))                               # look for blocks files
+      bl <- resolve_dir(the$blocksdir, tolower(site))                               # ---- look for blocks files
       blocks <- list.files(bl, pattern = '.tif')
       if(length(blocks) > 0) {                                                      # if there are any blocks files
          xvars <- c(paste0('_', tolower(file_path_sans_ext(blocks))), xvars)        #    block var names start with underscore
@@ -105,15 +101,24 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
       }
       
       
-      sel <- !is.na(field)                                                          # cells with field samples
+      sel <- !is.na(field)                                                          # ---- cells with field samples
       nrows <- as.numeric(global(sel, fun = 'sum', na.rm = TRUE))                   # total sample size
       z <- data.frame(field[sel])                                                   # result is expected to be ~4 GB for 130 variables
-      names(z)[1] <- 'subclass'
+      names(z)[1] <- 'poly'
       
+      tf <- paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp')     # ---- transects shapefile name
+      ts <- file.path(resolve_dir(the$shapefilesdir, site), tf)                     # full path to transects shapefile
+      shp <- data.frame(st_read(ts, quiet = TRUE))                                  # read transects shapefile
       
-      browser()                                                                                                   #############################################
+      tomerge <- c('poly', 'subclass', 'year', grep('^bypoly\\d+$', names(shp), value = TRUE))
+      rows <- nrow(z)
+      z <- merge(z, shp[, tomerge])
+      if(nrow(z) != rows)
+         stop('Shapefile ', ts, ' (', format(nrow(z), big.mark = ','),' values) does not correspond with raster ', ft, ' (', format(rows, big.mark = ','), ' values)')
+      z <- z[, 'subclass', paste0('_', setdiff(names(z), 'subclass'))]
       
-      for(i in seq_along(xfiles)) {                                                 # for each predictor variable,
+        
+      for(i in seq_along(xfiles)) {                                                 # ---- for each predictor variable,
          x <- rast(file.path(xfiles[i]))                                            #    get the raster
          
          if(nlyr(x) == 1)                                                           #    if one layer,
