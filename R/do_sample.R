@@ -112,11 +112,16 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
       
       tomerge <- c('poly', 'subclass', 'year', grep('^bypoly\\d+$', names(shp), value = TRUE))
       rows <- nrow(z)
+      
+      shp$year <- as.numeric(shp$year) ############################ TMEP!!!!!!!!!!!!!!!!!
+      
       z <- merge(z, shp[, tomerge])
       if(nrow(z) != rows)
          stop('Shapefile ', ts, ' (', format(nrow(z), big.mark = ','),' values) does not correspond with raster ', ft, ' (', format(rows, big.mark = ','), ' values)')
-      z <- z[, 'subclass', paste0('_', setdiff(names(z), 'subclass'))]
       
+      morecols <- setdiff(names(z), 'subclass')
+      z <- z[, c('subclass', morecols)]
+      names(z)[2:ncol(z)] <- paste0('_', morecols)
         
       for(i in seq_along(xfiles)) {                                                 # ---- for each predictor variable,
          x <- rast(file.path(xfiles[i]))                                            #    get the raster
@@ -132,7 +137,7 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
          z[, names(x)] <- y                                                         #    sample selected values
       }
       
-      
+
       names(z) <- sub('^(\\d)', 'X\\1', names(z))                                   # add an X to the start of names that begin with a digit
       z <- round(z, 2)                                                              # round to 2 digits, which seems like plenty
       

@@ -210,6 +210,6 @@ fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks =
 
 
 # test new poly holdout approach
-gather('peg', replace_ground_truth = TRUE, replace_caches = FALSE)
+gather('peg', replace_ground_truth = TRUE, replace_caches = FALSE, local = TRUE)
 sample('peg', vars = 'ortho | mica | fall | mid', n = 100, result = 'zzzjunk', local = TRUE)
 

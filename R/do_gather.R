@@ -229,11 +229,13 @@ do_gather <- function(site, pattern = '',
                gt$poly <- 1:nrow(gt)                                                #       add unique poly ids
                
                names(gt) <- tolower(names(gt))                                      #       we want lowercase names in ground truth shapefile
-               gt$Year[is.na(gt$year)] <- 0                                         #       set NA years to 0
+               gt$year <- as.numeric(gt$year)
+               gt$year[is.na(gt$year)] <- 0                                         #       set NA years to 0
                
                for(j in 1:5)                                                        #       add 5 _bypoly columns
                   gt[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(gt$subclass)
                
+
                st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile with bonus columns as *_final
                
                
