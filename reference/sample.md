@@ -8,7 +8,7 @@ data table for modeling.
 ``` r
 sample(
   site,
-  pattern = "{*}",
+  vars = "{*}",
   n = NULL,
   p = NULL,
   d = NULL,
@@ -37,7 +37,7 @@ sample(
   process all sites. In batch mode, each named site will be run in a
   separate job.
 
-- pattern:
+- vars:
 
   File names, portable names, regex matching either, or search names
   selecting files to sample. See Image naming in
@@ -147,7 +147,7 @@ trouble.
 Results are saved in four files, plus a metadata file:
 
 1.  `<result>_all.txt` - A text version of the full dataset (selected by
-    `pattern` but not subsetted by `n`, `p`, `d`, `balance`, or
+    `vars` but not subsetted by `n`, `p`, `d`, `balance`, or
     `drop_corr`). Readable by any software.
 
 2.  `<result>_all.RDS` - An RDS version of the full dataset; far faster

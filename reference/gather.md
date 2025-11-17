@@ -18,6 +18,7 @@ gather(
   check = FALSE,
   field = TRUE,
   ignore_bad_classes = FALSE,
+  replace_ground_truth = FALSE,
   replace_caches = FALSE,
   resources = NULL,
   local = FALSE,
@@ -68,6 +69,10 @@ gather(
   shapefile that don't occur in `classes.txt`. Only use this if you're
   paying careful attention, because bad classes will crash `do_map` down
   the line.
+
+- replace_ground_truth:
+
+  If TRUE, replace ground truth data
 
 - replace_caches:
 

@@ -57,6 +57,7 @@ re-processed unless <code>update = TRUE</code> or <code>replace = TRUE</code>.</
 <span>  check <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  field <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ignore_bad_classes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  replace_ground_truth <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  replace_caches <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  local <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -102,6 +103,10 @@ The shapefile is downloaded for reference, and a raster corresponding to <code>s
 <dd><p>If TRUE, don't throw an error if there are classes in the ground
 truth shapefile that don't occur in <code>classes.txt</code>. Only use this if you're paying careful
 attention, because bad classes will crash <code>do_map</code> down the line.</p></dd>
+
+
+<dt id="arg-replace-ground-truth">replace_ground_truth<a class="anchor" aria-label="anchor" href="#arg-replace-ground-truth"></a></dt>
+<dd><p>If TRUE, replace ground truth data</p></dd>
 
 
 <dt id="arg-replace-caches">replace_caches<a class="anchor" aria-label="anchor" href="#arg-replace-caches"></a></dt>

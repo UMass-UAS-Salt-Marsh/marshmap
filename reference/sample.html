@@ -40,7 +40,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sample</span><span class="op">(</span></span>
 <span>  <span class="va">site</span>,</span>
-<span>  pattern <span class="op">=</span> <span class="st">"{*}"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"{*}"</span>,</span>
 <span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  d <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -70,7 +70,7 @@
 In batch mode, each named site will be run in a separate job.</p></dd>
 
 
-<dt id="arg-pattern">pattern<a class="anchor" aria-label="anchor" href="#arg-pattern"></a></dt>
+<dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
 <dd><p>File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
 <a href="https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md" class="external-link">README</a>
@@ -169,7 +169,7 @@ If <code>n</code>, <code>p</code>, and <code>d</code> are all omitted, the defau
 the data.</p>
 <p>Portable names are used for variable names in the resulting data files. Dashes
 from modifications are changed to underscore to avoid causing trouble.</p>
-<p>Results are saved in four files, plus a metadata file:</p><ol><li><p><code>&lt;result&gt;_all.txt</code> - A text version of the full dataset (selected by <code>pattern</code>
+<p>Results are saved in four files, plus a metadata file:</p><ol><li><p><code>&lt;result&gt;_all.txt</code> - A text version of the full dataset (selected by <code>vars</code>
 but not subsetted by <code>n</code>, <code>p</code>, <code>d</code>, <code>balance</code>, or <code>drop_corr</code>). Readable by
 any software.</p></li>
 <li><p><code>&lt;result&gt;_all.RDS</code> - An RDS version of the full dataset; far faster to read

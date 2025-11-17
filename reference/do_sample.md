@@ -8,7 +8,7 @@ fitting. This is an internal function, called by sample.
 ``` r
 do_sample(
   site,
-  pattern,
+  vars,
   n,
   p,
   d,
@@ -31,7 +31,7 @@ do_sample(
 
   site, using 3 letter abbreviation
 
-- pattern:
+- vars:
 
   File names, portable names, regex matching either, or search names
   selecting files to sample. See Image naming in
