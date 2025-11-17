@@ -4,12 +4,15 @@
 \alias{flights_prep}
 \title{Prepare flights data after \code{gather}}
 \usage{
-flights_prep(site, replace_caches = FALSE)
+flights_prep(site, replace_caches = FALSE, cache = TRUE)
 }
 \arguments{
 \item{site}{site, using 3 letter abbreviation}
 
 \item{replace_caches}{If TRUE, all cached images (used for \code{screen}) are replaced}
+
+\item{cache}{If TRUE, cache images for \code{screen}. If set to FALSE, these flights
+will be blank in \code{screen}.}
 }
 \description{
 Run by \code{gather}, this

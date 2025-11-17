@@ -8,8 +8,9 @@
 #'    only for summer season low and mid tides.
 #' @param result File name to write results to. If NULL, one will be constructed.
 #' @param normalize If TRUE, normalize importance by Kappa, so better fits get more importance 
-#' @importFrom lu
-#' bridate now
+#' @param min_ccr The minimum CCR to accept (percentage) to keep from polluting
+#'    importance with bad fits
+#' @importFrom lubridate now
 #' @importFrom dplyr summarise group_by
 #' @importFrom stringr str_replace
 #' @importFrom utils capture.output
@@ -24,7 +25,7 @@
 #    pull these from pars.yml and seasons.txt
 
 
-importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE) {
+importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE, min_ccr = 70) {
    
    
    make_summary <- function(x, file, name, what = NULL) {                        # summarize importances x, filtered for what and print to file
@@ -50,13 +51,6 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
    }
    
    
-   
-   info <- paste0('Importance summary, ', now('America/New_York'))
-   info <- paste0(info, '\n   fitids = ', paste(fitids, collapse = ', '))
-   info <- paste0(info, '\n   vars = ', ifelse(is.null(vars), 'all', paste(vars, collapse = ', ')))
-   info <- paste0(info, '\n   normalize = ', normalize, '\n\n')
-   
-   
    load_database('fdb')
    if(is.null(fitids))
       fitids <- the$fdb$id[the$fdb$status == 'finished']
@@ -64,7 +58,14 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
    frow <- match(fitids, the$fdb$id)
    if(any(is.na(frow))) {
       message('Skipping fitids that are not in database: ', paste(fitids[is.na(frow)], collapse = ', '))
+      fitids <- fitids[!is.na(frow)]
       frow <- frow[!is.na(frow)]
+   }
+   
+   if(!is.null(min_ccr)) {                                                       # if min_ccr, drop low-quality fits
+      b <- (the$fdb$CCR[frow] * 100) >= min_ccr
+      fitids <- fitids[b]
+      frow <- frow[b]
    }
    
    z <- list()
@@ -101,30 +102,41 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
       z[[i]] <- x
    }
    
-   z <- z[!sapply(z, is.null)]                                                   # clean up from missing sidecar files
+   b <- !sapply(z, is.null)
+   z <- z[b]                                                                     # clean up from missing sidecar files
+   fitids <- fitids[b]
    
    x <- do.call(rbind, z)                                                        # make them into one big happy data frame
    names(x) <- tolower(names(x))
    x$portable <- sub('_\\d$', '', x$portable)                                    # drop band, since we care about flights
+  
    
-   gr <- do.call(rbind.data.frame, str_split(x$portable, '_'))
-   names(gr) <- c('type', 'sensor', 'season', 'year', 'tide')
+   gr <- suppressWarnings(do.call(rbind.data.frame, 
+                                  c(str_split(paste0(x$portable, '_'), 
+                                              '_'))))[, 1:6]                     # -> 6 col data frame, finessing optional 'deriv'
+   names(gr) <- c('type', 'sensor', 'season', 'year', 'tide', 'deriv')
    
    
    if(!dir.exists(the$reportsdir))
       dir.create(the$reportsdir, recursive = TRUE)
    if(is.null(result))
-      result <- paste0('importance', fitids[1], '-', fitids[length(fitids)], '.txt')
+      result <- paste0('importance', fitids[1], ifelse(length(fitids) > 1, paste0('-', fitids[length(fitids)]), ''), '.txt')
    f <- file.path(the$reportsdir, result)
    
-   writeLines(info, f)
    
+   info <- paste0('Importance summary, ', now('America/New_York'))
+   info <- paste0(info, '\n   fitids = ', paste(fitids, collapse = ', '))
+   info <- paste0(info, '\n   vars = ', ifelse(is.null(vars), 'all', paste(vars, collapse = ', ')))
+   info <- paste0(info, '\n   normalize = ', normalize)
+   info <- paste0(info, '\n   min_ccr = ', min_ccr, '\n\n')
+   writeLines(info, f)
    
    make_summary(x, f, 'file')                                                    # print summary tables
    make_summary(x, f, 'type', gr$type)
    make_summary(x, f, 'sensor', gr$sensor)
    make_summary(x, f, 'season', gr$season)
    make_summary(x, f, 'tide', gr$tide)
+   make_summary(x, f, 'year', gr$year)
    
    message('Results written to ', f)
 }

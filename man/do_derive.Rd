@@ -9,7 +9,8 @@ do_derive(
   pattern1 = "mica",
   pattern2 = NULL,
   metrics = c("NDVI", "NDRE"),
-  window = 3
+  window = 3,
+  cache
 )
 }
 \arguments{
@@ -44,6 +45,9 @@ difference between late-season and early-season DEMs to represent vegetation can
 
 \item{window}{Window size for \code{mean}, \code{std}, \code{NDVImean}, and \code{NDVIstd}, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.}
+
+\item{cache}{If TRUE, cache images for \code{screen}. If set to FALSE, these flights
+will be blank in \code{screen}.}
 }
 \description{
 Create derived variables such as NDVI and NDRE

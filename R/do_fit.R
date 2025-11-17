@@ -108,7 +108,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    if(!is.null(fitargs))
       message('Additional fit arguments: fitargs = ', dput(fitargs))
    
-   
+   browser()
    v <- unique(gsub('-', '_', find_orthos(sites$site, vars, 
                                           minscore, maxmissing)$portable))                # portable names from vars (replace dash with underscore to match var names)
    
@@ -117,7 +117,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    r <- r[, (sub('_\\d$', '', names(r)) %in% c('site', 'subclass', v)) | 
              grepl('^_', names(r))]                                                       # include only selected vars, site, subclass, and _block vars
-   if(vars != '{*}')
+   if(length(vars) == 1 & all(vars != '{*}'))
       message('Analysis limited to ', sum(!names(r) %in% c('site', 'subclass')), 
               ' selected variables')
    

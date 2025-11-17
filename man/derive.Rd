@@ -10,6 +10,7 @@ derive(
   pattern2 = NULL,
   metrics = c("NDVI", "NDWIg", "NDRE"),
   window = 3,
+  cache = TRUE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -48,6 +49,9 @@ difference between late-season and early-season DEMs to represent vegetation can
 
 \item{window}{Window size for \code{mean}, \code{std}, \code{NDVImean}, and \code{NDVIstd}, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.}
+
+\item{cache}{If TRUE, cache images for \code{screen}. If set to FALSE, these flights
+will be blank in \code{screen}.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults.}

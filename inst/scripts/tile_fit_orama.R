@@ -123,6 +123,8 @@ fit('oth', max_samples = 50000, blocks = list(block = 'tiles60', classes = c(1, 
 
 
 # fit peg with 2025 samples as holdout
+sample('peg', result = 'upscale2025', n = 50000)
+
 fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples')
 fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 5,  comment = 'peg holdout2025, 50k, minscore5')
 fit('peg', data = 'field2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), minscore = 6,  comment = 'peg holdout2025, 50k, minscore6')
@@ -153,3 +155,55 @@ fit('peg', data = 'field2025', include_classes = c(1, 6, 12), max_samples = 5000
 sample(c('peg', 'oth', 'sor', 'wel'))
 #
 # now do 2025 holdout fits
+
+
+
+
+# Let's try a whole lot of derived variables. I timed out on both derive runs, so this is a subset
+sample('peg', result = 'upscale2025', n = 50000)
+
+
+fit('peg', data = 'upscale2025', max_samples = 15000, blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 15k samples, upscale')
+fit('peg', data = 'upscale2025', max_samples = 15000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 15k samples, upscale')
+fit('peg', vars = '{w\\d}', data = 'upscale2025', max_samples = 15000, blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 15k samples, upscale')
+fit('peg', vars = '{w\\d}', data = 'upscale2025', max_samples = 15000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 15k samples, upscale')
+
+
+fit('peg', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, upscale')
+fit('peg', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, upscale')
+fit('peg', vars = '{w\\d}', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 2)), comment = 'tiles20 1/2, 50k samples, upscale')
+fit('peg', vars = '{w\\d}', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'PEG_2025', classes = 2025), comment = 'peg holdout = 2025, 50k samples, upscale')
+
+
+fit('peg', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 2)), resources = list(walltime = '12:00:00'), comment = 'tiles20 1/2, 50k samples, upscale')
+fit('peg', vars = '{w\\d}', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 2)), resources = list(walltime = '12:00:00'), comment = 'tiles20 1/2, 50k samples, upscale')
+
+fit('peg', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 5)), resources = list(walltime = '12:00:00'), comment = 'tiles20 1/5, 50k samples, upscale')
+fit('peg', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(2, 6)), resources = list(walltime = '12:00:00'), comment = 'tiles20 2/6, 50k samples, upscale')
+fit('peg', data = 'upscale2025', max_samples = 50000, blocks = list(block = 'tiles20', classes = c(4, 8)), resources = list(walltime = '12:00:00'), comment = 'tiles20 4/8, 50k samples, upscale')
+fit('peg', comment = 'original overfit, just to make sure nothing changed')
+fit('peg', data = 'upscale2025', comment = 'original overfit, 2025 data')
+
+derive('peg', 'swir | low, mid', metrics = c('mean', 'std'), window = 3, resources = list(memory = 128))
+derive('peg', 'swir | low, mid', metrics = c('mean', 'std'), window = 5, resources = list(memory = 128))
+
+fit('peg', data = 'upscale2025', include_classes = 3:7, max_samples = 50000, blocks = list(block = 'tiles20', classes = c(1, 5)), resources = list(walltime = '12:00:00'), comment = 'tiles20 1/5, 50k samples, upscale, classes 3:7')
+fit('peg', data = 'upscale2025', include_classes = 3:7, max_samples = 50000, blocks = list(block = 'tiles20', classes = c(2, 6)), resources = list(walltime = '12:00:00'), comment = 'tiles20 2/6, 50k samples, upscale, classes 3:7')
+fit('peg', data = 'upscale2025', include_classes = 3:7, max_samples = 50000, blocks = list(block = 'tiles20', classes = c(4, 8)), resources = list(walltime = '12:00:00'), comment = 'tiles20 4/8, 50k samples, upscale, classes 3:7')
+
+
+fit('peg', data = 'upscale2025', comment = 'original overfit, 2025 data', resources = list(walltime = '12:00:00'))
+
+derive('peg', 'swir | low, mid', metrics = c('mean', 'std'), window = 7, resources = list(memory = 128))
+derive('peg', 'swir | low, mid', metrics = c('mean', 'std'), window = 9, resources = list(memory = 128))
+
+sample('peg', result = 'more2025', n = 50000)            # more upscaling with additional vars
+
+
+# try these again after building package ..........
+top20vars <- c('ortho_swir_summer_2020_mid.in', 'ortho_swir_summer_2021_mid', 'dem_mica_fall_2020_mid', 'ortho_swir_spring_2021_mid', 'dem_rgb_spring_2019_low', 'dem_mica_spring_2022_mid', 'derived_mica_summer_2020_high_ndwig', 'dem_mavic_spring_2021_low', 'dem_mica_summer_2019_mid', 'dem_mica_post_2020_mid', 'dem_mica_spring_2019_low', 'dem_mica_spring_2021_low', 'dem_mica_fall_2018_mid', 'ortho_swir_summer_2022_high', 'dem_p4_spring_2022_low', 'ortho_swir_fall_2022_high.spring', 'dem_p4_post_2019_low', 'dem_mica_summer_2019_low', 'derived_mica_post_2019_high_mean.w5', 'derived_mica_summer_2020_high_ndvi')
+fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks = list(block = 'tiles20', classes = c(1, 2)), resources = list(walltime = '12:00:00'), comment = 'tiles20 1/2, 30k samples, upscale, classes 3:7')
+fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks = list(block = 'tiles20', classes = c(1, 5)), resources = list(walltime = '12:00:00'), comment = 'tiles20 1/5, 30k samples, upscale, classes 3:7')
+fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks = list(block = 'tiles20', classes = c(2, 6)), resources = list(walltime = '12:00:00'), comment = 'tiles20 2/6, 30k samples, upscale, classes 3:7')
+fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks = list(block = 'tiles20', classes = c(4, 8)), resources = list(walltime = '12:00:00'), comment = 'tiles20 4/8, 30k samples, upscale, classes 3:7')
+

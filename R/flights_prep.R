@@ -12,12 +12,14 @@
 #'
 #' @param site site, using 3 letter abbreviation
 #' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
+#' @param cache If TRUE, cache images for `screen`. If set to FALSE, these flights
+#'    will be blank in `screen`.
 #' @importFrom terra rast setValues writeRaster
 #' @importFrom rasterPrep makeNiceTif assessType
 #' @importFrom lubridate now
 #' @keywords internal
 
-flights_prep <- function(site, replace_caches = FALSE) {
+flights_prep <- function(site, replace_caches = FALSE, cache = TRUE) {
    
    
    message('\nRunning flights_prep...')
@@ -82,5 +84,6 @@ flights_prep <- function(site, replace_caches = FALSE) {
    
    save_flights_db(db$db, db$db_name)                                         # save the flights database
    
-   flights_cache(site, replace_caches = replace_caches)                       # cache missing or outdated ortho images for screen
+   if(cache)
+      flights_cache(site, replace_caches = replace_caches)                    # cache missing or outdated ortho images for screen
 }

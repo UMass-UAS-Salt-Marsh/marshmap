@@ -4,7 +4,13 @@
 \alias{importance}
 \title{Produce a summary of variable importance across multiple fits}
 \usage{
-importance(fitids = NULL, vars = NULL, result = NULL, normalize = TRUE)
+importance(
+  fitids = NULL,
+  vars = NULL,
+  result = NULL,
+  normalize = TRUE,
+  min_ccr = 70
+)
 }
 \arguments{
 \item{fitids}{Vector of fit fitids, or NULL to run for all finished fits}
@@ -18,6 +24,9 @@ only for summer season low and mid tides.}
 \item{result}{File name to write results to. If NULL, one will be constructed.}
 
 \item{normalize}{If TRUE, normalize importance by Kappa, so better fits get more importance}
+
+\item{min_ccr}{The minimum CCR to accept (percentage) to keep from polluting
+importance with bad fits}
 }
 \description{
 Produce a summary of variable importance across multiple fits
