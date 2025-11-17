@@ -11,6 +11,7 @@ gather(
   check = FALSE,
   field = TRUE,
   ignore_bad_classes = FALSE,
+  replace_ground_truth = FALSE,
   replace_caches = FALSE,
   resources = NULL,
   local = FALSE,
@@ -43,6 +44,8 @@ The shapefile is downloaded for reference, and a raster corresponding to \code{s
 \item{ignore_bad_classes}{If TRUE, don't throw an error if there are classes in the ground
 truth shapefile that don't occur in \code{classes.txt}. Only use this if you're paying careful
 attention, because bad classes will crash \code{do_map} down the line.}
+
+\item{replace_ground_truth}{If TRUE, replace ground truth data}
 
 \item{replace_caches}{If TRUE, all cached images (used for \code{screen}) are replaced}
 

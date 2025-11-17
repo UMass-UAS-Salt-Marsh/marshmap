@@ -14,7 +14,7 @@
 #' 
 #' Results are saved in four files, plus a metadata file:
 #' 
-#' 1. `<result>_all.txt` - A text version of the full dataset (selected by `pattern` 
+#' 1. `<result>_all.txt` - A text version of the full dataset (selected by `vars` 
 #'    but not subsetted by `n`, `p`, `d`, `balance`, or `drop_corr`). Readable by
 #'    any software.
 #' 2. `<result>_all.RDS` - An RDS version of the full dataset; far faster to read 
@@ -28,7 +28,7 @@
 #' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
 #'    In batch mode, each named site will be run in a separate job.
-#' @param pattern File names, portable names, regex matching either, or search names
+#' @param vars File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md) 
 #'    for details. The default is `{*}`, which will include all variables.
@@ -67,7 +67,7 @@
 #' @export
 
 
-sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL, 
+sample <- function(site, vars = '{*}', n = NULL, p = NULL, d = NULL, 
                    classes = NULL, minscore = 0, maxmissing = 20, reclass = NULL,
                    balance = TRUE, balance_excl = NULL, result = NULL, 
                    transects = NULL, drop_corr = NULL, reuse = FALSE, 
@@ -100,7 +100,7 @@ sample <- function(site, pattern = '{*}', n = NULL, p = NULL, d = NULL,
       comment <- paste0('sample ', site$site)
    
    launch('do_sample', reps = site$site, repname = 'site', 
-          moreargs = list(pattern = pattern, n = n, p = p, d = d, classes = classes, minscore = minscore,
+          moreargs = list(vars = vars, n = n, p = p, d = d, classes = classes, minscore = minscore,
                           maxmissing = maxmissing, reclass = reclass, balance = balance, balance_excl = balance_excl, 
                           result = result, transects = transects, drop_corr = drop_corr, reuse = reuse), 
           finish = 'sample_finish', local = local, trap = trap, resources = resources, comment = comment)

@@ -28,6 +28,7 @@
 #' @param ignore_bad_classes If TRUE, don't throw an error if there are classes in the ground
 #'    truth shapefile that don't occur in `classes.txt`. Only use this if you're paying careful
 #'    attention, because bad classes will crash `do_map` down the line.
+#' @param replace_ground_truth If TRUE, replace ground truth data
 #' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
 #' @importFrom sf st_read st_write st_transform
@@ -36,11 +37,17 @@
 #' @importFrom tools file_path_sans_ext
 #' @importFrom googledrive drive_auth
 #' @importFrom utils packageVersion
+#' @importFrom stats ave
 #' @export
 
 
 do_gather <- function(site, pattern = '', 
-                      update, check, field, ignore_bad_classes, replace_caches) {
+                      update, check, field, ignore_bad_classes, replace_ground_truth, replace_caches) {
+   
+   
+   shuffle <- function(x)                                                           # provide shuffled validation indices stratified by subclasses x
+      ave(seq_along(x), x, 
+          FUN = function(y) base::sample(rep_len(1:10, length(y))))
    
    
    message('terra version is ', packageVersion('terra'), '; should be 1.8.73 or higher')
@@ -174,14 +181,15 @@ do_gather <- function(site, pattern = '',
          file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
       
       
-      if(field) {                                                                   #----if reading field transect shapefile,
+      if(field) {                                                                   #----if reading field transect shapefile, ----
          fd <- resolve_dir(the$fielddir, tolower(sites$site[i]))
          if(!dir.exists(fd))                                                        #       create field directory if it doesn't exist
             dir.create(fd, recursive = TRUE)
          
          
          if(sites$transects[i] != '')                                               #       if we have transects for this site,
-            if(!check_files(sites$transects[i], gd, tp, sf) ) {                     #          if we don't already have transect results or they're outdated,
+            if(!check_files(sites$transects[i], gd, tp, sf) | 
+               replace_ground_truth) {                                              #          if we don't already have transect results or they're outdated or replace_ground_truth,
                message(' Processing field transect shapefile')
                
                tp <- file.path(the$gather$sourcedir, the$gather$transects)
@@ -198,9 +206,9 @@ do_gather <- function(site, pattern = '',
                   message('         !!! Reprojecting ', basename(tpath))
                   shp <- st_transform(shp, crs = 4326)
                }
-         
                
-               names(shp)[grep('subclass', names(shp), ignore.case = TRUE)] <- 'subclass'       #       make subclass lower-case, no matter what it is
+               
+               names(shp)[grep('subclass', names(shp), ignore.case = TRUE)] <- 'subclass'   #       make subclass lower-case, no matter what it is
                
                if(is.character(shp$subclass))                                       #       if subclass is character, turn it into damn numbers!
                   shp$subclass <- as.numeric(shp$subclass)
@@ -216,13 +224,20 @@ do_gather <- function(site, pattern = '',
                
                
                overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
-               gt <- overlaps(shp, 'subclass')                                      #       get the shapefile and process overlaps
-               st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile as *_final
+               gt <- overlaps(shp, 'subclass')                                      #       get the shapefile and process overlaps ----
+               
+               gt$row <- 1:nrow(gt)                                                 #       add unique row ids
+               gt$Year[is.na(gt$Year)] <- 0                                         #       set NA years to 0
+               
+               for(j in 1:5)                                                        #       add 5 _bypoly columns
+                  gt[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(gt$subclass)
+               
+               st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile with bonus columns as *_final
                
                
                suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
                                    rasterize(vect(overlaps), standard, 
-                                             field = 'subclass')$subclass |>        #       convert it to raster and pull SubCl, numeric version of subclass
+                                             field = 'row')$row |>                  #       convert it to raster populated with unique row id
                                    crop(footprint) |>                               #       crop, mask, and write
                                    mask(footprint) |>
                                    writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
@@ -241,7 +256,7 @@ do_gather <- function(site, pattern = '',
       }
       
       
-      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                      #----Read blocks shapefiles from local drive, correct projection assumed
+      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                      #----Read blocks shapefiles from local drive, correct projection assumed ----
       if(dir.exists(bd)) {                                                          #    if the blocks directory exists, have a look
          
          blocks <- file.path(bd, list.files(bd, pattern = '.shp$', 
@@ -271,7 +286,7 @@ do_gather <- function(site, pattern = '',
       
       
       count$tiff <- count$tiff + length(files)
-      for(j in files) {                                                             #----for each target geoTIFF in site,
+      for(j in files) {                                                             #----for each target geoTIFF in site, ----
          message('      processing ', j)
          
          if(tryCatch({                                                              #    read the raster, skipping bad ones
@@ -310,6 +325,7 @@ do_gather <- function(site, pattern = '',
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
       
+
       flights_prep(site, replace_caches = replace_caches)                           #    now count missing values and cache images for screen
       
       message('Finished with site ', sites$site[i])

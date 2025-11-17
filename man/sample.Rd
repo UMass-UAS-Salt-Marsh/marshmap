@@ -6,7 +6,7 @@
 \usage{
 sample(
   site,
-  pattern = "{*}",
+  vars = "{*}",
   n = NULL,
   p = NULL,
   d = NULL,
@@ -30,7 +30,7 @@ sample(
 \item{site}{One or more site names, using 3 letter abbreviation. Use \code{all} to process all sites.
 In batch mode, each named site will be run in a separate job.}
 
-\item{pattern}{File names, portable names, regex matching either, or search names
+\item{vars}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
 \href{https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md}{README}
 for details. The default is \verb{\{*\}}, which will include all variables.}
@@ -99,7 +99,7 @@ from modifications are changed to underscore to avoid causing trouble.
 
 Results are saved in four files, plus a metadata file:
 \enumerate{
-\item \verb{<result>_all.txt} - A text version of the full dataset (selected by \code{pattern}
+\item \verb{<result>_all.txt} - A text version of the full dataset (selected by \code{vars}
 but not subsetted by \code{n}, \code{p}, \code{d}, \code{balance}, or \code{drop_corr}). Readable by
 any software.
 \item \verb{<result>_all.RDS} - An RDS version of the full dataset; far faster to read

@@ -91,6 +91,7 @@
 #' @param ignore_bad_classes If TRUE, don't throw an error if there are classes in the ground
 #'    truth shapefile that don't occur in `classes.txt`. Only use this if you're paying careful
 #'    attention, because bad classes will crash `do_map` down the line.
+#' @param replace_ground_truth If TRUE, replace ground truth data
 #' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #' #'    over the function's defaults.
@@ -105,8 +106,8 @@
 
 gather <- function(site, pattern = '', 
                    update = TRUE, check = FALSE, field = TRUE, ignore_bad_classes = FALSE,
-                   replace_caches = FALSE, resources = NULL, local = FALSE, trap = TRUE, 
-                   comment = NULL) {
+                   replace_ground_truth = FALSE, replace_caches = FALSE, 
+                   resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    if(!check)                                         # make sure scratch directory exists if we're going to use it
@@ -127,7 +128,8 @@ gather <- function(site, pattern = '',
    
    launch('do_gather', reps = site, repname = 'site', 
           moreargs = list(pattern = pattern, update = update, check = check, field = field, 
-                          ignore_bad_classes, replace_caches = replace_caches), 
+                          ignore_bad_classes, replace_ground_truth = replace_ground_truth, 
+                          replace_caches = replace_caches), 
           finish = 'gather_finish',
           local = local, trap = trap, resources = resources, comment = comment)
 }

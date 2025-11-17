@@ -6,7 +6,7 @@
 \usage{
 do_sample(
   site,
-  pattern,
+  vars,
   n,
   p,
   d,
@@ -25,7 +25,7 @@ do_sample(
 \arguments{
 \item{site}{site, using 3 letter abbreviation}
 
-\item{pattern}{File names, portable names, regex matching either, or search names
+\item{vars}{File names, portable names, regex matching either, or search names
 selecting files to sample. See Image naming in
 \href{https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md}{README}
 for details.W}

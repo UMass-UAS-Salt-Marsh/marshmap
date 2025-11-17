@@ -6,7 +6,7 @@
 #' **Memory requirements: I've measured up to 28.5 GB.**
 #' 
 #' @param site site, using 3 letter abbreviation
-#' @param pattern File names, portable names, regex matching either, or search names
+#' @param vars File names, portable names, regex matching either, or search names
 #'    selecting files to sample. See Image naming in
 #'    [README](https://github.com/UMass-UAS-Salt-Marsh/marshmap/blob/main/README.md) 
 #'    for details.W
@@ -41,7 +41,7 @@
 #' @keywords internal
 
 
-do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, reclass,
+do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclass,
                       balance, balance_excl, result, transects, drop_corr, reuse) {
    
    
@@ -50,7 +50,7 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
    message('')
    message('Running sample')
    message('site = ', paste(site, collapse = ', '))
-   message('pattern = ', pattern)
+   message('vars = ', vars)
    if(!is.null(n))
       message('n = ', n)
    if(!is.null(p))
@@ -76,14 +76,20 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       f <- resolve_dir(the$fielddir, tolower(site))                                 # get field transects
       if(is.null(transects))
          transects <- 'transects.tif'
-      field <- rast(file.path(f, transects))
+      field <- rast(file.path(f, transects))                                        # read raster of row ids for ground truth shapefile
+      
+      
+      tf <- paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp')     # transects shapefile name                                           -------------------------------------
+      ts <- file.path(resolve_dir(the$shapefilesdir, site), tf)                     # full path to transects shapefile
+      shp <- st_read(ts, quiet = TRUE)                                              # read transects shapefile
+      
       
       if(!is.null(classes))
          field <- subst(field, from = classes, to = classes, others = NA)           # select classes in transect
       
       
       fl <- resolve_dir(the$flightsdir, tolower(site))
-      x <- find_orthos(site, pattern, minscore, maxmissing)                         # find matching files
+      x <- find_orthos(site, vars, minscore, maxmissing)                            # find matching files
       xvars <- x$portable                                                           # we'll use the portable name as the variable name
       xfiles <- file.path(fl, x$file)                                               # and here are the files for reading and writing to <result>_vars.txt 
       
@@ -104,6 +110,8 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
       z <- data.frame(field[sel])                                                   # result is expected to be ~4 GB for 130 variables
       names(z)[1] <- 'subclass'
       
+      
+      browser()                                                                                                   #############################################
       
       for(i in seq_along(xfiles)) {                                                 # for each predictor variable,
          x <- rast(file.path(xfiles[i]))                                            #    get the raster
@@ -172,7 +180,7 @@ do_sample <- function(site, pattern, n, p, d, classes, minscore, maxmissing, rec
    if(!is.null(p))                                                                  #    if sampling by proportion,
       n <- p * dim(z)[1]                                                            #       set n to proportion
    
-
+   
    z <- z[base::sample(nrow(z), size = min(n, nrow(z)), replace = FALSE), ]         #    sample up to n points
    
    
