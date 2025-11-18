@@ -24,10 +24,12 @@ fit(
   maxmissing = 20,
   max_miss_train = 0.2,
   top_importance = 20,
-  holdout = 0.2,
+  holdout = NULL,
+  bypoly = "bypoly01",
   blocks = NULL,
   auc = FALSE,
   hyper = NULL,
+  notune = FALSE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -134,6 +136,14 @@ fit(
   the size of the single validation set, while for boosting, it is the
   size of each of the testing and validation sets.
 
+- bypoly:
+
+  The name of a `bypoly` cross-validation sequence in the sampled data.
+  `gather` creates `bypoly01` through `bypoly05`, with sequences of 1:10
+  for each subclass. Poly groups 1 and 6 will be used as holdouts. To
+  specify different groups, use
+  `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
+
 - blocks:
 
   An alternative to holding out random points. Specify a named list with
@@ -150,6 +160,11 @@ fit(
 - hyper:
 
   Hyperparameters. ***To be defined.***
+
+- notune:
+
+  If TRUE, don't do hyperparameter tuning. This can cost you a few
+  percent in CCR, but will speed the run up six-fold from the default.
 
 - resources:
 

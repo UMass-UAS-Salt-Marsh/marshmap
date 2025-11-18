@@ -57,9 +57,11 @@
 <span>  <span class="va">max_miss_train</span>,</span>
 <span>  <span class="va">top_importance</span>,</span>
 <span>  <span class="va">holdout</span>,</span>
+<span>  <span class="va">bypoly</span>,</span>
 <span>  <span class="va">blocks</span>,</span>
 <span>  <span class="va">auc</span>,</span>
 <span>  <span class="va">hyper</span>,</span>
+<span>  <span class="va">notune</span>,</span>
 <span>  rep <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -160,6 +162,13 @@ the size of the single validation set, while for boosting, it is the size of eac
 of the testing and validation sets.</p></dd>
 
 
+<dt id="arg-bypoly">bypoly<a class="anchor" aria-label="anchor" href="#arg-bypoly"></a></dt>
+<dd><p>The name of a <code>bypoly</code> cross-validation sequence in the sampled data.
+<code>gather</code> creates <code>bypoly01</code> through <code>bypoly05</code>, with sequences of 1:10 for each
+subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups,
+use <code>blocks = list(block = 'bypoly01', classes = c(2, 7)</code>, for instance.</p></dd>
+
+
 <dt id="arg-blocks">blocks<a class="anchor" aria-label="anchor" href="#arg-blocks"></a></dt>
 <dd><p>An alternative to holding out random points. Specify a named list
 with <code>block = &lt;name of block column&gt;, classes = &lt;vector of block classes to hold out&gt;</code>.
@@ -175,6 +184,11 @@ use here.</p></dd>
 
 <dt id="arg-hyper">hyper<a class="anchor" aria-label="anchor" href="#arg-hyper"></a></dt>
 <dd><p>Hyperparameters <em><strong>To be defined</strong></em></p></dd>
+
+
+<dt id="arg-notune">notune<a class="anchor" aria-label="anchor" href="#arg-notune"></a></dt>
+<dd><p>If TRUE, don't do hyperparameter tuning. This can cost you a few percent
+in CCR, but will speed the run up six-fold from the default.</p></dd>
 
 
 <dt id="arg-rep">rep<a class="anchor" aria-label="anchor" href="#arg-rep"></a></dt>

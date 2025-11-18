@@ -21,7 +21,8 @@ find_orthos(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE)
 - descrip:
 
   Character string with one or more of any of the following, separated
-  by `+`:
+  by `+` (you can also provide a vector of character strings–these will
+  be treated the same as a vector with elements separated by `+`)
 
   file name
 
