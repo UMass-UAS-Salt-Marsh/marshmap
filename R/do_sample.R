@@ -195,13 +195,15 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
    
    
    if(!is.null(drop_corr)) {                                                        #----drop_corr option: drop correlated variables
+      y <- y[, !grepl('^_', names(z))]                                              #       only look at orthos, of course
       cat('Correlations before applying drop_corr:\n')
-      corr <- cor(z, use = 'pairwise.compldim(ete.obs')
+      corr <- cor(y, use = 'pairwise.compldim(ete.obs')
       print(summary(corr[upper.tri(corr)]))
       c <- findCorrelation(corr, cutoff = drop_corr)
       z <- z[, -c]
+      y <- y[, -c]
       cat('Correlations after applying drop_corr:\n')
-      corr <- cor(z, use = 'pairwise.complete.obs')
+      corr <- cor(y, use = 'pairwise.complete.obs')
       print(summary(corr[upper.tri(corr)]))
       message('Applying drop_corr = ', drop_corr, ' reduced X variables from ', length(xvars), ' to ', dim(z)[2] - 1)
    }
