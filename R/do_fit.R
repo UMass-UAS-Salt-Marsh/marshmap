@@ -38,6 +38,10 @@
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
+#' @param bypoly The name of a `bypoly` cross-validation sequence in the sampled data. 
+#'    `gather` creates `bypoly01` through `bypoly05`, with sequences of 1:10 for each 
+#'    subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups, 
+#'    use `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
 #' @param blocks An alternative to holding out random points. Specify a named list 
 #'    with `block = <name of block column>, classes = <vector of block classes to hold out>`.
 #'    Set this up by creating a shapefile corresponding to ground truth data with a variable
@@ -46,6 +50,8 @@
 #'    use here.    
 #' @param auc If TRUE, calculate class probabilities so we can calculate AUC
 #' @param hyper Hyperparameters ***To be defined***
+#' @param notune If TRUE, don't do hyperparameter tuning. This can cost you a few percent 
+#'    in CCR, but will speed the run up six-fold from the default.
 #' @param rep Throwaway argument to make `slurmcollie` happy
 #' @importFrom caret createDataPartition trainControl train varImp confusionMatrix
 #' @importFrom stats complete.cases predict reformulate
@@ -57,7 +63,7 @@
 
 do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, include_classes,
                    min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
-                   top_importance, holdout, blocks, auc, hyper, rep = NULL) {
+                   top_importance, holdout, bypoly, blocks, auc, hyper, notune, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -108,7 +114,6 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    if(!is.null(fitargs))
       message('Additional fit arguments: fitargs = ', dput(fitargs))
    
-   browser()
    v <- unique(gsub('-', '_', find_orthos(sites$site, vars, 
                                           minscore, maxmissing)$portable))                # portable names from vars (replace dash with underscore to match var names)
    
@@ -169,7 +174,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
               paste(years, collapse = ', '), ')')
    }
    
-
+   
    r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train) | (grepl('^_', names(r)))]      # drop variables with too many missing values, but NOT from blocks!
    
    
@@ -186,16 +191,19 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
                           'rf' = 1,                                                       # random forest uses a single validation set,
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
+   if(!is.null(bypoly))                                                                   # if bypoly is supplied,
+      blocks <- list(block = bypoly, classes = c(1, 6))                                   #    do block holdout using classes 1 and 6
    
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
       blocks$block <- tolower(blocks$block)
-      message('Using blocks ', blocks$block, ', classes ', paste(blocks$classes, collapse = ', '), ' for holdout set')
+      what <- ifelse(is.null(bypoly), 'blocks', 'bypoly')
+      message('Using ', what, ' ', blocks$block, ', classes ', paste(blocks$classes, collapse = ', '), ' for holdout set')
       blocks$block <- paste0('_', sub('^_', '', blocks$block))                            #    be agnostic to leading underscores in block names
       validate <- r[b <- blks[[blocks$block]] %in% blocks$classes, ]                      #    pull out selected blocks for validation and drop block variables
       training <- r[!b, ]
-      message('Using block holdouts: ', nrow(training), ' cases in training set and ', nrow(validate), ' cases in validation set')
+      message('Using ', what, ' holdouts: ', nrow(training), ' cases in training set and ', nrow(validate), ' cases in validation set')
       if(nrow(validate) == 0 | nrow(training) == 0)
-         stop('Block validation leaves 0 cases in set')
+         stop(what, ' validation leaves 0 cases in set')
    }
    else                                                                                   # else, select holdout sets based on holdout proportion
    {
@@ -269,7 +277,10 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    a <- Sys.time()
    #z <- train(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')             #---train the model
    
-   args <- list(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')            #---train the model     WILL THIS WORK???
+   args <- list(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')            #---train the model
+   if(notune)
+      args <- c(args, list(tuneLength = 1))
+      #args <- args, list(tuneGrid = expand.grid(.mtry = 1, .splitrule = 'gini', .min.node.size = 1)
    z <- do.call(train, c(args, fitargs))
    
    

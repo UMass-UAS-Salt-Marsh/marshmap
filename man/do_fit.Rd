@@ -23,9 +23,11 @@ do_fit(
   max_miss_train,
   top_importance,
   holdout,
+  bypoly,
   blocks,
   auc,
   hyper,
+  notune,
   rep = NULL
 )
 }
@@ -86,6 +88,11 @@ variable is dropped}
 the size of the single validation set, while for boosting, it is the size of each
 of the testing and validation sets.}
 
+\item{bypoly}{The name of a \code{bypoly} cross-validation sequence in the sampled data.
+\code{gather} creates \code{bypoly01} through \code{bypoly05}, with sequences of 1:10 for each
+subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups,
+use \verb{blocks = list(block = 'bypoly01', classes = c(2, 7)}, for instance.}
+
 \item{blocks}{An alternative to holding out random points. Specify a named list
 with \verb{block = <name of block column>, classes = <vector of block classes to hold out>}.
 Set this up by creating a shapefile corresponding to ground truth data with a variable
@@ -96,6 +103,9 @@ use here.}
 \item{auc}{If TRUE, calculate class probabilities so we can calculate AUC}
 
 \item{hyper}{Hyperparameters \emph{\strong{To be defined}}}
+
+\item{notune}{If TRUE, don't do hyperparameter tuning. This can cost you a few percent
+in CCR, but will speed the run up six-fold from the default.}
 
 \item{rep}{Throwaway argument to make \code{slurmcollie} happy}
 }

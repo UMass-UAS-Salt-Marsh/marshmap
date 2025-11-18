@@ -10,7 +10,8 @@ find_orthos(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE)
 \item{site}{Vector of one or more site names}
 
 \item{descrip}{Character string with one or more of any of the following,
-separated by \code{+}:
+separated by \code{+} (you can also provide a vector of character strings--these
+will be treated the same as a vector with elements separated by \code{+})
 \describe{
 \item{file name}{a complete file name (\code{.tif} is optional)}
 \item{portable name}{a portable name}

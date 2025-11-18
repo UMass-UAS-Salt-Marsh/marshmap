@@ -211,5 +211,53 @@ fit('peg', data = 'upscale2025', vars = top20vars, max_samples = 15000, blocks =
 
 # test new poly holdout approach
 gather('peg', replace_ground_truth = TRUE, replace_caches = FALSE, local = TRUE)
-sample('peg', vars = 'ortho | mica | fall | mid', n = 100, result = 'zzzjunk', local = TRUE)
+sample('peg', vars = 'ortho | mica | fall | mid', n = 100, result = 'new', local = TRUE)
+
+sample('peg', n = 50e10, result = 'new', resources = list(walltime = '10:00:00'))
+
+
+# and then
+fit('peg', data = 'new', max_samples = 15000, blocks = list(block = 'bypoly01', classes = c(1, 6)), comment = 'bypoly01 15k upscale')
+fit('peg', data = 'new', max_samples = 15000, blocks = list(block = 'bypoly02', classes = c(1, 6)), comment = 'bypoly02 15k upscale')
+fit('peg', data = 'new', max_samples = 15000, blocks = list(block = 'bypoly03', classes = c(1, 6)), comment = 'bypoly03 15k upscale')
+fit('peg', data = 'new', max_samples = 15000, blocks = list(block = 'bypoly04', classes = c(1, 6)), comment = 'bypoly04 15k upscale')
+fit('peg', data = 'new', max_samples = 15000, blocks = list(block = 'bypoly05', classes = c(1, 6)), comment = 'bypoly05 15k upscale')
+
+fit('peg', data = 'new', max_samples = 50000, blocks = list(block = 'bypoly01', classes = c(1, 6)), resources = list(walltime = '12:00:00'), comment = 'bypoly01 50k upscale')
+
+fit('peg', data = 'new', exclude_vars = 'swir', max_samples = 15000, blocks = list(block = 'bypoly01', classes = c(1, 6)), comment = 'bypoly01 15k upscale no swir')
+
+
+
+
+fit('peg', data = 'new', vars = 'mica | spring | low', max_samples = 10000, blocks = list(block = 'bypoly01', classes = c(1, 6)), notune = TRUE, comment = 'tuning test 1', local = TRUE)
+fit('peg', data = 'new', vars = 'mica | spring | low', max_samples = 10000, bypoly = 'bypoly03', notune = TRUE, comment = 'tuning test 4', local = TRUE)
+
+
+# top 65 vars for fit 1391
+vars1391 <- c('dem_mica_fall_2020_mid', 'dem_mica_spring_2022_mid', 'dem_mavic_spring_2021_low', 'dem_mica_summer_2019_mid', 'dem_rgb_spring_2019_low', 'ortho_swir_spring_2021_mid', 'dem_mica_spring_2019_low', 'ortho_swir_summer_2022_high', 'ortho_swir_summer_2021_mid', 'derived_mica_summer_2020_high_ndwig', 'ortho_swir_summer_2020_mid.in', 'dem_mica_fall_2018_mid', 'dem_mica_post_2020_mid', 'dem_mica_spring_2021_low', 'derived_mica_summer_2020_high_ndre', 'dem_p4_spring_2022_low', 'derived_mica_spring_2021_mid_mean.w5', 'dem_mica_summer_2020_mid.in', 'derived_mica_summer_2020_high_ndvi', 'ortho_swir_fall_2022_high.spring', 'derived_mica_spring_2021_mid_mean.w3', 'dem_mica_summer_2019_low', 'ortho_swir_summer_2020_high', 'dem_mica_summer_2022_mid', 'derived_mica_post_2019_high_mean.w5', 'dem_mica_fall_2022_mid', 'ortho_mica_spring_2021_mid', 'dem_p4_post_2019_low', 'derived_mica_fall_2020_high.spring_mean.w5', 'dem_mica_summer_2021_mid', 'derived_mica_post_2020_high.spring_mean.w5', 'derived_mica_spring_2021_mid_mean.w5', 'derived_mica_post_2020_mid_ndvi', 'ortho_swir_spring_2021_high', 'derived_mica_spring_2022_mid_mean.w5', 'derived_mica_post_2019_high_mean.w5', 'derived_mica_summer_2021_mid_mean.w5', 'derived_mica_spring_2022_mid_ndwig', 'derived_mica_post_2020_high.spring_mean.w3', 'derived_mica_post_2020_mid_ndwig', 'derived_mica_summer_2019_mid_mean.w5', 'derived_mica_spring_2021_mid_mean.w3', 'derived_mica_post_2020_mid_mean.w5', 'derived_mica_summer_2020_high_mean.w5', 'derived_mica_summer_2021_mid_mean.w5', 'dem_mavic_summer_2021_mid', 'derived_mica_fall_2020_high.spring_mean.w5', 'derived_mica_fall_2020_high.spring_mean.w3', 'derived_mica_post_2019_high_mean.w3', 'derived_mica_spring_2022_mid_mean.w3', 'derived_mica_summer_2020_mid.in_mean.w5', 'derived_mica_post_2019_high_mean.w3', 'derived_mica_spring_2021_low_mean.w5', 'derived_mica_fall_2020_high.spring_ndre', 'derived_mica_spring_2022_mid_ndre', 'derived_mica_spring_2021_low_mean.w5', 'derived_mica_post_2019_high_mean.w5', 'derived_mica_spring_2021_low_mean.w5', 'derived_mica_summer_2019_mid_mean.w5', 'ortho_mica_spring_2021_mid', 'derived_mica_fall_2020_high.spring_mean.w5', 'derived_mica_summer_2020_high_mean.w3', 'derived_mica_summer_2019_mid_ndvi', 'derived_mica_fall_2022_mid_mean.w5', 'derived_mica_summer_2020_mid.in_mean.w3', 'derived_mica_post_2020_mid_mean.w5', 'derived_mica_summer_2021_mid_mean.w3', 'ortho_swir_spring_2021_low', 'derived_mica_spring_2021_mid_mean.w5', 'ortho_mica_spring_2022_mid', 'derived_mica_summer_2022_mid_mean.w5', 'derived_mica_post_2020_mid_mean.w3', 'derived_mica_fall_2020_high.spring_ndvi', 'derived_mica_summer_2022_mid_mean.w5', 'ortho_mica_summer_2020_mid.out', 'derived_mica_fall_2020_high.spring_mean.w3', 'derived_mica_summer_2019_low_mean.w5', 'derived_mica_summer_2019_mid_mean.w3', 'derived_mica_summer_2022_mid_mean.w5', 'derived_mica_summer_2019_mid_ndre', 'derived_mica_spring_2021_low_mean.w5', 'ortho_mica_summer_2021_mid', 'derived_mica_summer_2021_mid_mean.w3', 'derived_mica_summer_2020_mid.in_mean.w5', 'derived_mica_post_2019_high_mean.w5', 'derived_mica_summer_2022_mid_mean.w5', 'derived_mica_summer_2021_high_mean.w5', 'derived_mica_spring_2021_mid_mean.w5', 'derived_mica_spring_2021_mid_mean.w5')
+
+fit('peg', data = 'new', vars = vars1391, max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale 65 vars notune')
+fit('peg', data = 'new', vars = vars1391, max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale 65 vars notune')
+fit('peg', data = 'new', vars = vars1391, max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale 65 vars notune')
+fit('peg', data = 'new', vars = vars1391, max_samples = 15000, bypoly = 'bypoly04', notune = TRUE, comment = 'bypoly04 15k upscale 65 vars notune')
+fit('peg', data = 'new', vars = vars1391, max_samples = 15000, bypoly = 'bypoly05', notune = TRUE, comment = 'bypoly05 15k upscale 65 vars notune')
+
+# top 20 from previous fit
+vars20 <- c('ortho_swir_spring_2021_mid', 'derived_mica_fall_2020_high.spring_mean.w5', 'derived_mica_spring_2021_mid_mean.w5', 'derived_mica_post_2020_high.spring_mean.w5', 'derived_mica_fall_2020_high.spring_mean.w3', 'derived_mica_spring_2021_mid_mean.w3', 'derived_mica_fall_2020_high.spring_ndvi', 'ortho_swir_summer_2020_mid.in', 'ortho_mica_spring_2021_mid', 'derived_mica_post_2020_high.spring_mean.w3', 'derived_mica_fall_2020_high.spring_ndre', 'ortho_mica_summer_2020_mid.out', 'derived_mica_spring_2021_mid_mean.w5', 'derived_mica_summer_2020_mid.in_mean.w5', 'derived_mica_summer_2019_mid_mean.w5', 'dem_mica_fall_2020_mid', 'ortho_mica_summer_2020_mid.out', 'derived_mica_spring_2021_low_mean.w5', 'derived_mica_summer_2020_high_mean.w5', 'derived_mica_spring_2021_mid_mean.w3')
+fit('peg', data = 'new', vars = vars20, max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale 20 vars notune')
+fit('peg', data = 'new', vars = vars20, max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale 20 vars notune')
+fit('peg', data = 'new', vars = vars20, max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale 20 vars notune')
+fit('peg', data = 'new', vars = vars20, max_samples = 15000, bypoly = 'bypoly04', notune = TRUE, comment = 'bypoly04 15k upscale 20 vars notune')
+fit('peg', data = 'new', vars = vars20, max_samples = 15000, bypoly = 'bypoly05', notune = TRUE, comment = 'bypoly05 15k upscale 20 vars notune')
+
+# 23 vars that seem reasonable; nothing derived
+vars23 <- 'ortho | mica | low, mid + dem | spring, fall, post | low'
+fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale 23 vars notune')
+fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale 23 vars notune')
+fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale 23 vars notune')
+fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly04', notune = TRUE, comment = 'bypoly04 15k upscale 23 vars notune')
+fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly05', notune = TRUE, comment = 'bypoly05 15k upscale 23 vars notune')
+
+fit('peg', data = 'new', vars = vars23, max_samples = 50000, bypoly = 'bypoly01', comment = 'bypoly01 50k upscale 23 vars with tuning')
 

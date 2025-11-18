@@ -19,7 +19,8 @@
 #' 
 #' @param site Vector of one or more site names
 #' @param descrip Character string with one or more of any of the following, 
-#'    separated by `+`:
+#'    separated by `+` (you can also provide a vector of character strings--these
+#'    will be treated the same as a vector with elements separated by `+`)
 #' \describe{
 #'    \item{file name}{a complete file name (`.tif` is optional)}
 #'    \item{portable name}{a portable name}
@@ -47,6 +48,10 @@
 
 
 find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE) {
+   
+   
+   if(length(descrip) > 1)                                                             # if descrip is a string, join elements with +
+      descrip <- paste(descrip, collapse = ' + ')
    
    
    descrip <- gsub('high_spring', 'high.spring', descrip)         # ******************** TEMPORARY FOR LEGACY FITS
