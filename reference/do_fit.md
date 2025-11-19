@@ -15,6 +15,7 @@ do_fit(
   exclude_vars,
   exclude_classes,
   include_classes,
+  exclude_years,
   min_class,
   reclass,
   max_samples,
@@ -80,6 +81,11 @@ do_fit(
   Numeric vector of subclasses to include - all other classes are
   dropped. `include_classes` overrides `fit_exclude` (in `sites.txt`)
   and `exclude_classes`.
+
+- exclude_years:
+
+  A vector of one or more years of ground truth data to exclude
+  (requires a year column in source data)
 
 - min_class:
 

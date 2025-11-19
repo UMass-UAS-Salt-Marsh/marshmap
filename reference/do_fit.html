@@ -48,6 +48,7 @@
 <span>  <span class="va">exclude_vars</span>,</span>
 <span>  <span class="va">exclude_classes</span>,</span>
 <span>  <span class="va">include_classes</span>,</span>
+<span>  <span class="va">exclude_years</span>,</span>
 <span>  <span class="va">min_class</span>,</span>
 <span>  <span class="va">reclass</span>,</span>
 <span>  <span class="va">max_samples</span>,</span>
@@ -111,6 +112,11 @@ that may be included in <code>sites.txt</code>.</p></dd>
 <dt id="arg-include-classes">include_classes<a class="anchor" aria-label="anchor" href="#arg-include-classes"></a></dt>
 <dd><p>Numeric vector of subclasses to include - all other classes are dropped.
 <code>include_classes</code> overrides <code>fit_exclude</code> (in <code>sites.txt</code>) and <code>exclude_classes</code>.</p></dd>
+
+
+<dt id="arg-exclude-years">exclude_years<a class="anchor" aria-label="anchor" href="#arg-exclude-years"></a></dt>
+<dd><p>A vector of one or more years of ground truth data to exclude (requires a
+year column in source data)</p></dd>
 
 
 <dt id="arg-min-class">min_class<a class="anchor" aria-label="anchor" href="#arg-min-class"></a></dt>
