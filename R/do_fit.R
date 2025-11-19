@@ -16,6 +16,8 @@
 #'    that may be included in `sites.txt`.
 #' @param include_classes Numeric vector of subclasses to include - all other classes are dropped. 
 #'    `include_classes` overrides `fit_exclude` (in `sites.txt`) and `exclude_classes`.
+#' @param exclude_years A vector of one or more years of ground truth data to exclude (requires a
+#'    year column in source data)
 #' @param min_class Minimum number of training samples to allow in a class. All classes with
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
@@ -62,7 +64,7 @@
 
 
 do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, include_classes,
-                   min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
+                   exclude_years, min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
                    top_importance, holdout, bypoly, blocks, auc, hyper, notune, rep = NULL) {
    
    
@@ -159,6 +161,13 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    }
    
    
+   if(!is.null(exclude_years)) {                                                          # if exclude_years is supplied, drop these years
+      ro <- nrow(r)
+      r <- r[!r[['_year']] %in% exclude_years, ]
+      message('Excluding years ', paste(exclude_years, collapse = ', '), '; dropped ', ro - nrow(r), ' cases; ', nrow(r), ' cases remain')
+   }
+   
+   
    if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
       stop('Analysis doesn\'t include any orthoimage variables')
    
@@ -179,8 +188,8 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    
    if(!is.null(max_samples))                                                              # if max_samples,
-      if(dim(r)[1] > max_samples)                                                         #    and dataset is more than max_samples,
-         r <- r[base::sample(dim(r)[1], size = max_samples, replace = FALSE), ]           #       subsample points
+      if(nrow(r) > max_samples)                                                           #    and dataset is more than max_samples,
+         r <- r[base::sample(nrow(r), size = max_samples, replace = FALSE), ]             #       subsample points
    
    
    blks <- r[, b <- grepl('^_', names(r))]                                                # pull out any blocks vars
@@ -193,6 +202,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    
    if(!is.null(bypoly))                                                                   # if bypoly is supplied,
       blocks <- list(block = bypoly, classes = c(1, 6))                                   #    do block holdout using classes 1 and 6
+   
    
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
       blocks$block <- tolower(blocks$block)
@@ -280,7 +290,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    args <- list(model, data = training, method = meth, trControl = control, num.threads = 0, importance = 'impurity')            #---train the model
    if(notune)
       args <- c(args, list(tuneLength = 1))
-      #args <- args, list(tuneGrid = expand.grid(.mtry = 1, .splitrule = 'gini', .min.node.size = 1)
+   #args <- args, list(tuneGrid = expand.grid(.mtry = 1, .splitrule = 'gini', .min.node.size = 1)
    z <- do.call(train, c(args, fitargs))
    
    

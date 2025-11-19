@@ -259,5 +259,206 @@ fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly03'
 fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly04', notune = TRUE, comment = 'bypoly04 15k upscale 23 vars notune')
 fit('peg', data = 'new', vars = vars23, max_samples = 15000, bypoly = 'bypoly05', notune = TRUE, comment = 'bypoly05 15k upscale 23 vars notune')
 
-fit('peg', data = 'new', vars = vars23, max_samples = 50000, bypoly = 'bypoly01', comment = 'bypoly01 50k upscale 23 vars with tuning')
+
+
+
+gather('wel', replace_ground_truth = TRUE)
+gather('rr', replace_ground_truth = TRUE)
+gather('oth', replace_ground_truth = TRUE)
+
+
+fit('peg', data = 'new', minscore = 4, max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale minscore=4 notune')
+fit('peg', data = 'new', minscore = 4, max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale minscore=4 notune')
+fit('peg', data = 'new', minscore = 4, max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale minscore=4 notune')
+fit('peg', data = 'new', minscore = 4, max_samples = 15000, bypoly = 'bypoly04', notune = TRUE, comment = 'bypoly04 15k upscale minscore=4 notune')
+fit('peg', data = 'new', minscore = 4, max_samples = 15000, bypoly = 'bypoly05', notune = TRUE, comment = 'bypoly05 15k upscale minscore=4 notune')
+
+fit('peg', data = 'new', minscore = 4, max_samples = 15000, bypoly = 'bypoly01', comment = 'bypoly01 15k upscale minscore=4')
+
+fit('peg', data = 'new', vars = '13May21_PEG_Low_Mavic_Ortho.tif', max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'just one good ortho')
+
+
+
+# now...
+fit('peg', data = 'new', vars = '13May21_PEG_Low_Mavic_Ortho.tif', max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'just one good ortho')
+afewpegs <- '13May21_PEG_Low_Mavic_Ortho.tif + derived_mica_summer_2019_low_ndvi + derived_mica_summer_2019_low_ndre + derived_mica_summer_2019_low_mean.w3 + derived_mica_summer_2019_low_mean.w5 + 25Jul19_PEG_Low_Mica_Ortho__NDVImean_w3.tif + 25Jul19_PEG_Low_Mica_Ortho__NDVImean_w5.tif + derived_mica_summer_2019_low_std.w5'
+fit('peg', data = 'new', vars = afewpegs, max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'a few good orthos')
+
+fit('peg', data = 'new', vars = vars23, max_samples = 50000, bypoly = 'bypoly01', comment = 'bypoly01 50k upscale 23 vars with tuning (again ... >1 hr)')
+
+
+
+# next....
+
+for(win in c(3, 5, 7, 9, 11, 13)) {
+   derive('peg', 'ortho, dem | mica | low', metrics = c('mean', 'std'), window = win, cache = TRUE, resources = list(memory = 128), comment = 'make more mica means')
+   derive('rr', 'ortho, dem | mica | low', metrics = c('mean', 'std'), window = win, cache = TRUE, resources = list(memory = 128))
+   derive('oth', 'ortho, dem | mica | summer, fall | low', metrics = c('mean', 'std'), window = win, cache = TRUE, resources = list(memory = 128))
+   derive('wel', 'ortho, dem | mica | low', metrics = c('mean', 'std'), window = win, cache = TRUE, resources = list(memory = 128))
+}
+
+
+# OOM cleanups:
+for(win in c(3, 5, 7, 9, 11, 13))
+   derive('oth', 'ortho, dem | mica | summer, fall | low', metrics = c('mean', 'std'), window = win, cache = TRUE, resources = list(memory = 200))
+
+
+
+
+
+
+
+
+sample('rr', result = 'deriv', n = 50000)
+sample('wel', result = 'deriv', n = 50000)
+
+
+fit('wel', data = 'deriv', max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale notune')
+fit('wel', data = 'deriv', max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale notune')
+fit('wel', data = 'deriv', max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale notune')
+
+
+
+# when sample runs are done
+fit('rr', data = 'deriv', max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale notune')
+fit('rr', data = 'deriv', max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale notune')
+fit('rr', data = 'deriv', max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale notune')
+
+
+
+
+# when derive runs are done...
+sample('oth', result = 'deriv', n = 50000)
+sample('peg', result = 'deriv', n = 50000)
+
+
+# THIS IS WHERE WE ARE
+
+
+# when sample OTH is done
+fit('oth', data = 'new', minscore = 5, max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, comment = 'bypoly01 15k upscale minscore=5 notune')
+fit('oth', data = 'new', minscore = 5, max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, comment = 'bypoly02 15k upscale minscore=5 notune')
+fit('oth', data = 'new', minscore = 5, max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, comment = 'bypoly03 15k upscale minscore=5 notune')
+
+
+# after I fix drop_corr
+# sample('rr', result = 'new_uc', n = 50000, drop_cor = 0.7)
+# sample('oth', result = 'new_uc', n = 50000, drop_cor = 0.7)
+# sample('wel', result = 'new_uc', n = 50000, drop_cor = 0.7)
+# sample('peg', result = 'new_uc', n = 50000, drop_cor = 0.7)
+
+# Try better fits
+fit('rr', data = 'deriv', max_samples = 50000, bypoly = 'bypoly01', comment = 'bypoly01 50k upscale')
+fit('rr', data = 'deriv', max_samples = 50000, bypoly = 'bypoly02', comment = 'bypoly02 50k upscale')
+fit('rr', data = 'deriv', max_samples = 50000, bypoly = 'bypoly03', comment = 'bypoly03 50k upscale')
+fit('wel', data = 'deriv', max_samples = 50000, bypoly = 'bypoly01', comment = 'bypoly01 50k upscale minscore=5')
+fit('wel', data = 'deriv', max_samples = 50000, bypoly = 'bypoly02', comment = 'bypoly02 50k upscale minscore=5')
+fit('wel', data = 'deriv', max_samples = 50000, bypoly = 'bypoly03', comment = 'bypoly03 50k upscale minscore=5')
+
+
+
+
+# 2025 holdout - 15k notune
+fit('rr', data = 'deriv', max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale notune')
+fit('rr', data = 'deriv', max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale notune')
+fit('rr', data = 'deriv', max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale notune')
+fit('wel', data = 'deriv', max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale notune')
+fit('wel', data = 'deriv', max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale notune')
+fit('wel', data = 'deriv', max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale notune')
+
+
+# 2025 holdout - 50k
+fit('rr', data = 'deriv', max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale')
+fit('rr', data = 'deriv', max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale')
+fit('rr', data = 'deriv', max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale')
+fit('wel', data = 'deriv', max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale minscore=5')
+fit('wel', data = 'deriv', max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale minscore=5')
+fit('wel', data = 'deriv', max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale minscore=5')
+
+
+# *** Errors
+# *** derive for peg 11, 13 and oth 11, 13 timed out after 4 hours
+# *** sample for oth failed on [rast] file does not exist: .../flights/NA
+# *** 2025 50k upscale minscore=5 for wel timed out at 5 hours. Have 2 others though.
+# *** all 3 2025 50k upscale for rr timed out at 5 hours.
+
+
+# got an error in sample, fix it and then do these
+sample('oth', result = 'deriv', n = 50000)
+
+fit('oth', data = 'deriv', minscore = 5, max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale minscore=5 notune')
+fit('oth', data = 'deriv', minscore = 5, max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale minscore=5 notune')
+fit('oth', data = 'deriv', minscore = 5, max_samples = 15000, notune = TRUE, blocks = list(block = '_year', classes = 2025), comment = '2025 15k upscale minscore=5 notune')
+
+fit('oth', data = 'deriv', minscore = 5, max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale minscore=5')
+fit('oth', data = 'deriv', minscore = 5, max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale minscore=5')
+fit('oth', data = 'deriv', minscore = 5, max_samples = 50000, blocks = list(block = '_year', classes = 2025), comment = '2025 50k upscale minscore=5')
+
+fit('oth', data = 'deriv', minscore = 5, max_samples = 50000, bypoly = 'bypoly01', comment = 'bypoly01 50k upscale minscore=5')
+fit('oth', data = 'deriv', minscore = 5, max_samples = 50000, bypoly = 'bypoly02', comment = 'bypoly02 50k upscale minscore=5')
+fit('oth', data = 'deriv', minscore = 5, max_samples = 50000, bypoly = 'bypoly03', comment = 'bypoly03 50k upscale minscore=5')
+
+
+#################
+# flip experiment
+
+vars <- 'dem_mica_fall_2020_mid + ortho_swir_summer_2022_high + dem_mica_fall_2018_mid + dem_mica_summer_2019_mid + ortho_swir_summer_2021_mid + dem_mica_spring_2021_low + dem_p4_spring_2022_low + ortho_swir_spring_2021_high + dem_mica_spring_2019_low + dem_rgb_spring_2019_low'
+
+# make flipped versions
+library(terra)
+library(stringr)
+
+path <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/peg/flights/'
+toflip <- find_orthos('peg', vars)$file
+flipped <- do.call(paste0, list('flipped', 1:10, '.tif'))
+for(i in 2:10) {     #  seq_along(toflip)) {
+   print(i)
+   x <- flip(rast(file.path(path, toflip[i])), direction = 'horizontal')
+   writeRaster(x, file.path(path, flipped[i]))
+}
+
+
+flippedvars <- paste(str_extract(flipped, '(.*)(.tif$)', group = 1), collapse = ' + ')
+
+x <- build_flights_db('peg')
+sample('peg', result = 'flip', vars = c(vars, flippedvars), n = 1e4)
+
+
+
+# when sample is done
+fit('peg', data = 'deriv', vars = vars, bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: toflip')
+fit('peg', data = 'deriv', vars = vars, bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: flipped')
+fit('peg', data = 'deriv', vars = c(vars, flippedvars), bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: both')
+#################
+
+
+
+
+#################
+# try without 2025
+# omit emphemeral classes
+# both
+# compare with fits 1467:1469 (CCRs = 21.9%, 22.7%, 20.7%)
+
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, exclude_year = 2025, comment = 'bypoly01 omit 2025')
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, exclude_year = 2025, comment = 'bypoly02 omit 2025')
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, exclude_year = 2025, comment = 'bypoly03 omit 2025')
+
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly01', notune = TRUE, exclude_year = 2025, comment = 'bypoly01 omit 2025')
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, exclude_classes = c(10, 15, 30, 31, 32, 33), comment = 'bypoly02 noephemeral')
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, exclude_classes = c(10, 15, 30, 31, 32, 33), comment = 'bypoly03 noephemeral')
+
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly02', notune = TRUE, exclude_year = 2025, exclude_classes = c(10, 15, 30, 31, 32, 33), comment = 'bypoly02 omit 2025 noephemeral')
+fit('peg', data = 'deriv', max_samples = 15000, bypoly = 'bypoly03', notune = TRUE, exclude_year = 2025, exclude_classes = c(10, 15, 30, 31, 32, 33), comment = 'bypoly03 omit 2025 noephemeral')
+
+
+
+fit('peg', data = 'deriv', max_samples = 50e3, bypoly = 'bypoly05', notune = FALSE, exclude_year = 2025, comment = 'bypoly01 omit 2025 50k+', resources = list(walltime = '12:00:00'))
+fit('peg', data = 'deriv', max_samples = 50e3, bypoly = 'bypoly05', notune = FALSE, exclude_year = 2025, comment = 'bypoly01 omit 2025 50k+', resources = list(walltime = '12:00:00'))
+fit('peg', data = 'deriv', max_samples = 50e3, bypoly = 'bypoly05', notune = FALSE, exclude_year = 2025, exclude_classes = c(10, 15, 30, 31, 32, 33), comment = 'bypoly01 omit 2025 noephemeral 50k+', resources = list(walltime = '12:00:00'))
+
+
+
+
+#################
 

@@ -14,6 +14,7 @@ fit(
   exclude_vars = "",
   exclude_classes = NULL,
   include_classes = NULL,
+  exclude_years = NULL,
   min_class = 500,
   reclass = c(13, 2),
   max_samples = NULL,
@@ -59,6 +60,9 @@ that may be included in \code{sites.txt}.}
 
 \item{include_classes}{Numeric vector of subclasses to include - all other classes are dropped.
 \code{include_classes} overrides \code{fit_exclude} (in \code{sites.txt}) and \code{exclude_classes}.}
+
+\item{exclude_years}{A vector of one or more years of ground truth data to exclude (requires a
+year column in source data)}
 
 \item{min_class}{Minimum number of training samples to allow in a class. All classes with
 fewer samples in training set as well as all classes with zero cases in the

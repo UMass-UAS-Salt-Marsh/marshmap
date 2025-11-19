@@ -19,6 +19,8 @@
 #'    that may be included in `sites.txt`.
 #' @param include_classes Numeric vector of subclasses to include - all other classes are dropped. 
 #'    `include_classes` overrides `fit_exclude` (in `sites.txt`) and `exclude_classes`.
+#' @param exclude_years A vector of one or more years of ground truth data to exclude (requires a
+#'    year column in source data)
 #' @param min_class Minimum number of training samples to allow in a class. All classes with
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
@@ -69,7 +71,7 @@
 fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf', 
                 fitargs = NULL,
                 vars = '{*}', exclude_vars = '', exclude_classes = NULL, include_classes = NULL, 
-                min_class = 500, reclass = c(13, 2), max_samples = NULL, years = NULL, 
+                exclude_years = NULL, min_class = 500, reclass = c(13, 2), max_samples = NULL, years = NULL, 
                 minscore = 0, maxmissing = 20, max_miss_train = 0.20, 
                 top_importance = 20, holdout = NULL, bypoly = 'bypoly01', blocks = NULL,
                 auc = FALSE, hyper = NULL, notune = FALSE,
@@ -159,7 +161,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
    launch('do_fit', 
           moreargs = list(fitid = the$fdb$id[i], sites = sites, name = name, method = method, fitargs = fitargs,
                           vars = vars, exclude_vars = exclude_vars, exclude_classes = exclude_classes, 
-                          include_classes = include_classes,
+                          include_classes = include_classes, exclude_years = exclude_years,
                           min_class = min_class, reclass = reclass, max_samples = max_samples, 
                           years = years, minscore = minscore, maxmissing = maxmissing, 
                           max_miss_train = max_miss_train, top_importance = top_importance, 

@@ -193,19 +193,21 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
    
    z <- z[base::sample(nrow(z), size = min(n, nrow(z)), replace = FALSE), ]         #    sample up to n points
    
-   
-   if(!is.null(drop_corr)) {                                                        #----drop_corr option: drop correlated variables
-      y <- y[, !grepl('^_', names(z))]                                              #       only look at orthos, of course
+
+   if(!is.null(drop_corr)) {                                                        #----drop_corr option: rdrop correlated variables
+      no <- c(match('subclass', names(z)),  grep('^_', names(z)))                   #       non-orthophotos
+      before <- ncol(z) - length(no)
+      y <- z[, -no]                                                                 #       only look at orthos, of course
       cat('Correlations before applying drop_corr:\n')
-      corr <- cor(y, use = 'pairwise.compldim(ete.obs')
+      corr <- cor(y, use = 'pairwise.complete.obs')
       print(summary(corr[upper.tri(corr)]))
-      c <- findCorrelation(corr, cutoff = drop_corr)
-      z <- z[, -c]
-      y <- y[, -c]
+      c <- sort(findCorrelation(corr, cutoff = drop_corr))
+      z <- z[, c(no, c + length(no))]                                              #       drop highly correlated varaibles
+      y <- y[, c]
       cat('Correlations after applying drop_corr:\n')
       corr <- cor(y, use = 'pairwise.complete.obs')
       print(summary(corr[upper.tri(corr)]))
-      message('Applying drop_corr = ', drop_corr, ' reduced X variables from ', length(xvars), ' to ', dim(z)[2] - 1)
+      message('Applying drop_corr = ', drop_corr, ' reduced predictor variables from ', before, ' to ', ncol(z) - length(no))
    }
    
    
