@@ -26,6 +26,7 @@ do_fit(
   top_importance,
   holdout,
   bypoly,
+  byyear,
   blocks,
   auc,
   hyper,
@@ -144,6 +145,11 @@ do_fit(
   for each subclass. Poly groups 1 and 6 will be used as holdouts. To
   specify different groups, use
   `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
+
+- byyear:
+
+  One or more years to treat as holdout data. If supplied, this
+  superceeds bypoly.
 
 - blocks:
 

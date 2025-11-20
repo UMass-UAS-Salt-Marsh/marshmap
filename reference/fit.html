@@ -62,6 +62,7 @@ cover and report model assessment.</p>
 <span>  top_importance <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  holdout <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bypoly <span class="op">=</span> <span class="st">"bypoly01"</span>,</span>
+<span>  byyear <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  blocks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auc <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  hyper <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -175,10 +176,14 @@ of the testing and validation sets.</p></dd>
 
 
 <dt id="arg-bypoly">bypoly<a class="anchor" aria-label="anchor" href="#arg-bypoly"></a></dt>
-<dd><p>The name of a <code>bypoly</code> cross-validation sequence in the sampled data.
-<code>gather</code> creates <code>bypoly01</code> through <code>bypoly05</code>, with sequences of 1:10 for each
-subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups,
-use <code>blocks = list(block = 'bypoly01', classes = c(2, 7)</code>, for instance.</p></dd>
+<dd><p>Polygons to treat as holdout data. Supply the name of a <code>bypoly</code> cross-validation
+sequence in the sampled data. <code>gather</code> creates <code>bypoly01</code> through <code>bypoly05</code>, with sequences
+of 1:10 for each subclass. Poly groups 1 and 6 will be used as holdouts. To specify different
+groups, use <code>blocks = list(block = 'bypoly01', classes = c(2, 7)</code>, for instance.</p></dd>
+
+
+<dt id="arg-byyear">byyear<a class="anchor" aria-label="anchor" href="#arg-byyear"></a></dt>
+<dd><p>One or more years to treat as holdout data. If supplied, this superceeds bypoly.</p></dd>
 
 
 <dt id="arg-blocks">blocks<a class="anchor" aria-label="anchor" href="#arg-blocks"></a></dt>

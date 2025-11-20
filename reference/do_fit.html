@@ -59,6 +59,7 @@
 <span>  <span class="va">top_importance</span>,</span>
 <span>  <span class="va">holdout</span>,</span>
 <span>  <span class="va">bypoly</span>,</span>
+<span>  <span class="va">byyear</span>,</span>
 <span>  <span class="va">blocks</span>,</span>
 <span>  <span class="va">auc</span>,</span>
 <span>  <span class="va">hyper</span>,</span>
@@ -173,6 +174,10 @@ of the testing and validation sets.</p></dd>
 <code>gather</code> creates <code>bypoly01</code> through <code>bypoly05</code>, with sequences of 1:10 for each
 subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups,
 use <code>blocks = list(block = 'bypoly01', classes = c(2, 7)</code>, for instance.</p></dd>
+
+
+<dt id="arg-byyear">byyear<a class="anchor" aria-label="anchor" href="#arg-byyear"></a></dt>
+<dd><p>One or more years to treat as holdout data. If supplied, this superceeds bypoly.</p></dd>
 
 
 <dt id="arg-blocks">blocks<a class="anchor" aria-label="anchor" href="#arg-blocks"></a></dt>

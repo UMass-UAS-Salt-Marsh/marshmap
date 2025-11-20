@@ -27,6 +27,7 @@ fit(
   top_importance = 20,
   holdout = NULL,
   bypoly = "bypoly01",
+  byyear = NULL,
   blocks = NULL,
   auc = FALSE,
   hyper = NULL,
@@ -144,11 +145,17 @@ fit(
 
 - bypoly:
 
-  The name of a `bypoly` cross-validation sequence in the sampled data.
-  `gather` creates `bypoly01` through `bypoly05`, with sequences of 1:10
-  for each subclass. Poly groups 1 and 6 will be used as holdouts. To
-  specify different groups, use
+  Polygons to treat as holdout data. Supply the name of a `bypoly`
+  cross-validation sequence in the sampled data. `gather` creates
+  `bypoly01` through `bypoly05`, with sequences of 1:10 for each
+  subclass. Poly groups 1 and 6 will be used as holdouts. To specify
+  different groups, use
   `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
+
+- byyear:
+
+  One or more years to treat as holdout data. If supplied, this
+  superceeds bypoly.
 
 - blocks:
 
