@@ -39,6 +39,7 @@ reference:
   - find_orthos
   - maketiles
   - refit
+  - upscale_clone
 
 - title: slurmcollie functions
   desc: These functions are part of the [slurmcollie](https://github.com/UMassCDS/slurmcollie) 

@@ -411,24 +411,29 @@ library(stringr)
 path <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/peg/flights/'
 toflip <- find_orthos('peg', vars)$file
 flipped <- do.call(paste0, list('flipped', 1:10, '.tif'))
+flippedvars <- paste(str_extract(flipped, '(.*)(.tif$)', group = 1), collapse = ' + ')
+
+
 for(i in 2:10) {     #  seq_along(toflip)) {
    print(i)
    x <- flip(rast(file.path(path, toflip[i])), direction = 'horizontal')
    writeRaster(x, file.path(path, flipped[i]))
 }
 
-
-flippedvars <- paste(str_extract(flipped, '(.*)(.tif$)', group = 1), collapse = ' + ')
-
 x <- build_flights_db('peg')
-sample('peg', result = 'flip', vars = c(vars, flippedvars), n = 1e4)
+sample('peg', result = 'flip', n = 50000, vars = paste0(vars, ' + ', flippedvars))
 
 
 
 # when sample is done
-fit('peg', data = 'deriv', vars = vars, bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: toflip')
-fit('peg', data = 'deriv', vars = vars, bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: flipped')
-fit('peg', data = 'deriv', vars = c(vars, flippedvars), bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: both')
+fit('peg', data = 'flip', vars = vars, bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: toflip')
+fit('peg', data = 'flip', vars = flippedvars, bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: flipped')
+fit('peg', data = 'flip', vars = paste0(vars, ' + ', flippedvars), bypoly = 'bypoly01', notune = TRUE, comment = 'flip test: both')
+
+fit('peg', data = 'flip', vars = vars, bypoly = 'bypoly01', max_samples = 50e3, notune = FALSE, comment = 'flip test: toflip 50k+', resources = list(walltime = '12:00:00'))
+fit('peg', data = 'flip', vars = flippedvars, bypoly = 'bypoly01', max_samples = 50e3, notune = FALSE, comment = 'flip test: flipped 50k+', resources = list(walltime = '12:00:00'))
+fit('peg', data = 'flip', vars = paste0(vars, ' + ', flippedvars), bypoly = 'bypoly01', max_samples = 50e3, notune = FALSE, comment = 'flip test: both 50k+', resources = list(walltime = '12:00:00'))
+
 #################
 
 

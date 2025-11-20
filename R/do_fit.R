@@ -191,7 +191,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
       if(nrow(r) > max_samples)                                                           #    and dataset is more than max_samples,
          r <- r[base::sample(nrow(r), size = max_samples, replace = FALSE), ]             #       subsample points
    
-   
+
    blks <- r[, b <- grepl('^_', names(r))]                                                # pull out any blocks vars
    r <- r[, !b]
    
