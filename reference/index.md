@@ -64,6 +64,8 @@ Uncommonly-used utility functions.
   : Create tiles with numbered blocks
 - [`refit()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/refit.md)
   : Relaunches specified fits, purging the old job and fit
+- [`upscale_clone()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_clone.md)
+  : Clones a site directory at a new grain
 
 ## slurmcollie functions
 
