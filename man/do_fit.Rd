@@ -25,6 +25,7 @@ do_fit(
   top_importance,
   holdout,
   bypoly,
+  byyear,
   blocks,
   auc,
   hyper,
@@ -96,6 +97,8 @@ of the testing and validation sets.}
 \code{gather} creates \code{bypoly01} through \code{bypoly05}, with sequences of 1:10 for each
 subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups,
 use \verb{blocks = list(block = 'bypoly01', classes = c(2, 7)}, for instance.}
+
+\item{byyear}{One or more years to treat as holdout data. If supplied, this superceeds bypoly.}
 
 \item{blocks}{An alternative to holding out random points. Specify a named list
 with \verb{block = <name of block column>, classes = <vector of block classes to hold out>}.

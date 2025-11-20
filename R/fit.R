@@ -43,10 +43,11 @@
 #' @param holdout Proportion of points to hold out. For Random Forest, this specifies 
 #'    the size of the single validation set, while for boosting, it is the size of each
 #'    of the testing and validation sets.
-#' @param bypoly The name of a `bypoly` cross-validation sequence in the sampled data. 
-#'    `gather` creates `bypoly01` through `bypoly05`, with sequences of 1:10 for each 
-#'    subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups, 
-#'    use `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
+#' @param bypoly Polygons to treat as holdout data. Supply the name of a `bypoly` cross-validation 
+#'    sequence in the sampled data. `gather` creates `bypoly01` through `bypoly05`, with sequences 
+#'    of 1:10 for each subclass. Poly groups 1 and 6 will be used as holdouts. To specify different 
+#'    groups, use `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
+#' @param byyear One or more years to treat as holdout data. If supplied, this superceeds bypoly.
 #' @param blocks An alternative to holding out random points. Specify a named list 
 #'    with `block = <name of block column>, classes = <vector of block classes to hold out>`.
 #'    Set this up by creating a shapefile corresponding to ground truth data with a variable
@@ -73,7 +74,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
                 vars = '{*}', exclude_vars = '', exclude_classes = NULL, include_classes = NULL, 
                 exclude_years = NULL, min_class = 500, reclass = c(13, 2), max_samples = NULL, years = NULL, 
                 minscore = 0, maxmissing = 20, max_miss_train = 0.20, 
-                top_importance = 20, holdout = NULL, bypoly = 'bypoly01', blocks = NULL,
+                top_importance = 20, holdout = NULL, bypoly = 'bypoly01', byyear = NULL, blocks = NULL,
                 auc = FALSE, hyper = NULL, notune = FALSE,
                 resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
@@ -165,7 +166,7 @@ fit <- function(site = NULL, datafile = 'data', name = '', method = 'rf',
                           min_class = min_class, reclass = reclass, max_samples = max_samples, 
                           years = years, minscore = minscore, maxmissing = maxmissing, 
                           max_miss_train = max_miss_train, top_importance = top_importance, 
-                          holdout = holdout, bypoly = bypoly, blocks = blocks, auc = auc, hyper = hyper, notune = notune),
+                          holdout = holdout, bypoly = bypoly, byyear = byyear, blocks = blocks, auc = auc, hyper = hyper, notune = notune),
           finish = 'fit_finish', callerid = the$fdb$id[i], 
           local = local, trap = trap, resources = resources, comment = comment)
 }

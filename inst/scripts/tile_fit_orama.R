@@ -465,5 +465,63 @@ fit('peg', data = 'deriv', max_samples = 50e3, bypoly = 'bypoly05', notune = FAL
 
 
 
-#################
+################# NEW UPSCALING APPROACH
+
+#upscale_clone('oth', 'oth_1m', 1)
+#sample('oth_1m', p = 1, balance = FALSE)
+
+
+launch('upscale_clone', reps = 'oth', repname = 'site', moreargs = list(newsite = 'orth_50cm', cellsize = 0.5), resources = list(memory = 100, walltime = '01:00:00'))
+launch('upscale_clone', reps = 'peg', repname = 'site', moreargs = list(newsite = 'peg_1m', cellsize = 1), resources = list(memory = 100, walltime = '01:00:00'))
+launch('upscale_clone', reps = 'peg', repname = 'site', moreargs = list(newsite = 'peg_50cm', cellsize = 0.5), resources = list(memory = 100, walltime = '01:00:00'))
+
+
+fit('oth_1m', bypoly = 'bypoly01', min_class = 50, comment = 'oth 1m bypoly01')
+fit('oth_1m', bypoly = 'bypoly02', min_class = 50, comment = 'oth 1m bypoly02')
+fit('oth_1m', bypoly = 'bypoly03', min_class = 50, comment = 'oth 1m bypoly03')
+fit('oth_1m', bypoly = 'bypoly04', min_class = 50, comment = 'oth 1m bypoly04')
+fit('oth_1m', bypoly = 'bypoly05', min_class = 50, comment = 'oth 1m bypoly05')
+fit('oth_1m', byyear = 2025, min_class = 50)
+
+
+
+
+
+# upscale_clone('oth', 'oth_50cm', 0.5)
+# upscale_clone('peg', 'peg_1m', 1)
+# upscale_clone('peg', 'peg_50cm', 0.5)
+
+
+# when upscale_clone is done
+sample('oth_50cm', p = 1, balance = FALSE)
+sample('peg_1m', p = 1, balance = FALSE)
+sample('peg_50cm', p = 1, balance = FALSE)
+
+
+# when sample is done
+fit('oth_50cm', bypoly = 'bypoly01', min_class = 100, comment = 'oth 50cm bypoly01')
+fit('oth_50cm', bypoly = 'bypoly02', min_class = 100, comment = 'oth 50cm bypoly02')
+fit('oth_50cm', bypoly = 'bypoly03', min_class = 100, comment = 'oth 50cm bypoly03')
+fit('oth_50cm', bypoly = 'bypoly04', min_class = 100, comment = 'oth 50cm bypoly04')
+fit('oth_50cm', bypoly = 'bypoly05', min_class = 100, comment = 'oth 50cm bypoly05')
+fit('oth_50cm', byyear = 2025, classes = 2025, min_class = 100)
+
+
+fit('peg_1m', bypoly = 'bypoly01', min_class = 50, comment = 'peg 1m bypoly01')
+fit('peg_1m', bypoly = 'bypoly02', min_class = 50, comment = 'peg 1m bypoly02')
+fit('peg_1m', bypoly = 'bypoly03', min_class = 50, comment = 'peg 1m bypoly03')
+fit('peg_1m', bypoly = 'bypoly04', min_class = 50, comment = 'peg 1m bypoly04')
+fit('peg_1m', bypoly = 'bypoly05', min_class = 50, comment = 'peg 1m bypoly05')
+fit('peg_1m', byyear = 2025, min_class = 50)
+
+
+fit('peg_50cm', bypoly = 'bypoly01', min_class = 100, comment = 'peg 50cm bypoly01')
+fit('peg_50cm', bypoly = 'bypoly02', min_class = 100, comment = 'peg 50cm bypoly02')
+fit('peg_50cm', bypoly = 'bypoly03', min_class = 100, comment = 'peg 50cm bypoly03')
+fit('peg_50cm', bypoly = 'bypoly04', min_class = 100, comment = 'peg 50cm bypoly04')
+fit('peg_50cm', bypoly = 'bypoly05', min_class = 100, comment = 'peg 50cm bypoly05')
+fit('peg_50cm', byyear = 2025, min_class = 100)
+
+
+
 

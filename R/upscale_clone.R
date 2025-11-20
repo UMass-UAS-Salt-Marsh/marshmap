@@ -19,7 +19,7 @@
 #' @param newsite Name for cloned site
 #' @param cellsize Cell size for new site (m)
 #' @importFrom terra rast datatype res aggregate writeRaster
-#' @improtFrom stringr file_path_sans_ext
+#' @importFrom tools file_path_sans_ext
 #' @export
 
 
@@ -66,6 +66,7 @@ upscale_clone <- function(site, newsite, cellsize) {
                      overwrite = TRUE, datatype = type, NAflag = missing)     #    save raster
    }
    
+   flights_prep(newsite, cache = FALSE)
    message('Finished upscaling orthos')
    
    
@@ -77,12 +78,18 @@ upscale_clone <- function(site, newsite, cellsize) {
    
    t <- file.copy(shpsource, dirname(shpresult), recursive = TRUE, overwrite = TRUE)
    
-   field <- file.path(shpresult, paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp'))
+ 
+   field <- file.path(resolve_dir(the$shapefilesdir, newsite), paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp'))
+   fieldresult <- resolve_dir(the$fielddir, newsite)
+   
+   if(!dir.exists(fieldresult))
+      dir.create(fieldresult, recursive = TRUE)
+   
    
    suppressWarnings(transects <-
                        rasterize(vect(field), standard, 
                                  field = 'poly')$poly |>                   # convert it to raster populated with unique poly id
-                       writeRaster(file.path(shpresult, 'transects.tif'), 
+                       writeRaster(file.path(fieldresult, 'transects.tif'), 
                                    overwrite = TRUE, datatype = type, 
                                    NAflag = missing))
    

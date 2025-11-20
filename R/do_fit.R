@@ -44,6 +44,7 @@
 #'    `gather` creates `bypoly01` through `bypoly05`, with sequences of 1:10 for each 
 #'    subclass. Poly groups 1 and 6 will be used as holdouts. To specify different groups, 
 #'    use `blocks = list(block = 'bypoly01', classes = c(2, 7)`, for instance.
+#' @param byyear One or more years to treat as holdout data. If supplied, this superceeds bypoly.
 #' @param blocks An alternative to holding out random points. Specify a named list 
 #'    with `block = <name of block column>, classes = <vector of block classes to hold out>`.
 #'    Set this up by creating a shapefile corresponding to ground truth data with a variable
@@ -65,7 +66,7 @@
 
 do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, include_classes,
                    exclude_years, min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
-                   top_importance, holdout, bypoly, blocks, auc, hyper, notune, rep = NULL) {
+                   top_importance, holdout, bypoly, byyear, blocks, auc, hyper, notune, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -200,8 +201,11 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
                           'rf' = 1,                                                       # random forest uses a single validation set,
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
-   if(!is.null(bypoly))                                                                   # if bypoly is supplied,
+   if(!is.null(bypoly) & !is.null(byyear))                                                # if bypoly is supplied (but only if byyear isn't),
       blocks <- list(block = bypoly, classes = c(1, 6))                                   #    do block holdout using classes 1 and 6
+   
+   if(!is.null(byyear))                                                                   # if byyear is supplied,
+      blocks <- list(block = year, classes = byyear)                                      #    for specified year
    
    
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
