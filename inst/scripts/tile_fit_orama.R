@@ -471,9 +471,11 @@ fit('peg', data = 'deriv', max_samples = 50e3, bypoly = 'bypoly05', notune = FAL
 #sample('oth_1m', p = 1, balance = FALSE)
 
 
-launch('upscale_clone', reps = 'oth', repname = 'site', moreargs = list(newsite = 'orth_50cm', cellsize = 0.5), resources = list(memory = 100, walltime = '01:00:00'))
-launch('upscale_clone', reps = 'peg', repname = 'site', moreargs = list(newsite = 'peg_1m', cellsize = 1), resources = list(memory = 100, walltime = '01:00:00'))
-launch('upscale_clone', reps = 'peg', repname = 'site', moreargs = list(newsite = 'peg_50cm', cellsize = 0.5), resources = list(memory = 100, walltime = '01:00:00'))
+upscale_clone('oth', 'oth_50cm', 0.5)
+upscale_clone('peg', 'peg_1m', 1)
+upscale_clone('peg', 'peg_50cm', 0.5)
+
+
 
 
 fit('oth_1m', bypoly = 'bypoly01', min_class = 50, comment = 'oth 1m bypoly01')
@@ -487,9 +489,7 @@ fit('oth_1m', byyear = 2025, min_class = 50)
 
 
 
-# upscale_clone('oth', 'oth_50cm', 0.5)
-# upscale_clone('peg', 'peg_1m', 1)
-# upscale_clone('peg', 'peg_50cm', 0.5)
+
 
 
 # when upscale_clone is done

@@ -201,7 +201,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
                           'rf' = 1,                                                       # random forest uses a single validation set,
                           'boost' = 2)                                                    # and AdaBoost uses a test and a validation set  
    
-   if(!is.null(bypoly) & !is.null(byyear))                                                # if bypoly is supplied (but only if byyear isn't),
+   if(!is.null(bypoly) & is.null(byyear))                                                 # if bypoly is supplied (but only if byyear isn't),
       blocks <- list(block = bypoly, classes = c(1, 6))                                   #    do block holdout using classes 1 and 6
    
    if(!is.null(byyear))                                                                   # if byyear is supplied,
@@ -221,6 +221,8 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    }
    else                                                                                   # else, select holdout sets based on holdout proportion
    {
+      message('Holding out random cells')
+      
       parts <- createDataPartition(r$subclass, p = holdout, times = n_partitions)         # create holdout sets
       
       training <- r[-unlist(parts), ]
@@ -334,7 +336,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    r$hyper <- 'tbd' # hyper                                                                    # hyperparameters
    
    r$vars <- ncol(z$train)                                                                # number of variables
-   r$cases <- nrow(z$train)                                                               # sample size   
+   r$cases <- nrow(z$train)                                                               #sample size   
    r$holdout <- dim(validate)[1]                                                          # holdout sample size
    r$CCR <- f$confusion$overall[['Accuracy']]                                             # correct classification rate
    r$kappa <- f$confusion$overall[['Kappa']]                                              # Kappa
