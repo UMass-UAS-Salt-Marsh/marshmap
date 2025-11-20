@@ -205,8 +205,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
       blocks <- list(block = bypoly, classes = c(1, 6))                                   #    do block holdout using classes 1 and 6
    
    if(!is.null(byyear))                                                                   # if byyear is supplied,
-      blocks <- list(block = year, classes = byyear)                                      #    for specified year
-   
+      blocks <- list(block = 'year', classes = byyear)                                    #    for specified year
    
    if(!is.null(blocks)) {                                                                 # if we're using blocks for holdouts,   ---- doesn't work with AdaBoost yet
       blocks$block <- tolower(blocks$block)
