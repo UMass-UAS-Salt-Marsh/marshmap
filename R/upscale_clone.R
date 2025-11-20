@@ -66,9 +66,6 @@ upscale_clone <- function(site, newsite, cellsize) {
                      overwrite = TRUE, datatype = type, NAflag = missing)     #    save raster
    }
    
-   flights_prep(newsite, cache = FALSE)
-   message('Finished upscaling orthos')
-   
    
    shpsource <- resolve_dir(the$shapefilesdir, site)                       # finally, process transects shapefile
    shpresult <- resolve_dir(the$shapefilesdir, newsite)
@@ -78,13 +75,15 @@ upscale_clone <- function(site, newsite, cellsize) {
    
    t <- file.copy(shpsource, dirname(shpresult), recursive = TRUE, overwrite = TRUE)
    
- 
+   flights_prep(newsite, cache = FALSE)
+   message('Finished upscaling orthos')
+   
+   
    field <- file.path(resolve_dir(the$shapefilesdir, newsite), paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp'))
    fieldresult <- resolve_dir(the$fielddir, newsite)
    
    if(!dir.exists(fieldresult))
       dir.create(fieldresult, recursive = TRUE)
-   
    
    suppressWarnings(transects <-
                        rasterize(vect(field), standard, 
