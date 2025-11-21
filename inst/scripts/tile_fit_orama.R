@@ -523,5 +523,5 @@ fit('peg_50cm', bypoly = 'bypoly05', min_class = 100, comment = 'peg 50cm bypoly
 fit('peg_50cm', byyear = 2025, min_class = 100, comment = 'peg 50cm 2025 min=100')
 
 
-
+launch('flights_prep', reps = 'oth_1m', repname = 'site')               # make cached images for previous runs
 

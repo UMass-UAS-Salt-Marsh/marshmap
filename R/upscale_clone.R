@@ -37,11 +37,10 @@ upscale_clone <- function(site, newsite, cellsize) {
    new_db_name <- file.path(paste0('flights_', site, '.txt'))
    db <- read.table(file.path(source, db_name), 
                     sep = '\t', quote = '', header = TRUE)
-   db <- db[!db$deleted, ]
    db[, c('filestamp', 'pct_missing', 'missing_filestamp')] <- NA
    
    db$score[is.na(db$score)] <- 0
-   keep <- nchar(db$window) == 0 & db$score != 1                           # we're keeping everything but upscaled and rejected orthos
+   db <- db[!db$deleted & nchar(db$window) == 0 & db$score != 1, ]         # we're keeping everything but deleted, upscaled and rejected orthos
    save_flights_db(db[keep, ], file.path(result, db_name))
    
    
@@ -61,7 +60,7 @@ upscale_clone <- function(site, newsite, cellsize) {
       missing <- get_NAflag(x) 
       
       x <- terra::aggregate(x, factor, fun = 'mean')                       #    use aggregate to upscale
-      writeRaster(x, file.path(file.path(result, orthos[i])), 
+      writeRaster(x, file.path(result, orthos[i]), 
                   overwrite = TRUE, datatype = type, NAflag = missing)     #    save raster
       
       if(i == 1)

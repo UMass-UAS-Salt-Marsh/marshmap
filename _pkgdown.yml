@@ -40,6 +40,7 @@ reference:
   - maketiles
   - refit
   - upscale_clone
+  - upscale_more
 
 - title: slurmcollie functions
   desc: These functions are part of the [slurmcollie](https://github.com/UMassCDS/slurmcollie) 
