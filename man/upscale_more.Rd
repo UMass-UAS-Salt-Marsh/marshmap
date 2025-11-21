@@ -4,7 +4,7 @@
 \alias{upscale_more}
 \title{Adds more metrics to an already existing upscaled clone}
 \usage{
-upscale_more(site, newsite, cellsize, metrics = "all")
+upscale_more(site, newsite, cellsize, metrics = "all", cache = TRUE)
 }
 \arguments{
 \item{site}{Site name}
@@ -20,6 +20,8 @@ upscale_more(site, newsite, cellsize, metrics = "all")
 \item \code{r0595}, \code{r1090}, \code{iqr} Quantile ranges: 5th-95th, 10th-90th, and interquartile range
 \item \code{skewness} and \code{kurtosis}, for Ryan
 }}
+
+\item{cache}{If TRUE, build cached images for \code{screen}}
 }
 \description{
 \itemize{

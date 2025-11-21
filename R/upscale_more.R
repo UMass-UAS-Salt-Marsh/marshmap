@@ -10,6 +10,7 @@
 #'  - `q05`, `q10`, `q25`, `median`, `q75`, `q90`, and `q95` Quantiles
 #'  - `r0595`, `r1090`, `iqr` Quantile ranges: 5th-95th, 10th-90th, and interquartile range
 #'  - `skewness` and `kurtosis`, for Ryan
+#' @param cache If TRUE, build cached images for `screen`
 #' @importFrom terra rast datatype res aggregate writeRaster
 #' @importFrom tools file_path_sans_ext
 #' @importFrom stats quantile IQR
@@ -17,7 +18,7 @@
 #' @export
 
 
-upscale_more <- function(site, newsite, cellsize, metrics = 'all') {
+upscale_more <- function(site, newsite, cellsize, metrics = 'all', cache = TRUE) {
    
    
    # metrics sd, median, skewness, and kurtosis are already defined. Here are the rest:
@@ -70,6 +71,6 @@ upscale_more <- function(site, newsite, cellsize, metrics = 'all') {
    
    
    message('New metrics added. Now running flights_prep')
-   flights_prep(newsite, cache = FALSE)
+   flights_prep(newsite, cache = cache)
    message('Finished upscaling orthos')
 }
