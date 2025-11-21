@@ -26,5 +26,7 @@ get_flights_db <- function(site, noerror = FALSE) {
    }
    db <- read.table(db_name, sep = '\t', quote = '', header = TRUE)
    
+   db$score[is.na(db$score)] <- 0
+   
    return(db)
 }

@@ -56,14 +56,15 @@ upscale_clone <- function(site, newsite, cellsize) {
       message('Processing ', orthos[i], ' (', i, ' of ', length(orthos), ')...')
       
       x <- rast(file.path(source, orthos[i]))                              #    read raster
-      if(i == 1)
-         standard <- x
       type <- datatype(x, bylyr = FALSE)                                   #    get datatype and missing
       missing <- get_NAflag(x) 
       
-      terra::aggregate(x, factor, fun = 'mean') |>                         #    use aggregate to upscale
-         writeRaster(file.path(file.path(result, orthos[i])), 
-                     overwrite = TRUE, datatype = type, NAflag = missing)     #    save raster
+      x <- terra::aggregate(x, factor, fun = 'mean')                       #    use aggregate to upscale
+      writeRaster(x, file.path(file.path(result, orthos[i])), 
+                  overwrite = TRUE, datatype = type, NAflag = missing)     #    save raster
+      
+      if(i == 1)
+         standard <- x
    }
    
    

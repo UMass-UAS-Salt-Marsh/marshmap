@@ -485,7 +485,7 @@ fit('oth_1m', byyear = 2025, min_class = 100, comment = 'oth 1m 2025 min=100')
 
 ### I'm here
 
-# upscale_clone('oth', 'oth_50cm', 0.5)
+upscale_clone('oth', 'oth_50cm', 0.5)
 upscale_clone('peg', 'peg_1m', 1)
 upscale_clone('peg', 'peg_50cm', 0.5)
 
@@ -493,7 +493,7 @@ upscale_clone('peg', 'peg_50cm', 0.5)
 
 
 # when upscale_clone is done
-#sample('oth_50cm', p = 1, balance = FALSE)
+sample('oth_50cm', p = 1, balance = FALSE)
 sample('peg_1m', p = 1, balance = FALSE)
 sample('peg_50cm', p = 1, balance = FALSE)
 
