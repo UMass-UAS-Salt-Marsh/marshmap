@@ -57,15 +57,21 @@ importance <- function(fitids = NULL, vars = NULL, result = NULL, normalize = TR
    
    frow <- match(fitids, the$fdb$id)
    if(any(is.na(frow))) {
-      message('Skipping fitids that are not in database: ', paste(fitids[is.na(frow)], collapse = ', '))
+      m <- fitids[is.na(frow)]
+      if(length(m) > 10)                                                         # if the list is long
+         m <- c(m[1:3], '...', m[length(m) - 2:0])                               #    elide the middle
+      message('Skipping fitids that are not in database: ', paste(m, collapse = ', '))
       fitids <- fitids[!is.na(frow)]
       frow <- frow[!is.na(frow)]
+      message('Working with ', length(fitids),' fits: ', paste(fitids, collapse = ', '))
    }
    
    if(!is.null(min_ccr)) {                                                       # if min_ccr, drop low-quality fits
       b <- (the$fdb$CCR[frow] * 100) >= min_ccr
       fitids <- fitids[b]
       frow <- frow[b]
+      if(any(!b))
+         message('Dropping ', sum(!b), ' fits because of min_ccr = ', min_ccr, '; now have ', length(frow), ' fits')
    }
    
    z <- list()

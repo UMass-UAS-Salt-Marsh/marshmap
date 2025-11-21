@@ -47,6 +47,9 @@ do_map <- function(site, fitid, fitfile, clip, result, mapid, rep = NULL) {
    f0x <- file.path(p, f0x)
    f <- file.path(p, f)
    
+   if(!dir.exists(p))
+      dir.create(p, recursive = TRUE)
+   
    model <- readRDS(fitfile)$model_object
    target <- as.character(model$terms[[2]])                                   # get target level, typically 'subclass'
    

@@ -37,6 +37,7 @@ upscale_clone <- function(site, newsite, cellsize) {
    new_db_name <- file.path(paste0('flights_', site, '.txt'))
    db <- read.table(file.path(source, db_name), 
                     sep = '\t', quote = '', header = TRUE)
+   db <- db[!db$deleted, ]
    db[, c('filestamp', 'pct_missing', 'missing_filestamp')] <- NA
    
    db$score[is.na(db$score)] <- 0

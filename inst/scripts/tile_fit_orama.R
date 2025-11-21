@@ -483,28 +483,28 @@ fit('oth_1m', bypoly = 'bypoly05', min_class = 100, comment = 'oth 1m bypoly05 m
 fit('oth_1m', byyear = 2025, min_class = 100, comment = 'oth 1m 2025 min=100')
 
 
+#upscale_clone('oth', 'oth_50cm', 0.5)
+#upscale_clone('peg', 'peg_1m', 1)            
+#upscale_clone('peg', 'peg_50cm', 0.5)        
+
+
 ### I'm here
-
-upscale_clone('oth', 'oth_50cm', 0.5)
-upscale_clone('peg', 'peg_1m', 1)
-upscale_clone('peg', 'peg_50cm', 0.5)
-
 
 
 
 # when upscale_clone is done
-sample('oth_50cm', p = 1, balance = FALSE)
-sample('peg_1m', p = 1, balance = FALSE)
-sample('peg_50cm', p = 1, balance = FALSE)
+# sample('oth_50cm', p = 1, balance = FALSE)
+sample('peg_1m', p = 1, balance = FALSE)             
+sample('peg_50cm', p = 1, balance = FALSE)           
 
 
 # when sample is done
-fit('oth_50cm', bypoly = 'bypoly01', min_class = 100, comment = 'oth 50cm bypoly01 min=100')
-fit('oth_50cm', bypoly = 'bypoly02', min_class = 100, comment = 'oth 50cm bypoly02 min=100')
-fit('oth_50cm', bypoly = 'bypoly03', min_class = 100, comment = 'oth 50cm bypoly03 min=100')
-fit('oth_50cm', bypoly = 'bypoly04', min_class = 100, comment = 'oth 50cm bypoly04 min=100')
-fit('oth_50cm', bypoly = 'bypoly05', min_class = 100, comment = 'oth 50cm bypoly05 min=100')
-fit('oth_50cm', byyear = 2025, classes = 2025, min_class = 100, comment = 'oth 50cm 2025 min=100')
+# fit('oth_50cm', bypoly = 'bypoly01', min_class = 100, comment = 'oth 50cm bypoly01 min=100')
+# fit('oth_50cm', bypoly = 'bypoly02', min_class = 100, comment = 'oth 50cm bypoly02 min=100')
+# fit('oth_50cm', bypoly = 'bypoly03', min_class = 100, comment = 'oth 50cm bypoly03 min=100')
+# fit('oth_50cm', bypoly = 'bypoly04', min_class = 100, comment = 'oth 50cm bypoly04 min=100')
+# fit('oth_50cm', bypoly = 'bypoly05', min_class = 100, comment = 'oth 50cm bypoly05 min=100')
+# fit('oth_50cm', byyear = 2025, min_class = 100, comment = 'oth 50cm 2025 min=100')
 
 
 fit('peg_1m', bypoly = 'bypoly01', min_class = 100, comment = 'peg 1m bypoly01 min=1001')
@@ -512,7 +512,7 @@ fit('peg_1m', bypoly = 'bypoly02', min_class = 100, comment = 'peg 1m bypoly02 m
 fit('peg_1m', bypoly = 'bypoly03', min_class = 100, comment = 'peg 1m bypoly03 min=100')
 fit('peg_1m', bypoly = 'bypoly04', min_class = 100, comment = 'peg 1m bypoly04 min=100')
 fit('peg_1m', bypoly = 'bypoly05', min_class = 100, comment = 'peg 1m bypoly05 min=100')
-fit('peg_1m', byyear = 2025, min_class = 50, min_class = 100, comment = 'peg 1m 2025 min=100')
+fit('peg_1m', byyear = 2025, min_class = 100, comment = 'peg 1m 2025 min=100')
 
 
 fit('peg_50cm', bypoly = 'bypoly01', min_class = 100, comment = 'peg 50cm bypoly01 min=100')
@@ -520,7 +520,7 @@ fit('peg_50cm', bypoly = 'bypoly02', min_class = 100, comment = 'peg 50cm bypoly
 fit('peg_50cm', bypoly = 'bypoly03', min_class = 100, comment = 'peg 50cm bypoly03 min=100')
 fit('peg_50cm', bypoly = 'bypoly04', min_class = 100, comment = 'peg 50cm bypoly04 min=100')
 fit('peg_50cm', bypoly = 'bypoly05', min_class = 100, comment = 'peg 50cm bypoly05 min=100')
-fit('peg_50cm', byyear = 2025, min_class = 100, min_class = 100, comment = 'peg 50cm 2025 min=100')
+fit('peg_50cm', byyear = 2025, min_class = 100, comment = 'peg 50cm 2025 min=100')
 
 
 
