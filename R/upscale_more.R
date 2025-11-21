@@ -42,9 +42,10 @@ upscale_more <- function(site, newsite, cellsize, metrics = 'all', cache = TRUE)
    
    
    db_name <- paste0('flights_', site, '.txt')                                      # copy flights database and nuke stuff we don't want to keep
-   db <- read.table(file.path(source, db_name), 
+   db <- read.table(file.path(source, db_name), ,
                     sep = '\t', quote = '', header = TRUE)
-   db <- db[!db$deleted & nchar(db$window) == 0 & db$score != 1 ]                   # we're keeping everything but deleted, upscaled and rejected orthos
+ 
+   db <- db[!db$deleted & nchar(db$window) == 0 & db$score != 1, ]                  # we're keeping everything but deleted, upscaled and rejected orthos
    orthos <- db$name                                                                # target orthos
    
    

@@ -525,3 +525,11 @@ fit('peg_50cm', byyear = 2025, min_class = 100, comment = 'peg 50cm 2025 min=100
 
 launch('flights_prep', reps = 'oth_1m', repname = 'site')               # make cached images for previous runs
 
+
+
+
+upscale_more('oth', 'oth_50cm', 1)
+upscale_more('oth', 'oth_50cm', 0.5)
+upscale_more('peg', 'peg_1m', 1)            
+upscale_more('peg', 'peg_50cm', 0.5)  
+
