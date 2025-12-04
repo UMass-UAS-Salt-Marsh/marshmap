@@ -84,7 +84,7 @@ do_upscale_more <- function(site, newsite, cellsize, vars, minscore, maxmissing,
       
       
       for(j in seq_along(metrics)) {                                                #    for each metric
-         cat('   ', metrics[j], '\nd')
+         cat('   metric: ', metrics[j], ' (', j, ' of ', length(metrics), ')\n', sep = '')
          z <- terra::aggregate(x, factor, fun = eval(parse(text = metrics[j])))     #       use aggregate to upscale
          name <- paste0(file_path_sans_ext(orthos[i]), '__', metrics[j], '.tif')    #       result file name
          writeRaster(z, file.path(result, name), 
