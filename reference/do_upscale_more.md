@@ -5,19 +5,15 @@
 ## Usage
 
 ``` r
-upscale_more(
+do_upscale_more(
   site,
   newsite,
-  cellsize = 1,
-  vars = "{*}",
-  minscore = 0,
-  maxmissing = 20,
+  cellsize,
+  vars,
+  minscore,
+  maxmissing,
   metrics = "all",
-  cache = TRUE,
-  resources = NULL,
-  local = FALSE,
-  trap = TRUE,
-  comment = NULL
+  cache = TRUE
 )
 ```
 
@@ -85,7 +81,3 @@ upscale_more(
   handling. Use this for debugging. If you get unrecovered errors, the
   job won't be added to the jobs database. Has no effect if local =
   FALSE.
-
-- comment:
-
-  Optional slurmcollie comment
