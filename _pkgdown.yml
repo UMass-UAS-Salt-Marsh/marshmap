@@ -55,6 +55,7 @@ reference:
   contents:
   - do_gather
   - flights_prep
+  - do_upscale_more
   - do_derive
   - do_sample
   - do_fit

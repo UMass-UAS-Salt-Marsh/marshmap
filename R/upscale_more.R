@@ -46,7 +46,7 @@ upscale_more <- function(site, newsite, cellsize = 1, vars = '{*}', minscore = 0
    if(is.null(comment))
       comment <- paste0('upscale_more ', site, ' from ', newsite, ' (', cellsize, ' m)')
    
-   launch('do_gather', reps = site, repname = 'site', 
+   launch('do_upscale_more', reps = site, repname = 'site', 
           moreargs = list(newsite = newsite, cellsize = cellsize, vars = vars, 
                           minscore = minscore, maxmissing = maxmissing,
                           metrics = metrics, cache = cache), 
