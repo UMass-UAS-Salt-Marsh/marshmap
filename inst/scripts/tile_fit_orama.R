@@ -533,3 +533,40 @@ upscale_more('oth', 'oth_50cm', 0.5)
 upscale_more('peg', 'peg_1m', 1)            
 upscale_more('peg', 'peg_50cm', 0.5)  
 
+
+
+
+
+#================================================================== upscale_more ==================================================================
+# quick test
+upscale_more('oth', 'oth_50cm', 0.5, vars = '02Aug19_OTH_Mid_Mica_Ortho.tif', local = TRUE)
+upscale_more('oth', 'oth_50cm', 0.5, vars = 'ortho | mica | low, mid', minscore = 5)
+upscale_more('oth', 'oth_1m', 1, vars = 'ortho | mica | low, mid', minscore = 5)
+
+
+
+
+
+# fits with data from upscale_more
+flights_prep('oth_1m', cache = FALSE)
+flights_prep('oth_50cm', cache = FALSE)
+
+sample('oth_1m', p = 1, balance = FALSE, reclass = c(13, 2))
+sample('oth_50cm', p = 1, balance = FALSE, reclass = c(13, 2))
+
+
+fit('oth_1m', bypoly = 'bypoly01', min_class = 75, comment = 'more upscaled 1m bypoly01 min=100')
+fit('oth_1m', bypoly = 'bypoly02', min_class = 75, comment = 'more upscaled 1m bypoly02 min=100')
+fit('oth_1m', bypoly = 'bypoly03', min_class = 75, comment = 'more upscaled 1m bypoly03 min=100')
+fit('oth_1m', bypoly = 'bypoly04', min_class = 75, comment = 'more upscaled 1m bypoly04 min=100')
+fit('oth_1m', bypoly = 'bypoly05', min_class = 75, comment = 'more upscaled 1m bypoly05 min=100')
+
+fit('oth_50cm', bypoly = 'bypoly01', min_class = 75, comment = 'more upscaled 50cm bypoly01 min=100')
+fit('oth_50cm', bypoly = 'bypoly02', min_class = 75, comment = 'more upscaled 50cm bypoly02 min=100')
+fit('oth_50cm', bypoly = 'bypoly03', min_class = 75, comment = 'more upscaled 50cm bypoly03 min=100')
+fit('oth_50cm', bypoly = 'bypoly04', min_class = 75, comment = 'more upscaled 50cm bypoly04 min=100')
+fit('oth_50cm', bypoly = 'bypoly05', min_class = 75, comment = 'more upscaled 50cm bypoly05 min=100')
+
+upscale_more('oth', 'oth_1m', 1, minscore = 3)
+upscale_more('oth', 'oth_50cm', 0.5, minscore = 3)
+

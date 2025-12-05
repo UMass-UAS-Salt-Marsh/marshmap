@@ -39,7 +39,7 @@ upscale_more <- function(site, newsite, cellsize = 1, vars = '{*}', minscore = 0
    resources <- get_resources(resources, list(
       ncpus = 1,
       memory = 64,
-      walltime = '4:00:00'
+      walltime = '24:00:00'
    ))
    
    
