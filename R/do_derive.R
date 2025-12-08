@@ -15,9 +15,9 @@
 #'    \item{NDRE}{Normalized difference red edge index, `(NIR - RE) / (NIR + RE)`, an index of the
 #'       amount of chlorophyll in a plant}
 #'    \item{mean}{mean of each band in a window, size defined by `window`}
-#'    \item{std}{standard deviation of each band in a window, size defined by `window`}
+#'    \item{sd}{standard deviation of each band in a window, size defined by `window`}
 #'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
-#'    \item{NDVIstd}{standard deviation of NDVI in a window, size defined by `window`}
+#'    \item{NDVIsd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
 #'    \item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's `NDWI`), `(NIR - SWIR) / (NIR + SWIR)`,
 #'       an index of water content in leaves; requires a Mica layer for `pattern1`, and a matched
@@ -25,7 +25,7 @@
 #'    \item{delta}{The difference between `pattern1` and `pattern2`, may be useful for taking a 
 #'    difference between late-season and early-season DEMs to represent vegetation canopy height}
 #' }
-#' @param window Window size for `mean`, `std`, `NDVImean`, and `NDVIstd`, in cells; windows are square, so just specify
+#' @param window Window size for `mean`, `sd`, `NDVImean`, and `NDVIsd`, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
 #' @param cache If TRUE, cache images for `screen`. If set to FALSE, these flights
 #'    will be blank in `screen`.
@@ -51,7 +51,7 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
    
    
    # When adding new metrics, they also need to be added to derive: in pars.yml
-   if(!all(b <- metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVImean', 'NDVIstd', 'mean', 'std', 'NDWIswir', 'delta')))
+   if(!all(b <- metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVImean', 'NDVIsd', 'mean', 'sd', 'NDWIswir', 'delta')))
       stop('Unknown metrics: ', metrics[!b])
    
    
@@ -72,7 +72,7 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
       if(length(pattern1) != length(pattern2))
          stop('pattern1 and pattern2 returned different numbers of files')
       
-      if(any(metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'mean', 'std', 'NDVI_mean', 'NDVI_std')))
+      if(any(metrics %in% c('NDVI', 'NDWIg', 'NDRE', 'mean', 'sd', 'NDVI_mean', 'NDVI_sd')))
          stop('Univariate metrics cannot be used with pattern2')
    }
    else {
@@ -96,11 +96,11 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          else
             result <- paste0(one[i], '__', metrics[j])
          
-         if(metrics[j] %in% c('mean', 'std', 'NDVImean', 'NDVIstd'))                      # for focal metrics, include window size in result name
+         if(metrics[j] %in% c('mean', 'sd', 'NDVImean', 'NDVIsd'))                      # for focal metrics, include window size in result name
             result <- paste0(result, '_w', window)
          
          
-         if(any(metrics %in% c('NDVI', 'NDVImean', 'NDVIstd')))                           # if we're doing any of the NDVI metrics,
+         if(any(metrics %in% c('NDVI', 'NDVImean', 'NDVIsd')))                           # if we're doing any of the NDVI metrics,
             ndvi <- (x[[mica$nir]] - x[[mica$red]]) / (x[[mica$nir]] + x[[mica$red]])     #    calculate NDVI now
          
          
@@ -117,13 +117,13 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
                 mean = {
                    z <- focal(x, w = window, fun = 'mean', na.policy = 'omit', na.rm = TRUE)
                 },
-                std = {
-                   z <- focal(x, w = window, fun = 'std', na.policy = 'omit', na.rm = TRUE)
+                sd = {
+                   z <- focal(x, w = window, fun = 'sd', na.policy = 'omit', na.rm = TRUE)
                 },
                 NDVImean = {
                    z <- focal(ndvi, w = window, fun = 'mean', na.policy = 'omit', na.rm = TRUE)
                 },
-                NDVIstd = {
+                NDVIsd = {
                    z <- focal(ndvi, w = window, fun = 'sd', na.policy = 'omit', na.rm = TRUE)
                 },
                 NDWIswir = {

@@ -2,6 +2,7 @@
 #' 
 #' @param site Three letter site code
 #' @param datafile Name of `.RDS` data file, excluding the extension
+#' @returns Returns the full list of portable names, invisibly
 #' @importFrom stringr str_extract
 #' @export
 
@@ -35,4 +36,6 @@ sampleinfo <- function(site, datafile = 'data') {
    
    cat('\n', length(z), ' orthos (', sum(!b), ' bands)\n', sep = '')
    print(z, quote = FALSE)
+   
+   return(invisible(orthos))
 }

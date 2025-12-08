@@ -2,6 +2,8 @@
 #' 
 #' - this is experimental
 #' 
+#' **Note**: all metrics *must* be added to pars.yml under category: derive.
+#'
 #' @param site Site name
 #' @param newsite Name for cloned site
 #' @param cellsize Cell size for new site (m)

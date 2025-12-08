@@ -88,20 +88,6 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
       )
    
    
-   # if(!'missing_filestamp' %in% names(db)) {        # temp to add new column
-   #    db <- cbind(db, NA)
-   #    names(db)[ncol(db)] <- 'missing_filestamp'
-   # }
-   
-   # ### ---delete this crap---
-   # cat(site, ': BEFORE FIX: db has ', nrow(db), ' rows\n', sep = '')                # ******************************** this is temporary code in case duplicated name bug reappears
-   # db <- db[match(unique(db$name), db$name), ]  #****************************** fix dups in db *************************************
-   # cat(site, ': AFTER FIX: db has ', nrow(db), ' rows\n\n', sep = '')
-   ### -----------------------
-   ### 
-   
-   
-   
    db$score[is.na(db$score)] <- 0                                       # NAs here wreak havoc
    
    x <- list.files(dir)                                                 # list files
@@ -116,7 +102,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    i <- i[!is.na(i)]
    c <- db$filestamp[i] != d
    if(any(c))
-      db <- db[-i[db$filestamp[i] != d], ]                              # drop files with changed stamps from database (md5 on Google Drive is way too slow to do it that way)                                
+      db <- db[-i[db$filestamp[i] != d], ]                              # drop files with changed stamps from database                             
    
    
    y <- x[!x %in% db$name]
@@ -179,7 +165,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    a <- aggreg(rep(1, nrow(db)), db$portable, FUN = sum, drop_by = FALSE)
    db$dups <- a[match(db$portable, a$Group.1),]$x
    
-   
+
    save_flights_db(db, db_name)
    
    invisible(list(db = db, db_name = db_name))

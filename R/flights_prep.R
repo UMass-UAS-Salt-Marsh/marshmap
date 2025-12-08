@@ -30,7 +30,8 @@ flights_prep <- function(site, replace_caches = FALSE, cache = TRUE) {
    fd <- file.mtime(file.path(dir, db$db$name))                               # file dates on disk
    
    
-   update <- is.na(fd) | nchar(db$db$missing_filestamp) == 0
+   update <- is.na(fd) | is.na(db$db$missing_filestamp) | 
+      nchar(db$db$missing_filestamp) == 0
    update[!update] <- db$db$missing_filestamp[!update] < fd[!update]          # files that are new or outdated
    
    

@@ -38,9 +38,9 @@
 #'    \item{NDRE}{Normalized difference red edge index, `(NIR - RE) / (NIR + RE)`, an index of the
 #'       amount of chlorophyll in a plant}
 #'    \item{mean}{mean of each band in a window, size defined by `window`}
-#'    \item{std}{standard deviation of each band in a window, size defined by `window`}
+#'    \item{sd}{standard deviation of each band in a window, size defined by `window`}
 #'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
-#'    \item{NDVIstd}{standard deviation of NDVI in a window, size defined by `window`}
+#'    \item{NDVIsd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
 #'    \item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's `NDWI`), 
 #'       `(NIR - SWIR) / (NIR + SWIR)`, an index of water content in leaves; requires a Mica layer for 
@@ -48,7 +48,7 @@
 #'    \item{delta}{The difference between `pattern1` and `pattern2`, may be useful for taking a 
 #'    difference between late-season and early-season DEMs to represent vegetation canopy height}
 #' }
-#' @param window Window size for `mean`, `std`, `NDVImean`, and `NDVIstd`, in cells; windows are square, so just specify
+#' @param window Window size for `mean`, `sd`, `NDVImean`, and `NDVIsd`, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
 #' @param cache If TRUE, cache images for `screen`. If set to FALSE, these flights
 #'    will be blank in `screen`.
