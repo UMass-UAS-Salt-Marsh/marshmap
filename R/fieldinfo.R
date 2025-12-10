@@ -34,10 +34,10 @@ fieldinfo <- function(site) {
    d <- floor(log10(c(sum(y$polys), y$polys))) + 1                               # combine cells (polys), padded so they line up
    y$w <- d[1] - d[-1] + 1                                                       # max width is the total, of course
    y$pad <- sapply(y$w, function(x) paste(rep(' ', x), collapse = ''))
-   y$info <- paste0(format(y$cells, big.mark = ','), y$pad, '(', y$polys, ')')
+   y$info <- paste0(format(y$cells, big.mark = ','), y$pad, '(', y$polys, ')  ')
    
    y <- y[, c('year', 'subclass', 'info')]
-   z <- pivot_wider(y, names_from = year, values_from = info, names_sort = TRUE, values_fill = '-')
+   z <- pivot_wider(y, names_from = year, values_from = info, names_sort = TRUE, values_fill = '-  ')
    z <- data.frame(z[order(z$subclass), ])
    names(z) <- sub('X', '', names(z))
    
@@ -49,7 +49,7 @@ fieldinfo <- function(site) {
    
    w <- d[1] - floor(log10(rtp$polys))
    rpad <- sapply(w, function(x) paste(rep(' ', x), collapse = ''))
-   rt <- c('Total', paste0(format(rtc$cells, big.mark = ','), rpad, '(', rtp$polys, ')'))
+   rt <- c('Total', paste0(format(rtc$cells, big.mark = ','), rpad, '(', rtp$polys, ')  '))
    z <- rbind(z, rt)
    
    
@@ -61,9 +61,10 @@ fieldinfo <- function(site) {
    w <- d[1] - floor(log10(c(ctp$polys, sum(ctp$polys))))
    cpad <- sapply(w, function(x) paste(rep(' ', x), collapse = ''))
    
-   Total <- paste0(format(c(ctc$cells, sum(ctc$cells)), big.mark = ','), cpad, '(', c(ctp$polys, sum(ctp$polys)), ')')
+   Total <- paste0(format(c(ctc$cells, sum(ctc$cells)), big.mark = ','), cpad, '(', c(ctp$polys, sum(ctp$polys)), ')  ')
    z <- cbind(z, Total)
-   
+
+   names(z)[-1] <- paste0(names(z)[-1], '  ')
    
    cat('Number of cells (polys) for ', site, ' by subclass and year\n', sep = '')
    print(z, row.names = FALSE)
