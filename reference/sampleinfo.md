@@ -17,3 +17,7 @@ sampleinfo(site, datafile = "data")
 - datafile:
 
   Name of `.RDS` data file, excluding the extension
+
+## Value
+
+Returns the full list of portable names, invisibly

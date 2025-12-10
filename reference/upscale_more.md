@@ -89,3 +89,8 @@ upscale_more(
 - comment:
 
   Optional slurmcollie comment
+
+## Details
+
+**Note**: all metrics *must* be added to pars.yml under category:
+derive.

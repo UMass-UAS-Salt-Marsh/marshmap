@@ -64,7 +64,7 @@ derive(
 
   :   mean of each band in a window, size defined by `window`
 
-  std
+  sd
 
   :   standard deviation of each band in a window, size defined by
       `window`
@@ -73,7 +73,7 @@ derive(
 
   :   mean of NDVI in a window, size defined by `window`
 
-  NDVIstd
+  NDVIsd
 
   :   standard deviation of NDVI in a window, size defined by `window`
 
@@ -92,7 +92,7 @@ derive(
 
 - window:
 
-  Window size for `mean`, `std`, `NDVImean`, and `NDVIstd`, in cells;
+  Window size for `mean`, `sd`, `NDVImean`, and `NDVIsd`, in cells;
   windows are square, so just specify a single number. Bonus points if
   you remember to make it odd.
 

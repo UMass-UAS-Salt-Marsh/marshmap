@@ -81,3 +81,8 @@ do_upscale_more(
   handling. Use this for debugging. If you get unrecovered errors, the
   job won't be added to the jobs database. Has no effect if local =
   FALSE.
+
+## Details
+
+**Note**: all metrics *must* be added to pars.yml under category:
+derive.
