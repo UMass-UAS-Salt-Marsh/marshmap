@@ -11,6 +11,9 @@ sampleinfo(site, datafile = "data")
 
 \item{datafile}{Name of \code{.RDS} data file, excluding the extension}
 }
+\value{
+Returns the full list of portable names, invisibly
+}
 \description{
 Give summary of sample data file
 }

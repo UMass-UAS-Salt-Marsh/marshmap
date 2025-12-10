@@ -58,3 +58,6 @@ no effect if local = FALSE.}
 \item this is experimental
 }
 }
+\details{
+\strong{Note}: all metrics \emph{must} be added to pars.yml under category: derive.
+}

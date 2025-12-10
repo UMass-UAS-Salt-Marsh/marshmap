@@ -32,9 +32,9 @@ primarily helps distinguish waterbodies}
 \item{NDRE}{Normalized difference red edge index, \code{(NIR - RE) / (NIR + RE)}, an index of the
 amount of chlorophyll in a plant}
 \item{mean}{mean of each band in a window, size defined by \code{window}}
-\item{std}{standard deviation of each band in a window, size defined by \code{window}}
+\item{sd}{standard deviation of each band in a window, size defined by \code{window}}
 \item{NDVImean}{mean of NDVI in a window, size defined by \code{window}}
-\item{NDVIstd}{standard deviation of NDVI in a window, size defined by \code{window}}
+\item{NDVIsd}{standard deviation of NDVI in a window, size defined by \code{window}}
 Bivariate metrics include:
 \item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's \code{NDWI}), \code{(NIR - SWIR) / (NIR + SWIR)},
 an index of water content in leaves; requires a Mica layer for \code{pattern1}, and a matched
@@ -43,7 +43,7 @@ SWIR layer for \code{pattern2}}
 difference between late-season and early-season DEMs to represent vegetation canopy height}
 }}
 
-\item{window}{Window size for \code{mean}, \code{std}, \code{NDVImean}, and \code{NDVIstd}, in cells; windows are square, so just specify
+\item{window}{Window size for \code{mean}, \code{sd}, \code{NDVImean}, and \code{NDVIsd}, in cells; windows are square, so just specify
 a single number. Bonus points if you remember to make it odd.}
 
 \item{cache}{If TRUE, cache images for \code{screen}. If set to FALSE, these flights
