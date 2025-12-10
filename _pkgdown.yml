@@ -29,6 +29,7 @@ reference:
   - flights_report
   - sample_freq
   - importance
+  - fieldinfo
   - sampleinfo
   
 - title: Utility functions
