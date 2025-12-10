@@ -230,6 +230,8 @@ do_gather <- function(site, pattern = '',
                
                names(gt) <- tolower(names(gt))                                      #       we want lowercase names in ground truth shapefile
                gt$year <- as.numeric(gt$year)
+               if(is.na(gt$year))                                                   #       if year is missing, use TargetYear - this will fill in for PI
+                  gt$year <- gt$targetyear
                gt$year[is.na(gt$year)] <- 0                                         #       set NA years to 0
                
                for(j in 1:5)                                                        #       add 5 _bypoly columns
