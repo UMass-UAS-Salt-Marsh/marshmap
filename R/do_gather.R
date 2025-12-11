@@ -199,8 +199,7 @@ do_gather <- function(site, pattern = '',
                
                tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
                
-               
-               shp <- st_read(tpath)                                                #       read transects shapefile
+               shp <- st_read(tpath, quiet = TRUE)                                  #       read transects shapefile
                
                if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
                   message('         !!! Reprojecting ', basename(tpath))
@@ -230,7 +229,8 @@ do_gather <- function(site, pattern = '',
                
                names(gt) <- tolower(names(gt))                                      #       we want lowercase names in ground truth shapefile
                gt$year <- as.numeric(gt$year)
-               gt$year <- ifelse(is.na(gt$year), gt$targetyear, gt$year)            #       where year is missing, use targetyear - this will fill in for PI
+               if(!is.null(gt$targetyear))
+                  gt$year <- ifelse(is.na(gt$year), gt$targetyear, gt$year)         #       where year is missing, use targetyear - this will fill in for PI
                gt$year[is.na(gt$year)] <- 0                                         #       set NA years to 0
                
                for(j in 1:5)                                                        #       add 5 _bypoly columns

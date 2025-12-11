@@ -11,7 +11,7 @@ Produce reports on orthoimages, including site summaries, files flagged for
 repair, duplicated portable names, and all files for each site
 }
 \details{
-The site report is series text files.
+The site report is a series of text files.
 \enumerate{
 \item Summary of orthos for each site, with stats and frequency tables
 for each site. Unformatted text file, suitable for viewing in a text

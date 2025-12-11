@@ -25,6 +25,7 @@ fieldinfo <- function(site) {
    names(freqs) <- c('poly', 'cells')
    
    x <- merge(shp, freqs)                                                        # merge shapefile and raster cell count
+   names(x) <- tolower(names(x))
    x <- x[, c('year', 'poly', 'subclass', 'cells')]
    
    
