@@ -230,14 +230,13 @@ do_gather <- function(site, pattern = '',
                
                names(gt) <- tolower(names(gt))                                      #       we want lowercase names in ground truth shapefile
                gt$year <- as.numeric(gt$year)
-               if(is.na(gt$year))                                                   #       if year is missing, use TargetYear - this will fill in for PI
-                  gt$year <- gt$targetyear
+               gt$year <- ifelse(is.na(gt$year), gt$targetyear, gt$year)            #       where year is missing, use targetyear - this will fill in for PI
                gt$year[is.na(gt$year)] <- 0                                         #       set NA years to 0
                
                for(j in 1:5)                                                        #       add 5 _bypoly columns
                   gt[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(gt$subclass)
                
-
+               
                st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile with bonus columns as *_final
                
                
@@ -331,7 +330,7 @@ do_gather <- function(site, pattern = '',
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
       
-
+      
       flights_prep(site, replace_caches = replace_caches)                           #    now count missing values and cache images for screen
       
       message('Finished with site ', sites$site[i])

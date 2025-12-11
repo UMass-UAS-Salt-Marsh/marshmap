@@ -57,7 +57,7 @@ Kappa = `r round(model_fit$confuse$overall['Kappa'], 4)`
 ### Confusion matrix and detailed stats
 
 ```{r}
-print(saltmarsh::unconfuse(model_fit)$confuse, mode = 'prec_recall')                          # I'll move unconfuse to fit, so won't need it here
+print(marshmap::unconfuse(model_fit)$confuse, mode = 'prec_recall')                          # I'll move unconfuse to fit, so won't need it here
 ```
 #### Note
 
@@ -189,6 +189,6 @@ terra::plot(prediction, col = pal, all_levels = TRUE)
 # Appendix: Subclasses
 
 ```{r}
-classes <- saltmarsh::read_pars_table('classes')[, c('subclass', 'subclass_name')] 
+classes <- marshmap::read_pars_table('classes')[, c('subclass', 'subclass_name')] 
 print(classes, row.names = FALSE)
 ```

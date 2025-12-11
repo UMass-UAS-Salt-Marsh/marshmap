@@ -3,7 +3,8 @@
 #' @param site Three letter site code
 #' @importFrom terra rast values
 #' @importFrom sf st_read
-#' @importFrom tidyverse group_by summarise
+#' @importFrom dplyr n group_by summarize 
+#' @importFrom tidyr pivot_wider
 #' @export
 
 
@@ -29,7 +30,7 @@ fieldinfo <- function(site) {
    
    y <- x |>                                                                     # make a nice table 
       group_by(year, subclass) |>
-      summarise(polys = n(), cells = sum(cells), .groups = 'drop')
+      summarize(polys = n(), cells = sum(cells), .groups = 'drop')
    
    d <- floor(log10(c(sum(y$polys), y$polys))) + 1                               # combine cells (polys), padded so they line up
    y$w <- d[1] - d[-1] + 1                                                       # max width is the total, of course

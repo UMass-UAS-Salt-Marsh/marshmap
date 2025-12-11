@@ -1,4 +1,4 @@
-Package: saltmarsh
+Package: marshmap
 Type: Package
 Title: UMass UAS Salt Marsh Project salt marsh land cover mapping
 Description: Predictive model of salt marsh land cover from drone-based imagery. 
