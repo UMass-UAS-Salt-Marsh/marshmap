@@ -43,6 +43,23 @@ errors, even though the second two are correct.
 
 ``` r
 require(saltmarsh)
+#> Loading required package: saltmarsh
+#> 
+#> Attaching package: ‘saltmarsh’
+#> The following objects are masked from ‘package:marshmap’:
+#> 
+#>     assess, derive, do_derive, do_fit, do_gather, do_map, do_mosaic,
+#>     do_upscale_more, fieldinfo, find_orthos, fit, fit_finish, fitinfo,
+#>     fitpurge, fitset, flights_report, gather, gather_finish,
+#>     importance, init, maketiles, map, map_finish, mapinfo, mappurge,
+#>     mosaic, refit, resolve_dir, sample, sample_finish, sample_freq,
+#>     sampleinfo, screen, search_names, the, upscale_clone, upscale_more
+#> The following object is masked from ‘package:graphics’:
+#> 
+#>     screen
+#> The following object is masked from ‘package:base’:
+#> 
+#>     sample
 init()
 #> NULL
 search_names('mid.in, mid.out, high')
