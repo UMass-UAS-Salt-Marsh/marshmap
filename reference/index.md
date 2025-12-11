@@ -47,6 +47,8 @@ These functions report data and model status.
   data
 - [`importance()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/importance.md)
   : Produce a summary of variable importance across multiple fits
+- [`flightinfo()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/flightinfo.md)
+  : Summarize orthos at a single site
 - [`fieldinfo()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/fieldinfo.md)
   : Summarize number of field-sampled polys and pixels by class and year
 - [`sampleinfo()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/sampleinfo.md)

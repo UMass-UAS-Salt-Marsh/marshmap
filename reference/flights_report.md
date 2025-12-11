@@ -11,7 +11,7 @@ flights_report()
 
 ## Details
 
-The site report is series text files.
+The site report is a series of text files.
 
 1.  Summary of orthos for each site, with stats and frequency tables for
     each site. Unformatted text file, suitable for viewing in a text
