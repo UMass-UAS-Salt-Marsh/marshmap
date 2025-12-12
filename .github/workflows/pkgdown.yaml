@@ -37,7 +37,7 @@ jobs:
           needs: website
 
      - name: Remove local-only Rmd files before build
-       run: |
+       run:
          rm -f vignettes/articles/*.Rmd
        shell: bash
 
