@@ -5,4 +5,5 @@
 ^docs$
 ^pkgdown$
 ^\.github$
-^vignettes/articles/.*\.Rmd$
+^vignettes/articles/field_data_summary\.Rmd$
+^vignettes/articles/flight_data_summary\.Rmd$
