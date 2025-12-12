@@ -1,0 +1,153 @@
+# 
+
+/\* Knit with
+rmarkdown::render(‘vignettes/articles/field_data_summary.Rmd’) \*/
+
+#### Field data goals for U-Net
+
+- Preliminary estimate is that we’ll need \>10k cells per subclass in a
+  single year for robust fits
+- We’re cross-validating by holding out entire polygons (transects, MUs,
+  or polys) for validation. For the years we model, we’ll need at least
+  10 (preferably more) polys per subclass in a single year. These should
+  be scattered across the site, separated by \>20 m or so, and ideally
+  spanning the entire study area.
+- Some subclasses are rare in some or all sites. We’ll have to drop
+  these as necessary because of insufficient sample sizes. For
+  preliminary fitting, we can just drop them, but when producing maps,
+  we’ll need to lump them so they map reasonably.
+- Some subclasses are highly emphemeral, especially 32 (wrack). We may
+  need to drop these. They’ll present problems for mapping if we do.
+- We obviously can’t do much with data previously collected in the field
+  at this point, but should be able to do PI for the classes where
+  that’s possible to fill out sampling requriements.
+- Because marshes change over time, we’ll want to pick a single year of
+  field data and match orthos to it (within a year or so), so we’re
+  looking for our minimum cell and poly requirements for single years.
+- Some sites (OTH, ESS, others?) have had significant remediation
+  efforts coinciding with our study, so we may not be able to model for
+  these sites. If we can find out dates that work was done, we may be
+  able to work around it (e.g., if management started in 2022, we could
+  use 2018-2021 data).
+- For U-Net modeling, I’m going to pick a couple of sites and years to
+  start with. We’ll need strong data for those years, beefing up PI
+  where necessary and possible.
+
+#### Still needed
+
+- Not all sites have been completed for 2025 (still missing ESS, BAR,
+  and WES)
+- Sites and years that don’t have adequate orthos within a year or so
+  aren’t worth our effort.
+- We still need the `year` and `targetyear` fields for both field and PI
+  data at most sites. Note the `0` year in tables below.
+- It’s possible we could correct for insufficient polygons by breaking
+  long field transects into separate polygons, but we’d probably have to
+  delete ~20 m sections to avoid contaminating validation sets. I may be
+  able to do this in code on the fly.
+
+#### Questions
+
+- I still don’t have 2023 orthos, so I don’t know what we’ve got yet.
+  They match a good field year.
+- Were orthos flown in 2024?
+- Could we fit 2023 field work from 2026 orthos? Unclear that we’ll have
+  the resources to fly these sites next summer, but perhaps we could
+  target a promising site or two.
+
+## OTH (Old Town Hill)
+
+``` r
+fieldinfo('oth')
+```
+
+#### Notes
+
+- Active management at this site
+- Have years for field and PI data, but missing for subclasses 1, 3, 9,
+  12 (are these all really possible from PI?!)
+- 2018 and 2021 look reasonably promising (except for mowing in the high
+  marsh). 2025 has a decent sample, but is inadequate orthos.
+
+## PEG (Peggotty Beach)
+
+``` r
+fieldinfo('peg')
+```
+
+#### Notes
+
+- Unclear how promising this site is until we have dates
+
+## SOR (South River)
+
+``` r
+fieldinfo('sor')
+```
+
+#### Notes
+
+- Unclear how promising this site is until we have dates
+
+## NOR (North River)
+
+``` r
+fieldinfo('nor')
+```
+
+#### Notes
+
+- We have a crazy amount of data for 2019, 2023, and 2025 at this site
+  (but insufficient orthos for 2025).
+
+## WEL (Wellfleet Bay)
+
+``` r
+fieldinfo('wel')
+```
+
+#### Notes
+
+- This site looks great for 2019, and perhaps promising for 2025 (though
+  no orthos). Inadequate for 2023.
+
+## RR (Red River)
+
+``` r
+fieldinfo('rr')
+```
+
+#### Notes
+
+- Maybe 2019.
+
+## ESS (Essex Bay)
+
+``` r
+#fieldinfo('ess')
+```
+
+#### Notes
+
+- Active management at this site
+- No field data yet
+
+## BAR (Barnstable)
+
+``` r
+#fieldinfo('bar')
+```
+
+#### Notes
+
+- No field data yet
+
+## WES (Westport)
+
+``` r
+#fieldinfo('wes')
+```
+
+#### Notes
+
+- No field data yet
