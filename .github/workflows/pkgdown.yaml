@@ -37,11 +37,6 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Remove local-only Rmd files before build
-        run: |
-          rm -f vignettes/articles/*.Rmd
-        shell: bash
-
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
