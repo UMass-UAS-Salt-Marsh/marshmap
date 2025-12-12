@@ -37,10 +37,10 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Remove Rmd files, keep only pre-built HTML
+      - name: Make HTML files newer than Rmd to skip re-rendering
         run: |
-          rm -f vignettes/articles/field_data_summary.Rmd
-          rm -f vignettes/articles/flight_data_summary.Rmd
+          touch vignettes/articles/field_data_summary.html
+          touch vignettes/articles/flight_data_summary.html
         shell: bash
 
       - name: Build site
