@@ -37,15 +37,16 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-
-      - name: Remove Rmd files so pkgdown uses pre-built HTML
-        run: |
-          rm -f vignettes/articles/*.Rmd
-        shell: bash
-
-
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: |
+          # Remove Rmds so only HTML remains
+          unlink(list.files("vignettes/articles", pattern = "\\.Rmd$", full.names = TRUE))
+          # Build site without rendering articles
+          pkgdown::build_site_github_pages(
+            new_process = FALSE, 
+            install = FALSE,
+            override = list(code = list(build_articles = FALSE))
+          )
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
