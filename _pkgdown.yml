@@ -71,3 +71,13 @@ reference:
   - db_purge
   - the
   - .onLoad
+
+articles:
+- title: Articles
+  contents:
+  - field_data_summary
+  - flight_data_summary
+development:
+  mode: auto
+build:
+  preview: false
