@@ -37,12 +37,6 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Make HTML files newer than Rmd to skip re-rendering
-        run: |
-          touch vignettes/articles/field_data_summary.html
-          touch vignettes/articles/flight_data_summary.html
-        shell: bash
-
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}

@@ -1,5 +1,3 @@
-/* Knit with rmarkdown::render('vignettes/articles/field_data_summary.Rmd') */
-
 ---
 title: "Field data summary"
 subtitle: "UMass MassMarsh UAS project"
