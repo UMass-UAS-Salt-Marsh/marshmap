@@ -32,17 +32,6 @@ max-width: none !important;
 knitr::opts_chunk$set(echo = FALSE, comment = NA)
 options(width = 150)
 
-
-# Check if running on CI (GitHub Actions)
-on_ci <- Sys.getenv("CI") != ""
-
-# If on CI, don't evaluate any code chunks
-knitr::opts_chunk$set(
-  eval = !on_ci,
-  echo = TRUE
-)
-
-
 library(marshmap)
 ```
 
