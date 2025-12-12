@@ -4,10 +4,13 @@
 \alias{flightinfo}
 \title{Summarize orthos at a single site}
 \usage{
-flightinfo(site, derived = FALSE)
+flightinfo(site, filter = NULL, derived = FALSE)
 }
 \arguments{
 \item{site}{Three letter site code}
+
+\item{filter}{A named list restricting to particular values, e.g.,
+\code{filter = list(type = 'DEM', season = c('spring', 'summer'))}}
 
 \item{derived}{If TRUE, include derived variables}
 }

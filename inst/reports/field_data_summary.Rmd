@@ -1,5 +1,6 @@
 ---
 title: "Field data summary"
+subtitle: "UMass MassMarsh UAS project"
 author: "Brad Compton"
 date: "`r timestamp <- lubridate::stamp('February 4, 2025', quiet = TRUE); timestamp(lubridate::now(tz = 'America/New_York'))`"
 output: html_document
