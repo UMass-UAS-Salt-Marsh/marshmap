@@ -6,7 +6,7 @@ stage, lists names of orthos (%missing).
 ## Usage
 
 ``` r
-flightinfo(site, derived = FALSE)
+flightinfo(site, filter = NULL, derived = FALSE)
 ```
 
 ## Arguments
@@ -14,6 +14,11 @@ flightinfo(site, derived = FALSE)
 - site:
 
   Three letter site code
+
+- filter:
+
+  A named list restricting to particular values, e.g.,
+  `filter = list(type = 'DEM', season = c('spring', 'summer'))`
 
 - derived:
 
