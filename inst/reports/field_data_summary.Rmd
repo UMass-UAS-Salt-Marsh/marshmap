@@ -33,6 +33,10 @@ options(width = 150)
 library(marshmap)
 ```
 
+##### Links
+- this document: [https://landeco.umass.edu/web/massmarsh/field_data_summary.html](https://landeco.umass.edu/web/massmarsh/field_data_summary.html)
+- Flight data summary: [https://landeco.umass.edu/web/massmarsh/flight_data_summary.html](https://landeco.umass.edu/web/massmarsh/flight_data_summary.html)
+
 ### Field data goals for U-Net
 - Preliminary estimate is that we'll need >10k cells per subclass in a single year for robust fits
 - We're cross-validating by holding out entire polygons (transects, MUs, or polys) for validation. For the years we model, we'll 

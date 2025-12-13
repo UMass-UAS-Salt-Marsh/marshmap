@@ -32,6 +32,11 @@ options(width = 150)
 library(marshmap)
 ```
 
+##### Links
+- this document: [https://landeco.umass.edu/web/massmarsh/flight_data_summary.html](https://landeco.umass.edu/web/massmarsh/flight_data_summary.html)
+- Field data summary: [https://landeco.umass.edu/web/massmarsh/field_data_summary.html](https://landeco.umass.edu/web/massmarsh/field_data_summary.html)
+
+
 ### Flight goals for U-Net
 - We want to match good years of field data with a rich set of flights. Focus on ortho:mica and DEM at low (or mid) tide, multiple seasons.
 
