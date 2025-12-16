@@ -237,7 +237,7 @@ do_gather <- function(site, pattern = '',
                   gt[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(gt$subclass)
                
                
-               st_write(gt, overlaps, append = FALSE)                               #       save the overlapped shapefile with bonus columns as *_final
+               st_write(gt, overlaps, append = FALSE, quiet = TRUE)                 #       save the overlapped shapefile with bonus columns as *_final
                
                
                suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match

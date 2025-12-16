@@ -91,6 +91,7 @@ fieldinfo('peg')
 
 ### Notes
 - Unclear how promising this site is until we have dates
+- Undated field data is slim for 3-4-5 (only 7-8 polys), but could work
 
 
 # SOR (South River)
@@ -100,7 +101,7 @@ fieldinfo('sor')
 ```
 
 ### Notes
-- Unclear how promising this site is until we have dates
+- 2019 could work, although slim on subclasses 5 and 7
 
 # NOR (North River)
 
@@ -109,7 +110,10 @@ fieldinfo('nor')
 ```
 
 ### Notes
-- We have a crazy amount of data for 2019, 2023, and 2025 at this site (but insufficient orthos for 2025).
+- We have a crazy amount of data for 2019, 2023, and 2025 at this site (but insufficient orthos for 2025)
+- 2019 falls short for subclasses 5 and 7, with only 2 polys for each, so not doable for 3-4-5-6-7; would have to be 3-4-6
+- 2023 looks pretty good, though no 7. **This might be the pick of the litter.**
+- 2025 is poor for 3, 4, 5, 7, plus no orthos
 
 
 # WEL (Wellfleet Bay)
@@ -119,7 +123,9 @@ fieldinfo('wel')
 ```
 
 ### Notes
-- This site looks great for 2019, and perhaps promising for 2025 (though no orthos). Inadequate for 2023.
+- This site looks maybe okay for 2019, and perhaps promising for 2025 (though no orthos). Inadequate for 2023.
+- 2019 is slim but maybe doable for 4-5-7
+- no ditches?!
 
 
 # RR (Red River)
@@ -129,7 +135,8 @@ fieldinfo('rr')
 ```
 
 ### Notes
-- Maybe 2019. 
+- Maybe 2019, though iffy.
+- Need dates for 22, presumably from PI.
 
 # ESS (Essex Bay)
 
@@ -149,7 +156,7 @@ fieldinfo('rr')
 ```
 
 ### Notes
-- No field data yet
+- No field data yet and only 2 orthos. Not really a site?
 
 
 # WES (Westport)

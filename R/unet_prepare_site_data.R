@@ -31,7 +31,7 @@ unet_prepare_site_data <- function() {
    
    # 2. Load transects
    message("Loading transects...")
-   transects <- st_read(transect_file)
+   transects <- st_read(transect_file, quiet = TRUE)
    
    # Filter to target classes
    transects <- transects %>% 

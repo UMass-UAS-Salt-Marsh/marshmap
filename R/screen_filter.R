@@ -12,6 +12,8 @@ screen_filter <- function(input, output, session) {
    
    sel <- !session$userData$db$deleted                                                             #    image list starts with everything that's not deleted
    sel <- sel & (input$revisit | (session$userData$db$score == 0 & !session$userData$db$repair))   #    exclude visited and repair unless revisit is selected
+   if(!input$derive)
+      sel <- sel & !grepl('derived', session$userData$db$portable, ignore.case = TRUE)              #    exclude derived orthos unless "include derived" is true
    
    if(input$filter != '')
       suppressWarnings(tryCatch({

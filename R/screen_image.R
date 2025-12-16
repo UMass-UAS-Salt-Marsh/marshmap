@@ -15,7 +15,7 @@ screen_image <- function(score_choices, input, output, session) {
       screen_no_site(input, output, session)
    else
    {
-      lapply(c('score', 'comment', 'inset', 'first', 'previous', 'next_', 'last'), enable)
+      lapply(c('score', 'repair', 'comment', 'inset', 'first', 'previous', 'next_', 'last'), enable)
       
       
       output$image_no <- renderText(paste0(session$userData$index, ' of ', length(session$userData$sel),
