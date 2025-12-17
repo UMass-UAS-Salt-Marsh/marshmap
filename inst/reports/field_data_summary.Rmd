@@ -81,6 +81,8 @@ fieldinfo('oth')
 - Have years for field and PI data, but missing for subclasses 1, 3, 9, 12 (are these all really possible from PI?!)
 - 2018 and 2021 look reasonably promising (except for mowing in the high marsh). 2025 has a decent sample, but is 
   inadequate orthos.
+- 2018 has terrible flights
+- 2021 has small sample sizes
 
 
 # PEG (Peggotty Beach)
@@ -90,7 +92,7 @@ fieldinfo('peg')
 ```
 
 ### Notes
-- Unclear how promising this site is until we have dates
+- **Unclear how promising this site is until we have dates**
 - Undated field data is slim for 3-4-5 (only 7-8 polys), but could work
 
 
@@ -102,6 +104,7 @@ fieldinfo('sor')
 
 ### Notes
 - 2019 could work, although slim on subclasses 5 and 7
+- 2019 has 3 orthos: a high tide, a cloudy one, and a muddy-looking one, plus 2 nice DEMs
 
 # NOR (North River)
 
@@ -112,8 +115,9 @@ fieldinfo('nor')
 ### Notes
 - We have a crazy amount of data for 2019, 2023, and 2025 at this site (but insufficient orthos for 2025)
 - 2019 falls short for subclasses 5 and 7, with only 2 polys for each, so not doable for 3-4-5-6-7; would have to be 3-4-6
-- 2023 looks pretty good, though no 7. **This might be the pick of the litter.**
+- 2023 looks pretty good, though no 7. **This might be the pick of the litter--BUT I don't have flights yet**
 - 2025 is poor for 3, 4, 5, 7, plus no orthos
+
 
 
 # WEL (Wellfleet Bay)
@@ -124,7 +128,7 @@ fieldinfo('wel')
 
 ### Notes
 - This site looks maybe okay for 2019, and perhaps promising for 2025 (though no orthos). Inadequate for 2023.
-- 2019 is slim but maybe doable for 4-5-7
+- 2019 is slim but maybe doable for 4-5-7, BUT only 1 5-band ortho, at high tide
 - no ditches?!
 
 
@@ -135,7 +139,7 @@ fieldinfo('rr')
 ```
 
 ### Notes
-- Maybe 2019, though iffy.
+- Maybe 2019, though poor sample size. There's a decent fall low-tide Mica (17Sep19_RR_Low_Mica_Ortho.tif) and a good DEM (17Sep19_RR_Low_P4_DEM_NoTiles.tif)
 - Need dates for 22, presumably from PI.
 
 # ESS (Essex Bay)

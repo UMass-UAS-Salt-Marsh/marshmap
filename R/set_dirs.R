@@ -9,7 +9,7 @@
 set_dirs <- function() {
    
    
-   for(i in c('models', 'data', 'flights', 'field', 'blocks', 'shapefiles', 'samples', 'maps', 'cache', 'logs', 'databases', 'reports'))          # set directory name defaults
+   for(i in c('models', 'data', 'flights', 'field', 'blocks', 'shapefiles', 'samples', 'unet', 'maps', 'cache', 'logs', 'databases', 'reports'))          # set directory name defaults
       the$dirs[[i]] <- ifelse(is.null(the$dirs[[i]]), i, the$dirs[[i]])
    
    the$modelsdir <- file.path(the$basedir, the$dirs$model)                                            # models
@@ -20,8 +20,8 @@ set_dirs <- function() {
    the$shapefilesdir <- file.path(the$datadir, the$dirs$shapefiles)                                   # data/<site>/shapefiles/
    the$mapsdir <- file.path(the$datadir, the$dirs$maps)                                               # data/<site>/maps/
    the$samplesdir <- file.path(the$datadir, the$dirs$samples)                                         # data/<site>/samples/
+   the$unetdir <- file.path(the$datadir, the$dirs$unet)                                               # data/<site>/unet/
    
-   the$logdir <- file.path(the$basedir, the$dirs$logs)                                                # job logs directory                          **** am I using this outside of slurmcollie?
    the$dbdir <- file.path(the$basedir, the$dirs$databases)                                            # fit and job databases directory
    the$reportsdir <- file.path(the$basedir, the$dirs$reports)                                         # reports directory
    the$cachedir <- file.path(the$scratchdir, the$dirs$cache)                                          # scratchdir/cache/

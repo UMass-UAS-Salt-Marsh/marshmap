@@ -14,8 +14,6 @@
 flights_image <- function(data, cdir, file, rgb, extent, footprint, pixels = 1200) {
    
    
-   message(file, '_', extent)
-   
    cache <- file.path(cdir, paste0(file_path_sans_ext(file), '_', extent, '.png'))
    
    

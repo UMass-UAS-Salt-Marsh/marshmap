@@ -46,7 +46,7 @@ unet_normalize_band <- function(r, method = "percentile", lower = 0.02, upper = 
 }
 
 # Helper: Standardize raster (mean=0, sd=1)
-unet_normalize_band <- function(r) {
+unet_standardize_band <- function(r) {
    r_mean <- global(r, "mean", na.rm = TRUE)[[1]]
    r_sd <- global(r, "sd", na.rm = TRUE)[[1]]
    (r - r_mean) / (r_sd + 1e-8)
@@ -61,8 +61,13 @@ unet_normalize_band <- function(r) {
 #' @param ortho_dir Directory containing ortho TIFFs
 #' @param ortho_lookup Named vector mapping portable names to actual filenames
 #' @return SpatRaster with 8 bands (RGB, NIR, RedEdge, NDVI, NDRE, DEM)
+
+
 unet_build_input_stack <- function(portable_name, ortho_dir, ortho_lookup, dem_lookup) {
+
    
+   
+      
    # Get actual filename
    multispectral_file <- file.path(ortho_dir, ortho_lookup[[portable_name]])
    dem_file <- file.path(ortho_dir, dem_lookup[[portable_name]])
@@ -95,7 +100,7 @@ unet_build_input_stack <- function(portable_name, ortho_dir, ortho_lookup, dem_l
    dem <- rast(dem_file)
    
    # Normalize spectral bands to 0-1
-   blue_norm <- unet_normalize_band(blue)
+   blue_norm <-unet_normalize_band(blue)
    green_norm <- unet_normalize_band(green)
    red_norm <- unet_normalize_band(red)
    
@@ -125,7 +130,7 @@ unet_build_input_stack <- function(portable_name, ortho_dir, ortho_lookup, dem_l
    }
    
    # Standardize DEM
-   dem_std <- unet_normalize_band(dem)
+   dem_std <- unet_standardize_band_band(dem)
    
    # Stack all layers
    input_stack <- c(red_norm, green_norm, blue_norm, 
@@ -343,8 +348,11 @@ unet_spatial_train_val_split <- function(patch_data, transects, holdout = 0.2, s
 #' @param split_indices List from unet_spatial_train_val_split
 #' @param output_dir Directory to save numpy files
 #' @param site_name Name for files (e.g., "site1")
+
+
 unet_export_to_numpy <- function(patch_data, split_indices, output_dir, site_name) {
-   
+
+      
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
    
    np <- import("numpy")

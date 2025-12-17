@@ -3,9 +3,12 @@
 #' @param patch_data List from unet_extract_training_patches
 #' @param split_indices List from unet_spatial_train_val_split
 #' @param output_dir Directory to save numpy files
-#' @param site_name Name for files (e.g., "site1")
-unet_export_to_numpy <- function(patch_data, split_indices, output_dir, site_name) {
-   
+#' @param site Name for files (e.g., "site1")
+
+
+unet_export_to_numpy <- function(patch_data, split_indices, output_dir, site) {
+
+      
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
    
    np <- import("numpy")
@@ -21,18 +24,18 @@ unet_export_to_numpy <- function(patch_data, split_indices, output_dir, site_nam
    val_masks <- patch_data$masks[split_indices$val_idx, , ]
    
    # Convert to numpy and save
-   np$save(file.path(output_dir, paste0(site_name, "_train_patches.npy")), 
+   np$save(file.path(output_dir, paste0(site, "_train_patches.npy")), 
            train_patches)
-   np$save(file.path(output_dir, paste0(site_name, "_train_labels.npy")), 
+   np$save(file.path(output_dir, paste0(site, "_train_labels.npy")), 
            train_labels)
-   np$save(file.path(output_dir, paste0(site_name, "_train_masks.npy")), 
+   np$save(file.path(output_dir, paste0(site, "_train_masks.npy")), 
            train_masks)
    
-   np$save(file.path(output_dir, paste0(site_name, "_val_patches.npy")), 
+   np$save(file.path(output_dir, paste0(site, "_val_patches.npy")), 
            val_patches)
-   np$save(file.path(output_dir, paste0(site_name, "_val_labels.npy")), 
+   np$save(file.path(output_dir, paste0(site, "_val_labels.npy")), 
            val_labels)
-   np$save(file.path(output_dir, paste0(site_name, "_val_masks.npy")), 
+   np$save(file.path(output_dir, paste0(site, "_val_masks.npy")), 
            val_masks)
    
    # Save metadata as CSV
@@ -42,7 +45,7 @@ unet_export_to_numpy <- function(patch_data, split_indices, output_dir, site_nam
    val_meta$split <- "val"
    
    all_meta <- rbind(train_meta, val_meta)
-   write.csv(all_meta, file.path(output_dir, paste0(site_name, "_metadata.csv")), 
+   write.csv(all_meta, file.path(output_dir, paste0(site, "_metadata.csv")), 
              row.names = FALSE)
    
    message("Exported to: ", output_dir)
