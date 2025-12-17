@@ -39,7 +39,8 @@ site footprint. It includes the following controls:
 - **Revisit images**. Normally, images that have been scored or flagged
   for repair are hidden. Turn this switch on to revisit all images.
   (After scoring or flagging an image, it won't be hidden until changing
-  sites or toggling this switch.)
+  sites or toggling this switch.) **Include derived images**. Normally,
+  derived images are excluded. Check this box to include them.
 
 - **Image filter** enter a regular expression to filter images on either
   the file name or portable name (see `README` for a description of

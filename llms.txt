@@ -209,6 +209,8 @@ with `local = TRUE`.
   : Create derived variables
 - [`sample()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/sample.md)
   : Sample orthoimages for field-collected data
+- [`prep_unet()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/prep_unet.md)
+  : Pre-process data for U-Net
 - [`fit()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/fit.md)
   : Build statistical models of vegetation cover
 - [`map()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/map.md)
