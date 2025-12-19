@@ -166,7 +166,7 @@ fieldinfo('rr')
 # WES (Westport)
 
 ```{r}
-#fieldinfo('wes')
+fieldinfo('wes')
 ```
 
 ### Notes

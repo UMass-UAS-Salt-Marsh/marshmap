@@ -27,7 +27,8 @@
 #    library(reticulate)
 
 # Notes:
-# - I may want to change this to accept portable names, or a choice of portable or file names    
+# - I may want to change this to accept portable names, or a choice of portable or file names
+# - Claude has me quantile-scaling spectral data, standardizing DEM, and leaving NDVI and NDRI as-is. Is this correct?
 
 
 do_prep_unet <- function(model_name) {
