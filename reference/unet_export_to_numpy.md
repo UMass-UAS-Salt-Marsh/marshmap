@@ -5,7 +5,7 @@ Export prepared data to numpy arrays for Python
 ## Usage
 
 ``` r
-unet_export_to_numpy(patch_data, split_indices, output_dir, site_name)
+unet_export_to_numpy(patch_data, split_indices, output_dir, site)
 ```
 
 ## Arguments
@@ -22,6 +22,6 @@ unet_export_to_numpy(patch_data, split_indices, output_dir, site_name)
 
   Directory to save numpy files
 
-- site_name:
+- site:
 
   Name for files (e.g., "site1")

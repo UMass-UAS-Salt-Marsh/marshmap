@@ -38,14 +38,20 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prep_unet</span><span class="op">(</span><span class="va">model</span>, resources <span class="op">=</span> <span class="cn">NULL</span>, local <span class="op">=</span> <span class="cn">FALSE</span>, trap <span class="op">=</span> <span class="cn">TRUE</span>, comment <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prep_unet</span><span class="op">(</span></span>
+<span>  <span class="va">model_name</span>,</span>
+<span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  trap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  comment <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
+<dl><dt id="arg-model-name">model_name<a class="anchor" aria-label="anchor" href="#arg-model-name"></a></dt>
 <dd><p>The model name, which is also the name of a <code>.yml</code> parameter file in the <code>pars</code>
 directory. This file must contain the following:</p><ul><li><p>year: the year to fit</p></li>
 <li><p>orthos: portable names of all orthophotos to include</p></li>
@@ -58,7 +64,7 @@ directory. This file must contain the following:</p><ul><li><p>year: the year to
 
 <dt id="arg-resources">resources<a class="anchor" aria-label="anchor" href="#arg-resources"></a></dt>
 <dd><p>Slurm launch resources. See <a href="https://rdrr.io/pkg/slurmcollie/man/launch.html" class="external-link">launch</a>. These take priority
-#'    over the function's defaults.</p></dd>
+over the function's defaults.</p></dd>
 
 
 <dt id="arg-local">local<a class="anchor" aria-label="anchor" href="#arg-local"></a></dt>
