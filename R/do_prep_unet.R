@@ -15,19 +15,19 @@
 
 
 # fns:
-# - 1. unet_build_input_stack
-# - 2. unet_extract_training_patches 
-# - 3. unet_spatial_train_val_split 
-# - 4. unet_export_to_numpy 
+# [x] 1. unet_build_input_stack
+# [ ] 2. unet_extract_training_patches 
+# [ ] 3. unet_spatial_train_val_split 
+# [ ] 4. unet_export_to_numpy 
 # 
 # libs:
 #    library(terra)
 #    library(sf)
-#   library(dplyr)
+#    library(dplyr)
 #    library(reticulate)
 
 # Notes:
-# - I may want to change this to accept protable names, or a choice of portable or file names    
+# - I may want to change this to accept portable names, or a choice of portable or file names    
 
 
 do_prep_unet <- function(model_name) {
@@ -35,49 +35,31 @@ do_prep_unet <- function(model_name) {
    
    config <- read_yaml(file.path(the$parsdir, paste0(model_name, '.yml')))
    
-   fpath <- resolve_dir(the$flightsdir, config$site)
+   config$fpath <- resolve_dir(the$flightsdir, config$site)
    config$bands <- unlist(lapply(config$orthos, function(x) 
-      nlyr(rast(file.path(fpath, x)))))                                       # number of bands for each ortho
+      nlyr(rast(file.path(config$fpath, x)))))                                # number of bands for each ortho
    config$n_channels <- sum(config$bands)                                     # total number of channels
    
    config$type <- rep('image', length(config$orthos))                         # type for each ortho
    config$type[grep('__NDVI', config$orthos)] <- 'ndvi'
    config$type[grep('__NDRE', config$orthos)] <- 'ndre'
    config$type[grep('DEM', config$orthos)] <- 'dem'
- #  config$type <- unlist(lapply(seq_along(config$bands), function(x) rep(config$type[x], config$bands[x])))
-   
+
    config$class_mapping <- as.list(0:(length(config$classes) - 1))
    names(config$class_mapping) <- config$classes                              # class mapping
    config$seed <- 42                                                          # random seed for repeatability
    
    
-   transect_file <- file.path(resolve_dir(the$flightsdir, site), get_sites(site)$transects)
-   output_dir <- file.path(resolve_dir(the$unetdir, site), model_name)
+   transect_file <- file.path(resolve_dir(the$flightsdir, config$site), get_sites(config$site)$transects)
+   output_dir <- file.path(resolve_dir(the$unetdir, config$site), model_name)
    
-   
-   
-   
-   # Define which ortho to use (your portable name)
-   selected_ortho <- "ortho_mica_fall_2022_low"  # Example - pick your best one
-   
-   # Lookup tables (you'll need to create these for your data)
-   # Map portable names to actual filenames
-   ortho_lookup <- c(
-      "ortho_mica_fall_2022_low" = "26Aug22_OTH_Low_Mica_Ortho.tif",
-      # ... add all your orthos
-   )
-   
-   dem_lookup <- c(
-      "ortho_mica_fall_2022_low" = "26Aug22_OTH_Low_Mica_DEM.tif",
-      # ... matching DEMs
-   )
-   
+
    # 1. Build input stack
    message("Building input stack...")
-   input_stack <- unet_build_input_stack(fpath, config$orthos)
+   input_stack <- unet_build_input_stack(config)                              # ----- build input stack
    
    
-   
+   # ---------------------- done to here ----------------------
    
    
    # 2. Load transects
@@ -99,7 +81,7 @@ do_prep_unet <- function(model_name) {
       overlap = 0.5,
       classes = config$classes,
       class_mapping = config$class_mapping
-   )
+   )                                                                          # ----- extract training patches
    
    # 4. Train/val split
    message("Creating train/val split...")
@@ -108,7 +90,7 @@ do_prep_unet <- function(model_name) {
       transects = transects,
       holdout = config$holdout,
       seed = config$seed
-   )
+   )                                                                          # ----- split training and validation data
    
    # 5. Export to numpy
    message("Exporting to numpy...")
@@ -117,7 +99,7 @@ do_prep_unet <- function(model_name) {
       split_indices = split_indices,
       output_dir = output_dir,
       site = site
-   )
+   )                                                                          # ----- export to numpy
    
    message("Data preparation complete!")
    
