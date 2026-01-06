@@ -166,7 +166,7 @@ do_gather <- function(site, pattern = '',
       if(the$gather$sourcedrive %in% c('google', 'sftp'))                           #----Read footprint: if reading from Google Drive or SFTP,
          get_sidecars(dir, sites$footprint[i], gd)                                  #       load two sidecar files for shapefile into cache
       footprint <- st_read(get_file(file.path(dir, sites$footprint[i]), 
-                                    gd), quiet = TRUE)                              #    read footprint shapefile (we always do this 'cuz it's cheap)
+                                    gd), promote_to_multi = FALSE, quiet = TRUE)    #    read footprint shapefile (we always do this 'cuz it's cheap)
       
       if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
          message('         !!! Reprojecting ', basename(sites$footprint[i]))
@@ -191,7 +191,7 @@ do_gather <- function(site, pattern = '',
             if(!check_files(sites$transects[i], gd, tp, sf) | 
                replace_ground_truth) {                                              #          if we don't already have transect results or they're outdated or replace_ground_truth,
                message(' Processing field transect shapefile')
-               
+                
                tp <- file.path(the$gather$sourcedir, the$gather$transects)
                
                if(the$gather$sourcedrive %in% c('google', 'sftp'))                  #       if reading from Google Drive or SFTP,
@@ -199,7 +199,7 @@ do_gather <- function(site, pattern = '',
                
                tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
                
-               shp <- st_read(tpath, quiet = TRUE)                                  #       read transects shapefile
+               shp <- st_read(tpath, promote_to_multi = FALSE, quiet = TRUE)        #       read transects shapefile
                
                if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
                   message('         !!! Reprojecting ', basename(tpath))
@@ -223,6 +223,7 @@ do_gather <- function(site, pattern = '',
                
                
                overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
+               
                gt <- overlaps(shp, 'subclass')                                      #       get the shapefile and process overlaps ----
                
                gt$poly <- 1:nrow(gt)                                                #       add unique poly ids

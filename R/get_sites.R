@@ -1,5 +1,8 @@
 #' Get info for one or more sites
 #' 
+#' If the optional `enable` field is present in `sites.txt`, only enabled sitesa are included
+#' when using `all`.
+#' 
 #' @param site One or more site names, using 3 letter abbreviation. Use `all` to process all sites. 
 #' @returns site Data frame with one or more rows of:
 #' \item{site}{Standard 3 letter site abbreviation}
@@ -21,8 +24,11 @@ get_sites <- function(site) {
    site <- tolower(site)
    if(length(site) == 0 || site[1] == '')
       stop('No sites specified. Use site = \'all\' for all sites.')
-   if(site[1] == 'all')                                              # if all sites,
+   if(site[1] == 'all') {                                            # if all sites,
       site <- sites$site                                             #    get list of all of them so we can split across reps in batch mode
+      if(!is.null(sites$enable))                                     #    if there's an enable field in sites.txt,
+         site <- site[sites$enable]                                  #       only take the enabled ones
+   }
    if(any(m <- !site %in% sites$site))
       stop('Non-existent sites: ', site[m])
    

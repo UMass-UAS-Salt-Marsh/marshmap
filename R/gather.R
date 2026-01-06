@@ -50,7 +50,7 @@
 #' If you're reading from the Google Drive or SFTP, you'll need a cache. Best to put this on the 
 #' Unity **scratch drive**. Create it with `ws_allocate cache 30` in the Unity shell. You can extend
 #' the scratch drive (up to 5 times) with `ws_extend cache 30`. When you're done with it, be polite
-#' and release it with `ws_release cache`. You'll need to point to the cache in `~/pars.yml`, under 
+#' and release it with `ws_release cache`. You'll need to point to the cache in `~/marshmap.yml`, under 
 #' `scratchdir:`.
 #'
 #' Note that initial runs with Google Drive in a session open the browser for authentication or wait
