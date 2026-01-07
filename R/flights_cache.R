@@ -29,7 +29,7 @@ flights_cache <- function(site, replace_caches = FALSE) {
    
    if(all(good)) {                                                      # if they're all good, we're done
       message('   All cached images are up-to-date')
-      return()
+      return(invisible())
    }
    
    

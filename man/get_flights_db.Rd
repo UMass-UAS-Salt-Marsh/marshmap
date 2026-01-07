@@ -12,7 +12,7 @@ get_flights_db(site, noerror = FALSE)
 \item{noerror}{If TRUE, return NULL instead of error}
 }
 \value{
-the flights database
+the flights database, with deleted files excluded
 }
 \description{
 Get the flights database for a site

@@ -34,21 +34,21 @@ library(marshmap)
 ```
 
 
-| CCR  | model                             | error source                                                                                             | resolvability                     | approach                                                      | who         |
+| CCR | model | error source  | resolvability | approach | who |
 | ---- | --------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------- | ----------- |
-| 100% | perfect fit                       |                                                                                                          |                                   |                                                               |             |
-|      |                                   | **inherent error**                                                                                       | not resolvable                    | none                                                          | ---         |
-|      |                                   | **pixel-based** modeling approach poorly matched to heterogeneous data with high spatial autocorrelation | likely?                           | U-Net                                                         | Brad        |
-|      |                                   | no **LiDAR**                                                                                             | 100%                              | process LiDAR                                                 | Ethan       |
-|      |                                   | poor **variable selection**                                                                              | high                              | try fewer high-quality orthos + variable selection            | Brad        |
-|      |                                   | **insufficient orthos** (missing seasons, poor quality, areas of missing data)                           | minimal                           | repair as possible                                            | Ryan & crew |
-|      |                                   | **missing years** of orthos                                                                              | moderate                          | process 2023 (and 2024?)                                      | Ryan & crew |
-|      |                                   | inadequate sample of **PI data**                                                                         | 100%                              | need many scattered PI polys per year                         | Angel       |
-|      |                                   | **mowing** and other management interventions                                                            | high                              | use PI to map areas with mowing for deletion                  | Ryan        |
-|      |                                   | **field poly errors** and boundary slop                                                                  | modest                            | careful review of field data                                  | Ryan        |
-|      |                                   | **temporaral mismatch** between field data and orthos                                                    | high, but will reduce sample size | need dates for field polys, then select years matching orthos | Ryan's crew |
-|      |                                   | inadequate **field sample size** (with severe spatial autocorrelation)                                   | not resolvable with past data     |                                                               | ---         |
-| 40%  | random forest w/rich upscaling    |                                                                                                          |                                   |                                                               |             |
+| 100% | perfect fit |  | |  |  |
+| | | **inherent error** | not resolvable | none  | --- |
+| | | **pixel-based** modeling approach poorly matched to heterogeneous data with high spatial autocorrelation | likely? | U-Net | Brad |
+| | | no **LiDAR**  | 100% | process LiDAR | Ethan  |
+| | | poor **variable selection**  | high | try fewer high-quality orthos + variable selection | Brad |
+| | | **insufficient orthos** (missing seasons, poor quality, areas of missing data) | minimal | repair as possible | Ryan & crew |
+| | | **missing years** of orthos  | moderate | process 2023 (and 2024?) | Ryan & crew |
+| | | inadequate sample of **PI data**  | 100% | need many scattered PI polys per year  | Angel **done** |
+| | | **mowing** and other management interventions | high | use PI to map areas with mowing for deletion | Ryan |
+| | | **field poly errors** and boundary slop  | modest  | careful review of field data  | Ryan |
+| | | **temporaral mismatch** between field data and orthos | high, but will reduce sample size | need dates for field polys, then select years matching orthos | Ryan's crew |
+| | | inadequate **field sample size** (with severe spatial autocorrelation) | not resolvable with past data |  | --- |
+| 40% | random forest w/rich upscaling |  | |  |  |
 
 
 # Lessons for future field years

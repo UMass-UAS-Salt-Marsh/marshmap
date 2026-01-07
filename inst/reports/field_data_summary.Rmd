@@ -46,12 +46,12 @@ library(marshmap)
   preliminary fitting, we can just drop them, but when producing maps, we'll need to lump them so they map reasonably.
 - Some subclasses are highly emphemeral, especially 32 (wrack). We may need to drop these. They'll present problems for mapping if we do.
 - We obviously can't do much with data previously collected in the field at this point, but should be able to do PI for the classes
-  where that's possible to fill out sampling requriements.
+  where that's possible to fill out sampling requriements. **We now have** PI for most water features at most sites and years.
 - Because marshes change over time, we'll want to pick a single year of field data and match orthos to it (within a year or so), 
   so we're looking for our minimum cell and poly requirements for single years.
 - Some sites (OTH, ESS, others?) have had significant remediation efforts coinciding with our study, so we may not be able to model 
   for these sites. If we can find out dates that work was done, we may be able to work around it (e.g., if management started in 2022,
-  we could use 2018-2021 data).
+  we could use 2018-2021 data). Ryan will try to remove mowed areas at OTH and ESS via PI, so we may be able to mask it away.
 - For U-Net modeling, I'm going to pick a couple of sites and years to start with. We'll need strong data for those years, beefing up 
   PI where necessary and possible.
 
@@ -63,7 +63,6 @@ library(marshmap)
   have to delete ~20 m sections to avoid contaminating validation sets. I may be able to do this in code on the fly.
   
 ### Questions
-- I still don't have 2023 orthos, so I don't know what we've got yet. They match a good field year.
 - Were orthos flown in 2024?
 - Could we fit 2023 field work from 2026 orthos? Unclear that we'll have the resources to fly these sites next summer, but perhaps
   we could target a promising site or two.
@@ -78,11 +77,12 @@ fieldinfo('oth')
 
 ### Notes
 - Active management at this site
-- Have years for field and PI data, but missing for subclasses 1, 3, 9, 12 (are these all really possible from PI?!)
-- 2018 and 2021 look reasonably promising (except for mowing in the high marsh). 2025 has a decent sample, but is 
-  inadequate orthos.
-- 2018 has terrible flights
-- 2021 has small sample sizes
+- Have years for field and PI data, but missing for subclasses 1, 3, 9, 12. Ryan will try to fill these in. These 
+  might give the year they belong to adequate sample sizes.
+- 2018 looks good but has terrible flights
+- 2021 and 2023 have small sample sizes. Possible to break them into separate polys to beef up sample sizes?
+- 2025 has a decent sample, but inadequate orthos.
+- Bottom line: none of the years look great. Re-evaluate when we've got years for 1, 3, 9, 12.
 
 
 # PEG (Peggotty Beach)
@@ -94,6 +94,7 @@ fieldinfo('peg')
 ### Notes
 - **Unclear how promising this site is until we have dates**
 - Undated field data is slim for 3-4-5 (only 7-8 polys), but could work
+- Bottom line: nothing usable. Re-evaluate when we have dates for year 0 polys.
 
 
 # SOR (South River)
@@ -105,6 +106,7 @@ fieldinfo('sor')
 ### Notes
 - 2019 could work, although slim on subclasses 5 and 7
 - 2019 has 3 orthos: a high tide, a cloudy one, and a muddy-looking one, plus 2 nice DEMs
+- Bottom line: 2019 looks okay, but inadequate orthos
 
 # NOR (North River)
 
@@ -115,8 +117,9 @@ fieldinfo('nor')
 ### Notes
 - We have a crazy amount of data for 2019, 2023, and 2025 at this site (but insufficient orthos for 2025)
 - 2019 falls short for subclasses 5 and 7, with only 2 polys for each, so not doable for 3-4-5-6-7; would have to be 3-4-6
-- 2023 looks pretty good, though no 7. **This might be the pick of the litter--BUT I don't have flights yet**
+- 2023 looks pretty good, though no 7. **This might be the pick of the litter**. 2023 flights: 2 spring mids, 1 summer high, 1 fall mid, plus DEMs.
 - 2025 is poor for 3, 4, 5, 7, plus no orthos
+- Bottom line: 2023 might work, though flights are slim. There are quite a few 2022 flights, so if we're willing to slip a year, we'd be okay.
 
 
 
@@ -128,8 +131,10 @@ fieldinfo('wel')
 
 ### Notes
 - This site looks maybe okay for 2019, and perhaps promising for 2025 (though no orthos). Inadequate for 2023.
-- 2019 is slim but maybe doable for 4-5-7, BUT only 1 5-band ortho, at high tide
+- 2019 is slim but maybe doable for 4-5-7, BUT only 1 5-band ortho, at high tide. 2020 has 2 fall low tides, and lots of 2021, depending on how
+  far we're willing to slide.
 - no ditches?!
+- Bottom line: maybe 2019, but would have to slide a year or two for adequate orthos.
 
 
 # RR (Red River)
@@ -139,8 +144,9 @@ fieldinfo('rr')
 ```
 
 ### Notes
-- Maybe 2019, though poor sample size. There's a decent fall low-tide Mica (17Sep19_RR_Low_Mica_Ortho.tif) and a good DEM (17Sep19_RR_Low_P4_DEM_NoTiles.tif)
+- Maybe 2019, though poor sample size on the platform. There's a decent fall low-tide Mica (17Sep19_RR_Low_Mica_Ortho.tif) and a good DEM (17Sep19_RR_Low_P4_DEM_NoTiles.tif)
 - Need dates for 22, presumably from PI.
+- Bottom line: 2019 is iffy at best.
 
 # ESS (Essex Bay)
 
@@ -161,6 +167,7 @@ fieldinfo('rr')
 
 ### Notes
 - No field data yet and only 2 orthos. Not really a site?
+- Bottom line: nope
 
 
 # WES (Westport)
@@ -170,7 +177,8 @@ fieldinfo('wes')
 ```
 
 ### Notes
-- No field data yet
+- 2018 is missing 4-5-6-7-8. Plenty for 2025, but no orthos.
+- Bottom line: nope
 
 
 

@@ -119,7 +119,7 @@ flights/ directory and rerun.
 If you're reading from the Google Drive or SFTP, you'll need a cache. Best to put this on the
 Unity \strong{scratch drive}. Create it with \verb{ws_allocate cache 30} in the Unity shell. You can extend
 the scratch drive (up to 5 times) with \verb{ws_extend cache 30}. When you're done with it, be polite
-and release it with \verb{ws_release cache}. You'll need to point to the cache in \verb{~/pars.yml}, under
+and release it with \verb{ws_release cache}. You'll need to point to the cache in \verb{~/marshmap.yml}, under
 \verb{scratchdir:}.
 
 Note that initial runs with Google Drive in a session open the browser for authentication or wait

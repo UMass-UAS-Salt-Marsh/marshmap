@@ -22,6 +22,7 @@ site Data frame with one or more rows of:
 to include site name in path)}
 }
 \description{
-Get info for one or more sites
+If the optional \code{enable} field is present in \code{sites.txt}, only enabled sitesa are included
+when using \code{all}.
 }
 \keyword{internal}
