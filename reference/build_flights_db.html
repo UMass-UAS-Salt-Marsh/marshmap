@@ -77,7 +77,8 @@ comments. Requires also supplying <code>really = TRUE</code>.</p></dd>
     <p>Reads any existing flights_<site>.txt from flights directory for site,
 builds it or updates it for new or deleted files, saves the new version,
 and returns the path/name and table. Finds classes from <code>pars.yml</code> as
-case-insensitive underscore-separated words (after applying name fixes).</site></p>
+case-insensitive underscore-separated words (after applying name fixes).
+Only flights that have not been deleted are returned.</site></p>
 <p>Files with changed timestamps are presumed to have been re-downloaded
 with gather (as stamps are set in processing). Files shouldn't be
 re-downloaded and replaced unless they've changed on the source, so

@@ -20,4 +20,4 @@ get_flights_db(site, noerror = FALSE)
 
 ## Value
 
-the flights database
+the flights database, with deleted files excluded

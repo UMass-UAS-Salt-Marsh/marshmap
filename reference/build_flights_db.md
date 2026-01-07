@@ -43,6 +43,7 @@ Reads any existing flights\_.txt from flights directory for site, builds
 it or updates it for new or deleted files, saves the new version, and
 returns the path/name and table. Finds classes from `pars.yml` as
 case-insensitive underscore-separated words (after applying name fixes).
+Only flights that have not been deleted are returned.
 
 Files with changed timestamps are presumed to have been re-downloaded
 with gather (as stamps are set in processing). Files shouldn't be

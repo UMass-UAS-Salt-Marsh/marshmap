@@ -1,6 +1,7 @@
 # Get info for one or more sites
 
-Get info for one or more sites
+If the optional `enable` field is present in `sites.txt`, only enabled
+sitesa are included when using `all`.
 
 ## Usage
 
