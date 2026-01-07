@@ -2,7 +2,7 @@
 #' 
 #' @param site A single site name (3 letter code), already vetted
 #' @param noerror If TRUE, return NULL instead of error 
-#' @returns the flights database
+#' @returns the flights database, with deleted files excluded
 #' @keywords internal
 
 
@@ -25,6 +25,7 @@ get_flights_db <- function(site, noerror = FALSE) {
          stop('The flights directory for site ', site, ' hasn\'t been built yet')
    }
    db <- read.table(db_name, sep = '\t', quote = '', header = TRUE)
+   db <- db[!db$deleted, ]                                                          # remove deleted files
    
    db$score[is.na(db$score)] <- 0
    

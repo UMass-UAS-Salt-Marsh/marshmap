@@ -109,7 +109,7 @@ flightinfo('rr')
 # ESS (Essex Bay)
 
 ```{r}
-#flightinfo('ess')
+flightinfo('ess')
 ```
 
 ### Notes
