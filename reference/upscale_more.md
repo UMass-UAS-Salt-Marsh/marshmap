@@ -56,6 +56,8 @@ upscale_more(
 
   A list of metrics, or 'all' for all metrics. May include any of:
 
+  - 'mean' Mean (may already have been done by `upscale_clone`)
+
   - `sd` Standard deviation
 
   - `q05`, `q10`, `q25`, `median`, `q75`, `q90`, and `q95` Quantiles
