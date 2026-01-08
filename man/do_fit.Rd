@@ -15,6 +15,7 @@ do_fit(
   exclude_classes,
   include_classes,
   exclude_years,
+  include_years,
   min_class,
   reclass,
   max_samples,
@@ -61,6 +62,9 @@ that may be included in \code{sites.txt}.}
 
 \item{exclude_years}{A vector of one or more years of ground truth data to exclude (requires a
 year column in source data)}
+
+\item{include_years}{A vector of one or more years of ground truth data to include - all other
+years are dropped (requires a year column in source data). Overrides \code{exclude_years}.}
 
 \item{min_class}{Minimum number of training samples to allow in a class. All classes with
 fewer samples in training set as well as all classes with zero cases in the

@@ -18,6 +18,8 @@
 #'    `include_classes` overrides `fit_exclude` (in `sites.txt`) and `exclude_classes`.
 #' @param exclude_years A vector of one or more years of ground truth data to exclude (requires a
 #'    year column in source data)
+#' @param include_years A vector of one or more years of ground truth data to include - all other
+#'    years are dropped (requires a year column in source data). Overrides `exclude_years`.
 #' @param min_class Minimum number of training samples to allow in a class. All classes with
 #'    fewer samples in training set as well as all classes with zero cases in the
 #'    validation set will be dropped from the model. Use `min_class = NULL` to prevent 
@@ -65,8 +67,8 @@
 
 
 do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, exclude_classes, include_classes,
-                   exclude_years, min_class, reclass, max_samples, years, minscore, maxmissing, max_miss_train, 
-                   top_importance, holdout, bypoly, byyear, blocks, auc, hyper, notune, rep = NULL) {
+                   exclude_years, include_years, min_class, reclass, max_samples, years, minscore, maxmissing, 
+                   max_miss_train, top_importance, holdout, bypoly, byyear, blocks, auc, hyper, notune, rep = NULL) {
    
    
    timestamp <- function() {                                                              # Nice local timestamp in brackets (gives current time at call)
@@ -162,10 +164,17 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    }
    
    
-   if(!is.null(exclude_years)) {                                                          # if exclude_years is supplied, drop these years
+   if(!is.null(exclude_years) & is.null(include_years)) {                                 # if exclude_years (but not include_years) is supplied, drop these years
       ro <- nrow(r)
       r <- r[!r[['_year']] %in% exclude_years, ]
       message('Excluding years ', paste(exclude_years, collapse = ', '), '; dropped ', ro - nrow(r), ' cases; ', nrow(r), ' cases remain')
+   }
+   
+   
+   if(!is.null(include_years)) {                                                          # if include_years is supplied, drop these years
+      ro <- nrow(r)
+      r <- r[r[['_year']] %in% include_years, ]
+      message('Including only years ', paste(include_years, collapse = ', '), '; dropped ', ro - nrow(r), ' cases; ', nrow(r), ' cases remain')
    }
    
    

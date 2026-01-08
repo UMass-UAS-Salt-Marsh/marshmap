@@ -39,14 +39,12 @@ upscale_clone <- function(site, newsite, cellsize) {
                     sep = '\t', quote = '', header = TRUE)
    db[, c('filestamp', 'pct_missing', 'missing_filestamp')] <- NA
    
+   db$window[is.na(db$window)] <- ''
    db$score[is.na(db$score)] <- 0
    db <- db[!db$deleted & nchar(db$window) == 0 & db$score != 1, ]         # we're keeping everything but deleted, upscaled and rejected orthos
-   save_flights_db(db[keep, ], file.path(result, db_name))
+   save_flights_db(db, file.path(result, db_name))
    
-   
-   orthos <- db$name[keep]
-   
-   
+   orthos <- db$name
    x <- rast(file.path(source, orthos[1]))                                 # get rescaling factor from first raster
    x <- project(x, 'epsg:26986')
    factor <- round(cellsize / res(x)[1])                                   # integer rescaling factor

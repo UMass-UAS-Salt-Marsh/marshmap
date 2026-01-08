@@ -67,6 +67,9 @@ do_upscale_more <- function(site, newsite, cellsize, vars, minscore, maxmissing,
    db <- read.table(file.path(source, db_name), ,
                     sep = '\t', quote = '', header = TRUE)
    
+   db$window[is.na(db$window)] <- ''
+   db$score[is.na(db$score)] <- 0
+   
    orthos <- find_orthos(site, vars, minscore, maxmissing)                          # find matching files
    orthos <- orthos[nchar(db$window[orthos$row]) == 0, ]$file                       # but don't want upscaled files
 
