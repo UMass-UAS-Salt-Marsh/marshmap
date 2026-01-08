@@ -166,7 +166,10 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    a <- aggreg(rep(1, nrow(db)), db$portable, FUN = sum, drop_by = FALSE)
    db$dups <- a[match(db$portable, a$Group.1),]$x
    
-
+   db$db$date <- fix_POSIXct(db$db$date)                                # fix date and time strings that keep getting broken for some reason
+   db$db$filestamp <- fix_POSIXct(db$db$filestamp)
+   db$db$missing_filestamp <- fix_POSIXct(db$db$missing_filestamp)
+   
    save_flights_db(db, db_name)
    
    invisible(list(db = db[!db$deleted, ], db_name = db_name))

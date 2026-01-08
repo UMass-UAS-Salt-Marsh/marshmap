@@ -40,6 +40,7 @@ than this are excluded.}
 
 \item{metrics}{A list of metrics, or 'all' for all metrics. May include any of:
 \itemize{
+\item 'mean' Mean (may already have been done by \code{upscale_clone})
 \item \code{sd} Standard deviation
 \item \code{q05}, \code{q10}, \code{q25}, \code{median}, \code{q75}, \code{q90}, and \code{q95} Quantiles
 \item \code{r0595}, \code{r1090}, \code{iqr} Quantile ranges: 5th-95th, 10th-90th, and interquartile range

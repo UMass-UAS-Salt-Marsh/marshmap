@@ -17,6 +17,7 @@
 #' @param maxmissing Maximum percent missing in orthos. Files with percent missing greater
 #'    than this are excluded.
 #' @param metrics A list of metrics, or 'all' for all metrics. May include any of:
+#'  - 'mean' Mean (may already have been done by `upscale_clone`)
 #'  - `sd` Standard deviation
 #'  - `q05`, `q10`, `q25`, `median`, `q75`, `q90`, and `q95` Quantiles
 #'  - `r0595`, `r1090`, `iqr` Quantile ranges: 5th-95th, 10th-90th, and interquartile range
@@ -39,6 +40,8 @@ do_upscale_more <- function(site, newsite, cellsize, vars, minscore, maxmissing,
    
    
    # metrics sd, median, skewness, and kurtosis are already defined. Here are the rest:
+   
+   mean <- function(x) mean(x, na.rm = TRUE)
    sd <- function(x) stats::sd(x, na.rm = TRUE)
    
    q05 <- function(x) quantile(x, 0.05, na.rm = TRUE)
