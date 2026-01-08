@@ -1,5 +1,5 @@
 # New random forest runs
-# Data matched by year (within 1 year) + a solid site with strong field data
+# Data matched by year (within 1 year) + a solid site with strong field data + fewer predictors
 # January 2026
 
 
@@ -13,11 +13,12 @@ vars2 <- vars1[1:5]
 
 
 derive('nor', c('ortho_mica_fall_2023_mid', 'ortho_mica_post_2022_mid'), metrics = 'NDVI')
-upscale_more('nor', 'nor_1m', 1, vars = c('ortho_mica_fall_2023_mid__NDVI', 'ortho_mica_post_2022_mid__NDVI'))
-upscale_more('nor', 'nor_50cm', 1, vars = c('ortho_mica_fall_2023_mid__NDVI', 'ortho_mica_post_2022_mid__NDVI'), metrics = 'mean')
 
-upscale_more('nor', 'nor_1m', 1, vars = vars1)
-upscale_more('nor', 'nor_50cm', 1, vars = vars1)
+upscale_more('nor', 'nor_1m', 1, vars = c(vars1, 'ortho_mica_fall_2023_mid__NDVI', 'ortho_mica_post_2022_mid__NDVI'), metrics = 'mean')
+upscale_more('nor', 'nor_50cm', 1, vars = c(vars1, 'ortho_mica_fall_2023_mid__NDVI', 'ortho_mica_post_2022_mid__NDVI'), metrics = 'mean')
+
+# upscale_more('nor', 'nor_1m', 1, vars = vars1)
+# upscale_more('nor', 'nor_50cm', 1, vars = vars1)
 
 
 
