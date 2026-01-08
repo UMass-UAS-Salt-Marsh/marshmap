@@ -17,6 +17,7 @@ fit(
   exclude_classes = NULL,
   include_classes = NULL,
   exclude_years = NULL,
+  include_years = NULL,
   min_class = 500,
   reclass = c(13, 2),
   max_samples = NULL,
@@ -92,6 +93,12 @@ fit(
 
   A vector of one or more years of ground truth data to exclude
   (requires a year column in source data)
+
+- include_years:
+
+  A vector of one or more years of ground truth data to include - all
+  other years are dropped (requires a year column in source data).
+  Overrides `exclude_years`.
 
 - min_class:
 

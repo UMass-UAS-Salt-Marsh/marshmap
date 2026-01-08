@@ -52,6 +52,7 @@ cover and report model assessment.</p>
 <span>  exclude_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exclude_years <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  include_years <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_class <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  reclass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  max_samples <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -124,6 +125,11 @@ that may be included in <code>sites.txt</code>.</p></dd>
 <dt id="arg-exclude-years">exclude_years<a class="anchor" aria-label="anchor" href="#arg-exclude-years"></a></dt>
 <dd><p>A vector of one or more years of ground truth data to exclude (requires a
 year column in source data)</p></dd>
+
+
+<dt id="arg-include-years">include_years<a class="anchor" aria-label="anchor" href="#arg-include-years"></a></dt>
+<dd><p>A vector of one or more years of ground truth data to include - all other
+years are dropped (requires a year column in source data). Overrides <code>exclude_years</code>.</p></dd>
 
 
 <dt id="arg-min-class">min_class<a class="anchor" aria-label="anchor" href="#arg-min-class"></a></dt>
