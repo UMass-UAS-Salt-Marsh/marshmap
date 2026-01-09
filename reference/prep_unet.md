@@ -48,3 +48,7 @@ prep_unet(model, resources = NULL, local = FALSE, trap = TRUE, comment = NULL)
 - comment:
 
   Optional slurmcollie comment
+
+## Details
+
+Try this to test: `prep_unet('unet01', local = TRUE)`
