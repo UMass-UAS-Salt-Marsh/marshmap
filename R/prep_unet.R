@@ -2,6 +2,9 @@
 #' 
 #' Creates numpy arrays ready for fitting in U-Net. Result files are placed in `<site>/unet/<model>`.
 #' 
+#' Try this to test:
+#'    `prep_unet('unet01', local = TRUE)`
+#' 
 #' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
 #'    directory. This file must contain the following:
 #'    - year: the year to fit

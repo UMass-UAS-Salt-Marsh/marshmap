@@ -32,3 +32,7 @@ no effect if local = FALSE.}
 \description{
 Creates numpy arrays ready for fitting in U-Net. Result files are placed in \verb{<site>/unet/<model>}.
 }
+\details{
+Try this to test:
+\code{prep_unet('unet01', local = TRUE)}
+}
