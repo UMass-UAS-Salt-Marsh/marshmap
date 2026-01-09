@@ -41,7 +41,7 @@ do_upscale_more <- function(site, newsite, cellsize, vars, minscore, maxmissing,
    
    # metrics sd, median, skewness, and kurtosis are already defined. Here are the rest:
    
-   mean <- function(x) mean(x, na.rm = TRUE)
+   mean <- function(x) base::mean(x, na.rm = TRUE)
    sd <- function(x) stats::sd(x, na.rm = TRUE)
    
    q05 <- function(x) quantile(x, 0.05, na.rm = TRUE)

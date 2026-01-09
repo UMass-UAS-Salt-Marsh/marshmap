@@ -22,8 +22,8 @@
 #'    separated by `+` (you can also provide a vector of character strings--these
 #'    will be treated the same as a vector with elements separated by `+`)
 #' \describe{
-#'    \item{file name}{a complete file name (`.tif` is optional)}
-#'    \item{portable name}{a portable name}
+#'    \item{file name}{a complete file name (case-insensitive`.tif` is optional)}
+#'    \item{portable name}{a portable name (case-insensitive)}
 #'    \item{regex}{a regular expression enclosed in `{}`, to be
 #'       applied to both file names and portable names. Regular expressions
 #'       are case-insensitive.}
@@ -90,11 +90,12 @@ find_orthos <- function(site, descrip, minscore = 0, maxmissing = 20, screen = T
       else
          m <- n
       
-      i <- match(m, db$name)
+      i <- match(tolower(m), tolower(db$name))
       if(!is.na(i))                                                                    #    if we matched a file name,
          z <- c(z, i)                                                                  #       got it and done here
       else {                                                                           #    else,
-         i <- match(n, db$portable)
+         n <- tolower(gsub('__', '_', n))
+         i <- match(n, tolower(db$portable))
          if(!is.na(i))                                                                 #       if we matched a portable name
             z <- c(z, pick(db$portable[i], db))                                        #          pick from among dups and we're done
          else {                                                                        #       else

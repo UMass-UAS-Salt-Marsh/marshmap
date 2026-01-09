@@ -178,7 +178,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
    }
    
    
-   if(sum(!names(r) %in% c('site', 'subclass')) <= 1)
+   if(sum(!(names(r) %in% c('site', 'subclass') | grepl('^_', names(r)))) <= 1)
       stop('Analysis doesn\'t include any orthoimage variables')
    
    r <- r[, !names(r) == 'site']                                                          # finally drop site name (not sure if we'll want it at some point, so I've kept it up to here)
@@ -193,8 +193,13 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
               paste(years, collapse = ', '), ')')
    }
    
-   
+   t <- ncol(r)
    r <- r[, c(TRUE, colSums(is.na(r[, -1])) / nrow(r) <= max_miss_train) | (grepl('^_', names(r)))]      # drop variables with too many missing values, but NOT from blocks!
+   if(ncol(r) < t)
+      message('Dropped ', t - ncol(r), ' variables because they were more than ', max_miss_train * 100, '% missing')
+   
+   if(sum(!(names(r) %in% c('site', 'subclass') | grepl('^_', names(r)))) <= 1)
+      stop('Analysis doesn\'t include any orthoimage variables')
    
    
    if(!is.null(max_samples))                                                              # if max_samples,
@@ -221,7 +226,7 @@ do_fit <- function(fitid, sites, name, method, fitargs, vars, exclude_vars, excl
       what <- ifelse(is.null(bypoly), 'blocks', 'bypoly')
       message('Using ', what, ' ', blocks$block, ', classes ', paste(blocks$classes, collapse = ', '), ' for holdout set')
       blocks$block <- paste0('_', sub('^_', '', blocks$block))                            #    be agnostic to leading underscores in block names
-      validate <- r[b <- blks[[blocks$block]] %in% blocks$classes, ]                      #    pull out selected blocks for validation and drop block variables
+      validate <- r[b <- blks[[blocks$block]] %in% blocks$classes, ]                    #    pull out selected blocks for validation and drop block variables
       training <- r[!b, ]
       message('Using ', what, ' holdouts: ', nrow(training), ' cases in training set and ', nrow(validate), ' cases in validation set')
       if(nrow(validate) == 0 | nrow(training) == 0)

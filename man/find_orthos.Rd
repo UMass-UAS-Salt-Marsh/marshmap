@@ -13,8 +13,8 @@ find_orthos(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE)
 separated by \code{+} (you can also provide a vector of character strings--these
 will be treated the same as a vector with elements separated by \code{+})
 \describe{
-\item{file name}{a complete file name (\code{.tif} is optional)}
-\item{portable name}{a portable name}
+\item{file name}{a complete file name (case-insensitive\code{.tif} is optional)}
+\item{portable name}{a portable name (case-insensitive)}
 \item{regex}{a regular expression enclosed in \code{{}}, to be
 applied to both file names and portable names. Regular expressions
 are case-insensitive.}

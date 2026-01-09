@@ -4,7 +4,7 @@
 #' @param transects Original sf transects object
 #' @param holdout Fraction for validation (e.g., 0.2)
 #' @param seed Random seed
-#' @return List with train and val patch indices
+#' @returns List with train and val patch indices
 
 
 unet_spatial_train_val_split <- function(patch_data, transects, holdout = 0.2, seed = 42) {

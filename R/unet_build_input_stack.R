@@ -6,21 +6,19 @@
 #'  - `config$orthos` Vector of orthophoto names (typically a 5-band Mica, NDVI, NDRE, and a matching DEM)
 #'  - `config$type` Vector of ortho type corresponding to `orthos`
 #'  - `config$bands` Number of bands in each ortho
-#' @return SpatRaster with all bands (typically Blue, Green, Red, NIR, RedEdge, NDVI, NDRE, DEM)
+#' @returns SpatRaster with all bands (typically Blue, Green, Red, NIR, RedEdge, NDVI, NDRE, DEM)
 #' @importFrom terra rast values global quantile clamp
 
 
 unet_build_input_stack <- function(config) {
-
+   
    
    # Helper: Normalize raster to 0-1
    unet_normalize_band <- function(r, lower = 0.02, upper = 0.98) {
-      if (method == 'percentile') {
-         vals <- values(r, na.rm = TRUE)
-         q_lower <- quantile(vals, lower, na.rm = TRUE)
-         q_upper <- quantile(vals, upper, na.rm = TRUE)
-         r_norm <- (r - q_lower) / (q_upper - q_lower)
-      }
+      vals <- values(r, na.rm = TRUE)
+      q_lower <- quantile(vals, lower, na.rm = TRUE)
+      q_upper <- quantile(vals, upper, na.rm = TRUE)
+      r_norm <- (r - q_lower) / (q_upper - q_lower)
       clamp(r_norm, lower = 0, upper = 1, values = TRUE)
    }
    
@@ -56,4 +54,4 @@ unet_build_input_stack <- function(config) {
    
    z <- rast(z)                                                               # convert the list of rasters to a raster stack
    z
-   }
+}

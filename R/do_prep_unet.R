@@ -2,7 +2,7 @@
 #' 
 #' Creates numpy arrays ready for fitting in U-Net. Result files are placed in `<site>/unet/<model>`.
 #' 
-#' @param model_name The model name, which is also the name of a `.yml` parameter file in the `pars` 
+#' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
 #'    directory. This file must contain the following:
 #'    - year: the year to fit
 #'    - orthos: file names of all orthophotos to include
@@ -31,10 +31,10 @@
 # - Claude has me quantile-scaling spectral data, standardizing DEM, and leaving NDVI and NDRI as-is. Is this correct?
 
 
-do_prep_unet <- function(model_name) {
+do_prep_unet <- function(model) {
    
    
-   config <- read_yaml(file.path(the$parsdir, paste0(model_name, '.yml')))
+   config <- read_yaml(file.path(the$parsdir, paste0(model, '.yml')))
    
    config$fpath <- resolve_dir(the$flightsdir, config$site)
    config$bands <- unlist(lapply(config$orthos, function(x) 
@@ -51,8 +51,8 @@ do_prep_unet <- function(model_name) {
    config$seed <- 42                                                          # random seed for repeatability
    
    
-   transect_file <- file.path(resolve_dir(the$flightsdir, config$site), get_sites(config$site)$transects)
-   output_dir <- file.path(resolve_dir(the$unetdir, config$site), model_name)
+   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
+   output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
    
 
    # 1. Build input stack
@@ -60,22 +60,20 @@ do_prep_unet <- function(model_name) {
    input_stack <- unet_build_input_stack(config)                              # ----- build input stack
    
    
+   
+   message("Loading transects...")
+   transects <- st_read(transect_file, 
+                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
+   names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
+   transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
+   message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '))
+   
+   
    # ---------------------- done to here ----------------------
    
    
-   # 2. Load transects
-   message("Loading transects...")
-   transects <- st_read(transect_file)
-   
-   # Filter to target classes
-   transects <- transects %>% 
-      filter(Subclass %in% config$classes)
-   
-   message("Transects with target classes: ", nrow(transects))
-   
-   # 3. Extract patches
-   message("Extracting patches...")
-   patch_data <- unet_extract_training_patches(
+   message("Extracting patches...")                                           # ----- extract patches
+   patches <- unet_extract_training_patches(
       input_stack = input_stack,
       transects = transects,
       patch = config$patch,
@@ -84,10 +82,11 @@ do_prep_unet <- function(model_name) {
       class_mapping = config$class_mapping
    )                                                                          # ----- extract training patches
    
+   
    # 4. Train/val split
    message("Creating train/val split...")
    split_indices <- unet_spatial_train_val_split(
-      patch_data = patch_data,
+      patches = patches,
       transects = transects,
       holdout = config$holdout,
       seed = config$seed
@@ -96,7 +95,7 @@ do_prep_unet <- function(model_name) {
    # 5. Export to numpy
    message("Exporting to numpy...")
    unet_export_to_numpy(
-      patch_data = patch_data,
+      patches = patches,
       split_indices = split_indices,
       output_dir = output_dir,
       site = site
@@ -105,7 +104,7 @@ do_prep_unet <- function(model_name) {
    message("Data preparation complete!")
    
    return(list(
-      patch_data = patch_data,
+      patches = patches,
       split_indices = split_indices,
       input_stack = input_stack,
       transects = transects

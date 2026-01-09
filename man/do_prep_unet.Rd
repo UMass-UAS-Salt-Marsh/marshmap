@@ -4,10 +4,10 @@
 \alias{do_prep_unet}
 \title{Pre-process data for U-Net}
 \usage{
-do_prep_unet(model_name)
+do_prep_unet(model)
 }
 \arguments{
-\item{model_name}{The model name, which is also the name of a \code{.yml} parameter file in the \code{pars}
+\item{model}{The model name, which is also the name of a \code{.yml} parameter file in the \code{pars}
 directory. This file must contain the following:
 \itemize{
 \item year: the year to fit

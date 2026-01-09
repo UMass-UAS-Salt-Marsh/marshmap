@@ -2,7 +2,7 @@
 #' 
 #' Creates numpy arrays ready for fitting in U-Net. Result files are placed in `<site>/unet/<model>`.
 #' 
-#' @param model_name The model name, which is also the name of a `.yml` parameter file in the `pars` 
+#' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
 #'    directory. This file must contain the following:
 #'    - year: the year to fit
 #'    - orthos: portable names of all orthophotos to include
@@ -21,7 +21,7 @@
 #' @export
 
 
-prep_unet <- function(model_name,  resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+prep_unet <- function(model,  resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    resources <- get_resources(resources, list(
@@ -32,9 +32,9 @@ prep_unet <- function(model_name,  resources = NULL, local = FALSE, trap = TRUE,
    
    
    if(is.null(comment))
-      comment <- paste0('prep_unet ', model_name)
+      comment <- paste0('prep_unet ', model)
    
    
-   launch('do_prep_unet', reps = model_name, repname = 'model_name', 
+   launch('do_prep_unet', reps = model, repname = 'model', 
           local = local, trap = trap, resources = resources, comment = comment)
 }
