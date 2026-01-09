@@ -26,11 +26,11 @@ find_orthos(site, descrip, minscore = 0, maxmissing = 20, screen = TRUE)
 
   file name
 
-  :   a complete file name (`.tif` is optional)
+  :   a complete file name (case-insensitive`.tif` is optional)
 
   portable name
 
-  :   a portable name
+  :   a portable name (case-insensitive)
 
   regex
 

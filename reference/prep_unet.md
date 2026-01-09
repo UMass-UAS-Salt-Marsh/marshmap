@@ -6,18 +6,12 @@ in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-prep_unet(
-  model_name,
-  resources = NULL,
-  local = FALSE,
-  trap = TRUE,
-  comment = NULL
-)
+prep_unet(model, resources = NULL, local = FALSE, trap = TRUE, comment = NULL)
 ```
 
 ## Arguments
 
-- model_name:
+- model:
 
   The model name, which is also the name of a `.yml` parameter file in
   the `pars` directory. This file must contain the following:
