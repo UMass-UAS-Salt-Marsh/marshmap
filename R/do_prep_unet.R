@@ -34,6 +34,11 @@
 do_prep_unet <- function(model) {
    
    
+   
+   library(sf)                         # TEMPORARY, for development
+   library(terra)
+   
+   
    config <- read_yaml(file.path(the$parsdir, paste0(model, '.yml')))
    
    config$fpath <- resolve_dir(the$flightsdir, config$site)
@@ -64,9 +69,20 @@ do_prep_unet <- function(model) {
    message("Loading transects...")
    transects <- st_read(transect_file, 
                         promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
+   
+   
+   ###  ********************************** TEMPORARY CODE **********************************
+   message('Reprojecting...   [this is temporary, pending reprojection change in gather')
+   transects <- st_transform(transects, 'epsg:26986')                                     
+   message('Done projecting')
+   ###  ************************************************************************************
+   
+   
    names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
    transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
    message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '))
+   if(nrow(transects) == 0)
+      stop('No transect data for these classes')
    
    
    # ---------------------- done to here ----------------------

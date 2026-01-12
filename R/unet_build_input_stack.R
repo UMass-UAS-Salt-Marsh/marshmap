@@ -8,6 +8,7 @@
 #'  - `config$bands` Number of bands in each ortho
 #' @returns SpatRaster with all bands (typically Blue, Green, Red, NIR, RedEdge, NDVI, NDRE, DEM)
 #' @importFrom terra rast values global quantile clamp
+#' @keywords internal
 
 
 unet_build_input_stack <- function(config) {
@@ -53,5 +54,14 @@ unet_build_input_stack <- function(config) {
    }
    
    z <- rast(z)                                                               # convert the list of rasters to a raster stack
+   
+   
+   ###  ********************************** TEMPORARY CODE **********************************
+   message('Reprojecting...   [this is temporary, pending reprojection change in gather')
+      z <- project(z, 'epsg:26986')                                     
+   message('Done projecting')
+   ###  ************************************************************************************
+   
+   
    z
 }

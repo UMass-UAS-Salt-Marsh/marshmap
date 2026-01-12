@@ -4,6 +4,7 @@
 #' @param split_indices List from unet_spatial_train_val_split
 #' @param output_dir Directory to save numpy files
 #' @param site Name for files (e.g., "site1")
+#' @keywords internal
 
 
 unet_export_to_numpy <- function(patch_data, split_indices, output_dir, site) {

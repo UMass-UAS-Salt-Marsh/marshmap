@@ -5,6 +5,7 @@
 #' @param holdout Fraction for validation (e.g., 0.2)
 #' @param seed Random seed
 #' @returns List with train and val patch indices
+#' @keywords internal
 
 
 unet_spatial_train_val_split <- function(patch_data, transects, holdout = 0.2, seed = 42) {
