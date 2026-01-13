@@ -19,21 +19,20 @@ unet_extract_training_patches(
 
 - input_stack:
 
-  SpatRaster (8 bands)
+  All predictors (raster)
 
 - transects:
 
-  sf object with ground truth polygons
+  Ground truth polys (sf object)
 
 - patch:
 
-  Size of patches in pixels (e.g., 256)
+  Patch size (n pixels)
 
 - overlap:
 
-  Overlap fraction between patches (e.g., 0.5 for 50%)
+  Proportional patch overlap (e.g., 0.5 for 50%)
 
 ## Value
 
-List containing patches (array), labels (array), masks (array), metadata
-(df)
+List of patches (array), labels (array), masks (array), metadata (df)

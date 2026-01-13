@@ -86,6 +86,7 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_build_input_stack.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_export_to_numpy.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_extract_training_patches.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_patch_stats.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_spatial_train_val_split.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_clone.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_more.html</loc></url>
