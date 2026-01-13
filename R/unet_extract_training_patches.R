@@ -5,27 +5,14 @@
 #' @param patch Patch size (n pixels)
 #' @param overlap Proportional patch overlap (e.g., 0.5 for 50%)
 #' @returns List of patches (array), labels (array), masks (array), metadata (df)
-#' @importFrom terra ext res rast rasterize
-#' @importFrom sf st_as_sf crs st_buffer st_intersects st_coordinates st_crop
+#' @importFrom terra ext res rast rasterize crs
+#' @importFrom sf st_as_sf st_buffer st_intersects st_coordinates st_crop
 #' @keywords internal
 
 
 unet_extract_training_patches <- function(input_stack, transects, patch = 256, 
                                           overlap = 0.5, classes = c(3,4,5,6),
                                           class_mapping = c('3'=0, '4'=1, '5'=2, '6'=3)) {
-   
-   
-   # X 1. filter to classes ALREADY DONE in calling function
-   # X 2. reproject UNNECESSARY
-   # x 3. get extent and resolution
-   # x 4. create grid of patch centers
-   # x 5. filter to centers that intersect transects 
-   # x 6. initialize arrays
-   # x 7. extract patches
-   #   8. filter patches with no labels
-   
-   
-    
    
    
    ext <- ext(input_stack)                                                                # raster extent, resolution, etc.
@@ -47,13 +34,13 @@ unet_extract_training_patches <- function(input_stack, transects, patch = 256,
    transects_buffered <- st_buffer(transects, dist = patch_size_m / 2)
    patch_centers_valid <- patch_centers_sf[st_intersects(patch_centers_sf, 
                                                          st_union(transects_buffered), 
-                                                         sparse = FALSE), ]               # Filter to patch centers that intersect buffered transects
+                                                         sparse = FALSE), ]               # filter to patch centers that intersect buffered transects
    
    n_patches <- nrow(patch_centers_valid)
    message('Extracting ', n_patches, ' patches...')
    
-  
-   patches <- array(NA, dim = c(n_patches, patch, patch, nlyr(input_stack)))              # Initialize arrays
+   
+   patches <- array(NA, dim = c(n_patches, patch, patch, nlyr(input_stack)))              # initialize arrays
    labels <- array(NA, dim = c(n_patches, patch, patch))
    masks <- array(0, dim = c(n_patches, patch, patch))
    
@@ -66,29 +53,23 @@ unet_extract_training_patches <- function(input_stack, transects, patch = 256,
    )
    
    
-   
-   # ---------------------- done to here ----------------------
-   browser()
-   
-   
    for (i in 1:n_patches) {                                                               # for each patch,
       pc <- st_coordinates(patch_centers_valid[i, ])
       patch_ext <- ext(pc[1] - patch_size_m / 2, pc[1] + patch_size_m / 2,
                        pc[2] - patch_size_m / 2, pc[2] + patch_size_m / 2)                #    patch extent
       
-     
+      
       patch_rast <- crop(input_stack, patch_ext)                                          #    crop input stack
-      patch_array <- array(values(patch_rast),
-         dim = c(nrow(patch_rast), ncol(patch_rast), nlyr(patch_rast)))                   #    convert to array of rows, cols, bands
+      patch_array <- array(values(patch_rast), dim = c(nrow(patch_rast), 
+                           ncol(patch_rast), nlyr(patch_rast)))                           #    convert to array of rows, cols, bands
       
       
       
-      # Handle edge cases where patch is smaller than expected
-      actual_h <- dim(patch_array)[1]
+      
+      actual_h <- dim(patch_array)[1]                                                     #    handle edge cases where patch is smaller than expected
       actual_w <- dim(patch_array)[2]
       
-      if (actual_h < patch || actual_w < patch) {
-         # Pad with zeros
+      if (actual_h < patch || actual_w < patch) {                                         #    pad with zeros
          padded <- array(0, dim = c(patch, patch, nlyr(input_stack)))
          padded[1:actual_h, 1:actual_w, ] <- patch_array
          patch_array <- padded
@@ -96,50 +77,39 @@ unet_extract_training_patches <- function(input_stack, transects, patch = 256,
       
       patches[i, , , ] <- patch_array
       
-      # Rasterize transects to get labels
-      transects_patch <- st_crop(transects, patch_ext)
       
-      if (nrow(transects_patch) > 0) {
-         # Create template raster
+      transects_patch <- suppressWarnings(st_crop(transects, patch_ext))                  #    rasterize transects to get labels
+      
+      if (nrow(transects_patch) > 0) {                                                    #    if patch has data,
          template <- rast(patch_ext, nrows = patch, ncols = patch, 
-                          crs = crs(input_stack))
+                          crs = crs(input_stack))                                         #       create template raster
+         label_rast <- rasterize(transects_patch, template, field = "subclass")
          
-         # Rasterize
-         label_rast <- rasterize(transects_patch, template, field = "Subclass")
+         label_array <- matrix(values(label_rast), nrow = nrow(label_rast), 
+                               ncol = ncol(label_rast), byrow = FALSE)                    #       convert to matrix [H, W]
          
-         # Convert to matrix [H, W]
-         label_array <- matrix(values(label_rast), 
-                               nrow = nrow(label_rast), 
-                               ncol = ncol(label_rast),
-                               byrow = FALSE)
+         label_array <- t(label_array)                                                    #       transpose from terra's column-major to row-major
          
-         # Note: terra rasters are stored column-major, so we might need to transpose
-         # Check if labels align correctly; if not, use:
-         # label_array <- t(label_array)
-         
-         # Remap classes 
-         label_array_remapped <- label_array
+        
+         label_array_remapped <- label_array                                              #    remap classes
          for (old_class in names(class_mapping)) {
             label_array_remapped[label_array == as.numeric(old_class)] <- 
                class_mapping[[old_class]]
          }
          
-         # Create mask (1 where labeled, 0 where not)
-         mask_array <- ifelse(is.na(label_array), 0, 1)
          
+         mask_array <- ifelse(is.na(label_array), 0, 1)                                   #    mask (1 where labeled, 0 where not)
          labels[i, , ] <- label_array_remapped
          masks[i, , ] <- mask_array
          
-         # Metadata
          metadata$n_labeled_pixels[i] <- sum(mask_array)
          metadata$classes_present[i] <- paste(unique(label_array_remapped[!is.na(label_array_remapped)]), 
                                               collapse = ',')
       }
    }
    
-   # Filter out patches with no labeled pixels
-   valid_patches <- metadata$n_labeled_pixels > 0
    
+   valid_patches <- metadata$n_labeled_pixels > 0                                         #    drop patches with no labeled pixels
    message('Keeping ', sum(valid_patches), ' patches with labels')
    
    return(list(

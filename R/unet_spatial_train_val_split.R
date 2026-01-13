@@ -1,6 +1,6 @@
 #' Split patches into train and validation sets spatially
 #' 
-#' @param patch_data List from unet_extract_training_patches
+#' @param patches List from unet_extract_training_patches
 #' @param transects Original sf transects object
 #' @param holdout Fraction for validation (e.g., 0.2)
 #' @param seed Random seed
@@ -8,8 +8,10 @@
 #' @keywords internal
 
 
-unet_spatial_train_val_split <- function(patch_data, transects, holdout = 0.2, seed = 42) {
+unet_spatial_train_val_split <- function(patches, transects, holdout = 0.2, seed = 42) {
    
+   # ---------------------- done to here ----------------------
+   browser()
    
    set.seed(seed)
    

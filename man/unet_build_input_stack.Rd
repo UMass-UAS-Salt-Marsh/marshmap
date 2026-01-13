@@ -23,3 +23,4 @@ SpatRaster with all bands (typically Blue, Green, Red, NIR, RedEdge, NDVI, NDRE,
 \description{
 Build input stack for a given portable ortho name
 }
+\keyword{internal}

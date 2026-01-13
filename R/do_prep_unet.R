@@ -72,6 +72,7 @@ do_prep_unet <- function(model) {
    
    
    ###  ********************************** TEMPORARY CODE **********************************
+   transects <- st_zm(transects, drop = TRUE)                                 # DROP Z VALUES - this will happen in gather
    message('Reprojecting...   [this is temporary, pending reprojection change in gather')
    transects <- st_transform(transects, 'epsg:26986')                                     
    message('Done projecting')
@@ -84,10 +85,7 @@ do_prep_unet <- function(model) {
    if(nrow(transects) == 0)
       stop('No transect data for these classes')
    
-   
-   # ---------------------- done to here ----------------------
-   
-   
+  
    message("Extracting patches...")                                           # ----- extract patches
    patches <- unet_extract_training_patches(
       input_stack = input_stack,
@@ -99,23 +97,30 @@ do_prep_unet <- function(model) {
    )                                                                          # ----- extract training patches
    
    
+   patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
+   
+   # ---------------------- done to here ----------------------
+   browser()
+   
+   
    # 4. Train/val split
-   message("Creating train/val split...")
+   message("Creating train/validate split...")                                # ----- split into training and validation data
    split_indices <- unet_spatial_train_val_split(
       patches = patches,
       transects = transects,
       holdout = config$holdout,
       seed = config$seed
-   )                                                                          # ----- split training and validation data
+   )                                                                          
    
-   # 5. Export to numpy
-   message("Exporting to numpy...")
+   
+   message("Exporting to numpy...")                                           # ----- export to numpy
    unet_export_to_numpy(
       patches = patches,
       split_indices = split_indices,
       output_dir = output_dir,
       site = site
-   )                                                                          # ----- export to numpy
+   )
+   
    
    message("Data preparation complete!")
    

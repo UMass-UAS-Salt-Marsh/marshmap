@@ -4,10 +4,10 @@
 \alias{unet_spatial_train_val_split}
 \title{Split patches into train and validation sets spatially}
 \usage{
-unet_spatial_train_val_split(patch_data, transects, holdout = 0.2, seed = 42)
+unet_spatial_train_val_split(patches, transects, holdout = 0.2, seed = 42)
 }
 \arguments{
-\item{patch_data}{List from unet_extract_training_patches}
+\item{patches}{List from unet_extract_training_patches}
 
 \item{transects}{Original sf transects object}
 
@@ -21,3 +21,4 @@ List with train and val patch indices
 \description{
 Split patches into train and validation sets spatially
 }
+\keyword{internal}

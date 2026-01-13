@@ -14,17 +14,18 @@ unet_extract_training_patches(
 )
 }
 \arguments{
-\item{input_stack}{SpatRaster (8 bands)}
+\item{input_stack}{All predictors (raster)}
 
-\item{transects}{sf object with ground truth polygons}
+\item{transects}{Ground truth polys (sf object)}
 
-\item{patch}{Size of patches in pixels (e.g., 256)}
+\item{patch}{Patch size (n pixels)}
 
-\item{overlap}{Overlap fraction between patches (e.g., 0.5 for 50\%)}
+\item{overlap}{Proportional patch overlap (e.g., 0.5 for 50\%)}
 }
 \value{
-List containing patches (array), labels (array), masks (array), metadata (df)
+List of patches (array), labels (array), masks (array), metadata (df)
 }
 \description{
 Extract training patches that overlap with transects
 }
+\keyword{internal}

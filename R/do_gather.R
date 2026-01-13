@@ -167,6 +167,7 @@ do_gather <- function(site, pattern = '',
          get_sidecars(dir, sites$footprint[i], gd)                                  #       load two sidecar files for shapefile into cache
       footprint <- st_read(get_file(file.path(dir, sites$footprint[i]), 
                                     gd), promote_to_multi = FALSE, quiet = TRUE)    #    read footprint shapefile (we always do this 'cuz it's cheap)
+      footprint <- st_zm(footprint, drop = TRUE)                                    #    we don't want Z values!
       
       if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
          message('         !!! Reprojecting ', basename(sites$footprint[i]))
@@ -200,6 +201,7 @@ do_gather <- function(site, pattern = '',
                tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
                
                shp <- st_read(tpath, promote_to_multi = FALSE, quiet = TRUE)        #       read transects shapefile
+               shp <- st_zm(shp, drop = TRUE)                                       #    we don't want Z values!
                
                if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
                   message('         !!! Reprojecting ', basename(tpath))
