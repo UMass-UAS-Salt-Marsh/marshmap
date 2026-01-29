@@ -13,6 +13,12 @@ unet_spatial_train_val_split <- function(patches, transects, holdout = 0.2, seed
    # ---------------------- done to here ----------------------
    browser()
    
+   # year
+   # poly is transect id
+   # bypoly01..05 to indictate holdout sets
+   # subclass
+   
+   
    set.seed(seed)
    
    # Get unique transect IDs (assuming they have an ID field, or use row number)

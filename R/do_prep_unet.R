@@ -55,7 +55,8 @@ do_prep_unet <- function(model) {
    names(config$class_mapping) <- config$classes                              # class mapping
    config$seed <- 42                                                          # random seed for repeatability
    
-   
+   x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
+   transect_file <- paste0(file_path_sans_ext(x), '_final.shp')
    transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
    
