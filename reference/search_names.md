@@ -44,6 +44,7 @@ errors, even though the second two are correct.
 ``` r
 require(saltmarsh)
 #> Loading required package: saltmarsh
+#> Warning: replacing previous import ‘bslib::show_toast’ by ‘shinyWidgets::show_toast’ when loading ‘saltmarsh’
 #> 
 #> Attaching package: ‘saltmarsh’
 #> The following objects are masked from ‘package:marshmap’:
