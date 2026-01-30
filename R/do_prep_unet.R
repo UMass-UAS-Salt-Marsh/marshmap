@@ -4,12 +4,13 @@
 #' 
 #' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
 #'    directory. This file must contain the following:
-#'    - year: the year to fit
+#'    - years: the year(s) of field data to fit
 #'    - orthos: file names of all orthophotos to include
 #'    - patch: size in pixels
 #'    - depth: number of of downsampling stages
 #'    - classes: vector of target classes
-#'    - holdout: percent of data to hold out for validation
+#'    - holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
+#'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
 #' @importFrom yaml read_yaml
 #' @export
 
@@ -57,7 +58,6 @@ do_prep_unet <- function(model) {
    
    x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
    transect_file <- paste0(file_path_sans_ext(x), '_final.shp')
-   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
    
 
@@ -82,7 +82,8 @@ do_prep_unet <- function(model) {
    
    names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
    transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
-   message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '))
+   transects <- transects[transects$year %in% config$years, ]                 # and to years
+   message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '), ' in ', paste(config$years, collapse = ', '))
    if(nrow(transects) == 0)
       stop('No transect data for these classes')
    
@@ -100,10 +101,6 @@ do_prep_unet <- function(model) {
    
    patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
    
-   # ---------------------- done to here ----------------------
-   browser()
-   
-   
    # 4. Train/val split
    message("Creating train/validate split...")                                # ----- split into training and validation data
    split_indices <- unet_spatial_train_val_split(
@@ -112,6 +109,10 @@ do_prep_unet <- function(model) {
       holdout = config$holdout,
       seed = config$seed
    )                                                                          
+   
+   
+   # ---------------------- done to here ----------------------
+
    
    
    message("Exporting to numpy...")                                           # ----- export to numpy
