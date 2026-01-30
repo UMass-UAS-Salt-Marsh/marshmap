@@ -87,6 +87,15 @@ do_prep_unet <- function(model) {
    if(nrow(transects) == 0)
       stop('No transect data for these classes')
    
+   transects <- st_make_valid(transects)                                      # fix any invalid geometries
+   transects <- st_buffer(transects, dist = 0)                                # may fix topology issues
+
+   invalid_geoms <- !st_is_valid(transects)                                   # remove any remaining invalid geometries
+   if (any(invalid_geoms)) {
+      message('Removing ', sum(invalid_geoms), ' invalid transect geometries')
+      transects <- transects[!invalid_geoms, ]
+   }
+   
   
    message("Extracting patches...")                                           # ----- extract patches
    patches <- unet_extract_training_patches(

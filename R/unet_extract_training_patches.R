@@ -78,7 +78,13 @@ unet_extract_training_patches <- function(input_stack, transects, patch = 256,
       patches[i, , , ] <- patch_array
       
       
-      transects_patch <- suppressWarnings(st_crop(transects, patch_ext))                  #    rasterize transects to get labels
+      transects_patch <- tryCatch({
+         suppressWarnings(st_crop(transects, patch_ext))                                  #    rasterize transects to get labels
+      }, error = function(e) {
+         message('Skipping patch ', i, ' due to topology error: ', e$message)
+         return(NULL)
+      })
+      
       
       if (nrow(transects_patch) > 0) {                                                    #    if patch has data,
          template <- rast(patch_ext, nrows = patch, ncols = patch, 
