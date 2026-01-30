@@ -9,10 +9,6 @@
 
 unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
 
-   # ---------------------- done to here ----------------------
-   browser()
-   
-   
     
    if (!reticulate::py_module_available('numpy')) {                                 # check if numpy available
       stop("numpy not found. Run create_python_env() first.")
@@ -22,6 +18,13 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    
    
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+   
+   # ---------------------- done to here ----------------------
+   browser()
+   
+   
+   
+   
    
    # Train data
    train_patches <- patches$patches[split_indices$train_idx, , , ]

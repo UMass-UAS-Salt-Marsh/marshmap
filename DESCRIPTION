@@ -32,7 +32,8 @@ Imports:
     bslib,
     shinybusy,
     shinyWidgets,
-    moments
+    moments,
+    reticulate
 Remotes:
     UMassCDS/slurmcollie,
     ethanplunkett/rasterPrep
