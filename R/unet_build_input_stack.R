@@ -7,7 +7,6 @@
 #'  - `config$type` Vector of ortho type corresponding to `orthos`
 #'  - `config$bands` Number of bands in each ortho
 #' @returns SpatRaster with all bands (typically Blue, Green, Red, NIR, RedEdge, NDVI, NDRE, DEM)
-#' @importFrom terra rast values global quantile clamp
 #' @keywords internal
 
 

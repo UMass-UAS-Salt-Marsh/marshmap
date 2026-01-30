@@ -4,16 +4,15 @@
 \alias{unet_spatial_train_val_split}
 \title{Split patches into train and validation sets spatially}
 \usage{
-unet_spatial_train_val_split(patches, transects, holdout = 0.2, seed = 42)
+unet_spatial_train_val_split(patches, transects, holdout = 1)
 }
 \arguments{
 \item{patches}{List from unet_extract_training_patches}
 
 \item{transects}{Original sf transects object}
 
-\item{holdout}{Fraction for validation (e.g., 0.2)}
-
-\item{seed}{Random seed}
+\item{holdout}{Holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6). Holdout sets are
+created by \code{gather} to yield at least 20\% of separate polys. There are 5 sets to choose from.}
 }
 \value{
 List with train and val patch indices

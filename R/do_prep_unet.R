@@ -12,6 +12,9 @@
 #'    - holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
 #'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
 #' @importFrom yaml read_yaml
+#' @importFrom terra rast values global quantile clamp ext res rast rasterize crs
+#' @importFrom sf st_as_sf st_buffer st_intersects st_coordinates st_crop st_nearest_feature
+#' @importFrom reticulate import
 #' @export
 
 
@@ -51,7 +54,7 @@ do_prep_unet <- function(model) {
    config$type[grep('__NDVI', config$orthos)] <- 'ndvi'
    config$type[grep('__NDRE', config$orthos)] <- 'ndre'
    config$type[grep('DEM', config$orthos)] <- 'dem'
-
+   
    config$class_mapping <- as.list(0:(length(config$classes) - 1))
    names(config$class_mapping) <- config$classes                              # class mapping
    config$seed <- 42                                                          # random seed for repeatability
@@ -60,7 +63,7 @@ do_prep_unet <- function(model) {
    transect_file <- paste0(file_path_sans_ext(x), '_final.shp')
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
    
-
+   
    # 1. Build input stack
    message("Building input stack...")
    input_stack <- unet_build_input_stack(config)                              # ----- build input stack
@@ -68,16 +71,25 @@ do_prep_unet <- function(model) {
    
    
    message("Loading transects...")
-   transects <- st_read(transect_file, 
-                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
+   # transects <- st_read(transect_file, 
+   #                      promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
    
    
-   ###  ********************************** TEMPORARY CODE **********************************
-   transects <- st_zm(transects, drop = TRUE)                                 # DROP Z VALUES - this will happen in gather
-   message('Reprojecting...   [this is temporary, pending reprojection change in gather')
-   transects <- st_transform(transects, 'epsg:26986')                                     
-   message('Done projecting')
-   ###  ************************************************************************************
+   ###
+   transects <- st_read("/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp", 
+                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects                                    ************* SO TEMPORARY!
+   ###
+   
+   
+   # ###  ********************************** TEMPORARY CODE **********************************
+   # transects <- st_zm(transects, drop = TRUE)                                 # DROP Z VALUES - this will happen in gather
+   # message('Reprojecting...   [this is temporary, pending reprojection change in gather]')
+   # transects <- st_transform(transects, 'epsg:26986')      
+   # 
+   # st_write(transects, "/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp")
+   # 
+   # message('Done projecting')
+   # ###  ************************************************************************************
    
    
    names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
@@ -89,14 +101,14 @@ do_prep_unet <- function(model) {
    
    transects <- st_make_valid(transects)                                      # fix any invalid geometries
    transects <- st_buffer(transects, dist = 0)                                # may fix topology issues
-
+   
    invalid_geoms <- !st_is_valid(transects)                                   # remove any remaining invalid geometries
    if (any(invalid_geoms)) {
       message('Removing ', sum(invalid_geoms), ' invalid transect geometries')
       transects <- transects[!invalid_geoms, ]
    }
    
-  
+   
    message("Extracting patches...")                                           # ----- extract patches
    patches <- unet_extract_training_patches(
       input_stack = input_stack,
@@ -115,13 +127,12 @@ do_prep_unet <- function(model) {
    split_indices <- unet_spatial_train_val_split(
       patches = patches,
       transects = transects,
-      holdout = config$holdout,
-      seed = config$seed
+      holdout = config$holdout
    )                                                                          
    
    
    # ---------------------- done to here ----------------------
-
+   
    
    
    message("Exporting to numpy...")                                           # ----- export to numpy
@@ -129,7 +140,7 @@ do_prep_unet <- function(model) {
       patches = patches,
       split_indices = split_indices,
       output_dir = output_dir,
-      site = site
+      site = config$site
    )
    
    

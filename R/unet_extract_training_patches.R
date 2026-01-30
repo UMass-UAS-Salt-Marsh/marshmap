@@ -5,8 +5,6 @@
 #' @param patch Patch size (n pixels)
 #' @param overlap Proportional patch overlap (e.g., 0.5 for 50%)
 #' @returns List of patches (array), labels (array), masks (array), metadata (df)
-#' @importFrom terra ext res rast rasterize crs
-#' @importFrom sf st_as_sf st_buffer st_intersects st_coordinates st_crop
 #' @keywords internal
 
 

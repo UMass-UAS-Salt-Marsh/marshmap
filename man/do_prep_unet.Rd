@@ -10,12 +10,13 @@ do_prep_unet(model)
 \item{model}{The model name, which is also the name of a \code{.yml} parameter file in the \code{pars}
 directory. This file must contain the following:
 \itemize{
-\item year: the year to fit
+\item years: the year(s) of field data to fit
 \item orthos: file names of all orthophotos to include
 \item patch: size in pixels
 \item depth: number of of downsampling stages
 \item classes: vector of target classes
-\item holdout: percent of data to hold out for validation
+\item holdout: holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6). Holdout sets are
+created by \code{gather} to yield at least 20\% of separate polys. There are 5 sets to choose from.
 }}
 }
 \description{

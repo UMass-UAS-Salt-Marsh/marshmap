@@ -4,8 +4,7 @@
 #' @param split_indices List from unet_spatial_train_validate_split
 #' @param output_dir Directory to save numpy files
 #' @param site Name for files (e.g., 'site1')
-#' @importFrom reticulate import
-#' @keywords internal
+#' @export
 
 
 unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
@@ -14,11 +13,15 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    browser()
    
    
+    
+   if (!reticulate::py_module_available('numpy')) {                                 # check if numpy available
+      stop("numpy not found. Run create_python_env() first.")
+   }
+   
+   np <- reticulate::import('numpy')                                                # import Python's numpy module into R
+   
    
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
-   
-   np <- import('numpy')                                                   # import Python's numpy module into R
-   
    
    # Train data
    train_patches <- patches$patches[split_indices$train_idx, , , ]

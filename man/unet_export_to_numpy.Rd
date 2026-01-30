@@ -4,18 +4,17 @@
 \alias{unet_export_to_numpy}
 \title{Export prepared data to numpy arrays for Python}
 \usage{
-unet_export_to_numpy(patch_data, split_indices, output_dir, site)
+unet_export_to_numpy(patches, split_indices, output_dir, site)
 }
 \arguments{
-\item{patch_data}{List from unet_extract_training_patches}
+\item{patches}{List from unet_extract_training_patches}
 
-\item{split_indices}{List from unet_spatial_train_val_split}
+\item{split_indices}{List from unet_spatial_train_validate_split}
 
 \item{output_dir}{Directory to save numpy files}
 
-\item{site}{Name for files (e.g., "site1")}
+\item{site}{Name for files (e.g., 'site1')}
 }
 \description{
 Export prepared data to numpy arrays for Python
 }
-\keyword{internal}

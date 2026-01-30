@@ -5,7 +5,6 @@
 #' @param holdout Holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
 #'    created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
 #' @returns List with train and val patch indices
-#' @importFrom sf st_as_sf st_nearest_feature
 #' @keywords internal
 
 
