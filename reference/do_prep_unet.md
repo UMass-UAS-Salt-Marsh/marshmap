@@ -16,7 +16,7 @@ do_prep_unet(model)
   The model name, which is also the name of a `.yml` parameter file in
   the `pars` directory. This file must contain the following:
 
-  - year: the year to fit
+  - years: the year(s) of field data to fit
 
   - orthos: file names of all orthophotos to include
 
@@ -26,4 +26,6 @@ do_prep_unet(model)
 
   - classes: vector of target classes
 
-  - holdout: percent of data to hold out for validation
+  - holdout: holdout set to use (uses bypoly, classes 1 and 6). Holdout
+    sets are created by `gather` to yield at least 20% of separate
+    polys. There are 5 sets to choose from.

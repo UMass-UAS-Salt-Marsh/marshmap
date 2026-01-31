@@ -47,12 +47,13 @@
 
 <dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
 <dd><p>The model name, which is also the name of a <code>.yml</code> parameter file in the <code>pars</code>
-directory. This file must contain the following:</p><ul><li><p>year: the year to fit</p></li>
+directory. This file must contain the following:</p><ul><li><p>years: the year(s) of field data to fit</p></li>
 <li><p>orthos: file names of all orthophotos to include</p></li>
 <li><p>patch: size in pixels</p></li>
 <li><p>depth: number of of downsampling stages</p></li>
 <li><p>classes: vector of target classes</p></li>
-<li><p>holdout: percent of data to hold out for validation</p></li>
+<li><p>holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
+created by <code>gather</code> to yield at least 20% of separate polys. There are 5 sets to choose from.</holdout></p></li>
 </ul></dd>
 
 </dl></div>

@@ -5,7 +5,7 @@ Split patches into train and validation sets spatially
 ## Usage
 
 ``` r
-unet_spatial_train_val_split(patches, transects, holdout = 0.2, seed = 42)
+unet_spatial_train_val_split(patches, transects, holdout = 1)
 ```
 
 ## Arguments
@@ -20,11 +20,9 @@ unet_spatial_train_val_split(patches, transects, holdout = 0.2, seed = 42)
 
 - holdout:
 
-  Fraction for validation (e.g., 0.2)
-
-- seed:
-
-  Random seed
+  Holdout set to use (uses bypoly, classes 1 and 6). Holdout sets are
+  created by `gather` to yield at least 20% of separate polys. There are
+  5 sets to choose from.
 
 ## Value
 

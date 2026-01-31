@@ -211,6 +211,8 @@ with `local = TRUE`.
   : Sample orthoimages for field-collected data
 - [`prep_unet()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/prep_unet.md)
   : Pre-process data for U-Net
+- [`create_py_env()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/create_py_env.md)
+  : Create Python 3.10 env for U-Net
 - [`fit()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/fit.md)
   : Build statistical models of vegetation cover
 - [`map()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/map.md)

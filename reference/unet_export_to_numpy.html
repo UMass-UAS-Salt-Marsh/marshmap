@@ -38,19 +38,19 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unet_export_to_numpy</span><span class="op">(</span><span class="va">patch_data</span>, <span class="va">split_indices</span>, <span class="va">output_dir</span>, <span class="va">site</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unet_export_to_numpy</span><span class="op">(</span><span class="va">patches</span>, <span class="va">split_indices</span>, <span class="va">output_dir</span>, <span class="va">site</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-patch-data">patch_data<a class="anchor" aria-label="anchor" href="#arg-patch-data"></a></dt>
+<dl><dt id="arg-patches">patches<a class="anchor" aria-label="anchor" href="#arg-patches"></a></dt>
 <dd><p>List from unet_extract_training_patches</p></dd>
 
 
 <dt id="arg-split-indices">split_indices<a class="anchor" aria-label="anchor" href="#arg-split-indices"></a></dt>
-<dd><p>List from unet_spatial_train_val_split</p></dd>
+<dd><p>List from unet_spatial_train_validate_split</p></dd>
 
 
 <dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
@@ -58,7 +58,7 @@
 
 
 <dt id="arg-site">site<a class="anchor" aria-label="anchor" href="#arg-site"></a></dt>
-<dd><p>Name for files (e.g., "site1")</p></dd>
+<dd><p>Name for files (e.g., 'site1')</p></dd>
 
 </dl></div>
 
