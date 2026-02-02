@@ -60,12 +60,12 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    
    # Return file paths for verification
    invisible(list(
-      train_patches = file.path(output_dir, paste0(sote, '_train_patches.npy')),
-      train_labels = file.path(output_dir, paste0(sote, '_train_labels.npy')),
-      train_masks = file.path(output_dir, paste0(sote, '_train_masks.npy')),
-      validate_patches = file.path(output_dir, paste0(sote, '_validate_patches.npy')),
-      validate_labels = file.path(output_dir, paste0(sote, '_validate_labels.npy')),
-      validate_masks = file.path(output_dir, paste0(sote, '_validate_masks.npy')),
-      metadata = file.path(output_dir, paste0(sote, '_metadata.csv'))
+      train_patches = file.path(output_dir, paste0(site, '_train_patches.npy')),
+      train_labels = file.path(output_dir, paste0(site, '_train_labels.npy')),
+      train_masks = file.path(output_dir, paste0(site, '_train_masks.npy')),
+      validate_patches = file.path(output_dir, paste0(site, '_validate_patches.npy')),
+      validate_labels = file.path(output_dir, paste0(site, '_validate_labels.npy')),
+      validate_masks = file.path(output_dir, paste0(site, '_validate_masks.npy')),
+      metadata = file.path(output_dir, paste0(site, '_metadata.csv'))
    ))
 }
