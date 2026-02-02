@@ -18,10 +18,10 @@ create_py_env <- function() {
       envname = '~/marshmap_env',
       python = '/usr/bin/python3.10'
    )
-   
-   reticulate::virtualenv_install(                                            # Install packages
-      envname = '~/marshmap_env',
-      packages = c('numpy', 'scipy', 'matplotlib', 'pandas')
+
+   reticulate::virtualenv_install(                                            # Install numpy <2.0 explicitly
+      envname = "~/marshmap_env",
+      packages = c("numpy<2.0", "scipy", "matplotlib", "pandas")
    )
    
    reticulate::virtualenv_install(                                            # Install torch separately (with CUDA support)

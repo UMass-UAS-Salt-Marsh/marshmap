@@ -56,7 +56,7 @@ unet_build_input_stack <- function(config) {
    
    
    ###  ********************************** TEMPORARY CODE **********************************
-   message('Reprojecting...   [this is temporary, pending reprojection change in gather')
+   message('Reprojecting...   [this is temporary, pending reprojection change in gather]')
       z <- project(z, 'epsg:26986')                                     
    message('Done projecting')
    ###  ************************************************************************************

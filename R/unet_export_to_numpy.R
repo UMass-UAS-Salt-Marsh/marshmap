@@ -15,26 +15,24 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    }
    
    np <- reticulate::import('numpy')                                                # import Python's numpy module into R
-   
-   
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
-   
-   # ---------------------- done to here ----------------------
-   browser()
-   
-   
-   
-   
-   
+  
+     
    # Train data
    train_patches <- patches$patches[split_indices$train_idx, , , ]
    train_labels <- patches$labels[split_indices$train_idx, , ]
    train_masks <- patches$masks[split_indices$train_idx, , ]
    
+   
    # Validate data
    validate_patches <- patches$patches[split_indices$validate_idx, , , ]
    validate_labels <- patches$labels[split_indices$validate_idx, , ]
    validate_masks <- patches$masks[split_indices$validate_idx, , ]
+   
+   
+   # Replace NA with 255 (common ignore value)
+   train_labels[is.na(train_labels)] <- 255
+   validate_labels[is.na(validate_labels)] <- 255
    
    
    # Convert to numpy and save using numpy.save() in Python to create numpy binaries
@@ -62,12 +60,12 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    
    # Return file paths for verification
    invisible(list(
-      train_patches = file.path(output_dir, paste0(site_name, '_train_patches.npy')),
-      train_labels = file.path(output_dir, paste0(site_name, '_train_labels.npy')),
-      train_masks = file.path(output_dir, paste0(site_name, '_train_masks.npy')),
-      validate_patches = file.path(output_dir, paste0(site_name, '_validate_patches.npy')),
-      validate_labels = file.path(output_dir, paste0(site_name, '_validate_labels.npy')),
-      validate_masks = file.path(output_dir, paste0(site_name, '_validate_masks.npy')),
-      metadata = file.path(output_dir, paste0(site_name, '_metadata.csv'))
+      train_patches = file.path(output_dir, paste0(sote, '_train_patches.npy')),
+      train_labels = file.path(output_dir, paste0(sote, '_train_labels.npy')),
+      train_masks = file.path(output_dir, paste0(sote, '_train_masks.npy')),
+      validate_patches = file.path(output_dir, paste0(sote, '_validate_patches.npy')),
+      validate_labels = file.path(output_dir, paste0(sote, '_validate_labels.npy')),
+      validate_masks = file.path(output_dir, paste0(sote, '_validate_masks.npy')),
+      metadata = file.path(output_dir, paste0(sote, '_metadata.csv'))
    ))
 }
