@@ -8,3 +8,4 @@ marshmap.Rproj
 my_registry/
 .secrets
 docs
+.Rprofile
