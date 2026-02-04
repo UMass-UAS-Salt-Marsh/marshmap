@@ -30,6 +30,8 @@ do_prep_unet(model, save_gis)
     sets are created by `gather` to yield at least 20% of separate
     polys. There are 5 sets to choose from.
 
+  - overlap: Proportion overlap of patches
+
 - save_gis:
 
   If TRUE, saves GIS data for assessment and debugging
