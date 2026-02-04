@@ -4,7 +4,13 @@
 \alias{unet_spatial_train_val_split}
 \title{Split patches into train and validation sets spatially}
 \usage{
-unet_spatial_train_val_split(patches, transects, holdout = 1)
+unet_spatial_train_val_split(
+  patches,
+  transects,
+  holdout,
+  patch_size,
+  cell_width
+)
 }
 \arguments{
 \item{patches}{List from unet_extract_training_patches}
@@ -13,6 +19,10 @@ unet_spatial_train_val_split(patches, transects, holdout = 1)
 
 \item{holdout}{Holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6). Holdout sets are
 created by \code{gather} to yield at least 20\% of separate polys. There are 5 sets to choose from.}
+
+\item{patch_size}{Size of patches in cells}
+
+\item{cell_width}{Width of cell (m)}
 }
 \value{
 List with train and val patch indices

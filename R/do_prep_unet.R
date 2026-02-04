@@ -11,6 +11,7 @@
 #'    - classes: vector of target classes
 #'    - holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
 #'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
+#'    - overlap: Proportion overlap of patches
 #' @param save_gis If TRUE, saves GIS data for assessment and debugging
 #' @importFrom yaml read_yaml
 #' @importFrom terra rast values global quantile clamp ext res rast rasterize crs
@@ -51,7 +52,6 @@ do_prep_unet <- function(model, save_gis) {
    # 1. Build input stack
    message('Building input stack...')
    input_stack <- unet_build_input_stack(config)                              # ----- build input stack
-   
    
    
    message('Loading transects...')
@@ -98,7 +98,7 @@ do_prep_unet <- function(model, save_gis) {
       input_stack = input_stack,
       transects = transects,
       patch = config$patch,
-      overlap = 0.5,
+      overlap = config$overlap,
       classes = config$classes,
       class_mapping = config$class_mapping
    )                                                                          # ----- extract training patches
@@ -106,12 +106,19 @@ do_prep_unet <- function(model, save_gis) {
    
    patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
    
+   
+   rez <- res(input_stack)[1]
+   message('Resolution = ', rez) #*************** tmp***************
+   
+   
    # 4. Train/val split
    message('Creating train/validate split...')                                # ----- split into training and validation data
    split_indices <- unet_spatial_train_val_split(
       patches = patches,
       transects = transects,
-      holdout = config$holdout
+      holdout = config$holdout, 
+      patch_size = config$patch, 
+      cell_width = rez
    )                                                                          
    
    
@@ -126,7 +133,7 @@ do_prep_unet <- function(model, save_gis) {
    
    message('Data preparation complete!')
    
-   # return(invisible(list(
+   # return(invisible(list(                                 # this bogs down for some reason
    #    patches = patches,
    #    split_indices = split_indices,
    #    input_stack = input_stack,
