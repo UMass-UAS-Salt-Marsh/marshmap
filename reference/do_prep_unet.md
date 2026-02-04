@@ -6,7 +6,7 @@ in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-do_prep_unet(model)
+do_prep_unet(model, save_gis)
 ```
 
 ## Arguments
@@ -29,3 +29,7 @@ do_prep_unet(model)
   - holdout: holdout set to use (uses bypoly, classes 1 and 6). Holdout
     sets are created by `gather` to yield at least 20% of separate
     polys. There are 5 sets to choose from.
+
+- save_gis:
+
+  If TRUE, saves GIS data for assessment and debugging

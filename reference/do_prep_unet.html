@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_prep_unet</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_prep_unet</span><span class="op">(</span><span class="va">model</span>, <span class="va">save_gis</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,6 +55,10 @@ directory. This file must contain the following:</p><ul><li><p>years: the year(s
 <li><p>holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
 created by <code>gather</code> to yield at least 20% of separate polys. There are 5 sets to choose from.</holdout></p></li>
 </ul></dd>
+
+
+<dt id="arg-save-gis">save_gis<a class="anchor" aria-label="anchor" href="#arg-save-gis"></a></dt>
+<dd><p>If TRUE, saves GIS data for assessment and debugging</p></dd>
 
 </dl></div>
 

@@ -6,7 +6,14 @@ in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-prep_unet(model, resources = NULL, local = FALSE, trap = TRUE, comment = NULL)
+prep_unet(
+  model,
+  save_gis = FALSE,
+  resources = NULL,
+  local = FALSE,
+  trap = TRUE,
+  comment = NULL
+)
 ```
 
 ## Arguments
@@ -27,6 +34,10 @@ prep_unet(model, resources = NULL, local = FALSE, trap = TRUE, comment = NULL)
   - classes: vector of target classes
 
   - holdout: percent of data to hold out for validation
+
+- save_gis:
+
+  If TRUE, saves GIS data for assessment and debugging
 
 - resources:
 

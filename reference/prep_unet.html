@@ -38,7 +38,14 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prep_unet</span><span class="op">(</span><span class="va">model</span>, resources <span class="op">=</span> <span class="cn">NULL</span>, local <span class="op">=</span> <span class="cn">FALSE</span>, trap <span class="op">=</span> <span class="cn">TRUE</span>, comment <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prep_unet</span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  save_gis <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  trap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  comment <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -54,6 +61,10 @@ directory. This file must contain the following:</p><ul><li><p>year: the year to
 <li><p>classes: vector of target classes</p></li>
 <li><p>holdout: percent of data to hold out for validation</p></li>
 </ul></dd>
+
+
+<dt id="arg-save-gis">save_gis<a class="anchor" aria-label="anchor" href="#arg-save-gis"></a></dt>
+<dd><p>If TRUE, saves GIS data for assessment and debugging</p></dd>
 
 
 <dt id="arg-resources">resources<a class="anchor" aria-label="anchor" href="#arg-resources"></a></dt>
