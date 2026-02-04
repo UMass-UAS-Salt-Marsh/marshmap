@@ -2,10 +2,11 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rprofile
 zztemp
 messing around with SFTP.R
 marshmap.Rproj
 my_registry/
 .secrets
 docs
-.Rprofile
+models/

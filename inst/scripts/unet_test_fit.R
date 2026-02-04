@@ -5,9 +5,9 @@ source_python("inst/python/train_unet.py")
 
 # Call the training function
 result <- train_unet(
-   data_dir = "C:/path/to/your/numpy/files",
-   site = "site1",
-   n_epochs = 10L,  # L forces integer
+   data_dir = "X:/projects/uas/marshmap/data/rr/unet/unet01",
+   site = "rr",
+   n_epochs = 10L,
    batch_size = 8L,
    learning_rate = 0.001
 )

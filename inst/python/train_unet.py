@@ -6,11 +6,6 @@ Uses masked loss to handle sparse transect labels
 
 # Part 1: Imports and setup
 
-"""
-Train U-Net for salt marsh gradient classification
-Uses masked loss to handle sparse transect labels
-"""
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -232,6 +227,24 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     validate_labels = np.load(os.path.join(data_dir, f"{site}_validate_labels.npy"))
     validate_masks = np.load(os.path.join(data_dir, f"{site}_validate_masks.npy"))
     
+    
+    # After loading train_patches, check input data
+    print("\nInput data ranges:")
+    for c in range(train_patches.shape[3]):  # For each channel
+        c_data = train_patches[:, :, :, c]
+        print(f"  Channel {c}: min={c_data.min():.4f}, max={c_data.max():.4f}, "
+              f"mean={c_data.mean():.4f}, std={c_data.std():.4f}")
+    
+    # Check for NaN/Inf
+    print(f"\nNaN in patches: {np.isnan(train_patches).any()}")
+    print(f"Inf in patches: {np.isinf(train_patches).any()}")
+    print(f"NaN in labels: {np.isnan(train_labels).any()}")
+    
+    # Check label range
+    unique_labels = np.unique(train_labels)
+    print(f"\nUnique label values: {unique_labels}")
+    
+    
     # Create datasets
     print("\nCreating datasets...")
     train_dataset = MaskedPatchDataset(train_patches, train_labels, train_masks)
@@ -313,15 +326,3 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     print("="*60)
     
     return model_path, best_validate_acc
-
-
-# Example usage (will be called from R)
-if __name__ == "__main__":
-    # Test with your Site 1 data
-    model_path, final_acc = train_unet(
-        data_dir="X:/projects/uas/marshmap/data/rr/unet/unet01",
-        site="rr",
-        n_epochs=10,  # Start with 10 for testing
-        batch_size=8,
-        learning_rate=0.001
-    )
