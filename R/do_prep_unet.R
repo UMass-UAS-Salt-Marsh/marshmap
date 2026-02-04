@@ -11,36 +11,20 @@
 #'    - classes: vector of target classes
 #'    - holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
 #'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
+#' @param save_gis If TRUE, saves GIS data for assessment and debugging
 #' @importFrom yaml read_yaml
 #' @importFrom terra rast values global quantile clamp ext res rast rasterize crs
-#' @importFrom sf st_as_sf st_buffer st_intersects st_coordinates st_crop st_nearest_feature
+#' @importFrom sf st_as_sf st_buffer st_is_valid st_make_valid st_intersects st_coordinates st_crop st_nearest_feature 
 #' @importFrom reticulate import
 #' @export
 
-
-# fns:
-# [x] 1. unet_build_input_stack
-# [ ] 2. unet_extract_training_patches 
-# [ ] 3. unet_spatial_train_val_split 
-# [ ] 4. unet_export_to_numpy 
-# 
-# libs:
-#    library(terra)
-#    library(sf)
-#    library(dplyr)
-#    library(reticulate)
 
 # Notes:
 # - I may want to change this to accept portable names, or a choice of portable or file names
 # - Claude has me quantile-scaling spectral data, standardizing DEM, and leaving NDVI and NDRI as-is. Is this correct?
 
 
-do_prep_unet <- function(model) {
-   
-   
-   
-   library(sf)                         # TEMPORARY, for development
-   library(terra)
+do_prep_unet <- function(model, save_gis) {
    
    
    config <- read_yaml(file.path(the$parsdir, paste0(model, '.yml')))
@@ -65,18 +49,18 @@ do_prep_unet <- function(model) {
    
    
    # 1. Build input stack
-   message("Building input stack...")
+   message('Building input stack...')
    input_stack <- unet_build_input_stack(config)                              # ----- build input stack
    
    
    
-   message("Loading transects...")
+   message('Loading transects...')
    # transects <- st_read(transect_file, 
    #                      promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
    
    
    ###
-   transects <- st_read("/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp", 
+   transects <- st_read('/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp', 
                         promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects                                    ************* SO TEMPORARY!
    ###
    
@@ -86,7 +70,7 @@ do_prep_unet <- function(model) {
    # message('Reprojecting...   [this is temporary, pending reprojection change in gather]')
    # transects <- st_transform(transects, 'epsg:26986')      
    # 
-   # st_write(transects, "/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp")
+   # st_write(transects, '/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp')
    # 
    # message('Done projecting')
    # ###  ************************************************************************************
@@ -109,7 +93,7 @@ do_prep_unet <- function(model) {
    }
    
    
-   message("Extracting patches...")                                           # ----- extract patches
+   message('Extracting patches...')                                           # ----- extract patches
    patches <- unet_extract_training_patches(
       input_stack = input_stack,
       transects = transects,
@@ -123,7 +107,7 @@ do_prep_unet <- function(model) {
    patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
    
    # 4. Train/val split
-   message("Creating train/validate split...")                                # ----- split into training and validation data
+   message('Creating train/validate split...')                                # ----- split into training and validation data
    split_indices <- unet_spatial_train_val_split(
       patches = patches,
       transects = transects,
@@ -131,11 +115,7 @@ do_prep_unet <- function(model) {
    )                                                                          
    
    
-   # ---------------------- done to here ----------------------
-   
-   
-   
-   message("Exporting to numpy...")                                           # ----- export to numpy
+   message('Exporting to numpy...')                                           # ----- export to numpy
    unet_export_to_numpy(
       patches = patches,
       split_indices = split_indices,
@@ -144,16 +124,12 @@ do_prep_unet <- function(model) {
    )
    
    
-   message("Data preparation complete!")
+   message('Data preparation complete!')
    
-   return(list(
-      patches = patches,
-      split_indices = split_indices,
-      input_stack = input_stack,
-      transects = transects
-   ))
+   # return(invisible(list(
+   #    patches = patches,
+   #    split_indices = split_indices,
+   #    input_stack = input_stack,
+   #    transects = transects
+   # )))
 }
-
-
-
-

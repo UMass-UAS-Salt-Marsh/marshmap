@@ -13,6 +13,7 @@
 #'    - depth: number of of downsampling stages
 #'    - classes: vector of target classes
 #'    - holdout: percent of data to hold out for validation
+#' @param save_gis If TRUE, saves GIS data for assessment and debugging
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
@@ -24,7 +25,7 @@
 #' @export
 
 
-prep_unet <- function(model,  resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+prep_unet <- function(model, save_gis = FALSE, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    resources <- get_resources(resources, list(
@@ -38,6 +39,6 @@ prep_unet <- function(model,  resources = NULL, local = FALSE, trap = TRUE, comm
       comment <- paste0('prep_unet ', model)
    
    
-   launch('do_prep_unet', reps = model, repname = 'model', 
+   launch('do_prep_unet', reps = model, repname = 'model', moreargs = list(save_gis = save_gis),
           local = local, trap = trap, resources = resources, comment = comment)
 }

@@ -4,7 +4,14 @@
 \alias{prep_unet}
 \title{Pre-process data for U-Net}
 \usage{
-prep_unet(model, resources = NULL, local = FALSE, trap = TRUE, comment = NULL)
+prep_unet(
+  model,
+  save_gis = FALSE,
+  resources = NULL,
+  local = FALSE,
+  trap = TRUE,
+  comment = NULL
+)
 }
 \arguments{
 \item{model}{The model name, which is also the name of a \code{.yml} parameter file in the \code{pars}
@@ -17,6 +24,8 @@ directory. This file must contain the following:
 \item classes: vector of target classes
 \item holdout: percent of data to hold out for validation
 }}
+
+\item{save_gis}{If TRUE, saves GIS data for assessment and debugging}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 over the function's defaults.}

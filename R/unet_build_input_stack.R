@@ -13,12 +13,19 @@
 unet_build_input_stack <- function(config) {
    
    
-   # Helper: Normalize raster to 0-1
+   # Helper: Normalize raster to 0-1 by quantiles
    unet_normalize_band <- function(r, lower = 0.02, upper = 0.98) {
       vals <- values(r, na.rm = TRUE)
       q_lower <- quantile(vals, lower, na.rm = TRUE)
       q_upper <- quantile(vals, upper, na.rm = TRUE)
-      r_norm <- (r - q_lower) / (q_upper - q_lower)
+      
+      if (q_upper - q_lower < 1e-10) {
+         warning("Band has no variation, setting to 0.5")
+         r_norm <- r * 0 + 0.5                                 # Constant 0.5
+      } 
+      else {
+         r_norm <- (r - q_lower) / (q_upper - q_lower)
+      }
       clamp(r_norm, lower = 0, upper = 1, values = TRUE)
    }
    
@@ -31,24 +38,50 @@ unet_build_input_stack <- function(config) {
    }
    
    
+   # Helper: Range rescale
+   unet_range_rescale_band <- function(r) {
+      r_min <- global(r, 'min', na.rm = TRUE)[[1]]
+      r_max <- global(r, 'max', na.rm = TRUE)[[1]]
+      
+      # Handle constant bands
+      if (abs(r_max - r_min) < 1e-10) {
+         return(r * 0 + 0.5)
+      }
+      
+      r_norm <- (r - r_min) / (r_max - r_min)
+      return(r_norm)
+   }
+   
    
    z <- NULL
    for(i in seq_along(config$orthos)) {                                       # for each ortho,
       x <- rast(file.path(config$fpath, config$orthos[i]))                    #    read it
+      
+      message('Original raster checks for ', 
+              config$orthos[i], ' (', nlyr(x), ' layers):')                   #    check each band
+      
+      for (j in 1:nlyr(x)) {
+         band <- x[[j]]
+         vals <- values(band, na.rm = TRUE)
+         message(sprintf('  Band %d: NA=%d, range=[%.4f, %.4f]',
+                         j, sum(is.na(values(band))), min(vals), max(vals)))
+      }
+      
+      
       switch(config$type[i],
              'image' = {                                                      #    if it's an image,
                 q <- NULL
                 for(j in seq_len(config$bands[i]))  
-                   q <- c(q, unet_normalize_band(x[[j]]))                     #       normalize each band
+                   q <- c(q, unet_range_rescale_band(x[[j]]))                 #       range-rescale each band
                 if(config$bands[i] == 3)                                      #       and name bands
                    names(q) <- c('red', 'green', 'blue')
                 else
                    names(q) <- c('blue', 'green', 'red',  'nir', 'red_edge')
                 z <- c(z, q)
              },                
-             'ndvi' = z <- c(z, ndvi = x),                                    #    NDVI and NDRE are fine as-is
-             'ndre' = z <- c(z, ndre = x),
-             'dem' = z <- c(z, dem = unet_standardize_band(x))                #    if it's a DEM, standardize it
+             'ndvi' = z <- c(z, ndvi = unet_range_rescale_band(x)),           #    I'm now range-rescaling everything
+             'ndre' = z <- c(z, ndre = unet_range_rescale_band(x)),
+             'dem' = z <- c(z, dem = unet_range_rescale_band(x))
       )
    }
    
@@ -57,7 +90,7 @@ unet_build_input_stack <- function(config) {
    
    ###  ********************************** TEMPORARY CODE **********************************
    message('Reprojecting...   [this is temporary, pending reprojection change in gather]')
-      z <- project(z, 'epsg:26986')                                     
+   z <- project(z, 'epsg:26986')                                     
    message('Done projecting')
    ###  ************************************************************************************
    

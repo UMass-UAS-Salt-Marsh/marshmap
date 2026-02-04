@@ -8,16 +8,16 @@
 
 
 unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
-
-    
+   
+   
    if (!reticulate::py_module_available('numpy')) {                                 # check if numpy available
-      stop("numpy not found. Run create_python_env() first.")
+      stop('numpy not found. Run create_python_env() first.')
    }
    
    np <- reticulate::import('numpy')                                                # import Python's numpy module into R
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
-  
-     
+   
+   
    # Train data
    train_patches <- patches$patches[split_indices$train_idx, , , ]
    train_labels <- patches$labels[split_indices$train_idx, , ]
@@ -35,6 +35,33 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    validate_labels[is.na(validate_labels)] <- 255
    
    
+   # Replace NA with 0 in patches so Python doesn't its knickers in a twist
+   train_patches[is.na(train_patches)] <- 0
+   validate_patches[is.na(validate_patches)] <- 0
+   
+   
+   # Also handle labels (though 255 should be fine)
+   train_labels[is.na(train_labels)] <- 255
+   validate_labels[is.na(validate_labels)] <- 255
+   
+   
+   # Check for NaN/NA in patches
+   cat('\nChecking train patches before export:\n')
+   cat('  Any NA:', any(is.na(train_patches)), '\n')
+   cat('  Any NaN:', any(is.nan(train_patches)), '\n')
+   cat('  Any Inf:', any(is.infinite(train_patches)), '\n')
+   cat('  Range:', range(train_patches, na.rm = TRUE), '\n')
+   
+   
+   # Check each channel
+   for (c in 1:dim(train_patches)[4]) {
+      channel_data <- train_patches[, , , c]
+      cat(sprintf('  Channel %d: NA=%d, range=[%.4f, %.4f]\n',
+                  c, sum(is.na(channel_data)), 
+                  min(channel_data, na.rm=TRUE), max(channel_data, na.rm=TRUE)))
+   }
+   
+   
    # Convert to numpy and save using numpy.save() in Python to create numpy binaries
    np$save(file.path(output_dir, paste0(site, '_train_patches.npy')), 
            train_patches)
@@ -50,7 +77,7 @@ unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
    np$save(file.path(output_dir, paste0(site, '_validate_masks.npy')), 
            validate_masks)
    
-
+   
    message('Exported to: ', output_dir)
    message('Train: ', nrow(train_patches), ' patches')
    message('  - Patches: ', paste(dim(train_patches), collapse = 'x'))

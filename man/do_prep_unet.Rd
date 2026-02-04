@@ -4,7 +4,7 @@
 \alias{do_prep_unet}
 \title{Pre-process data for U-Net}
 \usage{
-do_prep_unet(model)
+do_prep_unet(model, save_gis)
 }
 \arguments{
 \item{model}{The model name, which is also the name of a \code{.yml} parameter file in the \code{pars}
@@ -18,6 +18,8 @@ directory. This file must contain the following:
 \item holdout: holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6). Holdout sets are
 created by \code{gather} to yield at least 20\% of separate polys. There are 5 sets to choose from.
 }}
+
+\item{save_gis}{If TRUE, saves GIS data for assessment and debugging}
 }
 \description{
 Creates numpy arrays ready for fitting in U-Net. Result files are placed in \verb{<site>/unet/<model>}.
