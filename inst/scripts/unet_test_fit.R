@@ -7,7 +7,7 @@ source_python("inst/python/train_unet.py")
 result <- train_unet(
    data_dir = "X:/projects/uas/marshmap/data/rr/unet/unet01",
    site = "rr",
-   n_epochs = 10L,
+   n_epochs = 100L,
    batch_size = 8L,
    learning_rate = 0.001
 )

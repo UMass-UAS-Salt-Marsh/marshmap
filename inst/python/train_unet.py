@@ -228,7 +228,7 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     validate_masks = np.load(os.path.join(data_dir, f"{site}_validate_masks.npy"))
     
     
-    # After loading train_patches, check input data
+    # After loading train_patches, check input data 
     print("\nInput data ranges:")
     for c in range(train_patches.shape[3]):  # For each channel
         c_data = train_patches[:, :, :, c]
@@ -243,6 +243,27 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     # Check label range
     unique_labels = np.unique(train_labels)
     print(f"\nUnique label values: {unique_labels}")
+    
+    
+    # Calculate class weights
+    print("\nCalculating class weights...")
+    unique_classes = np.unique(train_labels)
+    unique_classes = unique_classes[unique_classes != 255]
+    num_classes = len(unique_classes)
+    
+    print(f"Number of classes: {num_classes}")
+    print(f"Class values: {unique_classes}")
+    
+    class_pixel_counts = []
+    for c in unique_classes:  # Use actual class values (0,1,2,3)
+        count = ((train_labels == c) & (train_masks == 1)).sum()
+        class_pixel_counts.append(float(count))
+    
+    class_weights = 1.0 / (np.array(class_pixel_counts) + 1e-6)
+    class_weights = class_weights / class_weights.sum() * num_classes
+    
+    print(f"Class pixel counts: {class_pixel_counts}")
+    print(f"Class weights: {class_weights}")
     
     
     # Create datasets
