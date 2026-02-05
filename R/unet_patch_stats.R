@@ -7,9 +7,7 @@
 #' @returns List with train_stats and val_stats data frames
 #' @keywords internal
 
-
 unet_patch_stats <- function(patch_data) {
-   
    
    n_patches <- dim(patch_data$patches)[1]
    
@@ -40,7 +38,9 @@ unet_patch_stats <- function(patch_data) {
       train_labeled <- train_labeled[!is.na(train_labeled)]
       
       train_results$n_labeled[i] <- length(train_labeled)
-      train_results$n_classes[i] <- length(unique(train_labeled))
+      train_results$n_classes[i] <- ifelse(length(train_labeled) > 0, 
+                                           length(unique(train_labeled)), 
+                                           0)  # Set to 0 instead of leaving NA
       
       if (length(train_labeled) > 0) {
          class_counts <- table(train_labeled)
@@ -54,7 +54,9 @@ unet_patch_stats <- function(patch_data) {
       val_labeled <- val_labeled[!is.na(val_labeled)]
       
       val_results$n_labeled[i] <- length(val_labeled)
-      val_results$n_classes[i] <- length(unique(val_labeled))
+      val_results$n_classes[i] <- ifelse(length(val_labeled) > 0, 
+                                         length(unique(val_labeled)), 
+                                         0)  # Set to 0 instead of leaving NA
       
       if (length(val_labeled) > 0) {
          class_counts <- table(val_labeled)
@@ -67,10 +69,14 @@ unet_patch_stats <- function(patch_data) {
    train_results <- train_results[patch_data$has_train, ]
    val_results <- val_results[patch_data$has_val, ]
    
+   # Additional check: remove any with 0 labeled pixels (shouldn't happen, but just in case)
+   train_results <- train_results[train_results$n_labeled > 0, ]
+   val_results <- val_results[val_results$n_labeled > 0, ]
+   
    # Print summaries
    message('\n=== TRAINING PATCHES ===')
    message('   Total patches: ', nrow(train_results))
-   message('   Mean labeled pixels per patch: ', round(mean(train_results$n_labeled), 2))
+   message('   Mean labeled pixels per patch: ', round(mean(train_results$n_labeled, na.rm = TRUE), 2))
    message('   Patches with single class: ', sum(train_results$n_classes == 1, na.rm = TRUE), 
            ' (', round(100 * sum(train_results$n_classes == 1, na.rm = TRUE) / nrow(train_results), 1), '%)')
    message('   Patches with multiple classes: ', sum(train_results$n_classes > 1, na.rm = TRUE),
@@ -79,7 +85,7 @@ unet_patch_stats <- function(patch_data) {
    
    message('\n=== VALIDATION PATCHES ===')
    message('   Total patches: ', nrow(val_results))
-   message('   Mean labeled pixels per patch: ', round(mean(val_results$n_labeled), 2))
+   message('   Mean labeled pixels per patch: ', round(mean(val_results$n_labeled, na.rm = TRUE), 2))
    message('   Patches with single class: ', sum(val_results$n_classes == 1, na.rm = TRUE), 
            ' (', round(100 * sum(val_results$n_classes == 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
    message('   Patches with multiple classes: ', sum(val_results$n_classes > 1, na.rm = TRUE),

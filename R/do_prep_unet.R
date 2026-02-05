@@ -120,7 +120,8 @@ do_prep_unet <- function(model, save_gis) {
    unet_export_to_numpy(
       patches = patches,
       output_dir = output_dir,
-      site = config$site
+      site = config$site, 
+      class_mapping = config$class_mapping
    )
    
    
