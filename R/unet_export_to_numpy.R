@@ -1,98 +1,89 @@
 #' Export prepared data to numpy arrays for Python
 #' 
 #' @param patches List from unet_extract_training_patches
-#' @param split_indices List from unet_spatial_train_validate_split
 #' @param output_dir Directory to save numpy files
-#' @param site Name for files (e.g., 'site1')
+#' @param site Name for files (e.g., 'rr')
+#' @param class_mapping Named vector mapping original to remapped classes (e.g., c('3'=0, '4'=1, '5'=2, '6'=3))
 #' @export
 
 
-unet_export_to_numpy <- function(patches, split_indices, output_dir, site) {
+unet_export_to_numpy <- function(patches, output_dir, site, class_mapping) {
    
    
-   if (!reticulate::py_module_available('numpy')) {                                 # check if numpy available
+   if (!reticulate::py_module_available('numpy')) {
       stop('numpy not found. Run create_python_env() first.')
    }
    
-   np <- reticulate::import('numpy')                                                # import Python's numpy module into R
+   np <- reticulate::import('numpy')
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
    
+   # Reverse mapping: 0->3, 1->4, 2->5, 3->6
+   original_classes <- as.integer(names(class_mapping))
+   
+   # Filter to train/val patches
+   train_idx <- which(patches$has_train)
+   val_idx <- which(patches$has_val)
+   
+   message('\n=== EXPORTING PATCHES ===')
+   message('Train patches: ', length(train_idx))
+   message('Val patches: ', length(val_idx))
+   message('Shared patches: ', sum(patches$has_train & patches$has_val, na.rm = TRUE))
    
    # Train data
-   train_patches <- patches$patches[split_indices$train_idx, , , ]
-   train_labels <- patches$labels[split_indices$train_idx, , ]
-   train_masks <- patches$masks[split_indices$train_idx, , ]
+   train_patches <- patches$patches[train_idx, , , ]
+   train_labels <- patches$labels[train_idx, , ]
+   train_masks <- patches$train_masks[train_idx, , ]
    
+   # Val data
+   validate_patches <- patches$patches[val_idx, , , ]
+   validate_labels <- patches$labels[val_idx, , ]
+   validate_masks <- patches$val_masks[val_idx, , ]
    
-   # Validate data
-   validate_patches <- patches$patches[split_indices$validate_idx, , , ]
-   validate_labels <- patches$labels[split_indices$validate_idx, , ]
-   validate_masks <- patches$masks[split_indices$validate_idx, , ]
-   
-   
-   # Replace NA with 255 (common ignore value)
+   # Replace NA
    train_labels[is.na(train_labels)] <- 255
    validate_labels[is.na(validate_labels)] <- 255
-   
-   
-   # Replace NA with 0 in patches so Python doesn't its knickers in a twist
    train_patches[is.na(train_patches)] <- 0
    validate_patches[is.na(validate_patches)] <- 0
    
+   # Quality checks
+   cat('\nData quality:\n')
+   cat('  Train mask coverage: ', round(mean(train_masks), 4), 
+       ' (', round(mean(train_masks) * 100, 2), '% of pixels labeled)\n', sep='')
+   cat('  Val mask coverage: ', round(mean(validate_masks), 4),
+       ' (', round(mean(validate_masks) * 100, 2), '% of pixels labeled)\n', sep='')
    
-   # Also handle labels (though 255 should be fine)
-   train_labels[is.na(train_labels)] <- 255
-   validate_labels[is.na(validate_labels)] <- 255
-   
-   
-   # Check for NaN/NA in patches
-   cat('\nChecking train patches before export:\n')
-   cat('  Any NA:', any(is.na(train_patches)), '\n')
-   cat('  Any NaN:', any(is.nan(train_patches)), '\n')
-   cat('  Any Inf:', any(is.infinite(train_patches)), '\n')
-   cat('  Range:', range(train_patches, na.rm = TRUE), '\n')
-   
-   
-   # Check each channel
-   for (c in 1:dim(train_patches)[4]) {
-      channel_data <- train_patches[, , , c]
-      cat(sprintf('  Channel %d: NA=%d, range=[%.4f, %.4f]\n',
-                  c, sum(is.na(channel_data)), 
-                  min(channel_data, na.rm=TRUE), max(channel_data, na.rm=TRUE)))
+   # Count pixels by ORIGINAL class
+   cat('\nTrain class distribution (labeled pixels only):\n')
+   for (i in seq_along(original_classes)) {
+      remapped <- class_mapping[as.character(original_classes[i])]
+      n_pixels <- sum(train_labels == remapped & train_masks == 1)
+      cat(sprintf('  Class %d: %s pixels\n', original_classes[i], format(n_pixels, big.mark=',')))
    }
    
+   cat('\nVal class distribution (labeled pixels only):\n')
+   for (i in seq_along(original_classes)) {
+      remapped <- class_mapping[as.character(original_classes[i])]
+      n_pixels <- sum(validate_labels == remapped & validate_masks == 1)
+      cat(sprintf('  Class %d: %s pixels\n', original_classes[i], format(n_pixels, big.mark=',')))
+   }
    
-   # Convert to numpy and save using numpy.save() in Python to create numpy binaries
-   np$save(file.path(output_dir, paste0(site, '_train_patches.npy')), 
-           train_patches)
-   np$save(file.path(output_dir, paste0(site, '_train_labels.npy')), 
-           train_labels)
-   np$save(file.path(output_dir, paste0(site, '_train_masks.npy')), 
-           train_masks)
+   # Save
+   np$save(file.path(output_dir, paste0(site, '_train_patches.npy')), train_patches)
+   np$save(file.path(output_dir, paste0(site, '_train_labels.npy')), train_labels)
+   np$save(file.path(output_dir, paste0(site, '_train_masks.npy')), train_masks)
    
-   np$save(file.path(output_dir, paste0(site, '_validate_patches.npy')), 
-           validate_patches)
-   np$save(file.path(output_dir, paste0(site, '_validate_labels.npy')), 
-           validate_labels)
-   np$save(file.path(output_dir, paste0(site, '_validate_masks.npy')), 
-           validate_masks)
+   np$save(file.path(output_dir, paste0(site, '_validate_patches.npy')), validate_patches)
+   np$save(file.path(output_dir, paste0(site, '_validate_labels.npy')), validate_labels)
+   np$save(file.path(output_dir, paste0(site, '_validate_masks.npy')), validate_masks)
    
+   message('\nExported to: ', output_dir)
    
-   message('Exported to: ', output_dir)
-   message('Train: ', nrow(train_patches), ' patches')
-   message('  - Patches: ', paste(dim(train_patches), collapse = 'x'))
-   message('  - Labels: ', paste(dim(train_labels), collapse = 'x'))
-   message('  - Masks: ', paste(dim(train_masks), collapse = 'x'))
-   message('Val: ', nrow(validate_patches), ' patches')
-   
-   # Return file paths for verification
    invisible(list(
       train_patches = file.path(output_dir, paste0(site, '_train_patches.npy')),
       train_labels = file.path(output_dir, paste0(site, '_train_labels.npy')),
       train_masks = file.path(output_dir, paste0(site, '_train_masks.npy')),
       validate_patches = file.path(output_dir, paste0(site, '_validate_patches.npy')),
       validate_labels = file.path(output_dir, paste0(site, '_validate_labels.npy')),
-      validate_masks = file.path(output_dir, paste0(site, '_validate_masks.npy')),
-      metadata = file.path(output_dir, paste0(site, '_metadata.csv'))
+      validate_masks = file.path(output_dir, paste0(site, '_validate_masks.npy'))
    ))
 }

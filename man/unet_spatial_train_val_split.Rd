@@ -2,32 +2,19 @@
 % Please edit documentation in R/unet_spatial_train_val_split.R
 \name{unet_spatial_train_val_split}
 \alias{unet_spatial_train_val_split}
-\title{Split patches into train and validation sets spatially}
+\title{Split transects into train and validation sets}
 \usage{
-unet_spatial_train_val_split(
-  patches,
-  transects,
-  holdout,
-  patch_size,
-  cell_width
-)
+unet_spatial_train_val_split(transects, holdout)
 }
 \arguments{
-\item{patches}{List from unet_extract_training_patches}
-
 \item{transects}{Original sf transects object}
 
-\item{holdout}{Holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6). Holdout sets are
-created by \code{gather} to yield at least 20\% of separate polys. There are 5 sets to choose from.}
-
-\item{patch_size}{Size of patches in cells}
-
-\item{cell_width}{Width of cell (m)}
+\item{holdout}{Holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6)}
 }
 \value{
-List with train and val patch indices
+List with train and val transect ids
 }
 \description{
-Split patches into train and validation sets spatially
+Split transects into train and validation sets
 }
 \keyword{internal}

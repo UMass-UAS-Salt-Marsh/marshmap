@@ -1,55 +1,105 @@
 #' Summary stats for extracted patches
 #' 
+#' Reports stats separately for train and val masks.
 #' Hope to see single class patches < 80%.
 #' 
 #' @param patch_data Extracted patches from `unet_extract_training_patches`
-#' @returns Data frame of stats for each patch (`patch_id`, `n_labeled`, `n_classes`,
-#'    `dominant_class`, `purity`)
+#' @returns List with train_stats and val_stats data frames
 #' @keywords internal
 
- 
+
 unet_patch_stats <- function(patch_data) {
    
    
-   results <- data.frame(
-      patch_id = 1:dim(patch_data$patches)[1],
+   n_patches <- dim(patch_data$patches)[1]
+   
+   # Stats for TRAIN masks
+   train_results <- data.frame(
+      patch_id = 1:n_patches,
       n_labeled = NA,
       n_classes = NA,
       dominant_class = NA,
-      purity = NA  # fraction of labeled pixels in dominant class
+      purity = NA
    )
    
+   # Stats for VAL masks
+   val_results <- data.frame(
+      patch_id = 1:n_patches,
+      n_labeled = NA,
+      n_classes = NA,
+      dominant_class = NA,
+      purity = NA
+   )
    
-   for (i in 1:nrow(results)) {
+   for (i in 1:n_patches) {
       labels <- patch_data$labels[i, , ]
-      mask <- patch_data$masks[i, , ]
       
-      labeled_pixels <- labels[mask == 1]
-      labeled_pixels <- labeled_pixels[!is.na(labeled_pixels)]
+      # TRAIN stats
+      train_mask <- patch_data$train_masks[i, , ]
+      train_labeled <- labels[train_mask == 1]
+      train_labeled <- train_labeled[!is.na(train_labeled)]
       
-      results$n_labeled[i] <- length(labeled_pixels)
-      results$n_classes[i] <- length(unique(labeled_pixels))
+      train_results$n_labeled[i] <- length(train_labeled)
+      train_results$n_classes[i] <- length(unique(train_labeled))
       
-      if (length(labeled_pixels) > 0) {
-         class_counts <- table(labeled_pixels)
-         results$dominant_class[i] <- as.numeric(names(class_counts)[which.max(class_counts)])
-         results$purity[i] <- max(class_counts) / length(labeled_pixels)
+      if (length(train_labeled) > 0) {
+         class_counts <- table(train_labeled)
+         train_results$dominant_class[i] <- as.numeric(names(class_counts)[which.max(class_counts)])
+         train_results$purity[i] <- max(class_counts) / length(train_labeled)
+      }
+      
+      # VAL stats
+      val_mask <- patch_data$val_masks[i, , ]
+      val_labeled <- labels[val_mask == 1]
+      val_labeled <- val_labeled[!is.na(val_labeled)]
+      
+      val_results$n_labeled[i] <- length(val_labeled)
+      val_results$n_classes[i] <- length(unique(val_labeled))
+      
+      if (length(val_labeled) > 0) {
+         class_counts <- table(val_labeled)
+         val_results$dominant_class[i] <- as.numeric(names(class_counts)[which.max(class_counts)])
+         val_results$purity[i] <- max(class_counts) / length(val_labeled)
       }
    }
    
-
-   message('Patch composition summary')
-   message('   Mean labeled pixels per patch: ', round(mean(results$n_labeled), 2))
-   message('   Patches with single class: ', sum(results$n_classes == 1), 
-       ' (', round(100 * sum(results$n_classes == 1) / nrow(results), 1), '%)')
-   message('   Patches with multiple classes: ', sum(results$n_classes > 1),
-       ' (', round(100 * sum(results$n_classes > 1) / nrow(results), 1), '%)')
-   message('   Mean patch purity: ', round(mean(results$purity, na.rm = TRUE), 3))
-
-
-   hist(results$purity, breaks = 20, main = 'Patch Purity Distribution',
-        xlab = 'Purity (fraction of pixels in dominant class)')
+   # Filter to patches that actually have data
+   train_results <- train_results[patch_data$has_train, ]
+   val_results <- val_results[patch_data$has_val, ]
    
+   # Print summaries
+   message('\n=== TRAINING PATCHES ===')
+   message('   Total patches: ', nrow(train_results))
+   message('   Mean labeled pixels per patch: ', round(mean(train_results$n_labeled), 2))
+   message('   Patches with single class: ', sum(train_results$n_classes == 1, na.rm = TRUE), 
+           ' (', round(100 * sum(train_results$n_classes == 1, na.rm = TRUE) / nrow(train_results), 1), '%)')
+   message('   Patches with multiple classes: ', sum(train_results$n_classes > 1, na.rm = TRUE),
+           ' (', round(100 * sum(train_results$n_classes > 1, na.rm = TRUE) / nrow(train_results), 1), '%)')
+   message('   Mean patch purity: ', round(mean(train_results$purity, na.rm = TRUE), 3))
    
-   invisible(results)
+   message('\n=== VALIDATION PATCHES ===')
+   message('   Total patches: ', nrow(val_results))
+   message('   Mean labeled pixels per patch: ', round(mean(val_results$n_labeled), 2))
+   message('   Patches with single class: ', sum(val_results$n_classes == 1, na.rm = TRUE), 
+           ' (', round(100 * sum(val_results$n_classes == 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
+   message('   Patches with multiple classes: ', sum(val_results$n_classes > 1, na.rm = TRUE),
+           ' (', round(100 * sum(val_results$n_classes > 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
+   message('   Mean patch purity: ', round(mean(val_results$purity, na.rm = TRUE), 3))
+   
+   # Plot side by side
+   par(mfrow = c(1, 2))
+   hist(train_results$purity, breaks = 20, 
+        main = 'Train Patch Purity',
+        xlab = 'Purity (fraction in dominant class)',
+        xlim = c(0, 1))
+   hist(val_results$purity, breaks = 20, 
+        main = 'Val Patch Purity',
+        xlab = 'Purity (fraction in dominant class)',
+        xlim = c(0, 1))
+   par(mfrow = c(1, 1))
+   
+   invisible(list(
+      train_stats = train_results,
+      val_stats = val_results
+   ))
 }

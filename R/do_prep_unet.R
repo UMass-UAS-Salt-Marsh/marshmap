@@ -40,8 +40,8 @@ do_prep_unet <- function(model, save_gis) {
    config$type[grep('__NDRE', config$orthos)] <- 'ndre'
    config$type[grep('DEM', config$orthos)] <- 'dem'
    
-   config$class_mapping <- as.list(0:(length(config$classes) - 1))
-   names(config$class_mapping) <- config$classes                              # class mapping
+   config$class_mapping <- as.list(0:(length(config$classes) - 1))            # 0:(n-1) classes for U-Net
+   names(config$class_mapping) <- config$classes                              # mapping to our class numbers
    config$seed <- 42                                                          # random seed for repeatability
    
    x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
@@ -92,11 +92,20 @@ do_prep_unet <- function(model, save_gis) {
       transects <- transects[!invalid_geoms, ]
    }
    
+      
+   message('Creating train/validate split...')                                # ----- split into training and validation data
+   split <- unet_spatial_train_val_split(
+      transects = transects,
+      holdout = config$holdout 
+   )                                                                          
+   
    
    message('Extracting patches...')                                           # ----- extract patches
    patches <- unet_extract_training_patches(
       input_stack = input_stack,
       transects = transects,
+      train_ids = split$train_ids,
+      validate_ids = split$validate_ids,
       patch = config$patch,
       overlap = config$overlap,
       classes = config$classes,
@@ -107,25 +116,9 @@ do_prep_unet <- function(model, save_gis) {
    patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
    
    
-   rez <- res(input_stack)[1]
-   message('Resolution = ', rez) #*************** tmp***************
-   
-   
-   # 4. Train/val split
-   message('Creating train/validate split...')                                # ----- split into training and validation data
-   split_indices <- unet_spatial_train_val_split(
-      patches = patches,
-      transects = transects,
-      holdout = config$holdout, 
-      patch_size = config$patch, 
-      cell_width = rez
-   )                                                                          
-   
-   
    message('Exporting to numpy...')                                           # ----- export to numpy
    unet_export_to_numpy(
       patches = patches,
-      split_indices = split_indices,
       output_dir = output_dir,
       site = config$site
    )

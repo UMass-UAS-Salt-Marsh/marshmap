@@ -4,16 +4,16 @@
 \alias{unet_export_to_numpy}
 \title{Export prepared data to numpy arrays for Python}
 \usage{
-unet_export_to_numpy(patches, split_indices, output_dir, site)
+unet_export_to_numpy(patches, output_dir, site, class_mapping)
 }
 \arguments{
 \item{patches}{List from unet_extract_training_patches}
 
-\item{split_indices}{List from unet_spatial_train_validate_split}
-
 \item{output_dir}{Directory to save numpy files}
 
-\item{site}{Name for files (e.g., 'site1')}
+\item{site}{Name for files (e.g., 'rr')}
+
+\item{class_mapping}{Named vector mapping original to remapped classes (e.g., c('3'=0, '4'=1, '5'=2, '6'=3))}
 }
 \description{
 Export prepared data to numpy arrays for Python
