@@ -11,6 +11,9 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 import segmentation_models_pytorch as smp
+import torchvision.transforms as T
+import torchvision.transforms.functional as TF
+import random
 import os
 from pathlib import Path
 
@@ -38,9 +41,10 @@ class MaskedPatchDataset(Dataset):
     - Class labels (4 classes: 0, 1, 2, 3)
     - Masks (1 = labeled, 0 = unlabeled)
     - Ignore value 255 for unlabeled pixels
+    - Augmentation (rotations and flips)
     """
     
-    def __init__(self, patches, labels, masks):
+    def __init__(self, patches, labels, masks, augment=True):
         """
         Args:
             patches: numpy array [N, H, W, C] - N patches, H×W size, C channels
@@ -54,6 +58,7 @@ class MaskedPatchDataset(Dataset):
         # PyTorch expects [N, C, H, W] not [N, H, W, C]
         # Permute from [N, H, W, C] to [N, C, H, W]
         self.patches = self.patches.permute(0, 3, 1, 2)
+        self.augment = augment
         
         print(f"Dataset created:")
         print(f"  Patches shape: {self.patches.shape}")  # [N, C, H, W]
@@ -64,8 +69,32 @@ class MaskedPatchDataset(Dataset):
         return len(self.patches)
     
     def __getitem__(self, idx):
-        """Return one patch, label, and mask"""
-        return self.patches[idx], self.labels[idx], self.masks[idx]
+        """Return one patch, label, and mask, randomly rotated and flipped"""
+        patch = self.patches[idx]
+        label = self.labels[idx]
+        mask = self.masks[idx]
+        
+        if self.augment:
+            # Random rotation (0, 90, 180, 270)
+            if random.random() > 0.5:
+                k = random.randint(0, 3)  # Number of 90° rotations
+                patch = torch.rot90(patch, k, dims=[1, 2])
+                label = torch.rot90(label.unsqueeze(0), k, dims=[1, 2]).squeeze(0)
+                mask = torch.rot90(mask.unsqueeze(0), k, dims=[1, 2]).squeeze(0)
+            
+            # Random horizontal flip
+            if random.random() > 0.5:
+                patch = torch.flip(patch, dims=[2])
+                label = torch.flip(label, dims=[1])
+                mask = torch.flip(mask, dims=[1])
+            
+            # Random vertical flip
+            if random.random() > 0.5:
+                patch = torch.flip(patch, dims=[1])
+                label = torch.flip(label, dims=[0])
+                mask = torch.flip(mask, dims=[0])
+        
+        return patch, label, mask
 
 
 # Part 3: Masked loss function
@@ -76,12 +105,11 @@ class MaskedCrossEntropyLoss(nn.Module):
     Ignores pixels where mask = 0
     """
     
-    def __init__(self, ignore_index=255):
+    def __init__(self, weight=None, ignore_index=255):  # Add weight parameter
         super().__init__()
         self.ignore_index = ignore_index
-        # Use PyTorch's built-in cross entropy with ignore_index
-        self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='mean')
-    
+        self.criterion = nn.CrossEntropyLoss(weight=weight, ignore_index=ignore_index, reduction='mean')
+        
     def forward(self, pred, target, mask):
         """
         Args:
@@ -193,7 +221,8 @@ def validate(model, dataloader, criterion, device, num_classes=4):
 # Part 6: Main training loop
 
 def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001, 
-               output_dir="models", num_classes=4, in_channels=8):
+               output_dir="models", num_classes=4, in_channels=8, 
+               original_classes=None):
     """
     Main training function
     
@@ -206,7 +235,23 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
         output_dir: Where to save trained model
         num_classes: Number of classes (4 for your gradient)
         in_channels: Number of input channels (8 for your multispectral + DEM)
+        original_classes: Optional list/array mapping internal class indices to original class numbers
+                         e.g., [3, 4, 5, 6] means class 0→3, class 1→4, etc.
     """
+    
+    # Set up class mapping
+    if original_classes is not None:
+        original_classes = [int(x) for x in original_classes]  # Convert to ints
+    else:
+        original_classes = list(range(num_classes))
+        
+    class_names = {i: f"Class {orig}" for i, orig in enumerate(original_classes)}
+    
+    
+    print("="*60)
+    print(f"Training U-Net for {site}")
+    print(f"Class mapping: {class_names}")
+    print("="*60)
     
     print("="*60)
     print(f"Training U-Net for {site}")
@@ -262,8 +307,9 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     class_weights = 1.0 / (np.array(class_pixel_counts) + 1e-6)
     class_weights = class_weights / class_weights.sum() * num_classes
     
-    print(f"Class pixel counts: {class_pixel_counts}")
-    print(f"Class weights: {class_weights}")
+    print(f"\nClass pixel counts:")
+    for i, (count, orig_class) in enumerate(zip(class_pixel_counts, original_classes)):
+        print(f"  Class {orig_class} (internal {i}): {count:.0f} pixels, weight={class_weights[i]:.4f}")
     
     
     # Create datasets
@@ -294,8 +340,11 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     
     model = model.to(device)
     
+    # Convert class_weights to torch tensor and move to device
+    class_weights_tensor = torch.FloatTensor(class_weights).to(device)
+
     # Loss and optimizer
-    criterion = MaskedCrossEntropyLoss(ignore_index=255)
+    criterion = MaskedCrossEntropyLoss(weight=class_weights_tensor, ignore_index=255)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     
     # Training loop
@@ -304,6 +353,7 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     print("="*60)
     
     best_validate_acc = 0.0
+    
     
     for epoch in range(n_epochs):
         # Train
@@ -315,11 +365,11 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
         # Print progress
         print(f"\nEpoch {epoch+1}/{n_epochs}")
         print(f"  Train Loss: {train_loss:.4f}")
-        print(f"  Val Loss:   {validate_loss:.4f}")
-        print(f"  Val Acc:    {validate_acc:.2%}")
-        print(f"  Class Acc:  ", end="")
+        print(f"  Validate Loss:   {validate_loss:.4f}")
+        print(f"  Validate CCR:    {validate_acc:.2%}")
+        print(f"  Class CCR:  ", end="")
         for c, acc in enumerate(class_acc):
-            print(f"C{c}={acc:.2%} ", end="")
+            print(f"C{original_classes[c]}={acc:.2%} ", end="")
         print()
         
         # Save best model
@@ -338,11 +388,11 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
             else:
                 torch.save(model.state_dict(), model_path)
             
-            print(f"  → Saved best model (acc={best_validate_acc:.2%})")
+            print(f"  → Saved best model (CCR={best_validate_acc:.2%})")
     
     print("\n" + "="*60)
     print("Training complete!")
-    print(f"Best validation accuracy: {best_validate_acc:.2%}")
+    print(f"Best validation CCR: {best_validate_acc:.2%}")
     print(f"Model saved to: {model_path}")
     print("="*60)
     
