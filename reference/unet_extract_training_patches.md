@@ -1,6 +1,6 @@
-# Extract training patches that overlap with transects
+# Extract training patches with separate train and val masks
 
-Extract training patches that overlap with transects
+Extract training patches with separate train and val masks
 
 ## Usage
 
@@ -8,10 +8,12 @@ Extract training patches that overlap with transects
 unet_extract_training_patches(
   input_stack,
   transects,
+  train_ids,
+  validate_ids,
   patch = 256,
   overlap = 0.5,
-  classes = c(3, 4, 5, 6),
-  class_mapping = c(`3` = 0, `4` = 1, `5` = 2, `6` = 3)
+  classes,
+  class_mapping
 )
 ```
 
@@ -25,14 +27,30 @@ unet_extract_training_patches(
 
   Ground truth polys (sf object)
 
+- train_ids:
+
+  IDs of training transects
+
+- validate_ids:
+
+  IDs of validation transects
+
 - patch:
 
   Patch size (n pixels)
 
 - overlap:
 
-  Proportional patch overlap (e.g., 0.5 for 50%)
+  Proportional patch overlap (e.g., 0.75 for training, 0 for val)
+
+- classes:
+
+  Classes to include
+
+- class_mapping:
+
+  Mapping from original to 0-indexed classes
 
 ## Value
 
-List of patches (array), labels (array), masks (array), metadata (df)
+List with patches, labels, train_masks, val_masks, metadata

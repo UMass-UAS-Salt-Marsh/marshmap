@@ -1,6 +1,7 @@
 # Summary stats for extracted patches
 
-Hope to see single class patches \< 80%.
+Reports stats separately for train and val masks. Hope to see single
+class patches \< 80%.
 
 ## Usage
 
@@ -16,5 +17,4 @@ unet_patch_stats(patch_data)
 
 ## Value
 
-Data frame of stats for each patch (`patch_id`, `n_labeled`,
-`n_classes`, `dominant_class`, `purity`)
+List with train_stats and val_stats data frames
