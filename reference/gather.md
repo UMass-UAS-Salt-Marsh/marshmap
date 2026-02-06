@@ -149,8 +149,8 @@ Results:
 
 - models/gather_data.log
 
-All source data are expected to be in `EPSG:4326`. Non-conforming
-rasters will be reprojected.
+All source data will be reprojected to Massachusetts State Plane
+(mainland, NAD83), `EPSG:26986`.
 
 `sites.txt` must include the name of the footprint shapefile for each
 site, a field transect shapefile, and a standard geoTIFF for each site.
@@ -158,8 +158,8 @@ The footprint is used for clipping and must be present. The transect
 contains ground truth data, and must be present if `field = TRUE`. The
 standard must be present. It is used as the standard for grain and
 alignment; all rasters will be resampled to match. Standards MUST be in
-the standard projection, `EPSG:4326`. Best to use a Mica orthophoto,
-with 8 cm resolution.
+the standard projection, `EPSG:4326`. Best to use a Mica
+\*\*\*\*\*\*\*\*\*\*\*\*\* orthophoto, with ~9 cm resolution.
 
 Note that adding to an existing stack using a different standard will
 lead to sorrow. **BEST PRACTICE**: don't change the standards in

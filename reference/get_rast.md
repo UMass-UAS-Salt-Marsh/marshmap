@@ -1,4 +1,4 @@
-# A wrapper for `rast(get_file)` that sets missing values to NA
+# A wrapper for `rast` that sets missing values to NA
 
 The image geoTIFFs for the Salt Marsh project don't have `NAflag` set,
 leading to trouble downstream. This function reads a raster from the
@@ -10,7 +10,7 @@ and sets these values to NA.
 ## Usage
 
 ``` r
-get_rast(name, gd)
+get_rast(name)
 ```
 
 ## Arguments
@@ -18,19 +18,6 @@ get_rast(name, gd)
 - name:
 
   File path and name
-
-- gd:
-
-  Source drive info, named list of
-
-  - `dir` - Google directory info, from
-    [get_dir](https://umass-uas-salt-marsh.github.io/marshmap/reference/get_dir.md)
-
-  - `sourcedrive` - which source drive (`local`, `google`, or `sftp`)
-
-  - `sftp` - list(url, user)
-
-  - `cachedir` - local cache directory
 
 ## Value
 

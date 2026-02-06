@@ -155,13 +155,13 @@ shapefile.</p></li>
 </ul><p>Results:</p><ul><li><p>flights/geoTIFFs, clipped, resampled, and aligned. <em><strong>Make sure you've closed ArcGIS/QGIS projects that
 point to these before running!</strong></em></p></li>
 <li><p>models/gather_data.log</p></li>
-</ul><p>All source data are expected to be in <code>EPSG:4326</code>. Non-conforming rasters will be reprojected.</p>
+</ul><p>All source data will be reprojected to Massachusetts State Plane (mainland, NAD83), <code>EPSG:26986</code>.</p>
 <p><code>sites.txt</code> must include the name of the footprint shapefile for each site, a field transect
 shapefile, and a standard geoTIFF for each site. The footprint is used for clipping and must be
 present. The transect contains ground truth data, and must be present if <code>field = TRUE</code>. The
 standard must be present. It is used as the standard for grain and alignment; all rasters will be
-resampled to match. Standards MUST be in the standard projection, <code>EPSG:4326</code>. Best to use a Mica
-orthophoto, with 8 cm resolution.</p>
+resampled to match. Standards MUST be in the standard projection, <code>EPSG:4326</code>. Best to use a Mica          *************
+orthophoto, with ~9 cm resolution.</p>
 <p>Note that adding to an existing stack using a different standard will lead to sorrow. <strong>BEST
 PRACTICE</strong>: don't change the standards in <code>standards.txt</code>; if you must change them, clear the
 flights/ directory and rerun.</p>
