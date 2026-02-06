@@ -31,7 +31,7 @@
 #' @param replace_ground_truth If TRUE, replace ground truth data
 #' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @importFrom terra project rast crs writeRaster mask crop resample rasterize vect datatype
-#' @importFrom sf st_read st_write st_transform
+#' @importFrom sf st_read st_write st_transform st_zm
 #' @importFrom lubridate as.duration interval
 #' @importFrom pkgcond suppress_warnings
 #' @importFrom tools file_path_sans_ext
@@ -66,7 +66,7 @@ do_gather <- function(site, pattern = '',
       stop('sourcedrive must be one of local, google, or sftp')
    if(any(is.na(sites$site_name)))                                                  # check for missing sites
       stop('Bad site names: ', paste(site[is.na(sites$site_name)], collapse = ', '))
-   if(any(t <- is.na(sites$footprint) | sites$footprint == ''))                     # check for missing standards
+   if(any(t <- is.na(sites$footprint) | sites$footprint == ''))                     # check for missing footprints
       stop('Missing footprints for sites ', paste(sites$footprint[t], collapse = ', '))
    if(any(t <- is.na(sites$standard) | sites$standard == ''))                       # check for missing standards
       stop('Missing standards for sites ', paste(sites$site[t], collapse = ', '))
@@ -147,15 +147,10 @@ do_gather <- function(site, pattern = '',
       
       
       dumb_warning <- 'Sum of Photometric type-related color channels'              #    we don't want to hear about this!
-      suppress_warnings(r <- get_rast(file.path(dir, sites$standard[i]), 
-                                      gd), 
-                        pattern = dumb_warning, class = 'warning')
-      standard <- r$rast
-      type <- r$type
-      missing <- r$missing
       
-      message('   Processing ', length(files), ' geoTIFFs...')
-      
+      rd <- resolve_dir(the$flightsdir, tolower(sites$site[i]))                     #    prepare result directory
+      if(!dir.exists(rd))
+         dir.create(rd, recursive = TRUE)
       
       
       get_sidecars <- function(path, file, gd) {                                    #    helper function: cache shapefile sidecar files
@@ -169,10 +164,40 @@ do_gather <- function(site, pattern = '',
                                     gd), promote_to_multi = FALSE, quiet = TRUE)    #    read footprint shapefile (we always do this 'cuz it's cheap)
       footprint <- st_zm(footprint, drop = TRUE)                                    #    we don't want Z values!
       
-      if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
-         message('         !!! Reprojecting ', basename(sites$footprint[i]))
-         footprint <- st_transform(footprint, crs = 4326)
+      if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
+         message('         !!! Reprojecting ', basename(sites$footprint[i]), ' to Mass State Plane')
+         footprint <- st_transform(footprint, crs = 26986)
       }
+      
+      
+      std <- file.path(rd, basename(sites$standard[i]))                             #    path to stored standard file
+      message('   Standard: ', basename(std))
+      
+      if(!file.exists(std)) {                                                       #    if we don't have the standard in our files yet,
+         r <- suppress_warnings(get_rast(
+            get_file(file.path(dir, sites$standard[i]), gd)), 
+            pattern = dumb_warning, class = 'warning')           #       get it from the remote drive or the cache
+         if(!dir.exists(rd))
+            dir.create(rd, recursive = TRUE)
+         message('         !!! Reprojecting standard ', basename(std), ' to Mass State Plane')
+         pkgcond::suppress_warnings({
+            project(r$rast, 'epsg:26986') |>                                        #       reproject it to Mass State Plane
+               crop(footprint) |>
+               mask(footprint) |>
+               writeRaster(std, overwrite = TRUE, 
+                                     datatype = r$type, NAflag = r$missing)         #    save raster
+         }, 
+         pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
+      }
+   
+      r <-get_rast(std)                                                             #    new get the standard
+      standard <- r$rast
+      type <- r$type
+      missing <- r$missing                                                          #    *** these are fucking mess. Need to rethink how I do them--they won't be right for transects or blocks
+      
+      
+      message('   --- Processing ', length(files), ' geoTIFFs ---')
+      
       
       sf <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
       if(!dir.exists(sf))
@@ -192,7 +217,7 @@ do_gather <- function(site, pattern = '',
             if(!check_files(sites$transects[i], gd, tp, sf) | 
                replace_ground_truth) {                                              #          if we don't already have transect results or they're outdated or replace_ground_truth,
                message(' Processing field transect shapefile')
-                
+               
                tp <- file.path(the$gather$sourcedir, the$gather$transects)
                
                if(the$gather$sourcedrive %in% c('google', 'sftp'))                  #       if reading from Google Drive or SFTP,
@@ -201,11 +226,11 @@ do_gather <- function(site, pattern = '',
                tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
                
                shp <- st_read(tpath, promote_to_multi = FALSE, quiet = TRUE)        #       read transects shapefile
-               shp <- st_zm(shp, drop = TRUE)                                       #    we don't want Z values!
+               shp <- st_zm(shp, drop = TRUE)                                       #       we don't want Z values!
                
-               if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
-                  message('         !!! Reprojecting ', basename(tpath))
-                  shp <- st_transform(shp, crs = 4326)
+               if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
+                  message('         !!! Reprojecting ', basename(tpath), ' to Mass State Plane')
+                  shp <- st_transform(shp, crs = 26986)
                }
                
                
@@ -243,7 +268,7 @@ do_gather <- function(site, pattern = '',
                st_write(gt, overlaps, append = FALSE, quiet = TRUE)                 #       save the overlapped shapefile with bonus columns as *_final
                
                
-               suppressWarnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
+               suppress_warnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
                                    rasterize(vect(overlaps), standard, 
                                              field = 'poly')$poly |>                #       convert it to raster populated with unique poly id
                                    crop(footprint) |>                               #       crop, mask, and write
@@ -277,7 +302,7 @@ do_gather <- function(site, pattern = '',
                   skip <- TRUE
             if(!skip) {                                                             #    if not, process it
                message('Processing blocks file ', block, '...')
-               suppressWarnings(rasterize(vect(block), standard,                    #       mask gives a bogus warning that CRS do not match
+               suppress_warnings(rasterize(vect(block), standard,                    #       mask gives a bogus warning that CRS do not match
                                           field = 'block')$block |>                 #       convert it to raster
                                    crop(footprint) |>                               #       crop, mask, and write
                                    mask(footprint) |>
@@ -288,17 +313,14 @@ do_gather <- function(site, pattern = '',
       }
       
       
-      rd <- resolve_dir(the$flightsdir, tolower(sites$site[i]))                     #    prepare result directory
-      if(!dir.exists(rd))
-         dir.create(rd, recursive = TRUE)
-      
-      
       count$tiff <- count$tiff + length(files)
       for(j in files) {                                                             #----for each target geoTIFF in site, ----
          message('      processing ', j)
          
          if(tryCatch({                                                              #    read the raster, skipping bad ones
-            suppressWarnings(r <- get_rast(j, gd))
+            r <- 
+               suppress_warnings(get_rast(get_file(j, gd)), 
+                                pattern = dumb_warning, class = 'warning')
             g <- r$rast
             type <- r$type
             missing <- r$missing
@@ -316,12 +338,12 @@ do_gather <- function(site, pattern = '',
             g <- g[[1]]                                                             #       it's 3 redundant bands, so just take first one
          
          
-         if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:4326') {
-            message('         !!! Reprojecting ', g)
-            g <- project(g, 'epsg:4326')
+         if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
+            message('         !!! Reprojecting ', j, ' to Mass State Plane')
+            g <- project(g, 'epsg:26986')
          }
          else
-            terra::crs(g) <- 'EPSG:4326'                                            #    prevent warnings when CRS is but isn't EPSG:4326 (e.g., 20Jun22_OTH_High_SWIR_Ortho.tif)
+            terra::crs(g) <- 'EPSG:26986'                                           #    prevent warnings when CRS is but isn't EPSG:26986 (e.g., 20Jun22_OTH_High_SWIR_Ortho.tif)
          
          pkgcond::suppress_warnings({
             resample(g, standard, method = 'bilinear', threads = TRUE) |>

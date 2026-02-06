@@ -2,20 +2,12 @@
 % Please edit documentation in R/get_rast.R
 \name{get_rast}
 \alias{get_rast}
-\title{A wrapper for \code{rast(get_file)} that sets missing values to NA}
+\title{A wrapper for \code{rast} that sets missing values to NA}
 \usage{
-get_rast(name, gd)
+get_rast(name)
 }
 \arguments{
 \item{name}{File path and name}
-
-\item{gd}{Source drive info, named list of
-\itemize{
-\item \code{dir} - Google directory info, from \link{get_dir}
-\item \code{sourcedrive} - which source drive (\code{local}, \code{google}, or \code{sftp})
-\item \code{sftp} - list(url, user)
-\item \code{cachedir} - local cache directory
-}}
 }
 \value{
 list of:

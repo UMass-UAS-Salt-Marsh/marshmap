@@ -20,8 +20,8 @@ maketiles <- function(site, sizes) {
       dir.create(rpath, recursive = TRUE)
    
    
-   ground <- st_read(source, quiet = TRUE)                                 # read site footprint
-   ground_m <- st_transform(ground, crs = 26986)                           # transform the footprint to Mass State Plane so we're in meters
+   ground_m <- st_read(source, quiet = TRUE)                                # read site footprint, already in Mass State Plane
+ #  ground_m <- st_transform(ground, crs = 26986)                           # transform the footprint to Mass State Plane so we're in meters
    
    e <- st_bbox(ground_m)
    ext <- c(e$xmax - e$xmin, e$ymax - e$ymin)                              # extent of footprint in meters

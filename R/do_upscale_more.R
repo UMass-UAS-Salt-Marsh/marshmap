@@ -78,7 +78,7 @@ do_upscale_more <- function(site, newsite, cellsize, vars, minscore, maxmissing,
 
    
    x <- rast(file.path(source, orthos[1]))                                          # get rescaling factor from the first raster
-   x <- project(x, 'epsg:26986')
+ #  x <- project(x, 'epsg:26986')               # we're already in Mass State Plane now
    factor <- round(cellsize / res(x)[1])                                            # integer rescaling factor
    message('Rescaling factor = ', factor)
    

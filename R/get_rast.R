@@ -1,4 +1,4 @@
-#' A wrapper for `rast(get_file)` that sets missing values to NA
+#' A wrapper for `rast` that sets missing values to NA
 #' 
 #' The image geoTIFFs for the Salt Marsh project don't have `NAflag` set, leading
 #' to trouble downstream. This function reads a raster from the Google Drive,
@@ -9,11 +9,6 @@
 #' See [get_file] for more info.
 #'
 #' @param name File path and name
-#' @param gd Source drive info, named list of 
-#' - `dir` - Google directory info, from [get_dir]
-#' - `sourcedrive` - which source drive (`local`, `google`, or `sftp`)
-#' - `sftp` - list(url, user)
-#' - `cachedir` - local cache directory
 #' @returns list of:
 #'    \item{rast}{raster object}
 #'    \item{type}{data type of the object}
@@ -23,10 +18,10 @@
 #' @keywords internal
 
 
-get_rast <- function(name, gd) {
+get_rast <- function(name) {
    
    
-   x <- rast(get_file(name, gd))
+   x <- rast(name)
    type <- datatype(x, bylyr = FALSE)                                   # get datatype
    missing <- get_NAflag(x)                                             # get NAflag if there is one
    

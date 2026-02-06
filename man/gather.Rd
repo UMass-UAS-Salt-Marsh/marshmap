@@ -103,14 +103,14 @@ point to these before running!}}
 \item models/gather_data.log
 }
 
-All source data are expected to be in \code{EPSG:4326}. Non-conforming rasters will be reprojected.
+All source data will be reprojected to Massachusetts State Plane (mainland, NAD83), \code{EPSG:26986}.
 
 \code{sites.txt} must include the name of the footprint shapefile for each site, a field transect
 shapefile, and a standard geoTIFF for each site. The footprint is used for clipping and must be
 present. The transect contains ground truth data, and must be present if \code{field = TRUE}. The
 standard must be present. It is used as the standard for grain and alignment; all rasters will be
-resampled to match. Standards MUST be in the standard projection, \code{EPSG:4326}. Best to use a Mica
-orthophoto, with 8 cm resolution.
+resampled to match. Standards MUST be in the standard projection, \code{EPSG:4326}. Best to use a Mica          *************
+orthophoto, with ~9 cm resolution.
 
 Note that adding to an existing stack using a different standard will lead to sorrow. \strong{BEST
 PRACTICE}: don't change the standards in \code{standards.txt}; if you must change them, clear the

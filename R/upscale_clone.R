@@ -46,7 +46,7 @@ upscale_clone <- function(site, newsite, cellsize) {
    
    orthos <- db$name
    x <- rast(file.path(source, orthos[1]))                                 # get rescaling factor from first raster
-   x <- project(x, 'epsg:26986')
+   x <- project(x, 'epsg:26986')               # we're already in Mass State Plane now
    factor <- round(cellsize / res(x)[1])                                   # integer rescaling factor
    message('Rescaling factor = ', factor)
    

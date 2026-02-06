@@ -64,7 +64,8 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
    
    
    if(!is.null(clip)) {                                                                # if there's a clip, modify result name
-      clip_area <- round(extent_area(clip))
+      browser()
+      clip_area <- round(extent_area(clip))                        #     *********************** this needs modifying thanks to change to Mass State Plane *******************************
       cr <- paste0('clip_', clip_area, '_ha')
    }
    else
