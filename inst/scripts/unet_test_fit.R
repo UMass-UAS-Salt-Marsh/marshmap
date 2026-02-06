@@ -11,9 +11,9 @@ original_classes <- c(3, 4, 5, 6)  # Maps to 0, 1, 2, 3 internally
 result <- train_unet(
    data_dir = "X:/projects/uas/marshmap/data/rr/unet/unet01",
    site = "rr",
-   n_epochs = 10L,
+   n_epochs = 50L,
    batch_size = 8L,
-   learning_rate = 0.001,
+   learning_rate = 0.0001,
    original_classes = original_classes  # Pass the mapping
 )
 

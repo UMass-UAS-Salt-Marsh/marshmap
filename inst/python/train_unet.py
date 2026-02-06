@@ -137,29 +137,61 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device):
     """Train for one epoch"""
     model.train()
     running_loss = 0.0
+    nan_count = 0
     
     for batch_idx, (patches, labels, masks) in enumerate(dataloader):
-        # Move to GPU
         patches = patches.to(device)
         labels = labels.to(device)
         masks = masks.to(device)
         
-        # Forward pass
+        # Check for NaN in batch
+        if torch.isnan(patches).any() or torch.isnan(labels.float()).any():
+            print(f"  WARNING: NaN in input batch {batch_idx}")
+            continue
+        
         optimizer.zero_grad()
         outputs = model(patches)
         
-        # Compute loss
+        # Check outputs
+        if torch.isnan(outputs).any() or torch.isinf(outputs).any():
+            print(f"  WARNING: NaN/Inf in outputs at batch {batch_idx}")
+            nan_count += 1
+            continue
+        
         loss = criterion(outputs, labels, masks)
         
-        # Backward pass
-        loss.backward()
-        optimizer.step()
+        # Check loss
+        if torch.isnan(loss) or torch.isinf(loss):
+            print(f"  WARNING: NaN/Inf loss at batch {batch_idx}")
+            print(f"    Output range: [{outputs.min():.4f}, {outputs.max():.4f}]")
+            print(f"    Labeled pixels in batch: {masks.sum().item()}")
+            print(f"    Labels range: [{labels[masks==1].min()}, {labels[masks==1].max()}]")  # NEW
+            print(f"    Patches range: [{patches.min():.4f}, {patches.max():.4f}]")  # NEW
+            
+            # Check each sample in batch
+            for i in range(patches.shape[0]):
+                sample_mask = masks[i]
+                if sample_mask.sum() > 0:
+                    sample_labels = labels[i][sample_mask == 1]
+                    sample_outputs = outputs[i]
+                    print(f"    Sample {i}: {sample_mask.sum().item()} labeled pixels, "
+                          f"labels={sample_labels.unique().tolist()}, "
+                          f"output range=[{sample_outputs.min():.4f}, {sample_outputs.max():.4f}]")
+            
+            nan_count += 1
+            continue
         
+        loss.backward()
+        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        optimizer.step()
         running_loss += loss.item()
     
-    epoch_loss = running_loss / len(dataloader)
+    epoch_loss = running_loss / (len(dataloader) - nan_count) if (len(dataloader) - nan_count) > 0 else float('nan')
+    
+    if nan_count > 0:
+        print(f"  → {nan_count} batches skipped due to NaN/Inf")
+    
     return epoch_loss
-
 
 # Part 5: Validation function
 
@@ -266,6 +298,9 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.001,
     train_patches = np.load(os.path.join(data_dir, f"{site}_train_patches.npy"))
     train_labels = np.load(os.path.join(data_dir, f"{site}_train_labels.npy"))
     train_masks = np.load(os.path.join(data_dir, f"{site}_train_masks.npy"))
+    
+    print(f"Train patches - any Inf: {np.isinf(train_patches).any()}")
+    print(f"Train patches - any NaN: {np.isnan(train_patches).any()}")
     
     print("Loading validation data...")
     validate_patches = np.load(os.path.join(data_dir, f"{site}_validate_patches.npy"))
