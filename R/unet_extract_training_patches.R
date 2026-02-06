@@ -168,11 +168,9 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
    }
    
    
-   # Filter to patches with ANY labeled pixels
-   has_train <- metadata$n_train_pixels > 0
-   has_val <- metadata$n_val_pixels > 0
+   has_train <- !is.na(metadata$n_train_pixels) & metadata$n_train_pixels > 0
+   has_val <- !is.na(metadata$n_val_pixels) & metadata$n_val_pixels > 0
    has_any <- has_train | has_val
-   has_any[is.na(has_any)] <- FALSE
    
    message('Total patches with labels: ', sum(has_any))
    message('  Patches with train labels: ', sum(has_train, na.rm = TRUE))
