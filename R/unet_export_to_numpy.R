@@ -19,15 +19,25 @@ unet_export_to_numpy <- function(patches, output_dir, site, class_mapping) {
    
    # Reverse mapping: 0->3, 1->4, 2->5, 3->6
    original_classes <- as.integer(names(class_mapping))
+ 
    
-   # Filter to train/val patches
+   # Where labels are NA, set mask to 0
+   patches$train_masks[is.na(patches$labels)] <- 0
+   patches$val_masks[is.na(patches$labels)] <- 0
+   
+   # THEN replace NA labels with 255
+   patches$labels[is.na(patches$labels)] <- 255
+   
+   # NOW extract train/val subsets
    train_idx <- which(patches$has_train)
    val_idx <- which(patches$has_val)
+   
    
    message('\n=== EXPORTING PATCHES ===')
    message('Train patches: ', length(train_idx))
    message('Val patches: ', length(val_idx))
    message('Shared patches: ', sum(patches$has_train & patches$has_val, na.rm = TRUE))
+   
    
    # Train data
    train_patches <- patches$patches[train_idx, , , ]
