@@ -4,10 +4,13 @@
 \alias{build_flights_db}
 \title{Build or update the flights database}
 \usage{
-build_flights_db(site, refresh = FALSE, really = FALSE)
+build_flights_db(site, update = FALSE, refresh = FALSE, really = FALSE)
 }
 \arguments{
 \item{site}{Site abbreviation}
+
+\item{update}{If TRUE, update file timestamps rather than deleting newer files from database.
+Use this to preserve scores, comments, etc. when replacing all files.}
 
 \item{refresh}{Recreated database from scratch. \strong{Warning:} this will
 destroy your existing database, including all assigned scores and

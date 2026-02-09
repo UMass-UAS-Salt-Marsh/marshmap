@@ -12,9 +12,12 @@
 #' whenever new images are added. Scores may be added to a sites database 
 #' (`flights/flights_<site>.txt`) by hand if necessary.
 #' 
-#' When an image file is updated (presumably from downloading a repaired image), the old
+#' Normally, when an image file is updated (presumably from downloading a repaired image), the old
 #' image is replaced in the database with the new one, thus the score, repair flag, and 
-#' comments will be reset. This sets you up for assessing repaired images.
+#' comments will be reset. This sets you up for assessing repaired images. You can set 
+#' `update = TRUE` to change this behavior; in that case, file timestamps will be updated to
+#' match the new files, and scores, etc. will not be reset. Use `update = TRUE` if you've 
+#' re-downloaded files without fundamentally changing them.
 #' 
 #' `screen` displays the selected image with a red outline indicating the site footprint. 
 #' It includes the following controls:
@@ -49,6 +52,8 @@
 #' - **Always show zooms** turn this on to always show zoomed insets.
 #' - **Exit** saves the flights database for the current site and exits (flights databases
 #'   are also saved when switching sites).
+#' @param update If TRUE, update file timestamps rather than deleting newer files from database.
+#'    Use this to preserve scores, comments, etc. when replacing all files.
 #' @import shiny
 #' @import bslib
 #' @importFrom shinybusy add_busy_spinner
@@ -58,7 +63,8 @@
 #' @export
 
 
-screen <- function() {
+screen <- function(update = FALSE) {
+  
   
   sites <- read_pars_table('sites')
   # sites$footprint <- basename(sites$footprint)
@@ -183,7 +189,7 @@ screen <- function() {
       save_flights_db(session$userData$db, session$userData$db_name)                                  #    save database for previous site
       
       session$userData$dir <- resolve_dir(the$flightsdir, input$site)
-      screen <- build_flights_db(input$site)
+      screen <- build_flights_db(input$site, update = update)
       
       if(is.null(screen)) {
         output$site_info <- renderText(paste0('There is no flights directory for ', 

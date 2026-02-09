@@ -9,6 +9,7 @@ save_flights_db <- function(db, db_name) {
    
    
    if(!is.null(db))
-      write.table(db, db_name, sep = '\t', quote = FALSE, row.names = FALSE, na = '')
+      if(0 < length(db$score))
+         write.table(db, db_name, sep = '\t', quote = FALSE, row.names = FALSE, na = '')
    
 }

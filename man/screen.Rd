@@ -4,7 +4,11 @@
 \alias{screen}
 \title{Visually screen orthoimages via a web app}
 \usage{
-screen()
+screen(update = FALSE)
+}
+\arguments{
+\item{update}{If TRUE, update file timestamps rather than deleting newer files from database.
+Use this to preserve scores, comments, etc. when replacing all files.}
 }
 \description{
 Used to screen images for quality, this web app allows users to view and score each image,
@@ -20,9 +24,12 @@ dropdown. An alternative to running \code{screen} is to call \code{build_fights_
 whenever new images are added. Scores may be added to a sites database
 (\verb{flights/flights_<site>.txt}) by hand if necessary.
 
-When an image file is updated (presumably from downloading a repaired image), the old
+Normally, when an image file is updated (presumably from downloading a repaired image), the old
 image is replaced in the database with the new one, thus the score, repair flag, and
-comments will be reset. This sets you up for assessing repaired images.
+comments will be reset. This sets you up for assessing repaired images. You can set
+\code{update = TRUE} to change this behavior; in that case, file timestamps will be updated to
+match the new files, and scores, etc. will not be reset. Use \code{update = TRUE} if you've
+re-downloaded files without fundamentally changing them.
 
 \code{screen} displays the selected image with a red outline indicating the site footprint.
 It includes the following controls:

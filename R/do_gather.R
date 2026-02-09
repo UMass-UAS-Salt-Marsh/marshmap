@@ -180,16 +180,16 @@ do_gather <- function(site, pattern = '',
          if(!dir.exists(rd))
             dir.create(rd, recursive = TRUE)
          message('         !!! Reprojecting standard ', basename(std), ' to Mass State Plane')
-         pkgcond::suppress_warnings({
+         suppress_warnings({
             project(r$rast, 'epsg:26986') |>                                        #       reproject it to Mass State Plane
                crop(footprint) |>
                mask(footprint) |>
                writeRaster(std, overwrite = TRUE, 
-                                     datatype = r$type, NAflag = r$missing)         #    save raster
+                           datatype = r$type, NAflag = r$missing)         #    save raster
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
-   
+      
       r <-get_rast(std)                                                             #    new get the standard
       standard <- r$rast
       type <- r$type
@@ -269,12 +269,12 @@ do_gather <- function(site, pattern = '',
                
                
                suppress_warnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
-                                   rasterize(vect(overlaps), standard, 
-                                             field = 'poly')$poly |>                #       convert it to raster populated with unique poly id
-                                   crop(footprint) |>                               #       crop, mask, and write
-                                   mask(footprint) |>
-                                   writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                                               datatype = type, NAflag = missing))
+                                    rasterize(vect(overlaps), standard, 
+                                              field = 'poly')$poly |>                #       convert it to raster populated with unique poly id
+                                    crop(footprint) |>                               #       crop, mask, and write
+                                    mask(footprint) |>
+                                    writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
+                                                datatype = type, NAflag = missing))
                
                if(all(is.na(values(transects)))) {
                   message('*** Ground truth data are all missing!!')
@@ -303,11 +303,11 @@ do_gather <- function(site, pattern = '',
             if(!skip) {                                                             #    if not, process it
                message('Processing blocks file ', block, '...')
                suppress_warnings(rasterize(vect(block), standard,                    #       mask gives a bogus warning that CRS do not match
-                                          field = 'block')$block |>                 #       convert it to raster
-                                   crop(footprint) |>                               #       crop, mask, and write
-                                   mask(footprint) |>
-                                   writeRaster(gn, overwrite = TRUE,
-                                               datatype = type, NAflag = missing))
+                                           field = 'block')$block |>                 #       convert it to raster
+                                    crop(footprint) |>                               #       crop, mask, and write
+                                    mask(footprint) |>
+                                    writeRaster(gn, overwrite = TRUE,
+                                                datatype = type, NAflag = missing))
             }
          }
       }
@@ -320,7 +320,7 @@ do_gather <- function(site, pattern = '',
          if(tryCatch({                                                              #    read the raster, skipping bad ones
             r <- 
                suppress_warnings(get_rast(get_file(j, gd)), 
-                                pattern = dumb_warning, class = 'warning')
+                                 pattern = dumb_warning, class = 'warning')
             g <- r$rast
             type <- r$type
             missing <- r$missing
@@ -340,12 +340,15 @@ do_gather <- function(site, pattern = '',
          
          if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
             message('         !!! Reprojecting ', j, ' to Mass State Plane')
-            g <- project(g, 'epsg:26986')
+            g <- suppress_warnings({
+               project(g, 'epsg:26986')
+               },
+               pattern = dumb_warning, class = 'warning')
          }
          else
             terra::crs(g) <- 'EPSG:26986'                                           #    prevent warnings when CRS is but isn't EPSG:26986 (e.g., 20Jun22_OTH_High_SWIR_Ortho.tif)
          
-         pkgcond::suppress_warnings({
+         suppress_warnings({
             resample(g, standard, method = 'bilinear', threads = TRUE) |>
                crop(footprint) |>
                mask(footprint) |>

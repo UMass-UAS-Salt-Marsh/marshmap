@@ -168,14 +168,28 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
    }
    
    
-   has_train <- !is.na(metadata$n_train_pixels) & metadata$n_train_pixels > 0
-   has_val <- !is.na(metadata$n_val_pixels) & metadata$n_val_pixels > 0
+   # Ensure n_train_pixels and n_val_pixels are never NA (set to 0 if not set)
+   metadata$n_train_pixels[is.na(metadata$n_train_pixels)] <- 0
+   metadata$n_val_pixels[is.na(metadata$n_val_pixels)] <- 0
+   
+   # Filter to patches with ANY labeled pixels
+   has_train <- metadata$n_train_pixels > 0
+   has_val <- metadata$n_val_pixels > 0
    has_any <- has_train | has_val
    
    message('Total patches with labels: ', sum(has_any))
-   message('  Patches with train labels: ', sum(has_train, na.rm = TRUE))
-   message('  Patches with val labels: ', sum(has_val, na.rm = TRUE))
-   message('  Patches with both: ', sum(has_train & has_val, na.rm = TRUE))
+   message('  Patches with train labels: ', sum(has_train))
+   message('  Patches with val labels: ', sum(has_val))
+   message('  Patches with both: ', sum(has_train & has_val))
+   
+   
+   # Validation check
+   if (any(has_train & rowSums(train_masks[has_any, , ], dims = 2) == 0)) {
+      stop('BUG: Some patches flagged has_train=TRUE have zero train mask pixels!')
+   }
+   if (any(has_val & rowSums(val_masks[has_any, , ], dims = 2) == 0)) {
+      stop('BUG: Some patches flagged has_val=TRUE have zero val mask pixels!')
+   }
    
    
    # Return ALL patches, but with separate train/val masks
@@ -185,7 +199,7 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       train_masks = train_masks[has_any, , ],
       val_masks = val_masks[has_any, , ],
       metadata = metadata[has_any, ],
-      has_train = has_train[has_any],   # Boolean vector
-      has_val = has_val[has_any]        # Boolean vector
+      has_train = has_train[has_any],
+      has_val = has_val[has_any]
    ))
 }

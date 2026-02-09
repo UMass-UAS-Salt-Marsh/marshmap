@@ -16,6 +16,8 @@
 #' flights database, ready for re-screening. 
 #'
 #' @param site Site abbreviation
+#' @param update If TRUE, update file timestamps rather than deleting newer files from database.
+#'    Use this to preserve scores, comments, etc. when replacing all files.
 #' @param refresh Recreated database from scratch. **Warning:** this will
 #'    destroy your existing database, including all assigned scores and 
 #'    comments. Requires also supplying `really = TRUE`.
@@ -27,7 +29,7 @@
 #' @keywords internal
 
 
-build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
+build_flights_db <- function(site, update = FALSE, refresh = FALSE, really = FALSE) {
    
    
    find_targets <- function(targets, names) {                           # find targets as substrings in names
@@ -58,6 +60,7 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    
    if(!dir.exists(dir))                                                 # if there's no flights dir, just return NULL
       return(NULL)
+   
    
    db_name <- file.path(dir, paste0('flights_', site, '.txt'))
    
@@ -98,12 +101,17 @@ build_flights_db <- function(site, refresh = FALSE, really = FALSE) {
    
    
    # check timestamps
+   db$filestamp <- as.POSIXct(db$filestamp)                             # make sure it's POSIXct
    i <- match(x, db$name)                                               # indices of files already in database
    d <- round(file.mtime(file.path(dir, x[!is.na(i)])))                 # filestamps for these
    i <- i[!is.na(i)]
    c <- db$filestamp[i] != d
-   if(any(c))
-      db <- db[-i[db$filestamp[i] != d], ]                              # drop files with changed stamps from database                             
+   if(any(c)) {                                                         # if any files are newer than filestamp,
+      if(update)                                                        #    if updating,
+         db$filestamp[i[c]] <- as.POSIXct(d)                            #       take these new dates
+      else                                                              #    else
+         db <- db[-i[c], ]                                              #       drop files with changed stamps from database
+   }
    
    
    y <- x[!x %in% db$name]
