@@ -12,8 +12,16 @@ never used in fitting.
 ## Usage
 
 ``` r
-screen()
+screen(update = FALSE)
 ```
+
+## Arguments
+
+- update:
+
+  If TRUE, update file timestamps rather than deleting newer files from
+  database. Use this to preserve scores, comments, etc. when replacing
+  all files.
 
 ## Details
 
@@ -23,10 +31,14 @@ from the `site` dropdown. An alternative to running `screen` is to call
 may be added to a sites database (`flights/flights_<site>.txt`) by hand
 if necessary.
 
-When an image file is updated (presumably from downloading a repaired
-image), the old image is replaced in the database with the new one, thus
-the score, repair flag, and comments will be reset. This sets you up for
-assessing repaired images.
+Normally, when an image file is updated (presumably from downloading a
+repaired image), the old image is replaced in the database with the new
+one, thus the score, repair flag, and comments will be reset. This sets
+you up for assessing repaired images. You can set `update = TRUE` to
+change this behavior; in that case, file timestamps will be updated to
+match the new files, and scores, etc. will not be reset. Use
+`update = TRUE` if you've re-downloaded files without fundamentally
+changing them.
 
 `screen` displays the selected image with a red outline indicating the
 site footprint. It includes the following controls:

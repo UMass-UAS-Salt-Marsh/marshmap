@@ -41,7 +41,7 @@ screen; call if you're unable or unwilling to run screen."></head><body>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_flights_db</span><span class="op">(</span><span class="va">site</span>, refresh <span class="op">=</span> <span class="cn">FALSE</span>, really <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_flights_db</span><span class="op">(</span><span class="va">site</span>, update <span class="op">=</span> <span class="cn">FALSE</span>, refresh <span class="op">=</span> <span class="cn">FALSE</span>, really <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -50,6 +50,11 @@ screen; call if you're unable or unwilling to run screen."></head><body>
 
 <dl><dt id="arg-site">site<a class="anchor" aria-label="anchor" href="#arg-site"></a></dt>
 <dd><p>Site abbreviation</p></dd>
+
+
+<dt id="arg-update">update<a class="anchor" aria-label="anchor" href="#arg-update"></a></dt>
+<dd><p>If TRUE, update file timestamps rather than deleting newer files from database.
+Use this to preserve scores, comments, etc. when replacing all files.</p></dd>
 
 
 <dt id="arg-refresh">refresh<a class="anchor" aria-label="anchor" href="#arg-refresh"></a></dt>

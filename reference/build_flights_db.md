@@ -6,7 +6,7 @@ Build or update the flights database for a site, normally called by
 ## Usage
 
 ``` r
-build_flights_db(site, refresh = FALSE, really = FALSE)
+build_flights_db(site, update = FALSE, refresh = FALSE, really = FALSE)
 ```
 
 ## Arguments
@@ -14,6 +14,12 @@ build_flights_db(site, refresh = FALSE, really = FALSE)
 - site:
 
   Site abbreviation
+
+- update:
+
+  If TRUE, update file timestamps rather than deleting newer files from
+  database. Use this to preserve scores, comments, etc. when replacing
+  all files.
 
 - refresh:
 
