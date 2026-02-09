@@ -103,6 +103,21 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
          suppressWarnings(st_crop(train_transects, patch_ext))
       }, error = function(e) NULL)
       
+
+      if (!is.null(train_transects_patch) && nrow(train_transects_patch) > 0) {               # make sure cropping didn't introduce lines
+         geom_types <- st_geometry_type(train_transects_patch)
+         if (any(geom_types != "POLYGON" & geom_types != "MULTIPOLYGON")) {
+            train_transects_patch <- train_transects_patch[
+               geom_types %in% c("POLYGON", "MULTIPOLYGON"), 
+            ]
+         }
+         
+         if (nrow(train_transects_patch) == 0) {                                            # If nothing left after filtering, skip
+            train_transects_patch <- NULL
+         }
+      }
+      
+      
       if (!is.null(train_transects_patch) && nrow(train_transects_patch) > 0) {
          train_label_rast <- rasterize(train_transects_patch, template, field = "subclass")
          train_label_array <- matrix(values(train_label_rast), nrow = nrow(train_label_rast), 
@@ -137,6 +152,21 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
          suppressWarnings(st_crop(val_transects, patch_ext))
       }, error = function(e) NULL)
       
+      
+      if (!is.null(val_transects_patch) && nrow(val_transects_patch) > 0) {               # make sure cropping didn't introduce lines
+         geom_types <- st_geometry_type(val_transects_patch)
+         if (any(geom_types != "POLYGON" & geom_types != "MULTIPOLYGON")) {
+            val_transects_patch <- val_transects_patch[
+               geom_types %in% c("POLYGON", "MULTIPOLYGON"), 
+            ]
+         }
+         
+         if (nrow(val_transects_patch) == 0) {                                            # If nothing left after filtering, skip
+            val_transects_patch <- NULL
+         }
+      }
+      
+      
       if (!is.null(val_transects_patch) && nrow(val_transects_patch) > 0) {
          val_label_rast <- rasterize(val_transects_patch, template, field = "subclass")
          val_label_array <- matrix(values(val_label_rast), nrow = nrow(val_label_rast), 
@@ -168,6 +198,8 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
    }
    
    
+   # At the end of unet_extract_training_patches():
+   
    # Ensure n_train_pixels and n_val_pixels are never NA (set to 0 if not set)
    metadata$n_train_pixels[is.na(metadata$n_train_pixels)] <- 0
    metadata$n_val_pixels[is.na(metadata$n_val_pixels)] <- 0
@@ -182,24 +214,41 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
    message('  Patches with val labels: ', sum(has_val))
    message('  Patches with both: ', sum(has_train & has_val))
    
+   # Filter everything first
+   patches_filtered <- patches[has_any, , , ]
+   labels_filtered <- labels[has_any, , ]
+   train_masks_filtered <- train_masks[has_any, , ]
+   val_masks_filtered <- val_masks[has_any, , ]
+   metadata_filtered <- metadata[has_any, ]
+   has_train_filtered <- has_train[has_any]
+   has_val_filtered <- has_val[has_any]
    
-   # Validation check
-   if (any(has_train & rowSums(train_masks[has_any, , ], dims = 2) == 0)) {
+   # NOW do validation checks on filtered data
+   train_mask_sums <- apply(train_masks_filtered, 1, sum)
+   val_mask_sums <- apply(val_masks_filtered, 1, sum)
+   
+   if (any(has_train_filtered & train_mask_sums == 0)) {
+      bad_patches <- which(has_train_filtered & train_mask_sums == 0)
+      message('ERROR: Found ', length(bad_patches), ' patches with has_train=TRUE but zero mask pixels')
+      message('Patch IDs: ', paste(metadata_filtered$patch_id[bad_patches], collapse=', '))
       stop('BUG: Some patches flagged has_train=TRUE have zero train mask pixels!')
    }
-   if (any(has_val & rowSums(val_masks[has_any, , ], dims = 2) == 0)) {
+   
+   if (any(has_val_filtered & val_mask_sums == 0)) {
+      bad_patches <- which(has_val_filtered & val_mask_sums == 0)
+      message('ERROR: Found ', length(bad_patches), ' patches with has_val=TRUE but zero mask pixels')
+      message('Patch IDs: ', paste(metadata_filtered$patch_id[bad_patches], collapse=', '))
       stop('BUG: Some patches flagged has_val=TRUE have zero val mask pixels!')
    }
    
-   
-   # Return ALL patches, but with separate train/val masks
+   # Return filtered data
    return(list(
-      patches = patches[has_any, , , ],
-      labels = labels[has_any, , ],
-      train_masks = train_masks[has_any, , ],
-      val_masks = val_masks[has_any, , ],
-      metadata = metadata[has_any, ],
-      has_train = has_train[has_any],
-      has_val = has_val[has_any]
+      patches = patches_filtered,
+      labels = labels_filtered,
+      train_masks = train_masks_filtered,
+      val_masks = val_masks_filtered,
+      metadata = metadata_filtered,
+      has_train = has_train_filtered,
+      has_val = has_val_filtered
    ))
 }

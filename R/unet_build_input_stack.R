@@ -86,14 +86,5 @@ unet_build_input_stack <- function(config) {
    }
    
    z <- rast(z)                                                               # convert the list of rasters to a raster stack
-   
-   
-   ###  ********************************** TEMPORARY CODE **********************************
-   message('Reprojecting...   [this is temporary, pending reprojection change in gather]')
-   z <- project(z, 'epsg:26986')                                     
-   message('Done projecting')
-   ###  ************************************************************************************
-   
-   
    z
 }

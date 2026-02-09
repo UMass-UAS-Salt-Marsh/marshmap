@@ -55,25 +55,8 @@ do_prep_unet <- function(model, save_gis) {
    
    
    message('Loading transects...')
-   # transects <- st_read(transect_file, 
-   #                      promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
-   
-   
-   ###
-   transects <- st_read('/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp', 
-                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects                                    ************* SO TEMPORARY!
-   ###
-   
-   
-   # ###  ********************************** TEMPORARY CODE **********************************
-   # transects <- st_zm(transects, drop = TRUE)                                 # DROP Z VALUES - this will happen in gather
-   # message('Reprojecting...   [this is temporary, pending reprojection change in gather]')
-   # transects <- st_transform(transects, 'epsg:26986')      
-   # 
-   # st_write(transects, '/work/pi_cschweik_umass_edu/marsh_mapping/data/rr/shapefiles/RR_Site_Polygon_Layer_final_proj.shp')
-   # 
-   # message('Done projecting')
-   # ###  ************************************************************************************
+   transects <- st_read(transect_file, 
+                         promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
    
    
    names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
