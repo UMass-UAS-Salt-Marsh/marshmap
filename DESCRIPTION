@@ -33,6 +33,7 @@ Imports:
     shinybusy,
     shinyWidgets,
     moments,
+    tidyr,
     reticulate
 Remotes:
     UMassCDS/slurmcollie,
