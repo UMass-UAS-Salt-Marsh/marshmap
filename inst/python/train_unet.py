@@ -144,6 +144,12 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device):
         labels = labels.to(device)
         masks = masks.to(device)
         
+        # Skip batches with no labeled pixels (can happen with sparse data + shuffling)
+        if masks.sum() == 0:
+            # Don't print every time, just count it
+            nan_count += 1
+            continue
+        
         # Check for NaN in batch
         if torch.isnan(patches).any() or torch.isnan(labels.float()).any():
             print(f"  WARNING: NaN in input batch {batch_idx}")
