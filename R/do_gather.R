@@ -49,10 +49,6 @@ do_gather <- function(site, pattern = '',
       ave(seq_along(x), x, 
           FUN = function(y) base::sample(rep_len(1:10, length(y))))
    
-   
-   message('terra version is ', packageVersion('terra'), '; should be 1.8.73 or higher')
-   
-   
    start <- Sys.time()
    count <- NULL
    count$tiff <- count$transect <- 0
