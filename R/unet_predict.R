@@ -8,7 +8,7 @@
 #' @param in_channels Number of input channels
 #' @param class_mapping Named vector mapping original to internal classes
 #' @returns List with predictions, labels, masks, and probabilities
-#' @export
+#' @keywords internal
 
 unet_predict <- function(model_path, data_dir, site, dataset = 'test',
                          num_classes = 4, in_channels = 8,
@@ -78,7 +78,7 @@ unet_predict <- function(model_path, data_dir, site, dataset = 'test',
 #' @param pred_results Results from unet_predict()
 #' @returns confusionMatrix object from caret
 #' @importFrom caret confusionMatrix
-#' @export
+#' @keywords internal
 
 unet_confusion_matrix <- function(pred_results) {
    
