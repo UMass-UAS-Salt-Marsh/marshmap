@@ -35,3 +35,4 @@ List with predictions, labels, masks, and probabilities
 \description{
 Predict with trained U-Net model
 }
+\keyword{internal}

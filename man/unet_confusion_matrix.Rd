@@ -15,3 +15,4 @@ confusionMatrix object from caret
 \description{
 Create confusion matrix from U-Net predictions
 }
+\keyword{internal}
