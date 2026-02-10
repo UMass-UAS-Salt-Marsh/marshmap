@@ -55,10 +55,10 @@
 #' @param update If TRUE, update file timestamps rather than deleting newer files from database.
 #'    Use this to preserve scores, comments, etc. when replacing all files.
 #' @import shiny
-#' @import bslib
+#' @importFrom bslib bs_theme card
 #' @importFrom shinybusy add_busy_spinner
 #' @importFrom shinyjs useShinyjs
-#' @import shinyWidgets
+#' @importFrom shinyWidgets materialSwitch sliderTextInput updateSliderTextInput
 #' @importFrom terra rast nlyr
 #' @export
 
