@@ -76,7 +76,7 @@ do_prep_unet <- function(model, save_gis) {
    }
    
       
-   message('Creating train/validate split...')                                # ----- split into training and validation data
+   message('Creating train/validate/test split...')                           # ----- split into training, validation, and test data
    split <- unet_spatial_train_val_split(
       transects = transects,
       holdout = config$holdout 
@@ -89,11 +89,12 @@ do_prep_unet <- function(model, save_gis) {
       transects = transects,
       train_ids = split$train_ids,
       validate_ids = split$validate_ids,
+      test_ids = split$test_ids,
       patch = config$patch,
       overlap = config$overlap,
       classes = config$classes,
       class_mapping = config$class_mapping
-   )                                                                          # ----- extract training patches
+   )
    
    
    patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
