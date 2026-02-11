@@ -31,8 +31,8 @@ source_python("inst/python/train_unet.py")
 
 
 original_classes <- c(3, 4, 5, 6)  # Maps to 0, 1, 2, 3 internally
-site <- 'nor'
-model <- 'unet02'
+site <- 'rr'
+model <- 'unet01'
 data_dir <- file.path(resolve_dir('X:/projects/uas/marshmap/data/<site>/unet', site), model) 
 output_dir <- file.path(data_dir, 'models')
 
@@ -58,8 +58,3 @@ result <- train_unet(
 
 # result will be a list: [model_path, final_accuracy]
 print(result)
-
-
-# still to add:
-# - early_stopping_patience
-

@@ -209,22 +209,34 @@ def validate(model, dataloader, criterion, device, num_classes=4):
     running_loss = 0.0
     correct = 0
     total = 0
+    nan_count = 0  # NEW
     
     # For per-class metrics
     class_correct = [0] * num_classes
     class_total = [0] * num_classes
     
-    with torch.no_grad():  # No gradients needed for validation
+    with torch.no_grad():
         for patches, labels, masks in dataloader:
             patches = patches.to(device)
             labels = labels.to(device)
             masks = masks.to(device)
+            
+            # NEW: Skip batches with no labeled pixels
+            if masks.sum() == 0:
+                nan_count += 1
+                continue
             
             # Forward pass
             outputs = model(patches)
             
             # Compute loss
             loss = criterion(outputs, labels, masks)
+            
+            # NEW: Check for NaN loss
+            if torch.isnan(loss) or torch.isinf(loss):
+                nan_count += 1
+                continue
+            
             running_loss += loss.item()
             
             # Get predictions (argmax over classes)
@@ -244,7 +256,7 @@ def validate(model, dataloader, criterion, device, num_classes=4):
                     class_correct[c] += (predicted[class_mask] == c).sum().item()
                     class_total[c] += class_mask.sum().item()
     
-    epoch_loss = running_loss / len(dataloader)
+    epoch_loss = running_loss / (len(dataloader) - nan_count) if (len(dataloader) - nan_count) > 0 else float('nan')
     overall_acc = correct / total if total > 0 else 0
     
     # Per-class accuracy
