@@ -13,7 +13,7 @@ source_python("inst/python/train_unet.py")
 #' **encoder_weights**. `imagenet` start with weights learned on ImageNet (natural images); 
 #' gives faster convergence, but might bias toward RGB patterns. NULL starts with random 
 #' initialization, thus learn severything from this dataset; no bias, but slower training. 
-#' My 8 channels don't match ImageNet's 3, so NULL might work better.
+#' You can only use `imagenet` with RGB data, so set it to NULL.
 #'
 #' **weight_decay**. L2 regularization - penalizes large weights to prevent overfitting. 
 #' Higher values (1e-3) = stronger regularization. Lower values (1e-5) = weaker. 
