@@ -133,7 +133,7 @@ class MaskedCrossEntropyLoss(nn.Module):
 
 # Part 4: Training function
 
-def train_one_epoch(model, dataloader, criterion, optimizer, device):
+def train_one_epoch(model, dataloader, criterion, optimizer, device, max_norm=1.0):
     """Train for one epoch"""
     model.train()
     running_loss = 0.0
@@ -188,7 +188,7 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device):
             continue
         
         loss.backward()
-        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
         optimizer.step()
         running_loss += loss.item()
     
@@ -344,23 +344,32 @@ def plot_training_curves(history, best_epoch, best_val_acc, output_dir, site, or
 
 # Part 7: Main training loop
 
-def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001, 
-               output_dir="models", num_classes=4, in_channels=8,
-               original_classes=None, plot_curves=True): 
+def train_unet(site, data_dir, output_dir="models", original_classes=None, 
+    encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001, 
+    weight_decay=1e-4, n_epochs=50, batch_size=8, early_stopping_patience=None, 
+    gradient_clip_max_norm=1.0, num_classes=4, in_channels=8, plot_curves=True):
+
     """
     Main training function
     
     Args:
+        site: Site's 3-letter code (e.g., "nor")
         data_dir: Directory containing numpy files
-        site: Site name (e.g., "site1")
+        output_dir: Where to save trained model and diagnostic plots
+        original_classes: Optional list/array mapping internal class indices to original class numbers
+           e.g., [3, 4, 5, 6] means class 0→3, class 1→4, etc.
+        encoder_name: Pre-trained encoder to use   
+        encoder_weights: Load pretrained ImageNet weights ("ImageNet", only when RGB!) or train from scratch (None)
+        learning_rate: Learning rate for optimizer
+        weight_decay: L2 regularization - penalizes large weights to prevent overfitting
         n_epochs: Number of training epochs
         batch_size: Batch size for training
-        learning_rate: Learning rate for optimizer
-        output_dir: Where to save trained model
-        num_classes: Number of classes (4 for your gradient)
-        in_channels: Number of input channels (8 for your multispectral + DEM)
-        original_classes: Optional list/array mapping internal class indices to original class numbers
-                         e.g., [3, 4, 5, 6] means class 0→3, class 1→4, etc.
+        early_stopping_patience: Stop early if no improvement for specified numher of epochs
+        gradient_clip_max_norm: How much to clip gradient?
+        num_classes: Number of classes to fit
+        in_channels: Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
+        plot_curves: Create diagnostic plot of fit progress in output_dir?
+        
     """
     
     # Set up class mapping
@@ -375,10 +384,6 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
     print("="*60)
     print(f"Training U-Net for {site}")
     print(f"Class mapping: {class_names}")
-    print("="*60)
-    
-    print("="*60)
-    print(f"Training U-Net for {site}")
     print("="*60)
     
     # Set device
@@ -416,27 +421,36 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
     unique_labels = np.unique(train_labels)
     print(f"\nUnique label values: {unique_labels}")
     
+    # Check that num_classes is correct
+    actual_classes = len(np.unique(train_labels[train_labels != 255]))
+    assert actual_classes == num_classes, f"Found {actual_classes} classes but expected {num_classes}"
+    
     
     # Calculate class weights
     print("\nCalculating class weights...")
-    unique_classes = np.unique(train_labels)
-    unique_classes = unique_classes[unique_classes != 255]
-    num_classes = len(unique_classes)
     
-    print(f"Number of classes: {num_classes}")
-    print(f"Class values: {unique_classes}")
+    # ALWAYS count ALL classes (0 to num_classes-1), even if some have zero pixels
+    class_pixel_counts = np.zeros(num_classes)
     
-    class_pixel_counts = []
-    for c in unique_classes:  # Use actual class values (0,1,2,3)
+    for c in range(num_classes):  # 0, 1, 2, 3 - always all of them
         count = ((train_labels == c) & (train_masks == 1)).sum()
-        class_pixel_counts.append(float(count))
-    
-    class_weights = 1.0 / (np.array(class_pixel_counts) + 1e-6)
-    class_weights = class_weights / class_weights.sum() * num_classes
+        class_pixel_counts[c] = float(count)
     
     print(f"\nClass pixel counts:")
-    for i, (count, orig_class) in enumerate(zip(class_pixel_counts, original_classes)):
-        print(f"  Class {orig_class} (internal {i}): {count:.0f} pixels, weight={class_weights[i]:.4f}")
+    for i in range(num_classes):
+        print(f"  Class {int(original_classes[i])} (internal {i}): {class_pixel_counts[i]:.0f} pixels")
+    
+    # Check for missing classes
+    if np.any(class_pixel_counts == 0):
+        zero_classes = [int(original_classes[i]) for i in range(num_classes) if class_pixel_counts[i] == 0]
+        print(f"\nWARNING: Classes {zero_classes} have ZERO training pixels!")
+        print("These classes cannot be learned. Consider removing them from your analysis.")
+    
+    # Compute weights (epsilon prevents division by zero)
+    class_weights = 1.0 / (class_pixel_counts + 1e-6)
+    class_weights = class_weights / class_weights.sum() * num_classes
+    
+    print(f"\nClass weights: {class_weights}")    
     
     
     # Create datasets
@@ -451,14 +465,21 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
     print(f"\nTrain batches: {len(train_loader)}")
     print(f"Val batches: {len(validate_loader)}")
     
+    
+    # Can't use ImageNet weights with 8 channels (ImageNet is 3-channel RGB)
+    if in_channels != 3 and encoder_weights == 'imagenet':
+        print(f"WARNING: Cannot use ImageNet weights with {in_channels} channels.")
+        print(f"Setting encoder_weights=None (training from scratch)")
+        encoder_weights = None
+    
+    
     # Create model
     print("\nBuilding U-Net model...")
     model = smp.Unet(
-   #     encoder_name='resnet34',       # Encoder backbone
-        encoder_name='resnet18',       # try smaller encoder
-        encoder_weights='imagenet',    # Use pretrained weights
-        in_channels=in_channels,       # 8 input channels
-        classes=num_classes,           # 4 output classes
+       encoder_name=encoder_name,
+       encoder_weights=encoder_weights,
+       in_channels=in_channels,
+       classes=num_classes,
     )
     
     # Use both GPUs if available
@@ -471,9 +492,10 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
     # Convert class_weights to torch tensor and move to device
     class_weights_tensor = torch.FloatTensor(class_weights).to(device)
 
+
     # Loss and optimizer
     criterion = MaskedCrossEntropyLoss(weight=class_weights_tensor, ignore_index=255)
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
     
     
     # Track metrics
@@ -484,12 +506,14 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
         'class_ccr': {c: [] for c in range(num_classes)}
     }
     
+
     print("\n" + "="*60)
     print("Starting training...")
     print("="*60)
     
     best_validate_acc = 0.0
     best_epoch = 0
+    epochs_without_improvement = 0  # NEW
     
     for epoch in range(n_epochs):
         # Train
@@ -520,6 +544,7 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
         if validate_acc > best_validate_acc:
             best_validate_acc = validate_acc
             best_epoch = epoch + 1
+            epochs_without_improvement = 0  # NEW: reset counter
             
             os.makedirs(output_dir, exist_ok=True)
             model_path = os.path.join(output_dir, f"unet_{site}_best.pth")
@@ -530,6 +555,18 @@ def train_unet(data_dir, site, n_epochs=50, batch_size=8, learning_rate=0.0001,
                 torch.save(model.state_dict(), model_path)
             
             print(f"  → Saved best model (CCR={best_validate_acc:.2%})")
+        else:
+            # NEW: Early stopping logic
+            if early_stopping_patience is not None:
+                epochs_without_improvement += 1
+                print(f"  (No improvement for {epochs_without_improvement} epoch(s))")
+                
+                if epochs_without_improvement >= early_stopping_patience:
+                    print(f"\n{'='*60}")
+                    print(f"Early stopping triggered after {epoch+1} epochs")
+                    print(f"No improvement for {early_stopping_patience} consecutive epochs")
+                    print(f"{'='*60}")
+                    break
     
     print("\n" + "="*60)
     print("Training complete!")

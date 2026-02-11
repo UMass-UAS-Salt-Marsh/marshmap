@@ -10,9 +10,11 @@
 #' @returns List with predictions, labels, masks, and probabilities
 #' @keywords internal
 
+
 unet_predict <- function(model_path, data_dir, site, dataset = 'test',
                          num_classes = 4, in_channels = 8,
                          class_mapping = c('3'=0, '4'=1, '5'=2, '6'=3)) {
+   
    
    # Check Python environment
    if (!reticulate::py_module_available('torch')) {
