@@ -80,7 +80,8 @@ unet_confusion_matrix <- function(pred_results) {
    
    cm <- caret::confusionMatrix(
       data = pred_results$predictions,
-      reference = pred_results$labels
+      reference = pred_results$labels,
+      mode = 'prec_recall'
    )
    
    return(cm)

@@ -12,7 +12,7 @@ source_python("inst/python/train_unet.py")
 #'
 #' **encoder_weights**. `imagenet` start with weights learned on ImageNet (natural images); 
 #' gives faster convergence, but might bias toward RGB patterns. NULL starts with random 
-#' initialization, thus learn severything from this dataset; no bias, but slower training. 
+#' initialization, thus learns everything from this dataset; no bias, but slower training. 
 #' You can only use `imagenet` with RGB data, so set it to NULL.
 #'
 #' **weight_decay**. L2 regularization - penalizes large weights to prevent overfitting. 
@@ -26,13 +26,14 @@ source_python("inst/python/train_unet.py")
 #' **gradient_clip_max_norm**. Prevents exploding gradients by capping gradient magnitude. 
 #' Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 #'
-#' **early_stopping_patience**. Stop early if no improvement for specified numher of epochs. 
+#' **early_stopping_patience**. Stop early if no improvement for specified number of epochs. 
 #' Use NULL to train all epochs. Start with 15 epochs.
 
 
-original_classes <- c(3, 4, 5, 6)  # Maps to 0, 1, 2, 3 internally
-site <- 'rr'
-model <- 'unet01'
+# original_classes <- c(3, 4, 5, 6)  # Maps to 0, 1, 2, 3 internally
+original_classes <- c(3, 4, 5)  # Maps to 0, 1, 2, 3 internally
+site <- 'nor'
+model <- 'unet04'
 data_dir <- file.path(resolve_dir('X:/projects/uas/marshmap/data/<site>/unet', site), model) 
 output_dir <- file.path(data_dir, 'models')
 
@@ -42,6 +43,7 @@ result <- train_unet(
    site = site,                           # 3-letter site code
    data_dir = data_dir,                   # source data directory with patch data from prep_unet
    output_dir = output_dir,               # result directory for trained model and diagnostic plots
+   use_ordinal = TRUE,                    # ---> USE ORDINAL REGRESSION U-NET!!!
    original_classes = original_classes,   # class mapping - our subclasses corresponding to 0:(n-1) patch classes
    encoder_name = 'resnet18',             # pre-trained encoder to use
    encoder_weights = NULL,                # Load pretrained ImageNet weights, only for plain RGB data ('ImageNet') or train from scratch (NULL)
@@ -51,8 +53,8 @@ result <- train_unet(
    batch_size = 8L,                       #
    early_stopping_patience = 15,          #  *** add
    gradient_clip_max_norm = 1,            # How much to clip gradient?
-   num_classes=4L,                        # Number of classes to fit; must = length(original_classes) and match patch data
-   in_channels=8L,                        # Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
+   num_classes=3L,                        # Number of classes to fit; must = length(original_classes) and match patch data
+   in_channels=16L,                        # Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
    plot_curves = TRUE                     # Create diagnostic plot of fit progress in output_dir?
 )
 
