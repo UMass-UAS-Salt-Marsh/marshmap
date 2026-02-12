@@ -556,15 +556,29 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         if validate_acc > best_validate_acc:
             best_validate_acc = validate_acc
             best_epoch = epoch + 1
-            epochs_without_improvement = 0  # NEW: reset counter
             
             os.makedirs(output_dir, exist_ok=True)
             model_path = os.path.join(output_dir, f"unet_{site}_best.pth")
+            config_path = os.path.join(output_dir, f"unet_{site}_config.json")  # NEW
             
+            # Save model weights
             if isinstance(model, nn.DataParallel):
                 torch.save(model.module.state_dict(), model_path)
             else:
                 torch.save(model.state_dict(), model_path)
+            
+            # Save model configuration
+            import json
+            config = {
+                'encoder_name': encoder_name,
+                'encoder_weights': encoder_weights,
+                'in_channels': in_channels,
+                'num_classes': num_classes,
+                'original_classes': original_classes,
+                'site': site
+            }
+            with open(config_path, 'w') as f:
+                json.dump(config, f, indent=2)
             
             print(f"  → Saved best model (CCR={best_validate_acc:.2%})")
         else:

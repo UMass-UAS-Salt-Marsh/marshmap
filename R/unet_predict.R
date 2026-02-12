@@ -1,19 +1,14 @@
 #' Predict with trained U-Net model
 #'
-#' @param model_path Path to trained model (.pth file)
+#' @param model_file Path to trained model (.pth file)
 #' @param data_dir Directory containing test numpy files
 #' @param site Site name (e.g., 'rr')
 #' @param dataset Which dataset to predict on ('test' or 'validate')
-#' @param num_classes Number of classes
-#' @param in_channels Number of input channels
-#' @param class_mapping Named vector mapping original to internal classes
 #' @returns List with predictions, labels, masks, and probabilities
 #' @keywords internal
 
 
-unet_predict <- function(model_path, data_dir, site, dataset = 'test',
-                         num_classes = 4, in_channels = 8,
-                         class_mapping = c('3'=0, '4'=1, '5'=2, '6'=3)) {
+unet_predict <- function(model_file, data_dir, site, dataset = 'test') {
    
    
    # Check Python environment
@@ -29,18 +24,12 @@ unet_predict <- function(model_path, data_dir, site, dataset = 'test',
    
    reticulate::source_python(python_script)
    
-   # Get original classes from mapping
-   original_classes <- as.integer(names(class_mapping))
-   
    # Call Python prediction function
    results <- predict_unet(
-      model_path = model_path,
+      model_file = model_file,
       data_dir = data_dir,
       site = site,
-      num_classes = num_classes,
-      in_channels = in_channels,
-      dataset = dataset,
-      original_classes = original_classes
+      dataset = dataset
    )
    
    # Convert to R format
@@ -49,6 +38,7 @@ unet_predict <- function(model_path, data_dir, site, dataset = 'test',
    
    predictions_labeled <- results$predictions[labeled_idx]
    labels_labeled <- results$labels[labeled_idx]
+   original_classes <- results$original_classes
    
    # Map back to original classes
    pred_original <- original_classes[predictions_labeled + 1]  # +1 for R indexing
