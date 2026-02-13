@@ -400,7 +400,7 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001, 
     weight_decay=1e-4, n_epochs=50, batch_size=8, early_stopping_patience=None, 
     gradient_clip_max_norm=1.0, num_classes=4, in_channels=8, plot_curves=True,
-    use_ordinal=False):  # NEW PARAMETER
+    use_ordinal=False):
     """
     Main training function
     
@@ -423,6 +423,13 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         use_ordinal: Use ordinal regression for ordered classes (requires coral_pytorch)
     """
     
+    # Set up class mapping
+    if original_classes is not None:
+        original_classes = [int(x) for x in original_classes]
+    else:
+        original_classes = list(range(num_classes))
+
+    
     # Validate ordinal mode
     if use_ordinal:
         if not CORAL_AVAILABLE:
@@ -442,11 +449,6 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         print("Adjacent class errors penalized less than distant errors")
         print("="*60)
     
-    # Set up class mapping
-    if original_classes is not None:
-        original_classes = [int(x) for x in original_classes]
-    else:
-        original_classes = list(range(num_classes))
         
     class_names = {i: f"Class {orig}" for i, orig in enumerate(original_classes)}
     
