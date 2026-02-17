@@ -7,12 +7,16 @@
 #' 
 #' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
 #'    directory. This file must contain the following:
-#'    - year: the year to fit
-#'    - orthos: portable names of all orthophotos to include
+#'    - years: the year(s) of field data to fit
+#'    - orthos: file names of all orthophotos to include
 #'    - patch: size in pixels
 #'    - depth: number of of downsampling stages
 #'    - classes: vector of target classes
-#'    - holdout: percent of data to hold out for validation
+#'    - holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
+#'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
+#'    - overlap: Proportion overlap of patches
+#'    - upscale: number of cells to upscale (default = 1). Use 3 to upscale to 3x3, 5 for 5x5, etc.
+#'    - smooth: number of cells to include in moving window mean (default = 1). Use 3 to smooth to 3x3, etc.
 #' @param save_gis If TRUE, saves GIS data for assessment and debugging
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults.

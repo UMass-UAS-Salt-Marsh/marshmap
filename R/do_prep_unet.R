@@ -13,6 +13,7 @@
 #'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
 #'    - overlap: Proportion overlap of patches
 #'    - upscale: number of cells to upscale (default = 1). Use 3 to upscale to 3x3, 5 for 5x5, etc.
+#'    - smooth: number of cells to include in moving window mean (default = 1). Use 3 to smooth to 3x3, etc.
 #' @param save_gis If TRUE, saves GIS data for assessment and debugging
 #' @importFrom yaml read_yaml
 #' @importFrom terra rast values global quantile clamp ext res rast rasterize crs
@@ -45,8 +46,14 @@ do_prep_unet <- function(model, save_gis) {
    names(config$class_mapping) <- config$classes                              # mapping to our class numbers
    config$seed <- 42                                                          # random seed for repeatability
    
+   if(is.null(config$reclass))                                                # default: no reclassifying
+      config$reclass <- ''
+   
    if(is.null(config$upscale))                                                # default: no upscaling
-      config$upscale = 1
+      config$upscale <- 1
+   
+   if(is.null(config$smooth))                                                 # default: no smoothing
+      config$upscale <- 1
    
    
    x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
@@ -98,9 +105,21 @@ do_prep_unet <- function(model, save_gis) {
    )                                                                          
    
    
+   if(config$smooth > 1) {                                                    # ----- smooth training data
+      message('======= Smoothing with ', config$upscale, 'x', config$upscale, ' moving window =====')
+      smooth_stack <- rast(nlyr(input_stack))
+      
+      for (i in 1:nlyr(input_stack)) {
+         band <- input_stack[[i]]
+         band_smooth <- focal(band, w = matrix(1/config$smooth^2, config$smooth, config$smooth), fun = 'mean', na.rm = TRUE)
+         smooth_stack[[i]] <- band_smooth
+      }
+   }
+   
+   
    if(config$upscale > 1) {                                                   # ----- upscale training data
+      message('======= Upscaling to ', config$upscale, 'x', config$upscale, ' =====')
       input_stack <- aggregate(input_stack, fact = config$upscale, fun = mean)
-      message('*** Upscaling to ', config$upscale, 'x', config$upscale, ' ***')
    }
    
    
