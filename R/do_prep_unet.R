@@ -12,6 +12,7 @@
 #'    - holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
 #'      created by `gather` to yield at least 20% of separate polys. There are 5 sets to choose from.
 #'    - overlap: Proportion overlap of patches
+#'    - upscale: number of cells to upscale (default = 1). Use 3 to upscale to 3x3, 5 for 5x5, etc.
 #' @param save_gis If TRUE, saves GIS data for assessment and debugging
 #' @importFrom yaml read_yaml
 #' @importFrom terra rast values global quantile clamp ext res rast rasterize crs
@@ -44,10 +45,14 @@ do_prep_unet <- function(model, save_gis) {
    names(config$class_mapping) <- config$classes                              # mapping to our class numbers
    config$seed <- 42                                                          # random seed for repeatability
    
+   if(is.null(config$upscale))                                                # default: no upscaling
+      config$upscale = 1
+   
+   
    x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
    transect_file <- paste0(file_path_sans_ext(x), '_final.shp')
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
-    
+   
    
    # 1. Build input stack
    message('Building input stack...')
@@ -56,7 +61,7 @@ do_prep_unet <- function(model, save_gis) {
    
    message('Loading transects...')
    transects <- st_read(transect_file, 
-                         promote_to_multi = FALSE, quiet = TRUE)              # ----- read transects
+                        promote_to_multi = FALSE, quiet = TRUE)              # ----- read transects
    
    
    names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
@@ -85,12 +90,18 @@ do_prep_unet <- function(model, save_gis) {
       transects <- transects[!invalid_geoms, ]
    }
    
-      
+   
    message('Creating train/validate/test split...')                           # ----- split into training, validation, and test data
    split <- unet_spatial_train_val_split(
       transects = transects,
       holdout = config$holdout 
    )                                                                          
+   
+   
+   if(config$upscale > 1) {                                                   # ----- upscale training data
+      input_stack <- aggregate(input_stack, fact = config$upscale, fun = mean)
+      message('*** Upscaling to ', config$upscale, 'x', config$upscale, ' ***')
+   }
    
    
    message('Extracting patches...')                                           # ----- extract patches
