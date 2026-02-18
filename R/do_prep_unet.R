@@ -53,7 +53,7 @@ do_prep_unet <- function(model, save_gis) {
       config$upscale <- 1
    
    if(is.null(config$smooth))                                                 # default: no smoothing
-      config$upscale <- 1
+      config$smooth <- 1
    
    
    x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
@@ -106,14 +106,8 @@ do_prep_unet <- function(model, save_gis) {
    
    
    if(config$smooth > 1) {                                                    # ----- smooth training data
-      message('======= Smoothing with ', config$upscale, 'x', config$upscale, ' moving window =====')
-      smooth_stack <- rast(nlyr(input_stack))
-      
-      for (i in 1:nlyr(input_stack)) {
-         band <- input_stack[[i]]
-         band_smooth <- focal(band, w = matrix(1/config$smooth^2, config$smooth, config$smooth), fun = 'mean', na.rm = TRUE)
-         smooth_stack[[i]] <- band_smooth
-      }
+      message('======= Smoothing with ', config$smooth, 'x', config$smooth, ' moving window =====')
+      input_stack <- focal(input_stack, w = matrix(1/config$smooth^2, config$smooth, config$smooth), fun = 'mean', na.rm = TRUE)
    }
    
    
