@@ -4,30 +4,16 @@
 \alias{unet_predict}
 \title{Predict with trained U-Net model}
 \usage{
-unet_predict(
-  model_path,
-  data_dir,
-  site,
-  dataset = "test",
-  num_classes = 4,
-  in_channels = 8,
-  class_mapping = c(`3` = 0, `4` = 1, `5` = 2, `6` = 3)
-)
+unet_predict(model_file, data_dir, site, dataset = "test")
 }
 \arguments{
-\item{model_path}{Path to trained model (.pth file)}
+\item{model_file}{Path to trained model (.pth file)}
 
 \item{data_dir}{Directory containing test numpy files}
 
 \item{site}{Site name (e.g., 'rr')}
 
 \item{dataset}{Which dataset to predict on ('test' or 'validate')}
-
-\item{num_classes}{Number of classes}
-
-\item{in_channels}{Number of input channels}
-
-\item{class_mapping}{Named vector mapping original to internal classes}
 }
 \value{
 List with predictions, labels, masks, and probabilities

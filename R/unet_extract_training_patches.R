@@ -97,6 +97,10 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       
       patches[i, , , ] <- patch_array
       
+      # NEW: Check which pixels have valid data (no NA in any channel)
+      # patch_array is [H, W, C], check across channel dimension
+      has_data <- apply(patch_array, c(1, 2), function(x) !any(is.na(x)))
+      
       # Create template
       template <- rast(patch_ext, nrows = patch, ncols = patch, 
                        crs = crs(input_stack))
@@ -105,7 +109,8 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       train_result <- rasterize_transects_for_patch(train_transects, patch_ext, 
                                                     template, class_mapping)
       if (!is.null(train_result)) {
-         train_masks[i, , ] <- train_result$mask_array
+         # NEW: Zero out mask where ortho has no data
+         train_masks[i, , ] <- train_result$mask_array * has_data
          metadata$n_train_pixels[i] <- train_result$n_pixels
          metadata$train_classes[i] <- train_result$classes_string
          
@@ -122,7 +127,7 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       val_result <- rasterize_transects_for_patch(val_transects, patch_ext, 
                                                   template, class_mapping)
       if (!is.null(val_result)) {
-         val_masks[i, , ] <- val_result$mask_array
+         val_masks[i, , ] <- val_result$mask_array * has_data  # NEW: multiply by has_data
          metadata$n_val_pixels[i] <- val_result$n_pixels
          metadata$val_classes[i] <- val_result$classes_string
          
@@ -139,7 +144,7 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       test_result <- rasterize_transects_for_patch(test_transects, patch_ext, 
                                                    template, class_mapping)
       if (!is.null(test_result)) {
-         test_masks[i, , ] <- test_result$mask_array
+         test_masks[i, , ] <- test_result$mask_array * has_data  # NEW: multiply by has_data
          metadata$n_test_pixels[i] <- test_result$n_pixels
          metadata$test_classes[i] <- test_result$classes_string
          
@@ -152,6 +157,11 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
          }
       }
    }
+   
+   
+   # After extracting patches, check for NA coverage:
+   na_proportion <- sum(is.na(patches)) / length(patches)
+   message('Proportion of NA cells in patches: ', round(na_proportion * 100, 2), '%')
    
    
    # Ensure n_train_pixels, n_val_pixels, and n_test_pixels are never NA (set to 0 if not set)

@@ -10,10 +10,10 @@ unet_patch_stats(patch_data)
 \item{patch_data}{Extracted patches from \code{unet_extract_training_patches}}
 }
 \value{
-List with train_stats and val_stats data frames
+List with train_stats, val_stats, and test_stats data frames
 }
 \description{
-Reports stats separately for train and val masks.
+Reports stats separately for train, val, and test masks.
 Hope to see single class patches < 80\%.
 }
 \keyword{internal}

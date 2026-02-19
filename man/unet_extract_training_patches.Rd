@@ -9,6 +9,7 @@ unet_extract_training_patches(
   transects,
   train_ids,
   validate_ids,
+  test_ids,
   patch = 256,
   overlap = 0.5,
   classes,
@@ -24,6 +25,8 @@ unet_extract_training_patches(
 
 \item{validate_ids}{IDs of validation transects}
 
+\item{test_ids}{IDs of test transects}
+
 \item{patch}{Patch size (n pixels)}
 
 \item{overlap}{Proportional patch overlap (e.g., 0.75 for training, 0 for val)}
@@ -33,7 +36,7 @@ unet_extract_training_patches(
 \item{class_mapping}{Mapping from original to 0-indexed classes}
 }
 \value{
-List with patches, labels, train_masks, val_masks, metadata
+List with patches, labels, train_masks, val_masks, test_masks, metadata
 }
 \description{
 Extract training patches with separate train and val masks
