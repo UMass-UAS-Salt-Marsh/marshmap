@@ -109,12 +109,15 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       train_result <- rasterize_transects_for_patch(train_transects, patch_ext, 
                                                     template, class_mapping)
       if (!is.null(train_result)) {
-         # NEW: Zero out mask where ortho has no data
-         train_masks[i, , ] <- train_result$mask_array * has_data
-         metadata$n_train_pixels[i] <- train_result$n_pixels
+         # Mask out nodata areas
+         train_mask_clean <- train_result$mask_array * has_data
+         train_masks[i, , ] <- train_mask_clean
+         
+         # Recalculate n_pixels AFTER masking
+         metadata$n_train_pixels[i] <- sum(train_mask_clean)  # NEW: count after masking
          metadata$train_classes[i] <- train_result$classes_string
          
-         # Merge labels
+         # Merge labels (same as before)
          if (is.na(labels[i, 1, 1])) {
             labels[i, , ] <- train_result$label_array
          } else {
@@ -127,8 +130,9 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       val_result <- rasterize_transects_for_patch(val_transects, patch_ext, 
                                                   template, class_mapping)
       if (!is.null(val_result)) {
-         val_masks[i, , ] <- val_result$mask_array * has_data  # NEW: multiply by has_data
-         metadata$n_val_pixels[i] <- val_result$n_pixels
+         val_mask_clean <- val_result$mask_array * has_data
+         val_masks[i, , ] <- val_mask_clean
+         metadata$n_val_pixels[i] <- sum(val_mask_clean)  # After masking
          metadata$val_classes[i] <- val_result$classes_string
          
          # Merge labels
@@ -144,8 +148,9 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
       test_result <- rasterize_transects_for_patch(test_transects, patch_ext, 
                                                    template, class_mapping)
       if (!is.null(test_result)) {
-         test_masks[i, , ] <- test_result$mask_array * has_data  # NEW: multiply by has_data
-         metadata$n_test_pixels[i] <- test_result$n_pixels
+         test_mask_clean <- test_result$mask_array * has_data
+         test_masks[i, , ] <- test_mask_clean
+         metadata$n_test_pixels[i] <- sum(test_mask_clean)  # After masking
          metadata$test_classes[i] <- test_result$classes_string
          
          # Merge labels
