@@ -1,8 +1,11 @@
 # Script to print confusion matrix from U-Net model with test set
 
 
+
+model <- 'unet05_v2_primary'
+
+
 site <- 'nor'
-model <- 'unet04'
 data_dir <- file.path(resolve_dir('X:/projects/uas/marshmap/data/<site>/unet', site), model) 
 output_dir <- file.path(data_dir, 'models')
 model_file <- file.path(output_dir, resolve_dir('unet_<site>_best.pth', site))

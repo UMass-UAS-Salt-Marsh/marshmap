@@ -527,11 +527,14 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     print(f"\nTrain batches: {len(train_loader)}")
     print(f"Val batches: {len(validate_loader)}")
     
-    # Check encoder weights compatibility
-    if in_channels != 3 and encoder_weights == 'imagenet':
-        print(f"WARNING: Cannot use ImageNet weights with {in_channels} channels.")
-        print(f"Setting encoder_weights=None (training from scratch)")
-        encoder_weights = None
+    # # Check encoder weights compatibility
+    # if in_channels != 3 and encoder_weights == 'imagenet':
+    #     print(f"WARNING: Cannot use ImageNet weights with {in_channels} channels.")
+    #     print(f"Setting encoder_weights=None (training from scratch)")
+    #     encoder_weights = None
+    
+    print(f"Encoder: {encoder_name}")
+    print(f"Encoder weights: {encoder_weights}")
     
     # Create model
     print("\nBuilding U-Net model...")
