@@ -2,7 +2,7 @@
 
 
 
-model <- 'unet05_v2_primary'
+model <- 'unet04'
 
 
 site <- 'nor'

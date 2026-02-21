@@ -398,7 +398,7 @@ def plot_training_curves(history, best_epoch, best_val_acc, output_dir, site, or
 
 def train_unet(site, data_dir, output_dir="models", original_classes=None, 
     encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001, 
-    weight_decay=1e-4, n_epochs=50, batch_size=8, early_stopping_patience=None, 
+    weight_decay=1e-4, n_epochs=50, batch_size=8,  
     gradient_clip_max_norm=1.0, num_classes=4, in_channels=8, plot_curves=True,
     use_ordinal=False):
     """
@@ -415,7 +415,6 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         weight_decay: L2 regularization strength
         n_epochs: Number of training epochs
         batch_size: Batch size for training
-        early_stopping_patience: Stop if no improvement for N epochs
         gradient_clip_max_norm: Gradient clipping threshold
         num_classes: Number of classes to fit
         in_channels: Number of input channels
@@ -623,48 +622,34 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
             print(f"C{int(original_classes[c])}={acc:.2%} ", end="")
         print()
         
-        # Save best model
-        if validate_acc > best_validate_acc:
-            best_validate_acc = validate_acc
-            best_epoch = epoch + 1
-            epochs_without_improvement = 0
-            
-            os.makedirs(output_dir, exist_ok=True)
-            model_path = os.path.join(output_dir, f"unet_{site}_best.pth")
-            config_path = os.path.join(output_dir, f"unet_{site}_config.json")
-            
-            # Save model weights
-            if isinstance(model, nn.DataParallel):
-                torch.save(model.module.state_dict(), model_path)
-            else:
-                torch.save(model.state_dict(), model_path)
-            
-            # Save model configuration
-            import json
-            config = {
-                'encoder_name': encoder_name,
-                'encoder_weights': encoder_weights,
-                'in_channels': in_channels,
-                'num_classes': num_classes,
-                'original_classes': original_classes,
-                'site': site,
-                'use_ordinal': use_ordinal  # NEW
-            }
-            with open(config_path, 'w') as f:
-                json.dump(config, f, indent=2)
-            
-            print(f"  → Saved best model (CCR={best_validate_acc:.2%})")
-        else:
-            # Early stopping
-            if early_stopping_patience is not None:
-                epochs_without_improvement += 1
-                print(f"  (No improvement for {epochs_without_improvement} epoch(s))")
-                
-                if epochs_without_improvement >= early_stopping_patience:
-                    print(f"\n{'='*60}")
-                    print(f"Early stopping triggered after {epoch+1} epochs")
-                    print(f"{'='*60}")
-                    break
+
+    # Save final model
+    os.makedirs(output_dir, exist_ok=True)
+    model_path = os.path.join(output_dir, f"unet_{site}_best.pth")
+    config_path = os.path.join(output_dir, f"unet_{site}_config.json")
+    
+    # Save model weights
+    if isinstance(model, nn.DataParallel):
+        torch.save(model.module.state_dict(), model_path)
+    else:
+        torch.save(model.state_dict(), model_path)
+    
+    # Save model configuration
+    import json
+    config = {
+        'encoder_name': encoder_name,
+        'encoder_weights': encoder_weights,
+        'in_channels': in_channels,
+        'num_classes': num_classes,
+        'original_classes': original_classes,
+        'site': site,
+        'use_ordinal': use_ordinal  # NEW
+    }
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    print(f"  → Saved final model (CCR={best_validate_acc:.2%})")
+
     
     print("\n" + "="*60)
     print("Training complete!")

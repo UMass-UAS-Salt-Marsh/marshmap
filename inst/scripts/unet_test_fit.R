@@ -31,10 +31,10 @@ source_python("inst/python/train_unet.py")
 
 
 site <- 'nor'
-model <- 'unet05_v2_primary'
+model <- 'unet04'
 # what <- 'primary'                   # primary fit, 6 classes
-what <- 'primary4'                  # primary fit, 4 classes
-# what <- '3-4-5'                   # classes 3-4-5
+#what <- 'primary4'                  # primary fit, 4 classes
+ what <- '3-4-5'                   # classes 3-4-5
 channels <- 16L                     # how many ortho bands are there?
 patience <- NULL                    # early stopping patience
 
@@ -70,7 +70,6 @@ result <- train_unet(
    weight_decay = 1e-4,                   # L2 regularization
    n_epochs = 50L,                        # Number of training epochs
    batch_size = 8L,                       # Number of patches to process in parallel
-   early_stopping_patience = patience,    # How many epochs to run without train loss improvement before giving up?
    gradient_clip_max_norm = 1,            # How much to clip gradient?
    num_classes = nclass,                  # Number of classes to fit; must = length(original_classes) and match patch data
    in_channels = channels,                # Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
