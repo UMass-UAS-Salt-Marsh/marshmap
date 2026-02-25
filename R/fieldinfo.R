@@ -15,7 +15,7 @@ fieldinfo <- function(site) {
    ft <- file.path(f, 'transects.tif')
    field <- rast(ft) 
    
-   tf <- paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp')     # read transects shapefile
+   tf <- paste0(toupper(site), '_transects.shp')                                 # transects shapefile
    ts <- file.path(resolve_dir(the$shapefilesdir, site), tf) 
    shp <- data.frame(st_read(ts, quiet = TRUE))
    

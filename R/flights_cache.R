@@ -38,7 +38,7 @@ flights_cache <- function(site, replace_caches = FALSE) {
    
    sites <- read_pars_table('sites')
    footfile <- file.path(resolve_dir(the$shapefilesdir, site), 
-                         basename(sites$footprint[sites$site == site]))
+                         paste0(toupper(site), '_footprint.shp'))
    footprint <- st_read(footfile, quiet = TRUE)                         # read site footprint
    
    

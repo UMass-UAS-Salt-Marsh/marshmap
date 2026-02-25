@@ -67,8 +67,6 @@ screen <- function(update = FALSE) {
   
   
   sites <- read_pars_table('sites')
-  # sites$footprint <- basename(sites$footprint)
-  
   score_choices <- c('unscored', 'rejected', 'poor', 'fair', 'good', 'very good', 'excellent')
   
   img_css <- 'img { width: 100% !important; 

@@ -106,7 +106,7 @@ do_sample <- function(site, vars, n, p, d, classes, minscore, maxmissing, reclas
       z <- data.frame(field[sel])                                                   # result is expected to be ~4 GB for 130 variables
       names(z)[1] <- 'poly'
       
-      tf <- paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp')     # ---- transects shapefile name
+      tf <- paste0(tolower(site), '_transects.shp')                                 # ---- transects shapefile name
       ts <- file.path(resolve_dir(the$shapefilesdir, site), tf)                     # full path to transects shapefile
       shp <- data.frame(st_read(ts, quiet = TRUE))                                  # read transects shapefile
       

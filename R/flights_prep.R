@@ -41,7 +41,7 @@ flights_prep <- function(site, replace_caches = FALSE, cache = TRUE) {
               sum(update), ' orthos and all_miss raster...')
       
       sites <- read_pars_table('sites')    
-      fp <- basename(sites$footprint[sites$site == site])
+      fp <- paste0(toupper(site), '_footprint.shp')
       footprint <- vect(file.path(resolve_dir(the$shapefilesdir, site), fp))
       
       for(i in seq_len(nrow(db$db))) {                                        #    for each ortho,

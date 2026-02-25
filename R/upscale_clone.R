@@ -78,7 +78,9 @@ upscale_clone <- function(site, newsite, cellsize) {
    message('Finished upscaling orthos')
    
    
-   field <- file.path(resolve_dir(the$shapefilesdir, newsite), paste0(file_path_sans_ext(get_sites(site)$transects), '_final.shp'))
+   tf <- paste0(toupper(site), '_transects.shp')                           # transects shapefile
+   field <- file.path(resolve_dir(the$shapefilesdir, site), tf) 
+   
    fieldresult <- resolve_dir(the$fielddir, newsite)
    
    if(!dir.exists(fieldresult))

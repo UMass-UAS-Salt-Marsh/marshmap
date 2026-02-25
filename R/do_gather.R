@@ -169,7 +169,9 @@ do_gather <- function(site, pattern = '',
       if(!dir.exists(sf))
          dir.create(sf, recursive = TRUE)
       
-      st_write(footprint, file.path(sf, paste0(sites$site[i], '_footprint.shp')))   #    save reprojected footprint
+      st_write(footprint, 
+               file.path(sf, paste0(toupper(sites$site[i]), '_footprint.shp')),
+               append = FALSE, quiet = TRUE)                                        #    save reprojected footprint
       
       std <- file.path(rd, basename(sites$standard[i]))                             #    path to stored standard file
       message('   Standard: ', basename(std))
@@ -177,7 +179,7 @@ do_gather <- function(site, pattern = '',
       if(!file.exists(std)) {                                                       #    if we don't have the standard in our files yet,
          r <- suppress_warnings(get_rast(
             get_file(file.path(dir, sites$standard[i]), gd)), 
-            pattern = dumb_warning, class = 'warning')           #       get it from the remote drive or the cache
+            pattern = dumb_warning, class = 'warning')                              #       get it from the remote drive or the cache
          if(!dir.exists(rd))
             dir.create(rd, recursive = TRUE)
          message('         !!! Reprojecting standard ', basename(std), ' to Mass State Plane')
@@ -186,7 +188,7 @@ do_gather <- function(site, pattern = '',
                crop(footprint) |>
                mask(footprint) |>
                writeRaster(std, overwrite = TRUE, 
-                           datatype = r$type, NAflag = r$missing)         #    save raster
+                           datatype = r$type, NAflag = r$missing)                   #    save raster
          }, 
          pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
       }
@@ -223,16 +225,18 @@ do_gather <- function(site, pattern = '',
                
                tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
                
+               
                shp <- st_read(tpath, promote_to_multi = FALSE, quiet = TRUE)        #       read transects shapefile
                shp <- st_zm(shp, drop = TRUE)                                       #       we don't want Z values!
+               shp <- st_make_valid(shp)                                            #       fix any invalid geometries
+               shp <- shp[st_is_valid(shp), ]                                       #       drop anything that survived invalid
                
                if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
                   message('         !!! Reprojecting ', basename(tpath), ' to Mass State Plane')
                   shp <- st_transform(shp, crs = 26986)
                }
                
-               
-               names(shp)[grep('subclass', names(shp), ignore.case = TRUE)] <- 'subclass'   #       make subclass lower-case, no matter what it is
+               names(shp) <- tolower(names(shp))                                    #       we want lowercase names in ground truth shapefile
                
                if(is.character(shp$subclass))                                       #       if subclass is character, turn it into damn numbers!
                   shp$subclass <- as.numeric(shp$subclass)
@@ -246,30 +250,35 @@ do_gather <- function(site, pattern = '',
                      stop('Ground truth shapefile has bad classes ', paste(bad, collapse = ', '))
                }
                
+               shp$poly <- 1:nrow(shp)                                              #       add unique poly ids
                
-               overlaps <- paste0(file_path_sans_ext(tpath), '_final.shp')
-               
-               gt <- overlaps(shp, 'subclass')                                      #       get the shapefile and process overlaps ----
-               
-               gt$poly <- 1:nrow(gt)                                                #       add unique poly ids
-               
-               names(gt) <- tolower(names(gt))                                      #       we want lowercase names in ground truth shapefile
-               gt$year <- as.numeric(gt$year)
-               if(!is.null(gt$targetyear))
-                  gt$year <- ifelse(is.na(gt$year), gt$targetyear, gt$year)         #       where year is missing, use targetyear - this will fill in for PI
-               gt$year[is.na(gt$year)] <- 0                                         #       set NA years to 0
+               shp$year <- as.numeric(shp$year)
+               if(!is.null(shp$targetyear))
+                  shp$year <- ifelse(is.na(shp$year), shp$targetyear, shp$year)     #       where year is missing, use targetyear - this will fill in for PI
+               shp$year[is.na(shp$year)] <- 0                                       #       set NA years to 0
                
                for(j in 1:5)                                                        #       add 5 _bypoly columns
-                  gt[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(gt$subclass)
+                  shp[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(shp$subclass)
+               
+               trpath <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
+               trname <- paste0(toupper(sites$site[i]), '_transects.shp')
+               tr_rejname <- paste0(toupper(sites$site[i]), '_transects_incl_rejects.shp')
+               st_write(shp, file.path(trpath, tr_rejname), 
+                        append = FALSE, quiet = TRUE)                               #       save the processed transects shapefile with rejected columns intact
+               
+               if(!is.null(shp$reject))                                             #       if there's a reject column,
+                  shp <- shp[is.na(shp$reject) | shp$reject == 0, ]                 #          DROP rejected rows
+               
+               st_write(shp, file.path(trpath, trname, 
+                                       append = FALSE, quiet = TRUE))               #       save the processed transects shapefile 
                
                
-               st_write(gt, overlaps, append = FALSE, quiet = TRUE)                 #       save the overlapped shapefile with bonus columns as *_final
+               unlapped <- overlaps(shp, 'subclass')                                #       remove overlaps for raster transects (all years) ----
                
-               
-               suppress_warnings(transects <-                                        #       mask gives a bogus warning that CRS do not match
-                                    rasterize(vect(overlaps), standard, 
-                                              field = 'poly')$poly |>                #       convert it to raster populated with unique poly id
-                                    crop(footprint) |>                               #       crop, mask, and write
+               suppress_warnings(transects <-                                       #       mask gives a bogus warning that CRS do not match
+                                    rasterize(unlapped, standard, 
+                                              field = 'poly')$poly |>               #       convert it to raster populated with unique poly id
+                                    crop(footprint) |>                              #       crop, mask, and write
                                     mask(footprint) |>
                                     writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
                                                 datatype = type, NAflag = missing))
@@ -280,9 +289,9 @@ do_gather <- function(site, pattern = '',
                }
                
                shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
-               for(f in shps)
-                  file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
-               count$transect <- count$transect + 1
+               # for(f in shps)
+               #    file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
+               # count$transect <- count$transect + 1
             }
       }
       
@@ -340,8 +349,8 @@ do_gather <- function(site, pattern = '',
             message('         !!! Reprojecting ', j, ' to Mass State Plane')
             g <- suppress_warnings({
                project(g, 'epsg:26986')
-               },
-               pattern = dumb_warning, class = 'warning')
+            },
+            pattern = dumb_warning, class = 'warning')
          }
          else
             terra::crs(g) <- 'EPSG:26986'                                           #    prevent warnings when CRS is but isn't EPSG:26986 (e.g., 20Jun22_OTH_High_SWIR_Ortho.tif)

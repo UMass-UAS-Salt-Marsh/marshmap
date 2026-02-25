@@ -56,8 +56,7 @@ do_prep_unet <- function(model, save_gis) {
       config$smooth <- 1
    
    
-   x <- file.path(resolve_dir(the$shapefilesdir, config$site), get_sites(config$site)$transects)
-   transect_file <- paste0(file_path_sans_ext(x), '_final.shp')
+   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), paste0(toupper(config$site), '_transects.shp'))
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
    
    
@@ -68,11 +67,7 @@ do_prep_unet <- function(model, save_gis) {
    
    message('Loading transects...')
    transects <- st_read(transect_file, 
-                        promote_to_multi = FALSE, quiet = TRUE)              # ----- read transects
-   
-   
-   names(transects) <- tolower(names(transects))                              # name cases aren't consistent, of course
-   
+                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
    
    if(config$reclass != '') {                                                 # if reclassifying transects (for multi-stage models),
       classes <- read_pars_table('classes')                                   #    read classes file
@@ -84,12 +79,18 @@ do_prep_unet <- function(model, save_gis) {
    
    transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
    transects <- transects[transects$year %in% config$years, ]                 # and to years
+   transects <- overlaps(transects, subclass)                                 # remove overlapping polys that don't agree
    message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '), ' in ', paste(config$years, collapse = ', '))
    if(nrow(transects) == 0)
       stop('No transect data for these classes')
    
    transects <- st_make_valid(transects)                                      # fix any invalid geometries
    transects <- st_buffer(transects, dist = 0)                                # may fix topology issues
+   
+   if(!is.null(transects$reject))                                             # if there's a reject column,
+      transects <- transects[is.na(transects$reject) | 
+                                transects$reject == 0, ]                      #    DROP rejected rows
+   
    
    invalid_geoms <- !st_is_valid(transects)                                   # remove any remaining invalid geometries
    if (any(invalid_geoms)) {
