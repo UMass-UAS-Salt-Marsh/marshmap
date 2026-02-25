@@ -165,6 +165,11 @@ do_gather <- function(site, pattern = '',
          footprint <- st_transform(footprint, crs = 26986)
       }
       
+      sf <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
+      if(!dir.exists(sf))
+         dir.create(sf, recursive = TRUE)
+      
+      st_write(footprint, file.path(sf, paste0(sites$site[i], '_footprint.shp')))   #    save reprojected footprint
       
       std <- file.path(rd, basename(sites$standard[i]))                             #    path to stored standard file
       message('   Standard: ', basename(std))
@@ -195,9 +200,6 @@ do_gather <- function(site, pattern = '',
       message('   --- Processing ', length(files), ' geoTIFFs ---')
       
       
-      sf <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
-      if(!dir.exists(sf))
-         dir.create(sf, recursive = TRUE)
       shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$footprint[i])))
       for(f in shps)
          file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
