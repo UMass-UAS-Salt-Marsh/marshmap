@@ -28,6 +28,7 @@ reference:
   - mapinfo
   - mappurge
   - assess
+  - unet_assess
   - unet_assess_hierarchical
   - flights_report
   - sample_freq

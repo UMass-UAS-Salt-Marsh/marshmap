@@ -6,7 +6,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person('Bradley', 'Compton', email = 'bcompton@umass.edu', role = c('aut', 'cre'), 
        comment = c(ORCID = '0009-0002-2375-8116'))
-URL: https://github.com/UMass-UAS-Salt-Marsh/marshmap
+URL: https://umass-uas-salt-marsh.github.io/marshmap
 BugReports: https://github.com/UMass-UAS-Salt-Marsh/marshmap/issues
 Imports:
     terra,
