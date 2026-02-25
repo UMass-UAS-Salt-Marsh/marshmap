@@ -237,6 +237,10 @@ These functions report data and model status.
   : Purge selected maps from maps database
 - [`assess()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/assess.md)
   : Assess a model fit from validation data
+- [`unet_assess()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_assess.md)
+  : Simple wrapper for single-stage assessment (existing behavior)
+- [`unet_assess_hierarchical()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_assess_hierarchical.md)
+  : Assess two-stage hierarchical U-Net model
 - [`flights_report()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/flights_report.md)
   : Produce reports on orthoimages for all sites
 - [`sample_freq()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/sample_freq.md)

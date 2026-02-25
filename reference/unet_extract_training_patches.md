@@ -10,6 +10,7 @@ unet_extract_training_patches(
   transects,
   train_ids,
   validate_ids,
+  test_ids,
   patch = 256,
   overlap = 0.5,
   classes,
@@ -35,6 +36,10 @@ unet_extract_training_patches(
 
   IDs of validation transects
 
+- test_ids:
+
+  IDs of test transects
+
 - patch:
 
   Patch size (n pixels)
@@ -53,4 +58,4 @@ unet_extract_training_patches(
 
 ## Value
 
-List with patches, labels, train_masks, val_masks, metadata
+List with patches, labels, train_masks, val_masks, test_masks, metadata

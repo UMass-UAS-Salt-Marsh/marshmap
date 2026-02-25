@@ -12,12 +12,12 @@ Source:
 
 Compton B (2026). *marshmap: UMass UAS Salt Marsh Project salt marsh
 land cover mapping*. R package version 0.0.0.9000,
-<https://github.com/UMass-UAS-Salt-Marsh/marshmap>.
+<https://umass-uas-salt-marsh.github.io/marshmap>.
 
     @Manual{,
       title = {marshmap: UMass UAS Salt Marsh Project salt marsh land cover mapping},
       author = {Bradley Compton},
       year = {2026},
       note = {R package version 0.0.0.9000},
-      url = {https://github.com/UMass-UAS-Salt-Marsh/marshmap},
+      url = {https://umass-uas-salt-marsh.github.io/marshmap},
     }

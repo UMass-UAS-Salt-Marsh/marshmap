@@ -32,6 +32,12 @@ do_prep_unet(model, save_gis)
 
   - overlap: Proportion overlap of patches
 
+  - upscale: number of cells to upscale (default = 1). Use 3 to upscale
+    to 3x3, 5 for 5x5, etc.
+
+  - smooth: number of cells to include in moving window mean (default =
+    1). Use 3 to smooth to 3x3, etc.
+
 - save_gis:
 
   If TRUE, saves GIS data for assessment and debugging
