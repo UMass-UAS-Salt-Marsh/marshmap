@@ -53,7 +53,7 @@ switch(what,
           nclass <- 3L
        })
    
-data_dir <- file.path(resolve_dir('X:/projects/uas/marshmap/data/<site>/unet', site), model) 
+data_dir <- file.path(resolve_dir(the$unetdir, site), model) 
 output_dir <- file.path(data_dir, 'models')
 
 
