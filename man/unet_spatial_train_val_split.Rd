@@ -4,12 +4,21 @@
 \alias{unet_spatial_train_val_split}
 \title{Split transects into train and validation sets}
 \usage{
-unet_spatial_train_val_split(transects, holdout)
+unet_spatial_train_val_split(transects, holdout_col, cv, val, test)
 }
 \arguments{
 \item{transects}{Original sf transects object}
 
-\item{holdout}{Holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6)}
+\item{holdout_col}{Index of holdout set to use, picks from \code{bypoly01} to \code{bypoly05}}
+
+\item{cv}{Number of cross-validations. Use 1 for a single model, up to 5 for five-fold}
+
+\item{val}{Validation polys from \code{holdout_col}. Use NULL to skip validation, or a vector of
+the validation polys for the first cross-validation (these will be incremented for
+subsequent validations). For 20\% validation holdout, use \code{val = c(1, 6)}. This will use
+\verb{bypoly01 \%in\% c(1,6)`` for the first cross-validation, }c(2, 7)` for the second, and so on.}
+
+\item{test}{Test polys from \code{holdout_col}, as with \code{val}.}
 }
 \value{
 List with train and val transect ids

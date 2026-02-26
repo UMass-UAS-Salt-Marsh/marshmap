@@ -1,9 +1,10 @@
-#' Script to set up environment for parameters
-#' 
+#' Environment for package parameters
+#'
 #' The environment `the` is used for user parameters. They
-#' are assigned by `init()`, which is run when the package is 
-#' loaded, and also may be run by the user, e.g., which parameter
+#' are assigned by `init()`, which is run when the package is
+#' loaded, and also may be run by the user, e.g., when parameter
 #' files are changed.
+#' @name the
 #' @export
 
 

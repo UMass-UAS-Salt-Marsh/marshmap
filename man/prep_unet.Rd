@@ -22,8 +22,19 @@ directory. This file must contain the following:
 \item patch: size in pixels
 \item depth: number of of downsampling stages
 \item classes: vector of target classes
-\item holdout: holdout set to use (uses bypoly\if{html}{\out{<holdout>}}, classes 1 and 6). Holdout sets are
-created by \code{gather} to yield at least 20\% of separate polys. There are 5 sets to choose from.
+\item holdout_col: holdout set to use (uses bypoly\if{html}{\out{<holdout>}}). Holdout sets are created by
+\code{gather}, numbering each poly from 1 to 10, repeating if necessary. There are 5 sets to
+choose from.
+\item cv: number of cross-validations. Use 1 for a single model, up to 5 for five-fold
+cross-validation. Cross-validations are systematic, not random. Since there are only 10
+sets in each bypoly, the number of cross-validations is limited by the values of val
+and test.
+\item val: validation polys from \code{holdout_col}. Use NULL to skip validation, or a vector of
+the validation polys for the first cross-validation (these will be incremented for
+subsequent validations). For 20\% validation holdout, use \code{val = c(1, 6)}. This will use
+\verb{bypoly01 \%in\% c(1,6)`` for the first cross-validation, }c(2, 7)` for the second, and so
+on.
+\item test: test polys from \code{holdout_col}, as with \code{val}.
 \item overlap: Proportion overlap of patches
 \item upscale: number of cells to upscale (default = 1). Use 3 to upscale to 3x3, 5 for 5x5, etc.
 \item smooth: number of cells to include in moving window mean (default = 1). Use 3 to smooth to 3x3, etc.
