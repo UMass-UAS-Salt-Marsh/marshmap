@@ -159,10 +159,12 @@ do_gather <- function(site, pattern = '',
       footprint <- st_read(get_file(file.path(dir, sites$footprint[i]), 
                                     gd), promote_to_multi = FALSE, quiet = TRUE)    #    read footprint shapefile (we always do this 'cuz it's cheap)
       footprint <- st_zm(footprint, drop = TRUE)                                    #    we don't want Z values!
-      
+      footprint <- st_make_valid(footprint)                                         #    fix any invalid geometries
+
       if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
          message('         !!! Reprojecting ', basename(sites$footprint[i]), ' to Mass State Plane')
          footprint <- st_transform(footprint, crs = 26986)
+         footprint <- st_make_valid(footprint)                                      #    fix any geometries broken by reprojection
       }
       
       sf <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
@@ -234,6 +236,8 @@ do_gather <- function(site, pattern = '',
                if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
                   message('         !!! Reprojecting ', basename(tpath), ' to Mass State Plane')
                   shp <- st_transform(shp, crs = 26986)
+                  shp <- st_make_valid(shp)                                         #       fix any geometries broken by reprojection
+                  shp <- shp[st_is_valid(shp), ]                                    #       drop anything that survived invalid
                }
                
                names(shp) <- tolower(names(shp))                                    #       we want lowercase names in ground truth shapefile
@@ -269,8 +273,8 @@ do_gather <- function(site, pattern = '',
                if(!is.null(shp$reject))                                             #       if there's a reject column,
                   shp <- shp[is.na(shp$reject) | shp$reject == 0, ]                 #          DROP rejected rows
                
-               st_write(shp, file.path(trpath, trname, 
-                                       append = FALSE, quiet = TRUE))               #       save the processed transects shapefile 
+               st_write(shp, file.path(trpath, trname), 
+                                       append = FALSE, quiet = TRUE)                #       save the processed transects shapefile 
                
                
                unlapped <- overlaps(shp, 'subclass')                                #       remove overlaps for raster transects (all years) ----
