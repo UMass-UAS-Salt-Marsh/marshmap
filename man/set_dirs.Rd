@@ -8,6 +8,7 @@ set_dirs()
 }
 \description{
 Sets all directory names from \code{pars.yml} or defaults. Note that \code{basedir}, \code{parsdir},
-and \code{scratchdir} are set by \code{\link[=init]{init()}}.
+and \code{scratchdir} are set by \code{\link[=init]{init()}}. Other directory names set by \code{init()}, from
+\code{marshmap.yml} in the user's home directory take precedence.
 }
 \keyword{internal}

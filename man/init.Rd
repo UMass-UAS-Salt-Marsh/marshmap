@@ -13,7 +13,7 @@ Reads user-set parameters for package marshmap.
 User parameters are set in two distinct locations:
 \enumerate{
 \item The initialization file, in the user's home directory, \verb{~/marshmap.yml}.
-This file should contain five lines:
+This file must contain these five lines:
 
 \verb{basedir: c:/Work/etc/marshmap} \cr
 \code{parsdir: pars} \cr
@@ -29,6 +29,9 @@ c. \code{parsfile} points to the main parameter file. It should be \code{pars.ym
 
 d. \code{scratchdir} points to the scratch drive, where the \code{cache} directory will be located.
 See notes on caching, below.
+
+It may contain additional lines, for example, to set unetdir as a directory on the project
+drive.
 \item Everything else, in \verb{<basedir>/<parsdir>}. The primary parameter file is
 \code{pars.yml}, which points to other parameters (such as \code{sites.txt}).
 }

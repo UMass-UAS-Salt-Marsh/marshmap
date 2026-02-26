@@ -7,5 +7,8 @@
 #' @export
 
 
+if(exists('the'))                                        # delete the environment if it exists for a clean start
+   rm('the', envir = as.environment(find('the')[1]))
+
 the <- new.env(parent = emptyenv())
 library(slurmcollie)

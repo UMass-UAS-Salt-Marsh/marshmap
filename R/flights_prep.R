@@ -14,7 +14,7 @@
 #' @param replace_caches If TRUE, all cached images (used for `screen`) are replaced
 #' @param cache If TRUE, cache images for `screen`. If set to FALSE, these flights
 #'    will be blank in `screen`.
-#' @importFrom terra rast setValues writeRaster
+#' @importFrom terra rast setValues writeRaster compareGeom resample
 #' @importFrom rasterPrep makeNiceTif assessType
 #' @importFrom lubridate now
 #' @keywords internal
@@ -54,6 +54,8 @@ flights_prep <- function(site, replace_caches = FALSE, cache = TRUE) {
             all_miss <- setValues(x, 0)                                       #          create missing raster
          }
          
+         if(!compareGeom(x, all_miss, stopOnError = FALSE))                   #       if extents don't match (floating-point alignment artifact),
+            x <- resample(x, all_miss, method = 'near')                      #          snap to all_miss grid
          all_miss <- all_miss + is.na(x)                                      #       and count missing
          
          if(update[i]) {                                                      #       if this file needs updating,
