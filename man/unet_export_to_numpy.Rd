@@ -4,7 +4,7 @@
 \alias{unet_export_to_numpy}
 \title{Export prepared data to numpy arrays for Python}
 \usage{
-unet_export_to_numpy(patches, output_dir, site, class_mapping)
+unet_export_to_numpy(patches, output_dir, site, class_mapping, set)
 }
 \arguments{
 \item{patches}{List from unet_extract_training_patches}
@@ -14,6 +14,8 @@ unet_export_to_numpy(patches, output_dir, site, class_mapping)
 \item{site}{Name for files (e.g., 'rr')}
 
 \item{class_mapping}{Named vector mapping original to remapped classes (e.g., c('3'=0, '4'=1, '5'=2, '6'=3))}
+
+\item{set}{Cross-validation set (integer, typically 1:5)}
 }
 \description{
 Export prepared data to numpy arrays for Python

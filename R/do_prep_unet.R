@@ -78,7 +78,7 @@ do_prep_unet <- function(model, save_gis) {
    if(is.null(config$test))                                                   # default: use c(1,6) for the first iteration, c(2,7) for the second, and so on
       config$test <- c(1,6)
    
-   if(cv + max(c(val, test)) - 1 > 10)
+   if(config$cv + max(c(config$val, config$test)) - 1 > 10)
       stop('Too many cross-validation iterations given values of val and test')
    
    
@@ -125,57 +125,55 @@ do_prep_unet <- function(model, save_gis) {
    }
    
    
-   message('Creating train/validate/test split...')                           # ----- split into training, validation, and test data
-   split <- unet_spatial_train_val_split(
-      transects = transects,
-      holdout_col = config$holdout_col 
-   )                                                                          
-   
-   
    if(config$smooth > 1) {                                                    # ----- smooth training data
-      message('======= Smoothing with ', config$smooth, 'x', config$smooth, ' moving window =====')
+      message('   ======= Smoothing with ', config$smooth, 'x', config$smooth, ' moving window =====')
       input_stack <- focal(input_stack, w = matrix(1/config$smooth^2, config$smooth, config$smooth), fun = 'mean', na.rm = TRUE)
    }
    
    
    if(config$upscale > 1) {                                                   # ----- upscale training data
-      message('======= Upscaling to ', config$upscale, 'x', config$upscale, ' =====')
+      message('   ======= Upscaling to ', config$upscale, 'x', config$upscale, ' =====')
       input_stack <- aggregate(input_stack, fact = config$upscale, fun = mean)
    }
    
    
-   message('Extracting patches...')                                           # ----- extract patches
-   patches <- unet_extract_training_patches(
-      input_stack = input_stack,
-      transects = transects,
-      train_ids = split$train_ids,
-      validate_ids = split$validate_ids,
-      test_ids = split$test_ids,
-      patch = config$patch,
-      overlap = config$overlap,
-      classes = config$classes,
-      class_mapping = config$class_mapping
-   )
-   
-   
-   patch_stats <<- unet_patch_stats(patches)                                  # ----- get and display stats on patches, including purity histogram
-   
-   
-   message('Exporting to numpy...')                                           # ----- export to numpy
-   unet_export_to_numpy(
-      patches = patches,
-      output_dir = output_dir,
-      site = config$site, 
-      class_mapping = config$class_mapping
-   )
+   for(i in seq_len(config$cv)) {                                             # ----- For each cross-validation iteration,
+      message('Iteration ', i, ' of ', config$cv)
+      message('   Creating train/validate/test split...')
+      split <- unet_spatial_train_val_split(                                  #    --- split into training, validation, and test data
+         transects = transects,
+         holdout_col = config$holdout_col, 
+         cv = i, val = config$val, test = config$test)                                                                                             
+      
+      
+      message('   Extracting patches...')                                     #    --- extract patches
+      patches <- unet_extract_training_patches(
+         input_stack = input_stack,
+         transects = transects,
+         train_ids = split$train_ids,
+         validate_ids = split$validate_ids,
+         test_ids = split$test_ids,
+         patch = config$patch,
+         overlap = config$overlap,
+         classes = config$classes,
+         class_mapping = config$class_mapping
+      )
+      
+      
+      patch_stats <- unet_patch_stats(patches)                                #    --- get and display stats on patches, including purity histogram
+      
+      
+      message('   Exporting to numpy...')                                     #    --- export to numpy
+      unet_export_to_numpy(
+         patches = patches,
+         output_dir = output_dir,
+         site = config$site, 
+         class_mapping = config$class_mapping, 
+         set = i
+      )
+      message('')
+   }
    
    
    message('Data preparation complete!')
-   
-   # return(invisible(list(                                 # this bogs down for some reason
-   #    patches = patches,
-   #    split_indices = split_indices,
-   #    input_stack = input_stack,
-   #    transects = transects
-   # )))
 }

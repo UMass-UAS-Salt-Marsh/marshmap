@@ -4,10 +4,11 @@
 #' @param output_dir Directory to save numpy files
 #' @param site Name for files (e.g., 'rr')
 #' @param class_mapping Named vector mapping original to remapped classes (e.g., c('3'=0, '4'=1, '5'=2, '6'=3))
+#' @param set Cross-validation set (integer, typically 1:5)
 #' @export
 
 
-unet_export_to_numpy <- function(patches, output_dir, site, class_mapping) {
+unet_export_to_numpy <- function(patches, output_dir, site, class_mapping, set) {
    
    
    if (!reticulate::py_module_available('numpy')) {
@@ -15,22 +16,19 @@ unet_export_to_numpy <- function(patches, output_dir, site, class_mapping) {
    }
    
    np <- reticulate::import('numpy')
+
+   original_classes <- as.integer(names(class_mapping))              # Reverse mapping: 0->3, 1->4, 2->5, 3->6
+
+   output_dir <- file.path(output_dir, paste0('set', set))           # include cross-validation set number as a subdirectory, e.g., 'set1'
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
    
-   # Reverse mapping: 0->3, 1->4, 2->5, 3->6
-   original_classes <- as.integer(names(class_mapping))
- 
-   
-   # Where labels are NA, set mask to 0
-   patches$train_masks[is.na(patches$labels)] <- 0
+   patches$train_masks[is.na(patches$labels)] <- 0                   # Where labels are NA, set mask to 0
    patches$val_masks[is.na(patches$labels)] <- 0
    patches$test_masks[is.na(patches$labels)] <- 0
    
-   # THEN replace NA labels with 255
-   patches$labels[is.na(patches$labels)] <- 255
+   patches$labels[is.na(patches$labels)] <- 255                      # THEN replace NA labels with 255
    
-   # NOW extract train/val/test subsets
-   train_idx <- which(patches$has_train)
+   train_idx <- which(patches$has_train)                             # NOW extract train/val/test subsets
    val_idx <- which(patches$has_val)
    test_idx <- which(patches$has_test)
    

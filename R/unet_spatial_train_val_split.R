@@ -34,9 +34,9 @@ unet_spatial_train_val_split <- function(transects, holdout_col, cv, val, test) 
    
    message('\n=== TRANSECT SPLIT ===')
    message(paste(paste0(sapply(list(train, val, test), length) * 10, '% ', c('train', 'val', 'test')), collapse = ' / '))
-   message('Train transects: ', length(train_ids), ' (groups ', paste(train, collapse = ', '))
-   message('Validate transects: ', length(validate_ids), ' (groups ', paste(val, collapse = ', '))
-   message('Test transects: ', length(test_ids), ' (groups ', paste(test, collapse = ', '))
+   message('Train transects: ', length(train_ids), ' (groups ', paste(train, collapse = ', '), ')')
+   message('Validate transects: ', length(validate_ids), ' (groups ', paste(val, collapse = ', '), ')')
+   message('Test transects: ', length(test_ids), ' (groups ', paste(test, collapse = ', '), ')')
    
    # Show class distribution
    train_transects <- transects[train_set, ]
