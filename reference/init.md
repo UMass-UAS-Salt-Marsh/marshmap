@@ -13,7 +13,7 @@ init()
 User parameters are set in two distinct locations:
 
 1.  The initialization file, in the user's home directory,
-    `~/marshmap.yml`. This file should contain five lines:
+    `~/marshmap.yml`. This file must contain these five lines:
 
     `basedir: c:/Work/etc/marshmap`  
     `parsdir: pars`  
@@ -30,6 +30,9 @@ User parameters are set in two distinct locations:
 
     d\. `scratchdir` points to the scratch drive, where the `cache`
     directory will be located. See notes on caching, below.
+
+    It may contain additional lines, for example, to set unetdir as a
+    directory on the project drive.
 
 2.  Everything else, in `<basedir>/<parsdir>`. The primary parameter
     file is `pars.yml`, which points to other parameters (such as

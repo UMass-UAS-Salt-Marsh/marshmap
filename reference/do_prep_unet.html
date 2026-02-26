@@ -52,8 +52,19 @@ directory. This file must contain the following:</p><ul><li><p>years: the year(s
 <li><p>patch: size in pixels</p></li>
 <li><p>depth: number of of downsampling stages</p></li>
 <li><p>classes: vector of target classes</p></li>
-<li><p>holdout: holdout set to use (uses bypoly<holdout>, classes 1 and 6). Holdout sets are
-created by <code>gather</code> to yield at least 20% of separate polys. There are 5 sets to choose from.</holdout></p></li>
+<li><p>holdout_col: holdout set to use (uses bypoly<holdout>). Holdout sets are created by
+<code>gather</code>, numbering each poly from 1 to 10, repeating if necessary. There are 5 sets to
+choose from.</holdout></p></li>
+<li><p>cv: number of cross-validations. Use 1 for a single model, up to 5 for five-fold
+cross-validation. Cross-validations are systematic, not random. Since there are only 10
+sets in each bypoly, the number of cross-validations is limited by the values of val
+and test.</p></li>
+<li><p>val: validation polys from <code>holdout_col</code>. Use NULL to skip validation, or a vector of
+the validation polys for the first cross-validation (these will be incremented for
+subsequent validations). For 20% validation holdout, use <code>val = c(1, 6)</code>. This will use
+<code>bypoly01 %in% c(1,6)`` for the first cross-validation, </code>c(2, 7)` for the second, and so
+on.</p></li>
+<li><p>test: test polys from <code>holdout_col</code>, as with <code>val</code>.</p></li>
 <li><p>overlap: Proportion overlap of patches</p></li>
 <li><p>upscale: number of cells to upscale (default = 1). Use 3 to upscale to 3x3, 5 for 5x5, etc.</p></li>
 <li><p>smooth: number of cells to include in moving window mean (default = 1). Use 3 to smooth to 3x3, etc.</p></li>

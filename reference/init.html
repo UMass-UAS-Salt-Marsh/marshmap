@@ -44,14 +44,16 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>User parameters are set in two distinct locations:</p><ol><li><p>The initialization file, in the user's home directory, <code>~/marshmap.yml</code>.
-This file should contain five lines:</p>
+This file must contain these five lines:</p>
 <p><code>basedir: c:/Work/etc/marshmap</code> <br><code>parsdir: pars</code> <br><code>parsfile: pars.yml</code> <br><code>scratchdir: c:/Work/etc/marshmap/data/scratch</code> <br></p>
 <p>a. <code>basedir</code> points to the base directory</p>
 <p>b. <code>parsdir</code> is the parameters subdirectory. It should be <code>pars</code> unless you have
 a good reason to change it.</p>
 <p>c. <code>parsfile</code> points to the main parameter file. It should be <code>pars.yml</code>.</p>
 <p>d. <code>scratchdir</code> points to the scratch drive, where the <code>cache</code> directory will be located.
-See notes on caching, below.</p></li>
+See notes on caching, below.</p>
+<p>It may contain additional lines, for example, to set unetdir as a directory on the project
+drive.</p></li>
 <li><p>Everything else, in <code>&lt;basedir&gt;/&lt;parsdir&gt;</code>. The primary parameter file is
 <code>pars.yml</code>, which points to other parameters (such as <code>sites.txt</code>).</p></li>
 </ol><p>These parameters include:</p><ul><li><p><code>sites</code> the name of the sites file, <code>sites.txt</code> by default</p></li>

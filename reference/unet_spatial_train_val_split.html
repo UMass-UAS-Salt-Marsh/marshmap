@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unet_spatial_train_val_split</span><span class="op">(</span><span class="va">transects</span>, <span class="va">holdout</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unet_spatial_train_val_split</span><span class="op">(</span><span class="va">transects</span>, <span class="va">holdout_col</span>, <span class="va">cv</span>, <span class="va">val</span>, <span class="va">test</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -49,8 +49,23 @@
 <dd><p>Original sf transects object</p></dd>
 
 
-<dt id="arg-holdout">holdout<a class="anchor" aria-label="anchor" href="#arg-holdout"></a></dt>
-<dd><p>Holdout set to use (uses bypoly<holdout>, classes 1 and 6)</holdout></p></dd>
+<dt id="arg-holdout-col">holdout_col<a class="anchor" aria-label="anchor" href="#arg-holdout-col"></a></dt>
+<dd><p>Index of holdout set to use, picks from <code>bypoly01</code> to <code>bypoly05</code></p></dd>
+
+
+<dt id="arg-cv">cv<a class="anchor" aria-label="anchor" href="#arg-cv"></a></dt>
+<dd><p>Number of cross-validations. Use 1 for a single model, up to 5 for five-fold</p></dd>
+
+
+<dt id="arg-val">val<a class="anchor" aria-label="anchor" href="#arg-val"></a></dt>
+<dd><p>Validation polys from <code>holdout_col</code>. Use NULL to skip validation, or a vector of
+the validation polys for the first cross-validation (these will be incremented for
+subsequent validations). For 20% validation holdout, use <code>val = c(1, 6)</code>. This will use
+<code>bypoly01 %in% c(1,6)`` for the first cross-validation, </code>c(2, 7)` for the second, and so on.</p></dd>
+
+
+<dt id="arg-test">test<a class="anchor" aria-label="anchor" href="#arg-test"></a></dt>
+<dd><p>Test polys from <code>holdout_col</code>, as with <code>val</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
