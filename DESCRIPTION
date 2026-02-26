@@ -9,7 +9,7 @@ Authors@R:
 URL: https://umass-uas-salt-marsh.github.io/marshmap
 BugReports: https://github.com/UMass-UAS-Salt-Marsh/marshmap/issues
 Imports:
-    terra,
+    terra (>= 1.8.73),
     sf,
     RCurl,
     lubridate,
