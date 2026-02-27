@@ -82,8 +82,8 @@ unet_patch_stats <- function(patch_data) {
       
       test_results$n_labeled[i] <- length(test_labeled)
       test_results$n_classes[i] <- ifelse(length(test_labeled) > 0, 
-                                         length(unique(test_labeled)), 
-                                         0)  # Set to 0 instead of leaving NA
+                                          length(unique(test_labeled)), 
+                                          0)  # Set to 0 instead of leaving NA
       
       if (length(test_labeled) > 0) {
          class_counts <- table(test_labeled)
@@ -114,38 +114,53 @@ unet_patch_stats <- function(patch_data) {
    message('   Mean patch purity: ', round(mean(train_results$purity, na.rm = TRUE), 3))
    
    message('\n=== VALIDATION PATCHES ===')
-   message('   Total patches: ', nrow(val_results))
-   message('   Mean labeled pixels per patch: ', round(mean(val_results$n_labeled, na.rm = TRUE), 2))
-   message('   Patches with single class: ', sum(val_results$n_classes == 1, na.rm = TRUE), 
-           ' (', round(100 * sum(val_results$n_classes == 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
-   message('   Patches with multiple classes: ', sum(val_results$n_classes > 1, na.rm = TRUE),
-           ' (', round(100 * sum(val_results$n_classes > 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
-   message('   Mean patch purity: ', round(mean(val_results$purity, na.rm = TRUE), 3))
    
+   val_patches <- nrow(val_results)
+   message('   Total patches: ', val_patches)
+   
+   if(val_patches > 0) {
+      message('   Mean labeled pixels per patch: ', round(mean(val_results$n_labeled, na.rm = TRUE), 2))
+      message('   Patches with single class: ', sum(val_results$n_classes == 1, na.rm = TRUE), 
+              ' (', round(100 * sum(val_results$n_classes == 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
+      message('   Patches with multiple classes: ', sum(val_results$n_classes > 1, na.rm = TRUE),
+              ' (', round(100 * sum(val_results$n_classes > 1, na.rm = TRUE) / nrow(val_results), 1), '%)')
+      message('   Mean patch purity: ', round(mean(val_results$purity, na.rm = TRUE), 3))
+   }
+   
+   test_patches <- nrow(test_results)
    message('\n=== TEST PATCHES ===')
-   message('   Total patches: ', nrow(test_results))
-   message('   Mean labeled pixels per patch: ', round(mean(test_results$n_labeled, na.rm = TRUE), 2))
-   message('   Patches with single class: ', sum(test_results$n_classes == 1, na.rm = TRUE), 
-           ' (', round(100 * sum(test_results$n_classes == 1, na.rm = TRUE) / nrow(test_results), 1), '%)')
-   message('   Patches with multiple classes: ', sum(test_results$n_classes > 1, na.rm = TRUE),
-           ' (', round(100 * sum(test_results$n_classes > 1, na.rm = TRUE) / nrow(test_results), 1), '%)')
-   message('   Mean patch purity: ', round(mean(test_results$purity, na.rm = TRUE), 3))
+   message('   Total patches: ', test_patches)
+   
+   if(test_patches > 0) {
+      message('   Mean labeled pixels per patch: ', round(mean(test_results$n_labeled, na.rm = TRUE), 2))
+      message('   Patches with single class: ', sum(test_results$n_classes == 1, na.rm = TRUE), 
+              ' (', round(100 * sum(test_results$n_classes == 1, na.rm = TRUE) / nrow(test_results), 1), '%)')
+      message('   Patches with multiple classes: ', sum(test_results$n_classes > 1, na.rm = TRUE),
+              ' (', round(100 * sum(test_results$n_classes > 1, na.rm = TRUE) / nrow(test_results), 1), '%)')
+      message('   Mean patch purity: ', round(mean(test_results$purity, na.rm = TRUE), 3))
+   }
    
    
    # Plot side by side
-   par(mfrow = c(1, 3))
+   par(mfrow = c(1, sum(c(1, val_patches > 0, test_patches > 0))))               # Histograms only where we have patches
+   
    hist(train_results$purity, breaks = 20, 
         main = 'Train Patch Purity',
         xlab = 'Purity (fraction in dominant class)',
         xlim = c(0, 1))
-   hist(val_results$purity, breaks = 20, 
-        main = 'Val Patch Purity',
-        xlab = 'Purity (fraction in dominant class)',
-        xlim = c(0, 1))
-   hist(test_results$purity, breaks = 20, 
-        main = 'Test Patch Purity',
-        xlab = 'Purity (fraction in dominant class)',
-        xlim = c(0, 1))
+   
+   if(val_patches > 0)
+      hist(val_results$purity, breaks = 20, 
+           main = 'Val Patch Purity',
+           xlab = 'Purity (fraction in dominant class)',
+           xlim = c(0, 1))
+   
+   if(test_patches > 0)
+      hist(test_results$purity, breaks = 20, 
+           main = 'Test Patch Purity',
+           xlab = 'Purity (fraction in dominant class)',
+           xlim = c(0, 1))
+   
    par(mfrow = c(1, 1))
    
    invisible(list(

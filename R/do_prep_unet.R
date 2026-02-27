@@ -78,7 +78,7 @@ do_prep_unet <- function(model, save_gis) {
    if(is.null(config$test))                                                   # default: use c(1,6) for the first iteration, c(2,7) for the second, and so on
       config$test <- c(1,6)
    
-   if(config$cv + max(c(config$val, config$test)) - 1 > 10)
+   if(config$cv + max(c(config$val, config$test, 0)) - 1 > 10)
       stop('Too many cross-validation iterations given values of val and test')
    
    
@@ -105,7 +105,7 @@ do_prep_unet <- function(model, save_gis) {
    
    transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
    transects <- transects[transects$year %in% config$years, ]                 # and to years
-   transects <- overlaps(transects, subclass)                                 # remove overlapping polys that don't agree
+   transects <- overlaps(transects, 'subclass')                               # remove overlapping polys that don't agree
    message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '), ' in ', paste(config$years, collapse = ', '))
    if(nrow(transects) == 0)
       stop('No transect data for these classes')
@@ -138,7 +138,7 @@ do_prep_unet <- function(model, save_gis) {
    
    
    for(i in seq_len(config$cv)) {                                             # ----- For each cross-validation iteration,
-      message('Iteration ', i, ' of ', config$cv)
+      message('======== Iteration ', i, ' of ', config$cv, ' ========')
       message('   Creating train/validate/test split...')
       split <- unet_spatial_train_val_split(                                  #    --- split into training, validation, and test data
          transects = transects,
