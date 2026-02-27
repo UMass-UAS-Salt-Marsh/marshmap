@@ -2,8 +2,8 @@
 #' 
 #' Creates numpy arrays ready for fitting in U-Net. Result files are placed in `<site>/unet/<model>`.
 #' 
-#' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
-#'    directory. This file must contain the following:
+#' @param model The model name, which is also the name of a `.yml` parameter file in `<pars>/unet/` 
+#'    This file must contain the following:
 #'    - years: the year(s) of field data to fit
 #'    - orthos: file names of all orthophotos to include
 #'    - patch: size in pixels
@@ -41,7 +41,7 @@
 do_prep_unet <- function(model, save_gis) {
    
    
-   config <- read_yaml(file.path(the$parsdir, paste0(model, '.yml')))
+   config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
    
    config$fpath <- resolve_dir(the$flightsdir, config$site)
    config$bands <- unlist(lapply(config$orthos, function(x) 
