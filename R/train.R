@@ -50,7 +50,8 @@
 #'      Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 #'    - use_ordinal If TRUE, use ordinal regression U-Net      
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
-#'    over the function's defaults.
+#'    over the function's defaults. **Note that this function requires GPUs**. By default, it 
+#'    requests 2 L40S GPUs.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
@@ -65,8 +66,8 @@ train <- function(model, train = NULL, resources = NULL, local = FALSE, trap = T
    
    resources <- get_resources(resources, list(
       ncpus = 1,
-      resources = list(ngpus = 2, gpu_type = 'l40s', partition.gpu =
-                          'gpupod-l40s,gpu-preempt,gpu'),               # Need GPUs for training
+      resources = list(ngpus = 1, gpu_type = 'l40s', partition.gpu =
+                          'gpupod-l40s,gpu-preempt,gpu'),               # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
       memory = 180,
       walltime = '10:00:00'
    ))

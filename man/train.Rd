@@ -68,7 +68,8 @@ Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 }}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
-over the function's defaults.}
+over the function's defaults. \strong{Note that this function requires GPUs}. By default, it
+requests 2 L40S GPUs.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 

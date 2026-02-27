@@ -7,8 +7,8 @@
 do_prep_unet(model, save_gis)
 }
 \arguments{
-\item{model}{The model name, which is also the name of a \code{.yml} parameter file in the \code{pars}
-directory. This file must contain the following:
+\item{model}{The model name, which is also the name of a \code{.yml} parameter file in \verb{<pars>/unet/}
+This file must contain the following:
 \itemize{
 \item years: the year(s) of field data to fit
 \item orthos: file names of all orthophotos to include

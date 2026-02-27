@@ -63,29 +63,41 @@
 do_train <- function(model, train = NULL) {
    
    
-   data_dir <- file.path(resolve_dir(the$unetdir, site), model) 
+   config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))       # read parameters from model
+   if(!is.null(train))                                                              # and train, which takes priority
+      config <- modifyList(config, 
+                           read_yaml(file.path(the$parsdir, 'unet', paste0(train, '.yml'))))
+   
+   
+   data_dir <- file.path(resolve_dir(the$unetdir, site), 'unet', model, paste0('set', i)) 
    output_dir <- file.path(data_dir, 'models')
    
    
-   # Call the training function
-   result <- train_unet(
-      site = config$site,
-      data_dir = data_dir,
-      output_dir = output_dir,
-      use_ordinal = config$use_ordinal,
-      original_classes = as.integer(config$classes),
-      num_classes = length(config$classes),
-      encoder_name = config$encoder_name,
-      encoder_weights = config$encoder_weights,
-      learning_rate = config$learning_rate,
-      weight_decay = config$weight_decay,
-      n_epochs = as.integer(config$n_epochs),
-      batch_size = as.integer(config$batch_size),
-      gradient_clip_max_norm = config$gradient_clip_max_norm,
-      in_channels = config$in_channels,
-      plot_curves = config$ plot_curves,
-   )
-   
-   # result will be a list: [model_path, final_accuracy]
-   print(result)
+   for(i in seq_len(config$cv)) {                                                   # For each cross-validation iteration,
+      data_dir <- file.path(resolve_dir(the$unetdir, site), 'unet', model, paste0('set', i)) 
+      output_dir <- file.path(data_dir, 'models')
+      
+      message('======== Cross-validation iteration ', i, ' of ', config$cv, ' ========')
+      # Call the training function
+      result <- train_unet(
+         site = config$site,
+         data_dir = data_dir,
+         output_dir = output_dir,
+         use_ordinal = config$use_ordinal,
+         original_classes = as.integer(config$classes),
+         num_classes = length(config$classes),
+         encoder_name = config$encoder_name,
+         encoder_weights = config$encoder_weights,
+         learning_rate = config$learning_rate,
+         weight_decay = config$weight_decay,
+         n_epochs = as.integer(config$n_epochs),
+         batch_size = as.integer(config$batch_size),
+         gradient_clip_max_norm = config$gradient_clip_max_norm,
+         in_channels = config$in_channels,
+         plot_curves = config$ plot_curves,
+      )
+      
+      # result will be a list: [model_path, final_accuracy]
+      print(result)
+   }
 }
