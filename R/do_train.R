@@ -69,12 +69,14 @@ do_train <- function(model, train = NULL) {
                            read_yaml(file.path(the$parsdir, 'unet', paste0(train, '.yml'))))
    
    
-   data_dir <- file.path(resolve_dir(the$unetdir, site), 'unet', model, paste0('set', i)) 
-   output_dir <- file.path(data_dir, 'models')
+   # Source the Python script
+   message('Sourcing Python code & initializing...')
+   source_python("inst/python/train_unet.py")
    
    
    for(i in seq_len(config$cv)) {                                                   # For each cross-validation iteration,
-      data_dir <- file.path(resolve_dir(the$unetdir, site), 'unet', model, paste0('set', i)) 
+      data_dir <- file.path(resolve_dir(the$unetdir, config$site), 
+                            'unet', model, paste0('set', i)) 
       output_dir <- file.path(data_dir, 'models')
       
       message('======== Cross-validation iteration ', i, ' of ', config$cv, ' ========')
