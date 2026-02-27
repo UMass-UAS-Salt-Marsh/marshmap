@@ -56,6 +56,8 @@ switch(what,
 data_dir <- file.path(resolve_dir(the$unetdir, site), model) 
 output_dir <- file.path(data_dir, 'models')
 
+nclass <- as.integer(length(original_classes))                   # Number of classes to fit
+
 
 # Call the training function
 result <- train_unet(
