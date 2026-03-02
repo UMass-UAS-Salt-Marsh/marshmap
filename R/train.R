@@ -66,8 +66,9 @@ train <- function(model, train = NULL, resources = NULL, local = FALSE, trap = T
    
    resources <- get_resources(resources, list(
       ncpus = 1,
-      resources = list(ngpus = 1, gpu_type = 'l40s', partition.gpu =
-                          'gpupod-l40s,gpu-preempt,gpu'),               # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
+      ngpus = 1,
+      gpu_type = 'l40s',
+      partition.gpu = 'gpupod-l40s,gpu-preempt,gpu',                   # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
       memory = 180,
       walltime = '10:00:00'
    ))

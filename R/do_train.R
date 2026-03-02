@@ -96,7 +96,7 @@ do_train <- function(model, train = NULL) {
          batch_size = as.integer(config$batch_size),
          gradient_clip_max_norm = config$gradient_clip_max_norm,
          in_channels = config$in_channels,
-         plot_curves = config$ plot_curves,
+         plot_curves = config$plot_curves
       )
       
       # result will be a list: [model_path, final_accuracy]
