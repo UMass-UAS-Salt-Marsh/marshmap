@@ -14,7 +14,7 @@ do_prep_unet(model, save_gis)
 - model:
 
   The model name, which is also the name of a `.yml` parameter file in
-  the `pars` directory. This file must contain the following:
+  `<pars>/unet/` This file must contain the following:
 
   - years: the year(s) of field data to fit
 
