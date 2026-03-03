@@ -15,6 +15,7 @@ reference:
   - sample
   - prep_unet
   - create_py_env
+  - train
   - fit
   - map
   - mosaic
@@ -65,6 +66,7 @@ reference:
   - do_derive
   - do_sample
   - do_fit
+  - do_train
   - do_map
   - do_mosaic
   - gather_finish
