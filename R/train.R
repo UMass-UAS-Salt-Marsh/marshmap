@@ -67,10 +67,11 @@ train <- function(model, train = NULL, resources = NULL, local = FALSE, trap = T
    resources <- get_resources(resources, list(
       ncpus = 1,
       ngpus = 1,
-      gpu_type = 'l40s',
+      perfer_gpu = 'l40s',                         # L40S is best, but not worth waiting for
+      constraint = 'x86_64&[l40s|v100|2080ti]',    # alternative GPUs: V100 or RTX 2080 Ti
       partition.gpu = 'gpu-preempt,gpu',           # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
       memory = 180,
-      walltime = '00:05:00'
+      walltime = '01:00:00'
    ))
    
    
