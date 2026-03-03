@@ -10,9 +10,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-import segmentation_models_pytorch as smp
-import torchvision.transforms as T
-import torchvision.transforms.functional as TF
 import random
 import os
 from pathlib import Path
@@ -27,16 +24,7 @@ except ImportError:
     print("NOTE: coral_pytorch not available. Install with: pip install coral-pytorch")
     print("      Ordinal regression will not be available.")
 
-# Set random seeds for reproducibility
-torch.manual_seed(42)
-np.random.seed(42)
-
 print(f"PyTorch version: {torch.__version__}")
-print(f"CUDA available: {torch.cuda.is_available()}")
-if torch.cuda.is_available():
-    print(f"Number of GPUs: {torch.cuda.device_count()}")
-    for i in range(torch.cuda.device_count()):
-        print(f"  GPU {i}: {torch.cuda.get_device_name(i)}")
 
 
 # Part 2: Custom dataset class
@@ -456,7 +444,16 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     print(f"Class mapping: {class_names}")
     print("="*60)
     
+    # Set random seeds for reproducibility
+    torch.manual_seed(42)
+    np.random.seed(42)
+
     # Set device
+    print(f"CUDA available: {torch.cuda.is_available()}")
+    if torch.cuda.is_available():
+        print(f"Number of GPUs: {torch.cuda.device_count()}")
+        for i in range(torch.cuda.device_count()):
+            print(f"  GPU {i}: {torch.cuda.get_device_name(i)}")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
@@ -537,7 +534,8 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     
     # Create model
     print("\nBuilding U-Net model...")
-    
+    import segmentation_models_pytorch as smp
+
     if use_ordinal:
         # Ordinal: num_classes - 1 outputs (cumulative thresholds)
         model = smp.Unet(

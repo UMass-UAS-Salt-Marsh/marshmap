@@ -76,7 +76,7 @@ do_train <- function(model, train = NULL) {
    
    for(i in seq_len(config$cv)) {                                                   # For each cross-validation iteration,
       data_dir <- file.path(resolve_dir(the$unetdir, config$site), 
-                            'unet', model, paste0('set', i)) 
+                            model, paste0('set', i)) 
       output_dir <- file.path(data_dir, 'models')
       
       message('======== Cross-validation iteration ', i, ' of ', config$cv, ' ========')
