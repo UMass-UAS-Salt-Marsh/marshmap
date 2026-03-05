@@ -4,7 +4,7 @@
 \alias{do_train}
 \title{Train and assess U-Net model}
 \usage{
-do_train(model, train = NULL)
+do_train(model, train)
 }
 \arguments{
 \item{model}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with model parameters. This
@@ -37,10 +37,9 @@ on.
 }}
 
 \item{train}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with training parameters.
-If present, this overrides parameters in \code{model}. This file contains parameters used only
-in the training phase. The following must be present either in the \code{model} or \code{train} file:
+If present, this overrides any overlapping parameters in \code{model}. This file contains parameters used
+only in the training phase. The following must be present either in the \code{model} or \code{train} file:
 \itemize{
-\item in_channels Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
 \item n_epochs Number of training epochs
 \item encoder_name. Pre-trained encoder to use. Choices include \code{resnet10}, \code{resnet18},
 \code{resnet34}, \code{resnet50}, \code{efficientnet-b0}, and others. The lower \code{restnet}
@@ -58,6 +57,12 @@ overfitting is a problem, try 4.
 \item gradient_clip_max_norm. Prevents exploding gradients by capping gradient magnitude.
 Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 \item use_ordinal If TRUE, use ordinal regression U-Net
+\item test_interval Evaluate test CCR every this many epochs (default 1 = every epoch). The
+last epoch is always evaluated. Test results are shown in plots but never used to select
+the model.
+\item plot_curves If TRUE (default), produce ggplot2 training-curve PNG in \code{model_dir}.
+\item window Half-width (in epochs) of the centered rolling-mean smoother applied to the
+cross-validation mean curve before plotting (default 1 = no smoothing).
 }}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
@@ -70,6 +75,10 @@ for debugging. If you get unrecovered errors, the job won't be added to the jobs
 no effect if local = FALSE.}
 
 \item{comment}{Optional slurmcollie comment}
+}
+\value{
+Invisibly: list with \code{confusion_matrix} (combined caret CM across all CVs) and
+\code{cv_ccr} (numeric vector of per-CV test CCR).
 }
 \description{
 Train a U-Net model. Result files are placed in \verb{<site>/unet/<model>}.

@@ -6,6 +6,7 @@ Supports ordinal regression for ordered classes
 
 # Part 1: Imports and setup
 
+import sys
 import numpy as np
 import torch
 import torch.nn as nn
@@ -13,6 +14,11 @@ from torch.utils.data import Dataset, DataLoader
 import random
 import os
 from pathlib import Path
+
+# Force line-buffered stdout so epoch progress appears in real time
+# (important when called via reticulate or batch jobs)
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(line_buffering=True)
 
 # Try to import CORAL for ordinal regression
 try:
@@ -311,84 +317,13 @@ def validate(model, dataloader, criterion, device, config):
     return epoch_loss, overall_acc, class_acc
 
 
-# Part 6: Progress plotting function
+# Part 6: Main training loop
 
-def plot_training_curves(history, best_epoch, best_val_acc, output_dir, site, original_classes):
-    """Plot training curves and save to file"""
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
-    
-    n_epochs = len(history['train_loss'])
-    epochs = range(1, n_epochs + 1)
-    num_classes = len(original_classes)
-    
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    
-    # Plot 1: Train vs Val Loss
-    axes[0, 0].plot(epochs, history['train_loss'], 'b-', label='Train Loss', linewidth=2)
-    axes[0, 0].plot(epochs, history['val_loss'], 'r-', label='Val Loss', linewidth=2)
-    axes[0, 0].axvline(best_epoch, color='g', linestyle='--', alpha=0.5, 
-                       label=f'Best epoch ({best_epoch})')
-    axes[0, 0].set_xlabel('Epoch')
-    axes[0, 0].set_ylabel('Loss')
-    axes[0, 0].set_title('Training and Validation Loss')
-    axes[0, 0].legend()
-    axes[0, 0].grid(True, alpha=0.3)
-    
-    # Plot 2: Val CCR
-    axes[0, 1].plot(epochs, [x*100 for x in history['val_ccr']], 'g-', linewidth=2)
-    axes[0, 1].axvline(best_epoch, color='g', linestyle='--', alpha=0.5, 
-                       label=f'Best: {best_val_acc:.1%}')
-    axes[0, 1].axhline(best_val_acc*100, color='orange', linestyle='--', alpha=0.5)
-    axes[0, 1].set_xlabel('Epoch')
-    axes[0, 1].set_ylabel('CCR (%)')
-    axes[0, 1].set_title('Validation CCR')
-    axes[0, 1].legend()
-    axes[0, 1].grid(True, alpha=0.3)
-    axes[0, 1].set_ylim([0, 100])
-    
-    # Plot 3: Per-class CCR
-    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown', 'pink', 'gray']
-    for c in range(num_classes):
-        axes[1, 0].plot(epochs, [x*100 for x in history['class_ccr'][c]], 
-                       color=colors[c % len(colors)], 
-                       label=f'Class {int(original_classes[c])}', 
-                       linewidth=1.5)
-    axes[1, 0].axvline(best_epoch, color='gray', linestyle='--', alpha=0.5)
-    axes[1, 0].set_xlabel('Epoch')
-    axes[1, 0].set_ylabel('CCR (%)')
-    axes[1, 0].set_title('Per-Class CCR')
-    axes[1, 0].legend()
-    axes[1, 0].grid(True, alpha=0.3)
-    axes[1, 0].set_ylim([0, 100])
-    
-    # Plot 4: Loss difference (overfitting indicator)
-    loss_diff = [v - t for v, t in zip(history['val_loss'], history['train_loss'])]
-    axes[1, 1].plot(epochs, loss_diff, 'purple', linewidth=2)
-    axes[1, 1].axhline(0, color='black', linestyle='-', alpha=0.3)
-    axes[1, 1].axvline(best_epoch, color='g', linestyle='--', alpha=0.5)
-    axes[1, 1].set_xlabel('Epoch')
-    axes[1, 1].set_ylabel('Val Loss - Train Loss')
-    axes[1, 1].set_title('Overfitting Indicator (higher = more overfit)')
-    axes[1, 1].grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plot_path = os.path.join(output_dir, f'training_curves_{site}.png')
-    plt.savefig(plot_path, dpi=150, bbox_inches='tight')
-    plt.close()
-    
-    print(f"Training curves saved to: {plot_path}")
-    return plot_path
-
-
-# Part 7: Main training loop
-
-def train_unet(site, data_dir, output_dir="models", original_classes=None, 
-    encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001, 
-    weight_decay=1e-4, n_epochs=50, batch_size=8,  
-    gradient_clip_max_norm=1.0, num_classes=4, in_channels=8, plot_curves=True,
-    use_ordinal=False):
+def train_unet(site, data_dir, output_dir="models", original_classes=None,
+    encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001,
+    weight_decay=1e-4, n_epochs=50, batch_size=8,
+    gradient_clip_max_norm=1.0, num_classes=4, in_channels=None,
+    use_ordinal=False, test_interval=5):
     """
     Main training function
     
@@ -410,6 +345,15 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         use_ordinal: Use ordinal regression for ordered classes (requires coral_pytorch)
     """
     
+    # Read in_channels from metadata JSON if not supplied
+    import json
+    if in_channels is None:
+        metadata_path = os.path.join(data_dir, f"{site}_metadata.json")
+        with open(metadata_path) as f:
+            metadata = json.load(f)
+        in_channels = metadata['in_channels']
+        print(f"in_channels read from metadata: {in_channels}")
+
     # Set up class mapping
     if original_classes is not None:
         original_classes = [int(x) for x in original_classes]
@@ -470,6 +414,11 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     validate_patches = np.load(os.path.join(data_dir, f"{site}_validate_patches.npy"))
     validate_labels = np.load(os.path.join(data_dir, f"{site}_validate_labels.npy"))
     validate_masks = np.load(os.path.join(data_dir, f"{site}_validate_masks.npy"))
+
+    print("Loading test data...")
+    test_patches = np.load(os.path.join(data_dir, f"{site}_test_patches.npy"))
+    test_labels = np.load(os.path.join(data_dir, f"{site}_test_labels.npy"))
+    test_masks = np.load(os.path.join(data_dir, f"{site}_test_masks.npy"))
     
     # Check input data 
     print("\nInput data ranges:")
@@ -516,12 +465,15 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     print("\nCreating datasets...")
     train_dataset = MaskedPatchDataset(train_patches, train_labels, train_masks)
     validate_dataset = MaskedPatchDataset(validate_patches, validate_labels, validate_masks)
-    
+    test_dataset = MaskedPatchDataset(test_patches, test_labels, test_masks, augment=False)
+
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     validate_loader = DataLoader(validate_dataset, batch_size=batch_size, shuffle=False)
-    
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
     print(f"\nTrain batches: {len(train_loader)}")
     print(f"Val batches: {len(validate_loader)}")
+    print(f"Test batches: {len(test_loader)}")
     
     # # Check encoder weights compatibility
     # if in_channels != 3 and encoder_weights == 'imagenet':
@@ -585,54 +537,84 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         'train_loss': [],
         'val_loss': [],
         'val_ccr': [],
-        'class_ccr': {c: [] for c in range(num_classes)}
+        'class_ccr': {c: [] for c in range(num_classes)},
+        'test_epochs': [],
+        'test_ccr': [],
+        'test_class_ccr': {c: [] for c in range(num_classes)},
     }
     
     print("\n" + "="*60)
     print("Starting training...")
     print("="*60)
     
-    best_validate_acc = 0.0
-    best_epoch = 0
-    epochs_without_improvement = 0
-    
+    has_val  = len(validate_loader) > 0
+    has_test = len(test_loader) > 0
+
     for epoch in range(n_epochs):
         # Train
         train_loss = train_one_epoch(model, train_loader, criterion, optimizer, device, training_config)
-        
-        # Validate
-        validate_loss, validate_acc, class_acc = validate(model, validate_loader, criterion, device, training_config)
-        
-        # Store metrics
         history['train_loss'].append(train_loss)
-        history['val_loss'].append(validate_loss)
-        history['val_ccr'].append(validate_acc)
-        for c in range(num_classes):
-            history['class_ccr'][c].append(class_acc[c])
-        
+
+        # Validate
+        if has_val:
+            validate_loss, validate_acc, class_acc = validate(model, validate_loader, criterion, device, training_config)
+            history['val_loss'].append(validate_loss)
+            history['val_ccr'].append(validate_acc)
+            for c in range(num_classes):
+                history['class_ccr'][c].append(class_acc[c])
+
+        # Test (every test_interval epochs)
+        run_test = has_test and ((epoch + 1) % test_interval == 0 or epoch == n_epochs - 1)
+        if run_test:
+            _, test_acc, test_class_acc = validate(model, test_loader, criterion, device, training_config)
+            history['test_epochs'].append(epoch + 1)
+            history['test_ccr'].append(test_acc)
+            for c in range(num_classes):
+                history['test_class_ccr'][c].append(test_class_acc[c])
+
         # Print progress
-        print(f"\nEpoch {epoch+1}/{n_epochs}")
-        print(f"  Train Loss: {train_loss:.4f}")
-        print(f"  Validate Loss:   {validate_loss:.4f}")
-        print(f"  Validate CCR:    {validate_acc:.2%}")
-        print(f"  Class CCR:  ", end="")
-        for c, acc in enumerate(class_acc):
-            print(f"C{int(original_classes[c])}={acc:.2%} ", end="")
-        print()
+        if has_val:
+            print(f"\nEpoch {epoch+1}/{n_epochs}")
+            print(f"  Train Loss: {train_loss:.4f}")
+            print(f"  Validate Loss:   {validate_loss:.4f}")
+            print(f"  Validate CCR:    {validate_acc:.2%}")
+            print(f"  Class CCR:  ", end="")
+            for c, acc in enumerate(class_acc):
+                print(f"C{int(original_classes[c])}={acc:.2%} ", end="")
+            if run_test:
+                print(f"\n  Test CCR:        {test_acc:.2%}", flush=True)
+            else:
+                print(flush=True)
+        else:
+            line = f"Epoch {epoch+1}/{n_epochs} | train loss: {train_loss:.4f}"
+            if run_test:
+                line += f" | test CCR: {test_acc:.2%}"
+            print(line, flush=True)
         
+
+    # Compute best CCR summaries from history
+    if has_val and history['val_ccr']:
+        best_val_ccr   = max(history['val_ccr'])
+        best_val_epoch = history['val_ccr'].index(best_val_ccr) + 1
+    else:
+        best_val_ccr = best_val_epoch = None
+
+    if has_test and history['test_ccr']:
+        best_test_ccr   = max(history['test_ccr'])
+        best_test_epoch = history['test_epochs'][history['test_ccr'].index(best_test_ccr)]
+    else:
+        best_test_ccr = best_test_epoch = None
 
     # Save final model
     os.makedirs(output_dir, exist_ok=True)
     model_path = os.path.join(output_dir, f"unet_{site}_best.pth")
     config_path = os.path.join(output_dir, f"unet_{site}_config.json")
-    
-    # Save model weights
+
     if isinstance(model, nn.DataParallel):
         torch.save(model.module.state_dict(), model_path)
     else:
         torch.save(model.state_dict(), model_path)
-    
-    # Save model configuration
+
     import json
     config = {
         'encoder_name': encoder_name,
@@ -641,24 +623,47 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         'num_classes': num_classes,
         'original_classes': original_classes,
         'site': site,
-        'use_ordinal': use_ordinal  # NEW
+        'use_ordinal': use_ordinal
     }
     with open(config_path, 'w') as f:
         json.dump(config, f, indent=2)
-    
-    print(f"  → Saved final model (CCR={best_validate_acc:.2%})")
 
-    
+    # Write training metrics CSV for R plotting
+    import csv
+    metrics_path = os.path.join(output_dir, 'training_metrics.csv')
+    class_col_names = [f'test_ccr_class{int(original_classes[c])}' for c in range(num_classes)]
+    header = ['epoch', 'train_loss', 'val_loss', 'val_ccr', 'test_ccr'] + class_col_names
+    test_epoch_lookup = {ep: idx for idx, ep in enumerate(history['test_epochs'])}
+
+    with open(metrics_path, 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=header)
+        writer.writeheader()
+        for ep_idx in range(n_epochs):
+            ep = ep_idx + 1
+            row = {
+                'epoch':      ep,
+                'train_loss': history['train_loss'][ep_idx],
+                'val_loss':   history['val_loss'][ep_idx] if has_val else '',
+                'val_ccr':    history['val_ccr'][ep_idx]  if has_val else '',
+                'test_ccr':   '',
+            }
+            for col in class_col_names:
+                row[col] = ''
+            if ep in test_epoch_lookup:
+                test_idx = test_epoch_lookup[ep]
+                row['test_ccr'] = history['test_ccr'][test_idx]
+                for c in range(num_classes):
+                    row[class_col_names[c]] = history['test_class_ccr'][c][test_idx]
+            writer.writerow(row)
+
     print("\n" + "="*60)
     print("Training complete!")
-    print(f"Best validation CCR: {best_validate_acc:.2%} (epoch {best_epoch})")
+    if best_val_ccr is not None:
+        print(f"Best validation CCR: {best_val_ccr:.2%} (epoch {best_val_epoch})")
+    if best_test_ccr is not None:
+        print(f"Best test CCR:       {best_test_ccr:.2%} (epoch {best_test_epoch})")
     print(f"Model saved to: {model_path}")
+    print(f"Metrics saved to: {metrics_path}")
     print("="*60)
-    
-    # Plot training curves
-    if plot_curves:
-        print("\nGenerating training curves...")
-        plot_training_curves(history, best_epoch, best_validate_acc, 
-                           output_dir, site, original_classes)
-    
-    return model_path, best_validate_acc
+
+    return model_path, best_test_ccr or best_val_ccr or 0.0

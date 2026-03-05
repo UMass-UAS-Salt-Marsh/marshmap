@@ -101,6 +101,12 @@ unet_export_to_numpy <- function(patches, output_dir, site, class_mapping, set) 
    }
    
    
+   # Save metadata JSON (in_channels read by train_unet.py)
+   in_channels <- dim(patches$patches)[4]
+   metadata <- list(in_channels = in_channels)
+   jsonlite::write_json(metadata, file.path(output_dir, paste0(site, '_metadata.json')), auto_unbox = TRUE)
+   message('in_channels: ', in_channels)
+
    # Save
    np$save(file.path(output_dir, paste0(site, '_train_patches.npy')), train_patches)
    np$save(file.path(output_dir, paste0(site, '_train_labels.npy')), train_labels)

@@ -34,7 +34,11 @@ Imports:
     shinyWidgets,
     moments,
     tidyr,
-    reticulate
+    reticulate,
+    jsonlite,
+    ggplot2,
+    patchwork,
+    scales
 Remotes:
     UMassCDS/slurmcollie,
     ethanplunkett/rasterPrep

@@ -6,7 +6,7 @@
 \usage{
 train(
   model,
-  train = NULL,
+  train = "train",
   resources = NULL,
   local = FALSE,
   trap = TRUE,

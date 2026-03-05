@@ -53,6 +53,7 @@ unet_predict <- function(model_file, data_dir, site, dataset = 'test') {
    message('  Total labeled pixels: ', length(label_original))
    message('  Overall CCR: ', round(100 * mean(pred_original == label_original), 2), '%')
    
+   
    # Return as factors for caret::confusionMatrix
    list(
       predictions = factor(pred_original, levels = original_classes),
@@ -62,27 +63,4 @@ unet_predict <- function(model_file, data_dir, site, dataset = 'test') {
       masks_array = results$masks,
       probabilities = results$probabilities
    )
-}
-
-
-#' Create confusion matrix from U-Net predictions
-#'
-#' @param pred_results Results from unet_predict()
-#' @returns confusionMatrix object from caret
-#' @importFrom caret confusionMatrix
-#' @keywords internal
-
-unet_confusion_matrix <- function(pred_results) {
-   
-   if (!requireNamespace('caret', quietly = TRUE)) {
-      stop('caret package required. Install with: install.packages("caret")')
-   }
-   
-   cm <- caret::confusionMatrix(
-      data = pred_results$predictions,
-      reference = pred_results$labels,
-      mode = 'prec_recall'
-   )
-   
-   return(cm)
 }

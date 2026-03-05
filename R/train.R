@@ -61,7 +61,7 @@
 #' @export
 
 
-train <- function(model, train = NULL, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+train <- function(model, train = 'train', resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    resources <- get_resources(resources, list(
