@@ -42,6 +42,9 @@
 #'    - learning_rate Learning rate for optimizer
 #'    - weight_decay. L2 regularization - penalizes large weights to prevent overfitting. 
 #'      Higher values (1e-3) = stronger regularization. Lower values (1e-5) = weaker. 
+#'    - class_weighting. One of `none`, `freq`, or `sqrt`. If `none`, all classes will be given the 
+#'      same weight; `freq` weights them by inverse frequency, and `sqrt` weights by the square
+#'      root of the inverse frequency.
 #'    - batch_size. How many patches to process together. Larger (16, 32) uses parallelization
 #'      on GPUs so trains faster, more stable gradients, uses more GPU memory. Smaller (4, 8) gives
 #'      noisier gradients (good regularization), less memory, better for small datasets. Use 8; if
@@ -49,6 +52,8 @@
 #'    - gradient_clip_max_norm. Prevents exploding gradients by capping gradient magnitude. 
 #'      Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 #'    - use_ordinal If TRUE, use ordinal regression U-Net      
+#' @param result Name for this training run's result subdirectory (default `"fit"`). Use different
+#'    names to store multiple runs on the same `prep_unet` patches (e.g. `"fit01"`, `"fit02"`).
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults. **Note that this function requires GPUs**. By default, it 
 #'    requests 2 L40S GPUs.
@@ -61,9 +66,9 @@
 #' @export
 
 
-train <- function(model, train = 'train', resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
-   
-   
+train <- function(model, train = 'train', result = 'fit', resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+
+
    resources <- get_resources(resources, list(
       ncpus = 1,
       ngpus = 1,
@@ -71,14 +76,14 @@ train <- function(model, train = 'train', resources = NULL, local = FALSE, trap 
       constraint = 'x86_64&[l40s|v100|2080ti]',    # alternative GPUs: V100 or RTX 2080 Ti
       partition.gpu = 'gpu-preempt,gpu',           # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
       memory = 180,
-      walltime = '01:00:00'
+      walltime = '02:00:00'
    ))
-   
-   
+
+
    if(is.null(comment))
-      comment <- paste0('train ', model)
-   
-   
-   launch('do_train', reps = model, repname = 'model', moreargs = list(train = train),
+      comment <- paste0('train ', model, '/', result)
+
+
+   launch('do_train', reps = model, repname = 'model', moreargs = list(train = train, result = result),
           local = local, trap = trap, resources = resources, comment = comment)
 }

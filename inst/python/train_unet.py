@@ -321,7 +321,7 @@ def validate(model, dataloader, criterion, device, config):
 
 def train_unet(site, data_dir, output_dir="models", original_classes=None,
     encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001,
-    weight_decay=1e-4, n_epochs=50, batch_size=8,
+    weight_decay=1e-4, class_weighting = 'freq', n_epochs=50, batch_size=8,
     gradient_clip_max_norm=1.0, num_classes=4, in_channels=None,
     use_ordinal=False, test_interval=5):
     """
@@ -336,6 +336,7 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         encoder_weights: 'imagenet' or None
         learning_rate: Learning rate for optimizer
         weight_decay: L2 regularization strength
+        class_weighting: weight classes by 'none', 'freq', or 'sqrt'
         n_epochs: Number of training epochs
         batch_size: Batch size for training
         gradient_clip_max_norm: Gradient clipping threshold
@@ -453,7 +454,17 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         zero_classes = [int(original_classes[i]) for i in range(num_classes) if class_pixel_counts[i] == 0]
         print(f"\nWARNING: Classes {zero_classes} have ZERO training pixels!")
     
-    class_weights = 1.0 / (class_pixel_counts + 1e-6)
+    
+    match class_weighting:
+        case 'none':
+            class_weights = np.ones(num_classes)
+        case 'freq':
+            class_weights = 1.0 / (class_pixel_counts + 1e-6)
+        case 'sqrt':
+            class_weights = 1.0 / np.sqrt(class_pixel_counts + 1e-6)
+        case _:
+            raise ValueError(f"class_weighting must be 'none', 'freq', or 'sqrt'; got '{class_weighting}'")
+
     class_weights = class_weights / class_weights.sum() * num_classes
     
     if use_ordinal:
@@ -607,8 +618,10 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
 
     # Save final model
     os.makedirs(output_dir, exist_ok=True)
-    model_path = os.path.join(output_dir, f"unet_{site}_best.pth")
-    config_path = os.path.join(output_dir, f"unet_{site}_config.json")
+    fit_dir     = os.path.dirname(output_dir)           # one level up: <model>/<result>/
+    os.makedirs(fit_dir, exist_ok=True)
+    model_path  = os.path.join(output_dir, f"unet_{site.upper()}_final.pth")
+    config_path = os.path.join(fit_dir,    f"unet_{site.upper()}_config.json")
 
     if isinstance(model, nn.DataParallel):
         torch.save(model.module.state_dict(), model_path)

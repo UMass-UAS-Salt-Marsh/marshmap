@@ -7,6 +7,7 @@
 train(
   model,
   train = "train",
+  result = "fit",
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -58,6 +59,9 @@ initialization, thus learns everything from this dataset; no bias, but slower tr
 \item learning_rate Learning rate for optimizer
 \item weight_decay. L2 regularization - penalizes large weights to prevent overfitting.
 Higher values (1e-3) = stronger regularization. Lower values (1e-5) = weaker.
+\item class_weighting. One of \code{none}, \code{freq}, or \code{sqrt}. If \code{none}, all classes will be given the
+same weight; \code{freq} weights them by inverse frequency, and \code{sqrt} weights by the square
+root of the inverse frequency.
 \item batch_size. How many patches to process together. Larger (16, 32) uses parallelization
 on GPUs so trains faster, more stable gradients, uses more GPU memory. Smaller (4, 8) gives
 noisier gradients (good regularization), less memory, better for small datasets. Use 8; if
@@ -66,6 +70,9 @@ overfitting is a problem, try 4.
 Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 \item use_ordinal If TRUE, use ordinal regression U-Net
 }}
+
+\item{result}{Name for this training run's result subdirectory (default \code{"fit"}). Use different
+names to store multiple runs on the same \code{prep_unet} patches (e.g. \code{"fit01"}, \code{"fit02"}).}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 over the function's defaults. \strong{Note that this function requires GPUs}. By default, it

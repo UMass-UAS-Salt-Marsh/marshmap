@@ -29,8 +29,9 @@
 #'    - upscale: number of cells to upscale (default = 1). Use 3 to upscale to 3x3, 5 for 5x5, etc.
 #'    - smooth: number of cells to include in moving window mean (default = 1). Use 3 to smooth to 3x3, etc.
 #' @param train The base name of a `.yml` file in `<pars>/unet/` with training parameters. 
-#'    If present, this overrides any overlapping parameters in `model`. This file contains parameters used 
-#'    only in the training phase. The following must be present either in the `model` or `train` file:
+#'    If present, this overrides parameters in `model`. This file contains parameters used only
+#'    in the training phase. The following must be present either in the `model` or `train` file:
+#'    - in_channels Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
 #'    - n_epochs Number of training epochs
 #'    - encoder_name. Pre-trained encoder to use. Choices include `resnet10`, `resnet18`, 
 #'     `resnet34`, `resnet50`, `efficientnet-b0`, and others. The lower `restnet` 
@@ -41,21 +42,21 @@
 #'    - learning_rate Learning rate for optimizer
 #'    - weight_decay. L2 regularization - penalizes large weights to prevent overfitting. 
 #'      Higher values (1e-3) = stronger regularization. Lower values (1e-5) = weaker. 
+#'    - class_weighting. One of `none`, `freq`, or `sqrt`. If `none`, all classes will be given the 
+#'      same weight; `freq` weights them by inverse frequency, and `sqrt` weights by the square
+#'      root of the inverse frequency.
 #'    - batch_size. How many patches to process together. Larger (16, 32) uses parallelization
 #'      on GPUs so trains faster, more stable gradients, uses more GPU memory. Smaller (4, 8) gives
 #'      noisier gradients (good regularization), less memory, better for small datasets. Use 8; if
 #'      overfitting is a problem, try 4.
 #'    - gradient_clip_max_norm. Prevents exploding gradients by capping gradient magnitude. 
 #'      Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
-#'    - use_ordinal If TRUE, use ordinal regression U-Net
-#'    - test_interval Evaluate test CCR every this many epochs (default 1 = every epoch). The
-#'      last epoch is always evaluated. Test results are shown in plots but never used to select
-#'      the model.
-#'    - plot_curves If TRUE (default), produce ggplot2 training-curve PNG in `model_dir`.
-#'    - window Half-width (in epochs) of the centered rolling-mean smoother applied to the
-#'      cross-validation mean curve before plotting (default 1 = no smoothing).
+#'    - use_ordinal If TRUE, use ordinal regression U-Net      
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults.
+#' @param result Name of the fit subdirectory within `<model>/` where this training run's results
+#'    are stored (default `"fit"`). Use different names (e.g. `"fit01"`, `"fit02"`) to store
+#'    multiple training runs on the same source patches.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
@@ -67,7 +68,7 @@
 #' @export
 
 
-do_train <- function(model, train) {
+do_train <- function(model, train, result = 'fit') {
 
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))       # read parameters from model
@@ -83,15 +84,18 @@ do_train <- function(model, train) {
    source_python("inst/python/train_unet.py")
 
    model_dir      <- file.path(resolve_dir(the$unetdir, config$site), model)
+   patches_dir    <- file.path(model_dir, 'patches')                                # training data (from prep_unet)
+   fit_dir        <- file.path(model_dir, result)                                   # results for this training run
    all_metrics    <- vector('list', config$cv)                                      # training_metrics.csv per CV
    all_preds      <- list()                                                         # prediction factors across CVs
    all_labels_all <- list()                                                         # label factors across CVs
    cv_ccr         <- numeric(config$cv)                                             # final test CCR per CV
 
    for(i in seq_len(config$cv)) {                                                   # For each cross-validation iteration,
-      data_dir   <- file.path(model_dir, paste0('set', i))
-      output_dir <- file.path(data_dir, 'models')
+      data_dir   <- file.path(patches_dir, paste0('set', i))                        # patches from prep_unet
+      output_dir <- file.path(fit_dir,     paste0('set', i))                        # set-specific fit results
 
+      message('')
       message('************ Cross-validation iteration ', i, ' of ', config$cv, ' ************')
 
       train_unet(
@@ -105,6 +109,7 @@ do_train <- function(model, train) {
          encoder_weights       = config$encoder_weights,
          learning_rate         = config$learning_rate,
          weight_decay          = config$weight_decay,
+         class_weighting         = config$class_weighting,
          n_epochs              = as.integer(config$n_epochs),
          batch_size            = as.integer(config$batch_size),
          gradient_clip_max_norm = config$gradient_clip_max_norm,
@@ -117,15 +122,14 @@ do_train <- function(model, train) {
 
       # Predict on test set
       message('Predicting on test set for CV ', i, '...')
-      model_file   <- file.path(output_dir, paste0('unet_', config$site, '_best.pth'))
+      model_file   <- file.path(output_dir, paste0('unet_', toupper(config$site), '_final.pth'))
       pred_results <- unet_predict(model_file, data_dir, config$site, dataset = 'test')
 
-      cv_ccr[i]         <- mean(pred_results$predictions == pred_results$labels)
-      all_preds[[i]]    <- pred_results$predictions
+      cv_ccr[i]           <- mean(pred_results$predictions == pred_results$labels)
+      all_preds[[i]]      <- pred_results$predictions
       all_labels_all[[i]] <- pred_results$labels
 
       message(sprintf('   CV %d test CCR: %.2f%%', i, cv_ccr[i] * 100))
-      message('')
    }
 
 
@@ -143,14 +147,14 @@ do_train <- function(model, train) {
    print(cm)
 
    # Save confusion matrix
-   cm_path <- file.path(model_dir, 'confusion_matrix.rds')
+   cm_path <- file.path(fit_dir, 'confusion_matrix.rds')
    saveRDS(cm, cm_path)
    message('Confusion matrix saved to: ', cm_path)
 
 
    # ── Plots ─────────────────────────────────────────────────────────────────────
    if (isTRUE(config$plot_curves)) {
-      plot_unet_training(all_metrics, config, model_dir, config$site)
+      plot_unet_training(all_metrics, config, fit_dir, config$site)
    }
 
 

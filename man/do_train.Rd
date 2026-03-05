@@ -4,7 +4,7 @@
 \alias{do_train}
 \title{Train and assess U-Net model}
 \usage{
-do_train(model, train)
+do_train(model, train, result = "fit")
 }
 \arguments{
 \item{model}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with model parameters. This
@@ -37,9 +37,10 @@ on.
 }}
 
 \item{train}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with training parameters.
-If present, this overrides any overlapping parameters in \code{model}. This file contains parameters used
-only in the training phase. The following must be present either in the \code{model} or \code{train} file:
+If present, this overrides parameters in \code{model}. This file contains parameters used only
+in the training phase. The following must be present either in the \code{model} or \code{train} file:
 \itemize{
+\item in_channels Number of input channels (8 for multispectral + NDVI + NDRE + DEM)
 \item n_epochs Number of training epochs
 \item encoder_name. Pre-trained encoder to use. Choices include \code{resnet10}, \code{resnet18},
 \code{resnet34}, \code{resnet50}, \code{efficientnet-b0}, and others. The lower \code{restnet}
@@ -50,6 +51,9 @@ initialization, thus learns everything from this dataset; no bias, but slower tr
 \item learning_rate Learning rate for optimizer
 \item weight_decay. L2 regularization - penalizes large weights to prevent overfitting.
 Higher values (1e-3) = stronger regularization. Lower values (1e-5) = weaker.
+\item class_weighting. One of \code{none}, \code{freq}, or \code{sqrt}. If \code{none}, all classes will be given the
+same weight; \code{freq} weights them by inverse frequency, and \code{sqrt} weights by the square
+root of the inverse frequency.
 \item batch_size. How many patches to process together. Larger (16, 32) uses parallelization
 on GPUs so trains faster, more stable gradients, uses more GPU memory. Smaller (4, 8) gives
 noisier gradients (good regularization), less memory, better for small datasets. Use 8; if
@@ -57,13 +61,11 @@ overfitting is a problem, try 4.
 \item gradient_clip_max_norm. Prevents exploding gradients by capping gradient magnitude.
 Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 \item use_ordinal If TRUE, use ordinal regression U-Net
-\item test_interval Evaluate test CCR every this many epochs (default 1 = every epoch). The
-last epoch is always evaluated. Test results are shown in plots but never used to select
-the model.
-\item plot_curves If TRUE (default), produce ggplot2 training-curve PNG in \code{model_dir}.
-\item window Half-width (in epochs) of the centered rolling-mean smoother applied to the
-cross-validation mean curve before plotting (default 1 = no smoothing).
 }}
+
+\item{result}{Name of the fit subdirectory within \verb{<model>/} where this training run's results
+are stored (default \code{"fit"}). Use different names (e.g. \code{"fit01"}, \code{"fit02"}) to store
+multiple training runs on the same source patches.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 over the function's defaults.}

@@ -37,12 +37,13 @@ def predict_unet(model_file, data_dir, site, dataset='test'):
             - config: full model configuration
     """
     
-    # Load config
-    config_path = model_file.replace('_best.pth', '_config.json')
-    
+    # Load config — stored one level above the set directory, at the fit level
+    fit_dir     = os.path.dirname(os.path.dirname(model_file))
+    config_path = os.path.join(fit_dir, f"unet_{site.upper()}_config.json")
+
     if not os.path.exists(config_path):
         raise ValueError(f"Config file not found: {config_path}\n"
-                        f"Model was probably trained before config saving was implemented.")
+                        f"Expected at fit level: <model>/<result>/unet_<SITE>_config.json")
     
     import json
     with open(config_path, 'r') as f:

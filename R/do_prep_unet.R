@@ -83,7 +83,7 @@ do_prep_unet <- function(model, save_gis) {
    
    
    transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), paste0(toupper(config$site), '_transects.shp'))
-   output_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
+   output_dir <- file.path(resolve_dir(the$unetdir, config$site), model, 'patches')
    
    
    # 1. Build input stack
