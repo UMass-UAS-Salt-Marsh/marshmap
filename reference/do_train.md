@@ -5,7 +5,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-do_train(model, train)
+do_train(model, train, result = "fit")
 ```
 
 ## Arguments
@@ -59,10 +59,12 @@ do_train(model, train)
 - train:
 
   The base name of a `.yml` file in `<pars>/unet/` with training
-  parameters. If present, this overrides any overlapping parameters in
-  `model`. This file contains parameters used only in the training
-  phase. The following must be present either in the `model` or `train`
-  file:
+  parameters. If present, this overrides parameters in `model`. This
+  file contains parameters used only in the training phase. The
+  following must be present either in the `model` or `train` file:
+
+  - in_channels Number of input channels (8 for multispectral + NDVI +
+    NDRE + DEM)
 
   - n_epochs Number of training epochs
 
@@ -82,6 +84,11 @@ do_train(model, train)
     overfitting. Higher values (1e-3) = stronger regularization. Lower
     values (1e-5) = weaker.
 
+  - class_weighting. One of `none`, `freq`, or `sqrt`. If `none`, all
+    classes will be given the same weight; `freq` weights them by
+    inverse frequency, and `sqrt` weights by the square root of the
+    inverse frequency.
+
   - batch_size. How many patches to process together. Larger (16, 32)
     uses parallelization on GPUs so trains faster, more stable
     gradients, uses more GPU memory. Smaller (4, 8) gives noisier
@@ -94,16 +101,12 @@ do_train(model, train)
 
   - use_ordinal If TRUE, use ordinal regression U-Net
 
-  - test_interval Evaluate test CCR every this many epochs (default 1 =
-    every epoch). The last epoch is always evaluated. Test results are
-    shown in plots but never used to select the model.
+- result:
 
-  - plot_curves If TRUE (default), produce ggplot2 training-curve PNG in
-    `model_dir`.
-
-  - window Half-width (in epochs) of the centered rolling-mean smoother
-    applied to the cross-validation mean curve before plotting (default
-    1 = no smoothing).
+  Name of the fit subdirectory within `<model>/` where this training
+  run's results are stored (default `"fit"`). Use different names (e.g.
+  `"fit01"`, `"fit02"`) to store multiple training runs on the same
+  source patches.
 
 - resources:
 

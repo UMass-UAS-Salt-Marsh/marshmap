@@ -8,6 +8,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 train(
   model,
   train = "train",
+  result = "fit",
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -91,6 +92,11 @@ train(
     overfitting. Higher values (1e-3) = stronger regularization. Lower
     values (1e-5) = weaker.
 
+  - class_weighting. One of `none`, `freq`, or `sqrt`. If `none`, all
+    classes will be given the same weight; `freq` weights them by
+    inverse frequency, and `sqrt` weights by the square root of the
+    inverse frequency.
+
   - batch_size. How many patches to process together. Larger (16, 32)
     uses parallelization on GPUs so trains faster, more stable
     gradients, uses more GPU memory. Smaller (4, 8) gives noisier
@@ -102,6 +108,12 @@ train(
     (gentle); start with 1.0.
 
   - use_ordinal If TRUE, use ordinal regression U-Net
+
+- result:
+
+  Name for this training run's result subdirectory (default `"fit"`).
+  Use different names to store multiple runs on the same `prep_unet`
+  patches (e.g. `"fit01"`, `"fit02"`).
 
 - resources:
 
