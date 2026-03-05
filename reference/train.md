@@ -7,7 +7,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 ``` r
 train(
   model,
-  train = NULL,
+  train = "train",
   resources = NULL,
   local = FALSE,
   trap = TRUE,

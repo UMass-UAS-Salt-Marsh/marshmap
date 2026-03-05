@@ -5,7 +5,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-do_train(model, train = NULL)
+do_train(model, train)
 ```
 
 ## Arguments
@@ -59,12 +59,10 @@ do_train(model, train = NULL)
 - train:
 
   The base name of a `.yml` file in `<pars>/unet/` with training
-  parameters. If present, this overrides parameters in `model`. This
-  file contains parameters used only in the training phase. The
-  following must be present either in the `model` or `train` file:
-
-  - in_channels Number of input channels (8 for multispectral + NDVI +
-    NDRE + DEM)
+  parameters. If present, this overrides any overlapping parameters in
+  `model`. This file contains parameters used only in the training
+  phase. The following must be present either in the `model` or `train`
+  file:
 
   - n_epochs Number of training epochs
 
@@ -96,6 +94,17 @@ do_train(model, train = NULL)
 
   - use_ordinal If TRUE, use ordinal regression U-Net
 
+  - test_interval Evaluate test CCR every this many epochs (default 1 =
+    every epoch). The last epoch is always evaluated. Test results are
+    shown in plots but never used to select the model.
+
+  - plot_curves If TRUE (default), produce ggplot2 training-curve PNG in
+    `model_dir`.
+
+  - window Half-width (in epochs) of the centered rolling-mean smoother
+    applied to the cross-validation mean curve before plotting (default
+    1 = no smoothing).
+
 - resources:
 
   Slurm launch resources. See
@@ -116,3 +125,8 @@ do_train(model, train = NULL)
 - comment:
 
   Optional slurmcollie comment
+
+## Value
+
+Invisibly: list with `confusion_matrix` (combined caret CM across all
+CVs) and `cv_ccr` (numeric vector of per-CV test CCR).

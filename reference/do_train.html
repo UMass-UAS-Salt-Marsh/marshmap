@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_train</span><span class="op">(</span><span class="va">model</span>, train <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_train</span><span class="op">(</span><span class="va">model</span>, <span class="va">train</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -76,9 +76,8 @@ on.</p></li>
 
 <dt id="arg-train">train<a class="anchor" aria-label="anchor" href="#arg-train"></a></dt>
 <dd><p>The base name of a <code>.yml</code> file in <code>&lt;pars&gt;/unet/</code> with training parameters.
-If present, this overrides parameters in <code>model</code>. This file contains parameters used only
-in the training phase. The following must be present either in the <code>model</code> or <code>train</code> file:</p><ul><li><p>in_channels Number of input channels (8 for multispectral + NDVI + NDRE + DEM)</p></li>
-<li><p>n_epochs Number of training epochs</p></li>
+If present, this overrides any overlapping parameters in <code>model</code>. This file contains parameters used
+only in the training phase. The following must be present either in the <code>model</code> or <code>train</code> file:</p><ul><li><p>n_epochs Number of training epochs</p></li>
 <li><p>encoder_name. Pre-trained encoder to use. Choices include <code>resnet10</code>, <code>resnet18</code>,
 <code>resnet34</code>, <code>resnet50</code>, <code>efficientnet-b0</code>, and others. The lower <code>restnet</code>
 numbers have fewer parameters, so may be likely to result in more stable training.</p></li>
@@ -95,6 +94,12 @@ overfitting is a problem, try 4.</p></li>
 <li><p>gradient_clip_max_norm. Prevents exploding gradients by capping gradient magnitude.
 Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.</p></li>
 <li><p>use_ordinal If TRUE, use ordinal regression U-Net</p></li>
+<li><p>test_interval Evaluate test CCR every this many epochs (default 1 = every epoch). The
+last epoch is always evaluated. Test results are shown in plots but never used to select
+the model.</p></li>
+<li><p>plot_curves If TRUE (default), produce ggplot2 training-curve PNG in <code>model_dir</code>.</p></li>
+<li><p>window Half-width (in epochs) of the centered rolling-mean smoother applied to the
+cross-validation mean curve before plotting (default 1 = no smoothing).</p></li>
 </ul></dd>
 
 
@@ -117,6 +122,11 @@ no effect if local = FALSE.</p></dd>
 <dd><p>Optional slurmcollie comment</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>Invisibly: list with <code>confusion_matrix</code> (combined caret CM across all CVs) and
+<code>cv_ccr</code> (numeric vector of per-CV test CCR).</p>
+    </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
