@@ -125,6 +125,9 @@ do_prep_unet <- function(model, save_gis) {
    }
    
    
+   transects <- spatial_holdout(transcts)                                     # Now assign holdout sequence to poly00
+   
+   
    if(config$smooth > 1) {                                                    # ----- smooth training data
       message('   ======= Smoothing with ', config$smooth, 'x', config$smooth, ' moving window =====')
       input_stack <- focal(input_stack, w = matrix(1/config$smooth^2, config$smooth, config$smooth), fun = 'mean', na.rm = TRUE)
