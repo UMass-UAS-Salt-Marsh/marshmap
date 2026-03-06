@@ -125,7 +125,7 @@ do_prep_unet <- function(model, save_gis) {
    }
    
    
-   transects <- spatial_holdout(transcts)                                     # Now assign holdout sequence to poly00
+   transects <- spatial_holdout(transects)                                    # Now assign holdout sequence to poly00
    
    
    if(config$smooth > 1) {                                                    # ----- smooth training data
