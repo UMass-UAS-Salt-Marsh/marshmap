@@ -19,5 +19,5 @@ The modified \code{sf} object
 \description{
 Polygons are numbered from \code{1:count}, starting at the northwest-most centroid and taking
 the closest centroid in turn. Numbering is stratified by \code{field}. Results are placed in
-field \code{poly00} in the \code{sf} object.
+field \code{bypoly00} in the \code{sf} object.
 }

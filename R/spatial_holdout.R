@@ -2,7 +2,7 @@
 #' 
 #' Polygons are numbered from `1:count`, starting at the northwest-most centroid and taking
 #' the closest centroid in turn. Numbering is stratified by `field`. Results are placed in
-#' field `poly00` in the `sf` object.
+#' field `bypoly00` in the `sf` object.
 #' 
 #' @param shape `sf` object
 #' @param field Name of field to stratify on; use NULL for no stratification
@@ -15,7 +15,7 @@
 spatial_holdout <- function(shape, field = 'subclass', count = 10) {
    
    
-   shape$poly00 <- NA
+   shape$bypoly00 <- NA
    if(is.null(field))
       targets <- 1
    else
@@ -37,7 +37,7 @@ spatial_holdout <- function(shape, field = 'subclass', count = 10) {
       k <- 0
       
       while(TRUE) {                                                     #    loop over polys
-         shape$poly00[j] <- k <- k %% 10 + 1                            #       assign class
+         shape$bypoly00[j] <- k <- k %% 10 + 1                          #       assign class
          done[j] <- TRUE                                                #       mark it done
          nxt <- ctrs[b & !done, ]                                       #       candidates for next poly
          if(nrow(nxt) == 0)                                             #       if there aren't any, we're done with this subclass
