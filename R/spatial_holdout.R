@@ -43,7 +43,7 @@ spatial_holdout <- function(shape, field = 'subclass', count = 10) {
          if(nrow(nxt) == 0)                                             #       if there aren't any, we're done with this subclass
             break
          d <- sqrt((ctrs$x[j] - nxt$x) ^ 2 + (ctrs$y[j] - nxt$y) ^ 2)   #       distance from current poly to candidates
-         j <- nxt$poly[d == min(d)][1]                                  #       winner is next
+         j <- match(nxt$poly[d == min(d)][1], shape$poly)               #       winner is next
       }
    }
    
