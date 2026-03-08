@@ -124,7 +124,7 @@ do_prep_unet <- function(model, save_gis) {
       transects <- transects[!invalid_geoms, ]
    }
    
-   
+
    message('Assigning spatially distributed holdout sets...')
    transects <- spatial_holdout(transects)                                    # Now assign holdout sequence to bypoly00
    

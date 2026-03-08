@@ -22,30 +22,31 @@ spatial_holdout <- function(shape, field = 'subclass', count = 10) {
       targets <- sort(unique(shape[[field]]))
    
    ctrs <- suppressWarnings(st_centroid(shape))$geometry
-   ctrs <- data.frame(t(apply(as.matrix(ctrs), 1, unlist)))             # x,y of poly centroids
+   ctrs <- data.frame(t(apply(as.matrix(ctrs), 1, unlist)))                   # x,y of poly centroids
    names(ctrs) <- c('x', 'y')
-   ctrs$nw <- ctrs$x - ctrs$y                                           # northwestness - lower values are closer to NW corner
+   ctrs$nw <- ctrs$x - ctrs$y                                                 # northwestness - lower values are closer to NW corner
    ctrs$poly <- shape$poly
-   done <- rep(FALSE, nrow(shape))                                      # flag for polys that have been visited   
+   done <- rep(FALSE, nrow(shape))                                            # flag for polys that have been visited   
    
    
-   for(i in targets) {                                                  # for each subclass,
-      b <- shape[[field]] == i                                          #    polys in target subclass
+   for(i in targets) {                                                        # for each subclass,
+      b <- shape[[field]] == i                                                #    polys in target subclass
       
       s <- ctrs[b,]
-      j <- match(s$poly[order(s$nw)[1]], ctrs$poly)                     #    start in the northwest corner for this subclass
+      j <- seq_len(nrow(ctrs))[ctrs$poly == s$poly[order(s$nw)[1]]]           #   start in the northwest corner for this subclass (treat multi polys together)
       k <- 0
       
-      while(TRUE) {                                                     #    loop over polys
-         shape$bypoly00[j] <- k <- k %% 10 + 1                          #       assign class
-         done[j] <- TRUE                                                #       mark it done
-         nxt <- ctrs[b & !done, ]                                       #       candidates for next poly
-         if(nrow(nxt) == 0)                                             #       if there aren't any, we're done with this subclass
+      message('start: ', j)
+      
+      while(TRUE) {                                                           #    loop over polys
+         shape$bypoly00[j] <- k <- k %% 10 + 1                                #       assign class
+         done[j] <- TRUE                                                      #       mark it done
+         nxt <- ctrs[b & !done, ]                                             #       candidates for next poly
+         if(nrow(nxt) == 0)                                                   #       if there aren't any, we're done with this subclass
             break
-         d <- sqrt((ctrs$x[j] - nxt$x) ^ 2 + (ctrs$y[j] - nxt$y) ^ 2)   #       distance from current poly to candidates
-         j <- match(nxt$poly[d == min(d)][1], shape$poly)               #       winner is next
+         d <- sqrt((ctrs$x[j[1]] - nxt$x) ^ 2 + (ctrs$y[j[1]] - nxt$y) ^ 2)   #       distance from current poly to candidates
+         j <- seq_len(nrow(shape))[shape$poly == nxt$poly[d == min(d)][1]]    #       winner is next (polys may be split from overlaps--take 'em all)
       }
    }
-   
    shape
 }
