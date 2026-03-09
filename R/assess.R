@@ -99,18 +99,28 @@ assess <- function(fitid = NULL, model = NULL, newdata = NULL, site = NULL,
       frow <- match(fitid, the$fdb$id)              # find our row in the fit database
       if(is.na(frow))
          stop('Fit id ', fitid, ' is not present in the fits database')
-      
+
+      if(the$fdb$method[frow] == 'unet') {           # U-Net: just print the summary file
+         sf <- file.path(the$modelsdir, paste0('fit_', fitid, '_summary.txt'))
+         if(!file.exists(sf))
+            stop('Summary file ', sf, ' for fit ', fitid, ' is missing')
+         lines <- readLines(sf)
+         if(!quiet)
+            cat(lines, sep = '\n')
+         return(invisible(lines))
+      }
+
       site <- the$fdb$site[frow]
-      
+
       ef <- file.path(the$modelsdir, paste0('fit_', fitid, '_extra.RDS'))
       if(!file.exists(ef))
-         stop('Sidecar file ', ef, ' for fit ', fitid, ' is missing. You could try fitpurge(undo = ', fitid, ')') 
+         stop('Sidecar file ', ef, ' for fit ', fitid, ' is missing. You could try fitpurge(undo = ', fitid, ')')
       extra <- readRDS(ef)
-      
-      model <- list(fit = extra$model_object, 
-                    confuse = extra$confuse, 
-                    nvalidate = the$fdb$holdout[frow], 
-                    id = fitid, 
+
+      model <- list(fit = extra$model_object,
+                    confuse = extra$confuse,
+                    nvalidate = the$fdb$holdout[frow],
+                    id = fitid,
                     name = the$fdb$name[frow])
    }
    

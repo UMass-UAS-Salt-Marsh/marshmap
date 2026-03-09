@@ -68,7 +68,7 @@
 #' @export
 
 
-do_train <- function(model, train, result = 'fit') {
+do_train <- function(model, train, result = 'fit', fitid = NULL) {
 
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))       # read parameters from model
@@ -157,6 +157,30 @@ do_train <- function(model, train, result = 'fit') {
    # ── Plots ─────────────────────────────────────────────────────────────────────
    if (isTRUE(config$plot_curves)) {
       plot_unet_training(all_metrics, config, fit_dir, config$site)
+   }
+
+
+   # ── Write temp results file for train_finish ──────────────────────────────────
+   if (!is.null(fitid)) {
+      hyper <- paste(
+         sprintf('encoder=%s',  config$encoder_name),
+         sprintf('weights=%s',  if(!is.null(config$encoder_weights)) config$encoder_weights else 'NULL'),
+         sprintf('lr=%s',       config$learning_rate),
+         sprintf('wd=%s',       config$weight_decay),
+         sprintf('batch=%d',    as.integer(config$batch_size)),
+         sprintf('epochs=%d',   as.integer(config$n_epochs)),
+         sprintf('weighting=%s', config$class_weighting),
+         sprintf('clip=%s',     config$gradient_clip_max_norm),
+         sep = ', '
+      )
+      saveRDS(list(
+         CCR     = as.numeric(cm$overall['Accuracy']),
+         kappa   = as.numeric(cm$overall['Kappa']),
+         vars    = as.integer(config$in_channels),
+         holdout = length(do.call(c, all_labels_all)),
+         hyper   = hyper,
+         fit_dir = fit_dir
+      ), file.path(the$modelsdir, paste0('zz_', fitid, '_train.RDS')))
    }
 
 

@@ -4,7 +4,7 @@
 \alias{do_train}
 \title{Train and assess U-Net model}
 \usage{
-do_train(model, train, result = "fit")
+do_train(model, train, result = "fit", fitid = NULL)
 }
 \arguments{
 \item{model}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with model parameters. This

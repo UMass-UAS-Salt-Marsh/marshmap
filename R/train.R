@@ -56,13 +56,15 @@
 #'    names to store multiple runs on the same `prep_unet` patches (e.g. `"fit01"`, `"fit02"`).
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults. **Note that this function requires GPUs**. By default, it 
-#'    requests 2 L40S GPUs.
+#'    requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
 #'    no effect if local = FALSE.
 #' @param comment Optional slurmcollie comment
 #' @importFrom slurmcollie launch get_resources
+#' @importFrom yaml read_yaml
+#' @importFrom lubridate now
 #' @export
 
 
@@ -84,6 +86,51 @@ train <- function(model, train = 'train', result = 'fit01', resources = NULL, lo
       comment <- paste0('train ', model, ifelse(model == result, '', paste0(' / ', result)))
 
 
-   launch('do_train', reps = model, repname = 'model', moreargs = list(train = train, result = result),
+   config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))  # read model config to get site
+
+
+   load_database('fdb')                                  # Get fit database
+   the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add row to database
+
+   the$fdb$id[i] <- the$last_fit_id + 1                  # model id
+   the$fdb$name[i] <- model                              # model name
+   the$fdb$site[i] <- config$site                        # site from model config
+   the$fdb$method[i] <- 'unet'                           # modeling approach
+   the$fdb$success[i] <- NA                              # run success; NA = not run yet
+   the$fdb$status[i] <- ''                               # final slurmcollie status, resolved in train_finish
+   the$fdb$error[i] <- NA                                # TRUE if error, resolved in train_finish
+   the$fdb$message[i] <- ''                              # error message if any, resolved in train_finish
+   the$fdb$cores[i] <- NA                                # cores requested, resolved in train_finish
+   the$fdb$cpu[i] <- ''                                  # CPU time, resolved in train_finish
+   the$fdb$cpu_pct[i] <- ''                              # percent CPU used, resolved in train_finish
+   the$fdb$mem_req[i] <- NA                              # memory requested (GB), resolved in train_finish
+   the$fdb$mem_gb[i] <- NA                               # memory used (GB), resolved in train_finish
+   the$fdb$walltime[i] <- ''                             # elapsed run time, resolved in train_finish
+   the$fdb$gpu[i] <- NA                                  # GPU(s) used, resolved in train_finish
+   the$fdb$gpu_pct[i] <- NA                              # percent GPU utilization, resolved in train_finish
+   the$fdb$gpu_mem[i] <- NA                              # GPU memory used (GB), resolved in train_finish
+   the$fdb$CCR[i] <- NA                                  # correct classification rate, resolved in train_finish
+   the$fdb$kappa[i] <- NA                                # Kappa, resolved in train_finish
+   the$fdb$predicted[i] <- ''                            # name of predicted geoTIFF, added by map
+   the$fdb$score[i] <- NA                                # subjective scoring field
+   the$fdb$comment_launch[i] <- comment                  # comment set at launch
+   the$fdb$comment_assess[i] <- ''                       # comment based on assessment
+   the$fdb$comment_map[i] <- ''                          # comment based on final map
+   the$fdb$call[i] <-
+      gsub('\\"', '\'', gsub('[ ]+', ' ', paste(deparse(sys.calls()[[sys.nframe()]]), collapse = ' ')))
+   the$fdb$model[i] <- paste0(model, '.yml')             # model yml file
+   the$fdb$full_model[i] <- paste0(model, '.yml + ', train, '.yml')  # model + train yml
+   the$fdb$datafile[i] <- paste0(model, '/', result)     # model/result subdirectory
+   the$fdb$hyper[i] <- ''                                # hyperparameters, resolved in train_finish
+
+   message('Fit id is ', the$fdb$id[i])
+   the$last_fit_id <- the$fdb$id[i]                      # save last_fit_id
+
+   the$fdb$launched[i] <- now()                          # date and time launched
+   save_database('fdb')
+
+
+   launch('do_train', reps = model, repname = 'model', moreargs = list(train = train, result = result, fitid = the$fdb$id[i]),
+          finish = 'train_finish', callerid = the$fdb$id[i],
           local = local, trap = trap, resources = resources, comment = comment)
 }

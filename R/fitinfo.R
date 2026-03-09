@@ -104,6 +104,9 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = FALSE,
    z$cores <- ifelse(is.na(z$cores), '', z$cores)
    z$mem_req <- ifelse(is.na(z$mem_req), '', z$mem_req)
    z$mem_gb <- ifelse(is.na(z$mem_gb), '', formatC(z$mem_gb, format = 'f', digits = 3))
+   z$gpu <- ifelse(is.na(z$gpu), '', z$gpu)
+   z$gpu_pct <- ifelse(is.na(z$gpu_pct), '', formatC(z$gpu_pct, format = 'f', digits = 1))
+   z$gpu_mem <- ifelse(is.na(z$gpu_mem), '', formatC(z$gpu_mem, format = 'f', digits = 3))
    
    z$score <- ifelse(is.na(z$score), '', z$score)
    
@@ -116,10 +119,10 @@ fitinfo <- function(rows = 'all', cols = 'normal', report = FALSE,
       if(cols[1] %in% c('brief', 'normal', 'long', 'all'))
          cols <- switch(cols,
                         brief = c('id', 'name', 'site', 'status', 'error', 'vars', 'cases', 'CCR', 'kappa', 'comment_launch'),
-                        normal = c('id', 'name', 'site', 'launched', 'status', 'error', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
-                                   'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map'),
-                        long = c('id', 'name', 'site', 'launched', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores', 
-                                 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'comment_launch', 'score', 'comment_assess', 'comment_map', 'call'),
+                        normal = c('id', 'name', 'site', 'launched', 'status', 'error', 'vars', 'cases', 'CCR', 'kappa', 'cores',
+                                   'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'gpu', 'gpu_pct', 'gpu_mem', 'comment_launch', 'score', 'comment_assess', 'comment_map'),
+                        long = c('id', 'name', 'site', 'launched', 'status', 'success', 'error', 'message', 'vars', 'cases', 'CCR', 'kappa', 'cores',
+                                 'cpu', 'cpu_pct', 'mem_req', 'mem_gb', 'walltime', 'gpu', 'gpu_pct', 'gpu_mem', 'comment_launch', 'score', 'comment_assess', 'comment_map', 'call'),
          )
       z <- z[, c(setdiff(c('id', 'site'), cols), cols), drop = FALSE]                  # always include id and site
    }

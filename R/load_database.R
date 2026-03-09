@@ -28,7 +28,13 @@ load_database <- function(database, purged = FALSE, lock = TRUE) {
       }
    
    the[[database]] <- readRDS(f)
-   
+
+   if(database == 'fdb') {                                                  # upward compatibility: add new columns if missing from old databases
+      if(!'gpu'     %in% names(the$fdb)) the$fdb$gpu     <- NA_character_
+      if(!'gpu_pct' %in% names(the$fdb)) the$fdb$gpu_pct <- NA_real_
+      if(!'gpu_mem' %in% names(the$fdb)) the$fdb$gpu_mem <- NA_real_
+   }
+
    if(database == 'fdb' & !purged) {                                       # if reading the model fit database,
       f <- file.path(the$dbdir, 'last_fit_id.txt')                         #    get the last fit id, as these are never reused, even if rows of the database are deleted
       if(file.exists(f))
