@@ -48,9 +48,9 @@ train_finish <- function(jobid, status) {
    the$fdb$mem_req[frow]  <- slu$jdb$mem_req[jrow]                # memory requested (GB)
    the$fdb$mem_gb[frow]   <- slu$jdb$mem_gb[jrow]                 # memory used (GB)
    the$fdb$walltime[frow] <- slu$jdb$walltime[jrow]               # elapsed run time
-   the$fdb$gpu[frow]      <- slu$jdb$gpu[jrow]                    # GPU(s) used
-   the$fdb$gpu_pct[frow]  <- slu$jdb$gpu_pct[jrow]                # percent GPU utilization
-   the$fdb$gpu_mem[frow]  <- slu$jdb$gpu_mem_gb[jrow]             # GPU memory used (GB)
+   the$fdb$gpu[frow]      <- if(!is.null(slu$jdb$gpu))         slu$jdb$gpu[jrow]         else NA_character_   # GPU(s) used
+   the$fdb$gpu_pct[frow]  <- if(!is.null(slu$jdb$gpu_pct))    slu$jdb$gpu_pct[jrow]    else NA_real_          # percent GPU utilization
+   the$fdb$gpu_mem[frow]  <- if(!is.null(slu$jdb$gpu_mem_gb)) slu$jdb$gpu_mem_gb[jrow] else NA_real_          # GPU memory used (GB)
 
    if(the$fdb$success[frow]) {                                    # If job was successful, get stuff from zz_<id>_train.RDS
       the$fdb$error[frow]   <- FALSE

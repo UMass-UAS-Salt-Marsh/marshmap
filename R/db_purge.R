@@ -36,8 +36,9 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
    # -------- helper functions --------
    
    running <- function(x) {                                                               # --- TRUE for ids that are still running
-      z <- info(list(callerid = x), cols = c('callerid', 'status'), 
-                table = FALSE, summary = FALSE)
+      z <- suppressMessages(info(list(callerid = x), cols = c('callerid', 'status'),
+                                 table = FALSE, summary = FALSE))
+      if(is.null(z)) return(rep(FALSE, length(x)))
       x %in% z$callerid[z$status %in% c('pending', 'queued', 'running')]
    }
    
@@ -112,7 +113,9 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
       
       restored <- purged[[id_name]][these]
       
-      db <- rbind(db, purged[these, setdiff(names(purged), 'purgegroup')])                # restore rows
+      restore_df <- purged[these, setdiff(names(purged), 'purgegroup')]
+      for(col in setdiff(names(db), names(restore_df))) restore_df[[col]] <- NA        # add any new columns missing from old purged db
+      db <- rbind(db, restore_df)                                                       # restore rows
       db <- db[!duplicated(db[[id_name]]), ]                                              # for robustness, make sure rows haven't gotten duplicated
       
       move_sidecars(purged[[id_name]][these], pd, md)                                     # restore sidecar files
@@ -186,8 +189,10 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
       
       purge$purgegroup <- max_pg + 1
       
-      if(file.exists(pf))                                                                 # add purged rows to purged database
+      if(file.exists(pf)) {                                                               # add purged rows to purged database
+         for(col in setdiff(names(purge), names(purged))) purged[[col]] <- NA           # add any new columns missing from old purged db
          purged <- rbind(purged, purge)
+      }
       else
          purged <- purge
       

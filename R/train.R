@@ -93,6 +93,7 @@ train <- function(model, train = 'train', result = 'fit01', resources = NULL, lo
    the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add row to database
 
    the$fdb$id[i] <- the$last_fit_id + 1                  # model id
+   comment <- paste0(comment, ' (fitid: ', the$fdb$id[i], ')')   # append fit id to comment
    the$fdb$name[i] <- model                              # model name
    the$fdb$site[i] <- config$site                        # site from model config
    the$fdb$method[i] <- 'unet'                           # modeling approach
