@@ -78,6 +78,8 @@ reference:
   - unet_extract_training_patches
   - unet_spatial_train_val_split
   - unet_export_to_numpy
+  - spatial_holdout
+  - train_finish
   - write_train_summary
   - the
   - .onLoad
