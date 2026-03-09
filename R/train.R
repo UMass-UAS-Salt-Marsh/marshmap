@@ -66,7 +66,7 @@
 #' @export
 
 
-train <- function(model, train = 'train', result = 'fit', resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+train <- function(model, train = 'train', result = 'fit01', resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
 
 
    resources <- get_resources(resources, list(
@@ -81,7 +81,7 @@ train <- function(model, train = 'train', result = 'fit', resources = NULL, loca
 
 
    if(is.null(comment))
-      comment <- paste0('train ', model, '/', result)
+      comment <- paste0('train ', model, ifelse(model == result, '', paste0(' / ', result)))
 
 
    launch('do_train', reps = model, repname = 'model', moreargs = list(train = train, result = result),

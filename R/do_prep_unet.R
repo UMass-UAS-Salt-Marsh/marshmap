@@ -171,10 +171,19 @@ do_prep_unet <- function(model, save_gis) {
       unet_export_to_numpy(
          patches = patches,
          output_dir = output_dir,
-         site = config$site, 
-         class_mapping = config$class_mapping, 
+         site = config$site,
+         class_mapping = config$class_mapping,
          set = i
       )
+
+      # Save poly counts for summary.txt (written by do_train)
+      poly_counts <- list(
+         total = table(transects$subclass),
+         train = table(transects$subclass[transects$poly %in% split$train_ids]),
+         test  = table(transects$subclass[transects$poly %in% split$test_ids])
+      )
+      saveRDS(poly_counts, file.path(output_dir, paste0('set', i), 'poly_counts.rds'))
+
       message('')
    }
    

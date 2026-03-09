@@ -77,6 +77,7 @@ reference:
   - unet_build_input_stack
   - unet_extract_training_patches
   - unet_spatial_train_val_split
-  - unet_export_to_numpy  
+  - unet_export_to_numpy
+  - write_train_summary
   - the
   - .onLoad

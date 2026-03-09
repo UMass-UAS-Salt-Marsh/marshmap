@@ -7,7 +7,7 @@
 train(
   model,
   train = "train",
-  result = "fit",
+  result = "fit01",
   resources = NULL,
   local = FALSE,
   trap = TRUE,

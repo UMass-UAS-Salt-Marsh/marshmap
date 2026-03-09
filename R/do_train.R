@@ -151,6 +151,8 @@ do_train <- function(model, train, result = 'fit') {
    saveRDS(cm, cm_path)
    message('Confusion matrix saved to: ', cm_path)
 
+   write_train_summary(model, train, fit_dir, config, cm, cv_ccr)
+
 
    # ── Plots ─────────────────────────────────────────────────────────────────────
    if (isTRUE(config$plot_curves)) {
