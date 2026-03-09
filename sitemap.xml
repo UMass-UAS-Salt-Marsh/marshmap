@@ -85,11 +85,11 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/seasons.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/set_dirs.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/set_up_google_drive.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/spatial_holdout.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/the.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/train.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/train_finish.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unconfuse.html</loc></url>
-<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_assess.html</loc></url>
-<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_assess_hierarchical.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_build_input_stack.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_confusion_matrix.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_export_to_numpy.html</loc></url>
@@ -100,5 +100,6 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_clone.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_more.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/write_pars_table.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/write_train_summary.html</loc></url>
 </urlset>
 

@@ -5,7 +5,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-do_train(model, train, result = "fit")
+do_train(model, train, result = "fit", fitid = NULL)
 ```
 
 ## Arguments

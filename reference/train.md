@@ -8,7 +8,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 train(
   model,
   train = "train",
-  result = "fit",
+  result = "fit01",
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -120,7 +120,8 @@ train(
   Slurm launch resources. See
   [launch](https://rdrr.io/pkg/slurmcollie/man/launch.html). These take
   priority over the function's defaults. **Note that this function
-  requires GPUs**. By default, it requests 2 L40S GPUs.
+  requires GPUs**. By default, it requests 1 L40S (preferred), but will
+  accept V100 or RTX 2080 Ti.
 
 - local:
 
