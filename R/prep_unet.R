@@ -55,5 +55,6 @@ prep_unet <- function(model, save_gis = FALSE, resources = NULL, local = FALSE, 
    
    
    launch('do_prep_unet', reps = model, repname = 'model', moreargs = list(save_gis = save_gis),
+          finish = 'prep_unet_finish',
           local = local, trap = trap, resources = resources, comment = comment)
 }

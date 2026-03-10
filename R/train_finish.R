@@ -4,6 +4,7 @@
 #'  - Populate fits database with `slurmcollie` stats
 #'  - and with info from `zz_<id>_train.RDS`, written by `do_train`
 #'  - Copy the log file to the models directory as `fit_<id>.log`
+#'  - Copy the log file to the unet model directory as `fit_<id>.log`
 #'  - Copy summary to `fit_<id>_summary.txt`
 #'  - Copy training curves to `fit_<id>_training_curves.png` (if present)
 #'
@@ -28,13 +29,17 @@ train_finish <- function(jobid, status) {
    }
 
 
-   # Copy log file
+   # Copy log file to models directory and to unet model directory
+   logname   <- paste0('fit_', the$fdb$id[frow], '.log')
+   model_dir <- file.path(resolve_dir(the$unetdir, the$fdb$site[frow]), the$fdb$name[frow])
+
    if(!dir.exists(the$modelsdir))
       dir.create(the$modelsdir, recursive = TRUE, showWarnings = FALSE)
-   sink <- file.copy(logfile(jobid)$done,
-                     file.path(the$modelsdir,
-                               paste0('fit_', the$fdb$id[frow], '.log')),
-                     overwrite = TRUE)
+   file.copy(logfile(jobid)$done, file.path(the$modelsdir, logname), overwrite = TRUE)
+
+   if(!dir.exists(model_dir))
+      dir.create(model_dir, recursive = TRUE, showWarnings = FALSE)
+   file.copy(logfile(jobid)$done, file.path(model_dir, logname), overwrite = TRUE)
 
 
    # Get stuff from slurmcollie jobs database
@@ -62,7 +67,7 @@ train_finish <- function(jobid, status) {
 
          the$fdb$CCR[frow]     <- x$CCR
          the$fdb$kappa[frow]   <- x$kappa
-         the$fdb$vars[frow]    <- x$vars
+         the$fdb$vars[frow]    <- if(length(x$vars) > 0) x$vars else NA_integer_
          the$fdb$holdout[frow] <- x$holdout
          the$fdb$hyper[frow]   <- x$hyper
 

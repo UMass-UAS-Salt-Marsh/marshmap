@@ -11,6 +11,7 @@
 
 write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
 
+   
    classes    <- as.character(config$classes)
    overall_ccr <- cm$overall['Accuracy'] * 100
    kappa      <- cm$overall['Kappa']
@@ -46,7 +47,16 @@ write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
       paste(header, fit_dir),
       ''
    )
-
+   
+   
+   m <- paste0('Model: ', model)          # model name & info
+   dashes <- strrep('-', nchar(m))
+   lines <- c(dashes, m, dashes, '')
+   if (!is.null(train))
+      lines <- c(lines, paste0('Train: ', train))
+   lines <- c(lines, paste0('Result: ', fit_dir), '')
+ 
+   
    # Site / classes / years / polys
    lines <- c(lines,
       sprintf('   - site: %s',         toupper(config$site)),

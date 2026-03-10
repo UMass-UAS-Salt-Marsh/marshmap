@@ -176,7 +176,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
       saveRDS(list(
          CCR     = as.numeric(cm$overall['Accuracy']),
          kappa   = as.numeric(cm$overall['Kappa']),
-         vars    = as.integer(config$in_channels),
+         vars    = as.integer(length(config$orthos)),
          holdout = length(do.call(c, all_labels_all)),
          hyper   = hyper,
          fit_dir = fit_dir

@@ -17,6 +17,7 @@ Finish a U-Net train run:
 \item Populate fits database with \code{slurmcollie} stats
 \item and with info from \verb{zz_<id>_train.RDS}, written by \code{do_train}
 \item Copy the log file to the models directory as \verb{fit_<id>.log}
+\item Copy the log file to the unet model directory as \verb{fit_<id>.log}
 \item Copy summary to \verb{fit_<id>_summary.txt}
 \item Copy training curves to \verb{fit_<id>_training_curves.png} (if present)
 }

@@ -74,6 +74,7 @@ reference:
   - resolve_dir
   - db_purge
   - do_prep_unet
+  - prep_unet_finish
   - unet_build_input_stack
   - unet_extract_training_patches
   - unet_spatial_train_val_split
