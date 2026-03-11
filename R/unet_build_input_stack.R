@@ -79,9 +79,13 @@ unet_build_input_stack <- function(config) {
                    names(q) <- c('blue', 'green', 'red',  'nir', 'red_edge')
                 z <- c(z, q)
              },                
-             'ndvi' = z <- c(z, ndvi = unet_range_rescale_band(x)),           #    I'm now range-rescaling everything
-             'ndre' = z <- c(z, ndre = unet_range_rescale_band(x)),
-             'dem' = z <- c(z, dem = unet_range_rescale_band(x))
+             'ndvi'   = z <- c(z, ndvi = unet_range_rescale_band(x)),
+             'ndre'   = z <- c(z, ndre = unet_range_rescale_band(x)),
+             'dem'    = z <- c(z, dem  = unet_range_rescale_band(x)),
+             'scalar' = {                                                      #    any other 1-band derived layer (NDWIg, mean, sd, etc.)
+                nm <- tolower(sub('.*__(.+)\\.tif$', '\\1', config$orthos[i]))
+                z <- c(z, setNames(list(unet_range_rescale_band(x[[1]])), nm))
+             }
       )
    }
    

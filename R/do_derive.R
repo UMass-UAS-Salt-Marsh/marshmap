@@ -27,8 +27,10 @@
 #' }
 #' @param window Window size for `mean`, `sd`, `NDVImean`, and `NDVIsd`, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
+#' @param flights_prep If TRUE, counts missing values and caches images for `screen` (if cache is also TRUE). You 
+#'    can do this manually with `flights_prep(<site>)`
 #' @param cache If TRUE, cache images for `screen`. If set to FALSE, these flights
-#'    will be blank in `screen`.
+#'    will be blank in `screen` (only if `flights_prep` is also TRUE)
 #' @importFrom terra rast focal writeRaster
 #' @importFrom rasterPrep assessType
 #' @importFrom tools file_path_sans_ext
@@ -38,7 +40,7 @@
 
 
 do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDVI', 'NDRE'),
-                      window = 3, cache) {
+                      window = 3, flights_prep, cache) {
    
    
    mica <- list(
@@ -88,10 +90,10 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          message('Calculating metric ', metrics[j], ' for ', one[i], ifelse(!is.null(pattern2), paste0(' and ', two[i]), ''), '...')
          
          x <- rast(file.path(path, paste0(one[i], '.tif')))                               # get univariate / first raster
-
+         
          if(metrics[j] %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVImean', 'NDVIsd') && nlyr(x) < 5)
             stop(metrics[j], ' requires a 5-band Mica ortho, but ', one[i], ' has ', nlyr(x), ' band(s)')
-
+         
          if(!is.null(pattern2)) {                                                         # if bivariate,
             y <- rast(file.path(path, paste0(two[i], '.tif')))                            #    get 2nd raster
             result <- paste0(one[i], '__', two[i], '__', metrics[j])
@@ -147,5 +149,6 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          z <- x <- y <- ndvi <- NULL                                                      # free up memory
       }
    
-   flights_prep(site, cache)
+   if(flights_prep)   
+      flights_prep(site, cache)
 }

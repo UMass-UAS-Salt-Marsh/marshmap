@@ -50,8 +50,10 @@
 #' }
 #' @param window Window size for `mean`, `sd`, `NDVImean`, and `NDVIsd`, in cells; windows are square, so just specify
 #'    a single number. Bonus points if you remember to make it odd.
+#' @param flights_prep If TRUE, counts missing values and caches images for `screen` (if cache is also TRUE). You 
+#'    can do this manually with `flights_prep(<site>)`
 #' @param cache If TRUE, cache images for `screen`. If set to FALSE, these flights
-#'    will be blank in `screen`.
+#'    will be blank in `screen` (only if `flights_prep` is also TRUE)
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #' #'    over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
@@ -66,7 +68,7 @@
 
 
 derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'NDWIg', 'NDRE'),
-                   window = 3, cache = TRUE, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+                   window = 3, flights_prep = FALSE, cache = FALSE, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    site <- get_sites(site)$site
@@ -82,7 +84,7 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
    
    launch('do_derive', reps = site, repname = 'site', 
           moreargs = list(pattern1 = pattern1, pattern2 = pattern2, metrics = metrics, window = window,
-                          cache = TRUE),
+                          flights_prep = TRUE, cache = TRUE),
           local = local, trap = trap, resources = resources, comment = comment)
    
 }

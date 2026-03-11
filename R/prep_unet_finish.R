@@ -16,7 +16,11 @@ prep_unet_finish <- function(jobid, status) {
    jrow  <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database
    model <- slu$jdb$rep[jrow]                                      # model name was passed as rep
 
-   config    <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
+   config_file <- file.path(the$parsdir, 'unet', paste0(model, '.yml'))
+   if(!file.exists(config_file))
+      return(invisible())
+
+   config    <- read_yaml(config_file)
    model_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
 
    if(!dir.exists(model_dir))
