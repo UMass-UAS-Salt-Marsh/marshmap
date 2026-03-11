@@ -12,7 +12,8 @@ derive(
   pattern2 = NULL,
   metrics = c("NDVI", "NDWIg", "NDRE"),
   window = 3,
-  cache = TRUE,
+  flights_prep = FALSE,
+  cache = FALSE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -96,10 +97,16 @@ derive(
   windows are square, so just specify a single number. Bonus points if
   you remember to make it odd.
 
+- flights_prep:
+
+  If TRUE, counts missing values and caches images for `screen` (if
+  cache is also TRUE). You can do this manually with
+  `flights_prep(<site>)`
+
 - cache:
 
   If TRUE, cache images for `screen`. If set to FALSE, these flights
-  will be blank in `screen`.
+  will be blank in `screen` (only if `flights_prep` is also TRUE)
 
 - resources:
 
