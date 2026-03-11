@@ -40,7 +40,7 @@ amount of chlorophyll in a plant}
 \item{NDVImean}{mean of NDVI in a window, size defined by \code{window}}
 \item{NDVIsd}{standard deviation of NDVI in a window, size defined by \code{window}}
 Bivariate metrics include:
-\item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's \code{NDWI}),
+\item{NDWIswir}{Normalized difference water index (SWIR, commonly known as either Gao's \code{NDWI} or \code{MNDWI}),
 \code{(NIR - SWIR) / (NIR + SWIR)}, an index of water content in leaves; requires a Mica layer for
 \code{pattern1}, and a matched SWIR layer for \code{pattern2}}
 \item{delta}{The difference between \code{pattern1} and \code{pattern2}, may be useful for taking a

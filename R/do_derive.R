@@ -19,9 +19,9 @@
 #'    \item{NDVImean}{mean of NDVI in a window, size defined by `window`}
 #'    \item{NDVIsd}{standard deviation of NDVI in a window, size defined by `window`}
 #'    Bivariate metrics include:
-#'    \item{NDWIswir}{Normalized difference water index (SWIR, commonly known as Gao's `NDWI`), `(NIR - SWIR) / (NIR + SWIR)`,
-#'       an index of water content in leaves; requires a Mica layer for `pattern1`, and a matched
-#'       SWIR layer for `pattern2`}
+#'    \item{NDWIswir}{Normalized difference water index (SWIR, commonly known as either Gao's `NDWI` or `MNDWI`), 
+#'       `(NIR - SWIR) / (NIR + SWIR)`, an index of water content in leaves; requires a Mica layer for 
+#'       `pattern1`, and a matched SWIR layer for `pattern2`}
 #'    \item{delta}{The difference between `pattern1` and `pattern2`, may be useful for taking a 
 #'    difference between late-season and early-season DEMs to represent vegetation canopy height}
 #' }
