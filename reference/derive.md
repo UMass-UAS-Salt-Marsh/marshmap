@@ -79,10 +79,10 @@ derive(
 
   NDWIswir
 
-  :   Normalized difference water index (SWIR, commonly known as Gao's
-      `NDWI`), `(NIR - SWIR) / (NIR + SWIR)`, an index of water content
-      in leaves; requires a Mica layer for `pattern1`, and a matched
-      SWIR layer for `pattern2`
+  :   Normalized difference water index (SWIR, commonly known as either
+      Gao's `NDWI` or `MNDWI`), `(NIR - SWIR) / (NIR + SWIR)`, an index
+      of water content in leaves; requires a Mica layer for `pattern1`,
+      and a matched SWIR layer for `pattern2`
 
   delta
 
