@@ -81,7 +81,7 @@ derive <- function(site, pattern1 = '', pattern2 = NULL, metrics = c('NDVI', 'ND
       comment <- paste0('derive ', paste(site, collapse = ', '), '(', paste(metrics, collapse = ', '), ')')
    
    launch('do_derive', reps = site, repname = 'site', 
-          moreargs = list(pattern = pattern1, pattern2 = pattern2, metrics = metrics, window = window,
+          moreargs = list(pattern1 = pattern1, pattern2 = pattern2, metrics = metrics, window = window,
                           cache = TRUE),
           local = local, trap = trap, resources = resources, comment = comment)
    

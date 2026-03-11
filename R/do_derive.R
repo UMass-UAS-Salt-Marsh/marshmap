@@ -88,7 +88,10 @@ do_derive <- function(site, pattern1 = 'mica', pattern2 = NULL, metrics = c('NDV
          message('Calculating metric ', metrics[j], ' for ', one[i], ifelse(!is.null(pattern2), paste0(' and ', two[i]), ''), '...')
          
          x <- rast(file.path(path, paste0(one[i], '.tif')))                               # get univariate / first raster
-         
+
+         if(metrics[j] %in% c('NDVI', 'NDWIg', 'NDRE', 'NDVImean', 'NDVIsd') && nlyr(x) < 5)
+            stop(metrics[j], ' requires a 5-band Mica ortho, but ', one[i], ' has ', nlyr(x), ' band(s)')
+
          if(!is.null(pattern2)) {                                                         # if bivariate,
             y <- rast(file.path(path, paste0(two[i], '.tif')))                            #    get 2nd raster
             result <- paste0(one[i], '__', two[i], '__', metrics[j])
