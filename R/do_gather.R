@@ -277,10 +277,10 @@ do_gather <- function(site, pattern = '',
                                        append = FALSE, quiet = TRUE)                #       save the processed transects shapefile 
                
                
-               unlapped <- overlaps(shp, 'subclass')                                #       remove overlaps for raster transects (all years) ----
+               shp <- overlaps(shp, 'subclass', all = FALSE)                        #       remove unequal overlaps for raster transects (all years) ----
                
                suppress_warnings(transects <-                                       #       mask gives a bogus warning that CRS do not match
-                                    rasterize(unlapped, standard, 
+                                    rasterize(shp, standard, 
                                               field = 'poly')$poly |>               #       convert it to raster populated with unique poly id
                                     crop(footprint) |>                              #       crop, mask, and write
                                     mask(footprint) |>
