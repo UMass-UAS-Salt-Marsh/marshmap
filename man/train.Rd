@@ -76,7 +76,8 @@ names to store multiple runs on the same \code{prep_unet} patches (e.g. \code{"f
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 over the function's defaults. \strong{Note that this function requires GPUs}. By default, it
-requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti.}
+requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti. To specify only L40S, use
+\code{resources = list(constraint = 'l40s')}.}
 
 \item{local}{If TRUE, run locally; otherwise, spawn a batch run on Unity}
 

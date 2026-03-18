@@ -60,10 +60,10 @@ do_prep_unet <- function(model, save_gis) {
    
    if(is.null(config$reclass))                                                # default: no reclassifying
       config$reclass <- ''
-   
+
    if(is.null(config$upscale))                                                # default: no upscaling
       config$upscale <- 1
-   
+
    if(is.null(config$smooth))                                                 # default: no smoothing
       config$smooth <- 1
    

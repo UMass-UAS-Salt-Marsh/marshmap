@@ -56,7 +56,8 @@
 #'    names to store multiple runs on the same `prep_unet` patches (e.g. `"fit01"`, `"fit02"`).
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults. **Note that this function requires GPUs**. By default, it 
-#'    requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti.
+#'    requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti. To specify only L40S, use
+#'    `resources = list(constraint = 'l40s')`.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has

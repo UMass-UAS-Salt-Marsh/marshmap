@@ -4,12 +4,14 @@
 \alias{overlaps}
 \title{Erase overlapping polys where class field isn't equal}
 \usage{
-overlaps(polys, field)
+overlaps(polys, field, all = TRUE)
 }
 \arguments{
 \item{polys}{sf object with potential multipolys}
 
 \item{field}{Field to check for overlaps}
+
+\item{all}{If TRUE, erase all overlaps, even if fields are equal}
 }
 \value{
 New sf object with overlaps erased unless all values in field are equal

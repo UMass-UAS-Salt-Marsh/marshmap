@@ -90,21 +90,50 @@ write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
       ''
    )
 
-   # Normalized confusion matrix (% of total pixels)
-   norm_tbl <- cm$table / sum(cm$table) * 100
-   cls      <- colnames(norm_tbl)
-   cell_w   <- max(nchar(sprintf('%.1f', norm_tbl)), nchar(cls)) + 2
-   ref_hdr  <- paste0(strrep(' ', cell_w), 'Reference')
-   col_hdr  <- paste0(strrep(' ', cell_w),
-                      paste(formatC(cls, width = cell_w), collapse = ''))
-   norm_rows <- character(nrow(norm_tbl))
-   for (k in seq_len(nrow(norm_tbl)))
-      norm_rows[k] <- paste0(
-         formatC(rownames(norm_tbl)[k], width = cell_w),
-         paste(formatC(sprintf('%.1f', norm_tbl[k, ]), width = cell_w), collapse = ''))
+   # Normalized confusion matrices (% total, rowwise, colwise) side by side
+   cls        <- colnames(tbl)
+   n_cls      <- length(cls)
+
+   norm_total <- tbl / sum(tbl) * 100
+   norm_row   <- sweep(tbl, 1, rowSums(tbl), '/') * 100
+   norm_col   <- sweep(tbl, 2, colSums(tbl), '/') * 100
+
+   cell_w     <- max(nchar(sprintf('%.1f', c(norm_total, norm_row, norm_col))),
+                     nchar(cls), nchar('Pred')) + 2
+   block_w    <- cell_w * (n_cls + 1)
+   gap        <- '   '
+
+   make_cmblock <- function(mat) {
+      ref_hdr <- paste0(strrep(' ', cell_w), 'Reference')
+      col_hdr <- paste0(formatC('Pred', width = cell_w),
+                        paste(formatC(cls, width = cell_w), collapse = ''))
+      rows <- vapply(seq_len(nrow(mat)), function(k)
+         paste0(formatC(rownames(mat)[k], width = cell_w),
+                paste(formatC(sprintf('%.1f', mat[k, ]), width = cell_w), collapse = '')),
+         character(1))
+      c(ref_hdr, col_hdr, rows)
+   }
+
+   b1 <- make_cmblock(norm_total)
+   b2 <- make_cmblock(norm_row)
+   b3 <- make_cmblock(norm_col)
+
+   pad <- function(s) formatC(s, width = block_w, flag = '-')
+
+   title_line <- paste0(pad('% of total pixels'), gap,
+                        pad('% of row (precision)'), gap,
+                        '% of column (recall)')
+   body_lines <- vapply(seq_along(b1), function(i)
+      paste0(pad(b1[i]), gap, pad(b2[i]), gap, b3[i]),
+      character(1))
+
    lines <- c(lines,
-      'Normalized Confusion Matrix (% of total pixels)',
-      '', ref_hdr, col_hdr, norm_rows, '')
+      'Normalized Confusion Matrices',
+      '',
+      title_line,
+      '',
+      body_lines,
+      '')
 
    # Confusion matrix (captured from print)
    lines <- c(lines, capture.output(print(cm)), '')
