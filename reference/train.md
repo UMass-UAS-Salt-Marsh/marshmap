@@ -121,7 +121,8 @@ train(
   [launch](https://rdrr.io/pkg/slurmcollie/man/launch.html). These take
   priority over the function's defaults. **Note that this function
   requires GPUs**. By default, it requests 1 L40S (preferred), but will
-  accept V100 or RTX 2080 Ti.
+  accept V100 or RTX 2080 Ti. To specify only L40S, use
+  `resources = list(constraint = 'l40s')`.
 
 - local:
 

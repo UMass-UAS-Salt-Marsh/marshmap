@@ -117,7 +117,8 @@ names to store multiple runs on the same <code>prep_unet</code> patches (e.g. <c
 <dt id="arg-resources">resources<a class="anchor" aria-label="anchor" href="#arg-resources"></a></dt>
 <dd><p>Slurm launch resources. See <a href="https://rdrr.io/pkg/slurmcollie/man/launch.html" class="external-link">launch</a>. These take priority
 over the function's defaults. <strong>Note that this function requires GPUs</strong>. By default, it
-requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti.</p></dd>
+requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti. To specify only L40S, use
+<code>resources = list(constraint = 'l40s')</code>.</p></dd>
 
 
 <dt id="arg-local">local<a class="anchor" aria-label="anchor" href="#arg-local"></a></dt>

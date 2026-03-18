@@ -5,7 +5,7 @@ Erase overlapping polys where class field isn't equal
 ## Usage
 
 ``` r
-overlaps(polys, field)
+overlaps(polys, field, all = TRUE)
 ```
 
 ## Arguments
@@ -17,6 +17,10 @@ overlaps(polys, field)
 - field:
 
   Field to check for overlaps
+
+- all:
+
+  If TRUE, erase all overlaps, even if fields are equal
 
 ## Value
 
