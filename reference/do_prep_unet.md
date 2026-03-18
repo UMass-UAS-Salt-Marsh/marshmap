@@ -26,6 +26,9 @@ do_prep_unet(model, save_gis)
 
   - classes: vector of target classes
 
+  - transects: base name of field transects shapefile (default:
+    "transects")
+
   - holdout_col: holdout set to use (uses bypoly). Holdout sets are
     created by `gather`, numbering each poly from 1 to 10, repeating if
     necessary. There are 5 sets to choose from.
