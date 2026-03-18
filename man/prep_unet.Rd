@@ -22,6 +22,7 @@ directory. This file must contain the following:
 \item patch: size in pixels
 \item depth: number of of downsampling stages
 \item classes: vector of target classes
+\item transects: base name of field transects shapefile (default: "transects")
 \item holdout_col: holdout set to use (uses bypoly\if{html}{\out{<holdout>}}). Holdout sets are created by
 \code{gather}, numbering each poly from 1 to 10, repeating if necessary. There are 5 sets to
 choose from.

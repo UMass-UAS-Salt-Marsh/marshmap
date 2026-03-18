@@ -9,6 +9,7 @@
 #'    - patch: size in pixels
 #'    - depth: number of of downsampling stages
 #'    - classes: vector of target classes
+#'    - transects: base name of field transects shapefile (default: "transects")
 #'    - holdout_col: holdout set to use (uses bypoly<holdout>). Holdout sets are created by
 #'      `gather`, numbering each poly from 1 to 10, repeating if necessary. There are 5 sets to 
 #'      choose from.
@@ -58,6 +59,9 @@ do_prep_unet <- function(model, save_gis) {
    names(config$class_mapping) <- config$classes                              # mapping to our class numbers
    config$seed <- 42                                                          # random seed for repeatability
    
+   if(is.null(config$transects))                                              # default field transects: "transects"
+      config$transects <- 'transects'
+   
    if(is.null(config$reclass))                                                # default: no reclassifying
       config$reclass <- ''
 
@@ -83,7 +87,9 @@ do_prep_unet <- function(model, save_gis) {
       stop('Too many cross-validation iterations given values of val and test')
    
    
-   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), paste0(toupper(config$site), '_transects.shp'))
+   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), paste0(toupper(config$site), '_', config$transects, '.shp'))
+   if(!file.exists(transect_file))
+      stop('Transects file not found: ', transect_file)
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model, 'patches')
    
    
