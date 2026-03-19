@@ -8,7 +8,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 train(
   model,
   train = "train",
-  result = "fit01",
+  result = NULL,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -111,9 +111,10 @@ train(
 
 - result:
 
-  Name for this training run's result subdirectory (default `"fit"`).
-  Use different names to store multiple runs on the same `prep_unet`
-  patches (e.g. `"fit01"`, `"fit02"`).
+  Name for this training run's result subdirectory. If NULL (default),
+  automatically increments to the next available `fitNN` name (e.g.
+  `"fit01"`, `"fit02"`). Specify explicitly to overwrite an existing
+  run.
 
 - resources:
 
