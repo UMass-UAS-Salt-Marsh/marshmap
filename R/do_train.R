@@ -78,7 +78,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
       message('Training file is ', paste0(train, '.yml'))
    }
 
-
+   
    # Source the Python training script
    message('Sourcing Python code & initializing...')
    source_python("inst/python/train_unet.py")
@@ -109,7 +109,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
          encoder_weights       = config$encoder_weights,
          learning_rate         = config$learning_rate,
          weight_decay          = config$weight_decay,
-         class_weighting         = config$class_weighting,
+         class_weighting       = config$class_weighting,
          n_epochs              = as.integer(config$n_epochs),
          batch_size            = as.integer(config$batch_size),
          gradient_clip_max_norm = config$gradient_clip_max_norm,

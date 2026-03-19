@@ -52,8 +52,9 @@
 #'    - gradient_clip_max_norm. Prevents exploding gradients by capping gradient magnitude. 
 #'      Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 #'    - use_ordinal If TRUE, use ordinal regression U-Net      
-#' @param result Name for this training run's result subdirectory (default `"fit"`). Use different
-#'    names to store multiple runs on the same `prep_unet` patches (e.g. `"fit01"`, `"fit02"`).
+#' @param result Name for this training run's result subdirectory. If NULL (default), automatically
+#'    increments to the next available `fitNN` name (e.g. `"fit01"`, `"fit02"`). Specify explicitly
+#'    to overwrite an existing run.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 #'    over the function's defaults. **Note that this function requires GPUs**. By default, it 
 #'    requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti. To specify only L40S, use
@@ -69,7 +70,7 @@
 #' @export
 
 
-train <- function(model, train = 'train', result = 'fit01', resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+train <- function(model, train = 'train', result = NULL, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
 
 
    resources <- get_resources(resources, list(
@@ -89,6 +90,13 @@ train <- function(model, train = 'train', result = 'fit01', resources = NULL, lo
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))  # read model config to get site
 
+   if (is.null(result)) {
+      model_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
+      existing  <- if (dir.exists(model_dir)) list.dirs(model_dir, full.names = FALSE, recursive = FALSE) else character(0)
+      fit_nums  <- as.integer(sub('^fit0*(\\d+)$', '\\1', grep('^fit\\d+$', existing, value = TRUE)))
+      result    <- sprintf('fit%02d', if (length(fit_nums) == 0) 1L else max(fit_nums) + 1L)
+      message('Auto-assigned result directory: ', result)
+   }
 
    load_database('fdb')                                  # Get fit database
    the$fdb[i <- nrow(the$fdb) + 1, ] <- NA               # add row to database
