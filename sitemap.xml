@@ -62,7 +62,6 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/pick.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/pickvars.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/plot_predict.html</loc></url>
-<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/plot_unet_training.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/rasterize_transects_for_patch.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/read_pars_table.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/refit.html</loc></url>
@@ -98,6 +97,7 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_prep.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_prep_finish.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_spatial_train_val_split.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_training_plot.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_clone.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/upscale_more.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/write_pars_table.html</loc></url>
