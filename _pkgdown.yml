@@ -82,5 +82,6 @@ reference:
   - spatial_holdout
   - train_finish
   - write_train_summary
+  - unet_assemble_map
   - the
   - .onLoad
