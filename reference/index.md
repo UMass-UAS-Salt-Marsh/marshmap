@@ -16,7 +16,7 @@ with `local = TRUE`.
   : Create derived variables
 - [`sample()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/sample.md)
   : Sample orthoimages for field-collected data
-- [`prep_unet()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/prep_unet.md)
+- [`unet_prep()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_prep.md)
   : Pre-process data for U-Net
 - [`create_py_env()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/create_py_env.md)
   : Create Python 3.10 env for U-Net
