@@ -39,7 +39,7 @@
 # - Claude has me quantile-scaling spectral data, standardizing DEM, and leaving NDVI and NDRI as-is. Is this correct?
 
 
-do_prep_unet <- function(model, save_gis) {
+do_unet_prep <- function(model, save_gis) {
    
    
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))

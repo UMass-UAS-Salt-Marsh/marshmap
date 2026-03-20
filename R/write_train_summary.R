@@ -26,7 +26,7 @@ write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
    class_ccr  <- diag(tbl) / colSums(tbl) * 100   # sensitivity = per-class CCR
    class_npix <- colSums(tbl)                       # reference pixels per class
 
-   # Poly counts (saved by do_prep_unet; use set 1 as representative)
+   # Poly counts (saved by do_unet_prep; use set 1 as representative)
    patches_dir    <- file.path(dirname(fit_dir), 'patches')
    poly_counts_path <- file.path(patches_dir, 'set1', 'poly_counts.rds')
    poly_line <- NULL

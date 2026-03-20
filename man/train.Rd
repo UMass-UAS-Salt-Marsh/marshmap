@@ -16,7 +16,7 @@ train(
 }
 \arguments{
 \item{model}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with model parameters. This
-file contains parameters used in data prep as well as training. Note that \code{prep_unet}
+file contains parameters used in data prep as well as training. Note that \code{unet_prep}
 must be run after changing any of these parameters. The \code{model} file must contain the
 following:
 \itemize{

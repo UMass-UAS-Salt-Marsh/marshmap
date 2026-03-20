@@ -3,7 +3,7 @@
 #' Creates numpy arrays ready for fitting in U-Net. Result files are placed in `<site>/unet/<model>`.
 #' 
 #' Try this to test:
-#'    `prep_unet('unet01', local = TRUE)`
+#'    `unet_prep('unet01', local = TRUE)`
 #' 
 #' @param model The model name, which is also the name of a `.yml` parameter file in the `pars` 
 #'    directory. This file must contain the following:
@@ -41,7 +41,7 @@
 #' @export
 
 
-prep_unet <- function(model, save_gis = FALSE, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+unet_prep <- function(model, save_gis = FALSE, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
    
    
    resources <- get_resources(resources, list(
@@ -52,10 +52,10 @@ prep_unet <- function(model, save_gis = FALSE, resources = NULL, local = FALSE, 
    
    
    if(is.null(comment))
-      comment <- paste0('prep_unet ', model)
+      comment <- paste0('unet_prep ', model)
    
    
-   launch('do_prep_unet', reps = model, repname = 'model', moreargs = list(save_gis = save_gis),
-          finish = 'prep_unet_finish',
+   launch('do_unet_prep', reps = model, repname = 'model', moreargs = list(save_gis = save_gis),
+          finish = 'unet_prep_finish',
           local = local, trap = trap, resources = resources, comment = comment)
 }

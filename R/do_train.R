@@ -3,7 +3,7 @@
 #' Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 #' 
 #' @param model The base name of a `.yml` file in `<pars>/unet/` with model parameters. This
-#'    file contains parameters used in data prep as well as training. Note that `prep_unet` 
+#'    file contains parameters used in data prep as well as training. Note that `unet_prep` 
 #'    must be run after changing any of these parameters. The `model` file must contain the 
 #'    following:
 #'    - site: the three-letter site code
@@ -84,7 +84,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
    source_python("inst/python/train_unet.py")
 
    model_dir      <- file.path(resolve_dir(the$unetdir, config$site), model)
-   patches_dir    <- file.path(model_dir, 'patches')                                # training data (from prep_unet)
+   patches_dir    <- file.path(model_dir, 'patches')                                # training data (from unet_prep)
    fit_dir        <- file.path(model_dir, result)                                   # results for this training run
    all_metrics    <- vector('list', config$cv)                                      # training_metrics.csv per CV
    all_preds      <- list()                                                         # prediction factors across CVs
@@ -92,7 +92,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
    cv_ccr         <- numeric(config$cv)                                             # final test CCR per CV
 
    for(i in seq_len(config$cv)) {                                                   # For each cross-validation iteration,
-      data_dir   <- file.path(patches_dir, paste0('set', i))                        # patches from prep_unet
+      data_dir   <- file.path(patches_dir, paste0('set', i))                        # patches from unet_prep
       output_dir <- file.path(fit_dir,     paste0('set', i))                        # set-specific fit results
 
       message('')

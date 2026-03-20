@@ -3,7 +3,7 @@
 #' Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 #' 
 #' @param model The base name of a `.yml` file in `<pars>/unet/` with model parameters. This
-#'    file contains parameters used in data prep as well as training. Note that `prep_unet` 
+#'    file contains parameters used in data prep as well as training. Note that `unet_prep` 
 #'    must be run after changing any of these parameters. The `model` file must contain the 
 #'    following:
 #'    - site: the three-letter site code

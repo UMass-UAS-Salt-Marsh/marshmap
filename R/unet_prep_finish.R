@@ -1,4 +1,4 @@
-#' Finish prep_unet run
+#' Finish unet_prep run
 #'
 #' Finish a U-Net data preparation run:
 #'  - Copy the log file to the unet model directory as `prep_<model>.log`
@@ -10,7 +10,7 @@
 #' @export
 
 
-prep_unet_finish <- function(jobid, status) {
+unet_prep_finish <- function(jobid, status) {
 
 
    jrow  <- match(jobid, slu$jdb$jobid)                            # find our row in slurmcollie jobs database

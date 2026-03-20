@@ -62,7 +62,7 @@ nclass <- as.integer(length(original_classes))                   # Number of cla
 # Call the training function
 result <- train_unet(
    site = site,                           # 3-letter site code
-   data_dir = data_dir,                   # source data directory with patch data from prep_unet
+   data_dir = data_dir,                   # source data directory with patch data from unet_prep
    output_dir = output_dir,               # result directory for trained model and diagnostic plots
    use_ordinal = FALSE,                    # ---> USE ORDINAL REGRESSION U-NET!!!
    original_classes = original_classes,   # class mapping - our subclasses corresponding to 0:(n-1) patch classes
