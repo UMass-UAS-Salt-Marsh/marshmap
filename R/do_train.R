@@ -156,7 +156,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
 
    # ── Plots ─────────────────────────────────────────────────────────────────────
    if (isTRUE(config$plot_curves)) {
-      plot_unet_training(all_metrics, config, fit_dir, config$site)
+      unet_training_plot(all_metrics, config, fit_dir, config$site)
    }
 
 

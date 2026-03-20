@@ -14,7 +14,7 @@
 #' @keywords internal
 
 
-plot_unet_training <- function(all_metrics, config, model_dir, site) {
+unet_training_plot <- function(all_metrics, config, model_dir, site) {
 
    
    window <- as.integer(if (!is.null(config$window)) config$window else 1L)
