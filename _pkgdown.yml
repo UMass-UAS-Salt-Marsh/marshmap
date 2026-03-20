@@ -18,6 +18,8 @@ reference:
   - train
   - fit
   - map
+  - unet_prep_map
+  - unet_map
   - mosaic
   
 - title: Reporting  and management functions
