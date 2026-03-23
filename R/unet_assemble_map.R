@@ -122,7 +122,7 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    # Build VAT from our predicted classes
    pred_classes <- sort(unique(as.vector(pred_original[!is.na(pred_original)])))
    vat <- data.frame(
-      value = seq_along(pred_classes),
+      value = pred_classes,
       subclass = as.integer(pred_classes)
    )
    vat <- merge(vat, classes[, c('subclass', 'subclass_name', 'subclass_color')],

@@ -4,14 +4,16 @@
 \alias{extent_area}
 \title{Give the area of a clip vector}
 \usage{
-extent_area(clip, units = "ha", crs = "epsg:4326")
+extent_area(clip, units = "ha", crs)
 }
 \arguments{
 \item{clip}{Vector of \code{xmin}, \code{xmax}, \code{ymin}, \code{ymax}}
 
 \item{units}{Area units to return}
 
-\item{crs}{Coordinate reference system of clip}
+\item{crs}{Coordinate reference system of clip. Pass the CRS from
+the relevant raster (e.g., \code{crs(my_raster)}) to ensure correctness
+regardless of the project's coordinate system.}
 }
 \description{
 Give the area of a clip vector
