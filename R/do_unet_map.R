@@ -10,6 +10,7 @@
 #' @param clip Optional clip extent
 #' @param write_probs If TRUE, write probability layers
 #' @param mapid Map database id (if called from `map()`)
+#' @param fitid Fit database id (for reference / logging)
 #' @param rep Throwaway argument for slurmcollie
 #' @importFrom yaml read_yaml
 #' @importFrom reticulate source_python
@@ -17,7 +18,8 @@
 
 
 do_unet_map <- function(model, result = 'fit01', which = 'all', clip = NULL,
-                        write_probs = FALSE, mapid = NULL, rep = NULL) {
+                        write_probs = FALSE, mapid = NULL, fitid = NULL, 
+                        rep = NULL) {
    
    
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
@@ -103,22 +105,25 @@ do_unet_map <- function(model, result = 'fit01', which = 'all', clip = NULL,
    # ── Step 4: Assemble ───────────────────────────────────────────────────────
    message('\n=== STEP 3: Assembling map ===')
    
-   # Build output filename: map_<site>_<mapid>_[clip_<area>_ha].tif
+   # Build output filename: map_<site>_<fitid>_[clip_<area>_ha].tif
    maps_dir <- resolve_dir(the$mapsdir, site)
    
    which_tag <- if(is.numeric(which)) paste0('cv', which) 
                 else which
    
    fname_parts <- c('map', tolower(site))
-   if(!is.null(mapid))
-      fname_parts <- c(fname_parts, mapid)
-   fname_parts <- c(fname_parts, model, result, which_tag)
+   if(!is.null(fitid))
+      fname_parts <- c(fname_parts, fitid)
+   fname_parts <- c(fname_parts, which_tag)
    if(!is.null(clip)) {
       clip_tag <- paste0('clip_', round(extent_area(clip)), '_ha')
       fname_parts <- c(fname_parts, clip_tag)
    }
    
    output_file <- file.path(maps_dir, paste0(paste(fname_parts, collapse = '_'), '.tif'))
+   
+   message(sprintf('Fitid: %s, model: %s, result: %s, which: %s',
+                   ifelse(is.null(fitid), 'none', fitid), model, result, which))
    
    
    result_info <- unet_assemble_map(
@@ -131,11 +136,12 @@ do_unet_map <- function(model, result = 'fit01', which = 'all', clip = NULL,
    
    # ── Save temp results for map_finish ───────────────────────────────────────
    if(!is.null(mapid)) {
-      saveRDS(list(mpix = result_info$mpix),
+      saveRDS(list(mpix = result_info$mpix, fitid = fitid),
               file.path(maps_dir, paste0('zz_', mapid, '_map.RDS')))
    }
    
    
    message('\n=== Mapping complete ===')
+   message('Fitid: ', ifelse(is.null(fitid), 'none', fitid))
    message('Output: ', output_file)
 }

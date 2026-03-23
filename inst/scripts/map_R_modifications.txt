@@ -1,16 +1,14 @@
 # Notes on modifying map.R to dispatch U-Net models
 # ================================================
 #
-# In map(), after resolving the fitid and site, add a check for the model type:
+# map() already takes a fitid. After resolving it, check the method:
 #
 #   load_database('fdb')
 #   fitrow <- the$fdb$id == fitid
 #   ...
 #
-#   # After resolving site and fitid, check method:
 #   if(the$fdb$method[fitrow] == 'unet') {
 #
-#      # For U-Net, we need the model name and result from the fits database
 #      model_name <- the$fdb$name[fitrow]          # e.g. 'ditch_creek_pool_new_PI'
 #      datafile   <- the$fdb$datafile[fitrow]       # e.g. 'ditch_creek_pool_new_PI/fit01'
 #      result_dir <- basename(datafile)              # e.g. 'fit01'
@@ -29,15 +27,16 @@
 #      # Register in maps database (same as current code)
 #      ...
 #
-#      # Launch U-Net mapping instead of RF mapping
+#      # Launch U-Net mapping
 #      launch('do_unet_map',
 #             moreargs = list(model = model_name, result = result_dir,
-#                             which = 'all', clip = clip,
-#                             write_probs = FALSE, mapid = the$mdb$mapid[i]),
+#                             which = which, clip = clip,
+#                             write_probs = FALSE, 
+#                             mapid = the$mdb$mapid[i],
+#                             fitid = fitid),
 #             finish = 'map_finish', callerid = the$mdb$mapid[i],
 #             local = local, trap = trap, resources = resources, 
 #             comment = comment)
-#
 #   }
 #   else {
 #      # Existing RF/AdaBoost path
@@ -45,9 +44,10 @@
 #   }
 #
 #
-# You may also want to add a 'which' parameter to map() that gets passed
-# through to do_unet_map, defaulting to 'all'. This would let you call:
+# Add a 'which' parameter to map() that gets passed through:
 #
-#   map(fitid = 1671, which = 3)          # map with CV fold 3
-#   map(fitid = 1671, which = 'all')      # ensemble of all folds
-#   map(fitid = 1671, which = 'full')     # full retrained model
+#   map(fit = 1671, which = 3)            # map with CV fold 3
+#   map(fit = 1671, which = 'all')        # ensemble of all folds (default)
+#   map(fit = 1671, which = 'full')       # full retrained model
+#
+# The 'which' parameter is ignored for non-U-Net models.
