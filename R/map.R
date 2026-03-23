@@ -72,6 +72,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
       unet_fit_result <- basename(the$fdb$datafile[fitrow])                            # e.g. 'fit01'
 
       config <- read_yaml(file.path(the$parsdir, 'unet', paste0(unet_model, '.yml')))
+      if(is.null(config$cv)) config$cv <- 5
 
       if(is.numeric(which)) {
          if(which < 1 || which > config$cv)
