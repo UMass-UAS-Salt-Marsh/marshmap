@@ -113,7 +113,7 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    # ----- Preliminary save -----
    dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
    f0 <- paste0(output_file, '.tmp.tif')
-   writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT2U')
+   writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT1U')
    
    
    # ----- Color table and VAT -----
