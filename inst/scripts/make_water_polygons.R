@@ -1,24 +1,54 @@
-# make_water_polygons - script to delineate polygons of water from high tide NDWI
+# make_water_polygons -  initial script to label water classes
+# 
+# Workflow:
+#    1. Create NDWIg
+#    2. Create line shapefile with splitting lines
+#    3. Run this
+#    4. Label polygons
+#    5. run finish_water_polygons
+# 
 # 18 Mar 2026
+# 2 Apr 2026: revised to buffer both in and out, and split on supplied lines
 
 
 
 library(sf)
 library(terra)
-
+library(lwgeom)
 
 r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho__NDWIg.tif')
 
-r <- r > -0.5                                               # NDWI < -0.5 is a good cutoff
-r[r == 0] <- NA                                             # water is all we want
-x <- st_as_sf(as.polygons(r))                               # fast dissolve (default)
+r <- r > -0.5
+r[r == 0] <- NA
+x <- st_as_sf(as.polygons(r))
 names(x)[1] <- 'water'
-x <- suppressWarnings(st_cast(x, 'POLYGON'))                # explode multipolygon to individual polys
-x <- x[as.numeric(st_area(x)) >= 1, ]                       # drop < 1 m^2 - only the smallest pools and a ton of noise
+x <- suppressWarnings(st_cast(x, 'POLYGON'))
+x <- x[as.numeric(st_area(x)) >= 1, ]
 
-x <- st_buffer(x, -0.5)                                     # shrink water to remove sloppy edges
-x <- st_sf(geometry = st_cast(st_union(x), 'POLYGON'))      # dissolve again
+# --- Light inward buffer (0.2m) before splitting ---
+x <- st_buffer(x, -0.2)
+x <- x[!st_is_empty(x), ]                                    # drop any polys consumed by buffer
+x <- st_sf(geometry = st_cast(st_union(x), 'POLYGON'))       # dissolve and explode
 
-x$subclass <- 0L                                            # set subclass for editing
+# --- Split by hand-drawn lines ---
+splits <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/nor_water_splits.shp')
+splits <- st_combine(splits)                                  # merge all lines into one geometry
 
-st_write(x, 'C:/Work/etc/saltmarsh/data/nor_unet/water_polys.shp', append = FALSE)
+split_polys <- lapply(seq_len(nrow(x)), function(i) {
+   poly <- x[i, ]
+   if (!st_intersects(poly, splits, sparse = FALSE)[1, 1]) {
+      return(poly)
+   }
+   result <- st_split(st_geometry(poly), splits)
+   parts <- st_collection_extract(result, "POLYGON")
+   out <- poly[rep(1, length(parts)), ]
+   st_geometry(out) <- parts
+   out
+})
+x <- do.call(rbind, split_polys)
+
+x$subclass <- 0L                                              # for labeling in GIS
+
+st_write(x, 'C:/Work/etc/saltmarsh/data/nor_unet/water_polys_split.shp', append = FALSE)
+
+print('Now label the polygons in GIS, then run finish_water_polygons')
