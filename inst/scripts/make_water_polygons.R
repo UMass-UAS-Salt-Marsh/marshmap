@@ -16,23 +16,26 @@ library(sf)
 library(terra)
 library(lwgeom)
 
-r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho__NDWIg.tif')
+#r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho__NDWIg.tif')     # NDWI does poorly with shadows and sun, and this image was taken early in the morning of a bright day
+#r <- r > -0.5
 
-r <- r > -0.5
+r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho.tif')             # instead, use a threshold on NIR. Works way better.
+r <- x[[5]] < 3000
+
 r[r == 0] <- NA
 x <- st_as_sf(as.polygons(r))
 names(x)[1] <- 'water'
 x <- suppressWarnings(st_cast(x, 'POLYGON'))
-x <- x[as.numeric(st_area(x)) >= 1, ]
+x <- x[as.numeric(st_area(x)) >= 1, ]                          # minimum mapping unit: 1 m^2
 
 # --- Light inward buffer (0.2m) before splitting ---
 x <- st_buffer(x, -0.2)
-x <- x[!st_is_empty(x), ]                                    # drop any polys consumed by buffer
-x <- st_sf(geometry = st_cast(st_union(x), 'POLYGON'))       # dissolve and explode
+x <- x[!st_is_empty(x), ]                                      # drop any polys consumed by buffer
+x <- st_sf(geometry = st_cast(st_union(x), 'POLYGON'))         # dissolve and explode
 
 # --- Split by hand-drawn lines ---
 splits <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/nor_water_splits.shp')
-splits <- st_combine(splits)                                  # merge all lines into one geometry
+splits <- st_combine(splits)                                   # merge all lines into one geometry
 
 split_polys <- lapply(seq_len(nrow(x)), function(i) {
    poly <- x[i, ]
@@ -47,7 +50,7 @@ split_polys <- lapply(seq_len(nrow(x)), function(i) {
 })
 x <- do.call(rbind, split_polys)
 
-x$subclass <- 0L                                              # for labeling in GIS
+x$subclass <- 0L                                               # for labeling in GIS
 
 st_write(x, 'C:/Work/etc/saltmarsh/data/nor_unet/water_polys_split.shp', append = FALSE)
 
