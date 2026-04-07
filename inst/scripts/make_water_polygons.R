@@ -20,7 +20,7 @@ library(lwgeom)
 #r <- r > -0.5
 
 r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho.tif')             # instead, use a threshold on NIR. Works way better.
-r <- x[[5]] < 3000
+r <- r[[5]] < 3000
 
 r[r == 0] <- NA
 x <- st_as_sf(as.polygons(r))
@@ -28,10 +28,14 @@ names(x)[1] <- 'water'
 x <- suppressWarnings(st_cast(x, 'POLYGON'))
 x <- x[as.numeric(st_area(x)) >= 1, ]                          # minimum mapping unit: 1 m^2
 
-# --- Light inward buffer (0.2m) before splitting ---
-x <- st_buffer(x, -0.2)
+# --- Light inward buffer (0.1 m) before splitting ---
+#     We'll buffer in some more for creeks and ponds in the 2nd phase; this is what we'll get for ditches
+x <- st_buffer(x, -0.1)
 x <- x[!st_is_empty(x), ]                                      # drop any polys consumed by buffer
 x <- st_sf(geometry = st_cast(st_union(x), 'POLYGON'))         # dissolve and explode
+
+x <- x[as.numeric(st_area(x)) >= 1, ]                          # enforce 1 m MMU again
+
 
 # --- Split by hand-drawn lines ---
 splits <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/nor_water_splits.shp')
