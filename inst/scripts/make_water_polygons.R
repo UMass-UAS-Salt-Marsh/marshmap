@@ -28,6 +28,8 @@ names(x)[1] <- 'water'
 x <- suppressWarnings(st_cast(x, 'POLYGON'))
 x <- x[as.numeric(st_area(x)) >= 1, ]                          # minimum mapping unit: 1 m^2
 
+st_write(x, 'C:/Work/etc/saltmarsh/data/nor_unet/raw_water_polys.shp')   # save raw unbuffered water polys
+
 # --- Light inward buffer (0.1 m) before splitting ---
 #     We'll buffer in some more for creeks and ponds in the 2nd phase; this is what we'll get for ditches
 x <- st_buffer(x, -0.1)
