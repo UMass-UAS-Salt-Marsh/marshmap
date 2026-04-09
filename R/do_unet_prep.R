@@ -111,7 +111,8 @@ do_unet_prep <- function(model, save_gis) {
    
    
    transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
-   transects <- transects[transects$year %in% config$years, ]                 # and to years
+   if(!is.na(transects$year))
+      transects <- transects[transects$year %in% config$years, ]              # and to years
    transects <- overlaps(transects, 'subclass', all = TRUE)                   # remove overlapping polys, whether or not they agree
    message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '), ' in ', paste(config$years, collapse = ', '))
    if(nrow(transects) == 0)
