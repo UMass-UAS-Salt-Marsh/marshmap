@@ -5,7 +5,7 @@ Give the area of a clip vector
 ## Usage
 
 ``` r
-extent_area(clip, units = "ha", crs = "epsg:4326")
+extent_area(clip, units = "ha", crs)
 ```
 
 ## Arguments
@@ -20,4 +20,6 @@ extent_area(clip, units = "ha", crs = "epsg:4326")
 
 - crs:
 
-  Coordinate reference system of clip
+  Coordinate reference system of clip. Pass the CRS from the relevant
+  raster (e.g., `crs(my_raster)`) to ensure correctness regardless of
+  the project's coordinate system.

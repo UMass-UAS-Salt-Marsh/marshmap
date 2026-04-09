@@ -42,6 +42,7 @@
 <span>  <span class="va">model</span>,</span>
 <span>  train <span class="op">=</span> <span class="st">"train"</span>,</span>
 <span>  result <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  requirecuda <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  local <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  trap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -113,6 +114,11 @@ Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.</p></li>
 <dd><p>Name for this training run's result subdirectory. If NULL (default), automatically
 increments to the next available <code>fitNN</code> name (e.g. <code>"fit01"</code>, <code>"fit02"</code>). Specify explicitly
 to overwrite an existing run.</p></dd>
+
+
+<dt id="arg-requirecuda">requirecuda<a class="anchor" aria-label="anchor" href="#arg-requirecuda"></a></dt>
+<dd><p>If TRUE (default), abort immediately if CUDA is not available rather than
+silently falling back to CPU. Set to FALSE only for testing without a GPU.</p></dd>
 
 
 <dt id="arg-resources">resources<a class="anchor" aria-label="anchor" href="#arg-resources"></a></dt>

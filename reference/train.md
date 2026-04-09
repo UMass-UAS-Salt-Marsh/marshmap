@@ -9,6 +9,7 @@ train(
   model,
   train = "train",
   result = NULL,
+  requirecuda = TRUE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -115,6 +116,12 @@ train(
   automatically increments to the next available `fitNN` name (e.g.
   `"fit01"`, `"fit02"`). Specify explicitly to overwrite an existing
   run.
+
+- requirecuda:
+
+  If TRUE (default), abort immediately if CUDA is not available rather
+  than silently falling back to CPU. Set to FALSE only for testing
+  without a GPU.
 
 - resources:
 

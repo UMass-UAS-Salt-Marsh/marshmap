@@ -220,6 +220,8 @@ with `local = TRUE`.
 - [`map()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/map.md)
   : Produce geoTIFF maps of predicted vegetation cover from fitted
   models
+- [`unet_prep_map()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/unet_prep_map.md)
+  : Prepare map patches for U-Net prediction
 - [`mosaic()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/mosaic.md)
   : Combines multiple maps, filling in missing data
 

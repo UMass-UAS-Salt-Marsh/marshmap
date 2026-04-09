@@ -5,7 +5,7 @@ Train a U-Net model. Result files are placed in `<site>/unet/<model>`.
 ## Usage
 
 ``` r
-do_train(model, train, result = "fit", fitid = NULL)
+do_train(model, train, result = "fit", fitid = NULL, requirecuda = TRUE)
 ```
 
 ## Arguments
@@ -107,6 +107,12 @@ do_train(model, train, result = "fit", fitid = NULL)
   run's results are stored (default `"fit"`). Use different names (e.g.
   `"fit01"`, `"fit02"`) to store multiple training runs on the same
   source patches.
+
+- requirecuda:
+
+  If TRUE (default), abort immediately if CUDA is not available rather
+  than silently falling back to CPU. Set to FALSE only for testing
+  without a GPU.
 
 - resources:
 
