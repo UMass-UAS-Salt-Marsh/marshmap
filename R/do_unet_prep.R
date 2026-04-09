@@ -51,9 +51,10 @@ do_unet_prep <- function(model, save_gis) {
    
    config$type <- rep('image', length(config$orthos))                         # type for each ortho
    config$type[grep('__NDVI', config$orthos)] <- 'ndvi'
+   config$type[grep('__NDWIg', config$orthos)] <- 'ndwi'
    config$type[grep('__NDRE', config$orthos)] <- 'ndre'
    config$type[grep('DEM', config$orthos)] <- 'dem'
-   config$type[config$type == 'image' & config$bands == 1] <- 'scalar'        # any remaining 1-band layer (NDWIg, mean, sd, etc.)
+   config$type[config$type == 'image' & config$bands == 1] <- 'scalar'        # any remaining 1-band layer (mean, sd, etc.)
    
    config$class_mapping <- as.list(0:(length(config$classes) - 1))            # 0:(n-1) classes for U-Net
    names(config$class_mapping) <- config$classes                              # mapping to our class numbers
@@ -111,8 +112,8 @@ do_unet_prep <- function(model, save_gis) {
    
    
    transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
-   if(!is.na(transects$year))
-      transects <- transects[transects$year %in% config$years, ]              # and to years
+   if(!is.null(transects$year))
+      transects <- transects[transects$year %in% config$years, ]              # and to years (if column exists)
    transects <- overlaps(transects, 'subclass', all = TRUE)                   # remove overlapping polys, whether or not they agree
    message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '), ' in ', paste(config$years, collapse = ', '))
    if(nrow(transects) == 0)

@@ -8,6 +8,7 @@ train(
   model,
   train = "train",
   result = NULL,
+  requirecuda = TRUE,
   resources = NULL,
   local = FALSE,
   trap = TRUE,
@@ -74,6 +75,9 @@ Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 \item{result}{Name for this training run's result subdirectory. If NULL (default), automatically
 increments to the next available \code{fitNN} name (e.g. \code{"fit01"}, \code{"fit02"}). Specify explicitly
 to overwrite an existing run.}
+
+\item{requirecuda}{If TRUE (default), abort immediately if CUDA is not available rather than
+silently falling back to CPU. Set to FALSE only for testing without a GPU.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 over the function's defaults. \strong{Note that this function requires GPUs}. By default, it

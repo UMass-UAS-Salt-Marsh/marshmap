@@ -13,9 +13,9 @@ overlaps <- function(polys, field, all = TRUE) {
    
    x <- suppressMessages(st_intersection(polys))                                       # intersect shapefile with itself        
    if(all)
-      b <- sapply(x$origins, function(i) length(polys[[field]][i]) == 1)               #    TRUE if no overlaps
+      b <- vapply(x$origins, function(i) length(polys[[field]][i]) == 1, logical(1))   #    TRUE if no overlaps
    else
-      b <- sapply(x$origins, function(i) length(unique(polys[[field]][i])) == 1)       #    TRUE if all overlaps are equal
+      b <- vapply(x$origins, function(i) length(unique(polys[[field]][i])) == 1, logical(1))  #    TRUE if all overlaps are equal
    z <- x[b, names(x) != 'origins']                                                    # keep these; don't want origins list
    z <-z[st_geometry_type(z) %in% c("POLYGON", "MULTIPOLYGON"), ]                      # only want polys
    

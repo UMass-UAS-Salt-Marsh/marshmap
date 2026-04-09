@@ -323,7 +323,7 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001,
     weight_decay=1e-4, class_weighting = 'freq', n_epochs=50, batch_size=8,
     gradient_clip_max_norm=1.0, num_classes=4, in_channels=None,
-    use_ordinal=False, test_interval=5):
+    use_ordinal=False, test_interval=5, requirecuda=True):
     """
     Main training function
     
@@ -394,12 +394,16 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     np.random.seed(42)
 
     # Set device
-    print(f"CUDA available: {torch.cuda.is_available()}")
-    if torch.cuda.is_available():
+    cuda_available = torch.cuda.is_available()
+    print(f"CUDA available: {cuda_available}")
+    if cuda_available:
         print(f"Number of GPUs: {torch.cuda.device_count()}")
         for i in range(torch.cuda.device_count()):
             print(f"  GPU {i}: {torch.cuda.get_device_name(i)}")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if requirecuda and not cuda_available:
+        raise RuntimeError("CUDA is not available but requirecuda=True. "
+                           "Check GPU allocation and driver/module setup.")
+    device = torch.device('cuda' if cuda_available else 'cpu')
     print(f"Using device: {device}")
     
     # Load data

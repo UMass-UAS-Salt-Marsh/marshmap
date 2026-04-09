@@ -4,7 +4,7 @@
 \alias{do_train}
 \title{Train and assess U-Net model}
 \usage{
-do_train(model, train, result = "fit", fitid = NULL)
+do_train(model, train, result = "fit", fitid = NULL, requirecuda = TRUE)
 }
 \arguments{
 \item{model}{The base name of a \code{.yml} file in \verb{<pars>/unet/} with model parameters. This
@@ -66,6 +66,9 @@ Range: 0.5 (aggressive clipping) to 5.0 (gentle); start with 1.0.
 \item{result}{Name of the fit subdirectory within \verb{<model>/} where this training run's results
 are stored (default \code{"fit"}). Use different names (e.g. \code{"fit01"}, \code{"fit02"}) to store
 multiple training runs on the same source patches.}
+
+\item{requirecuda}{If TRUE (default), abort immediately if CUDA is not available rather than
+silently falling back to CPU. Set to FALSE only for testing without a GPU.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
 over the function's defaults.}

@@ -19,9 +19,8 @@
 do_unet_prep_map <- function(model, clip = NULL) {
    
    
-   MAP_OVERLAP <- 0.5                                                         # mapping overlap (fixed)
-   
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
+   MAP_OVERLAP <- if(!is.null(config$mapping_overlap)) config$mapping_overlap else 0.5
    
    config$fpath <- resolve_dir(the$flightsdir, config$site)
    config$bands <- unlist(lapply(config$orthos, function(x)
@@ -30,6 +29,7 @@ do_unet_prep_map <- function(model, clip = NULL) {
    
    config$type <- rep('image', length(config$orthos))
    config$type[grep('__NDVI', config$orthos)] <- 'ndvi'
+   config$type[grep('__NDWIg', config$orthos)] <- 'ndwi'
    config$type[grep('__NDRE', config$orthos)] <- 'ndre'
    config$type[grep('DEM', config$orthos)] <- 'dem'
    config$type[config$type == 'image' & config$bands == 1] <- 'scalar'
@@ -38,7 +38,8 @@ do_unet_prep_map <- function(model, clip = NULL) {
    # ----- Output directory -----
    model_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
    if(!is.null(clip)) {
-      clip_tag <- paste0('clip_', round(extent_area(clip)), '_ha')             # TODO: verify extent_area works with Mass State Plane
+      site_crs <- crs(rast(file.path(config$fpath, config$orthos[1])))
+      clip_tag <- paste0('clip_', round(extent_area(clip, crs = site_crs)), '_ha')
       output_dir <- file.path(model_dir, paste0('map_patches_', clip_tag))
    }
    else {
@@ -134,8 +135,10 @@ do_unet_prep_map <- function(model, clip = NULL) {
       nodata_mask[i, 1:actual_h, 1:actual_w] <- as.integer(!full_nodata[r0:r1, c0:c1])
       
       # Edge padding stays as 0 (already initialized)
-      if(actual_h < patch_size || actual_w < patch_size)
-         nodata_mask[i, (actual_h + 1):patch_size, ] <- 0L                    # mark padding as nodata
+      if(actual_h < patch_size)
+         nodata_mask[i, (actual_h + 1):patch_size, ] <- 0L                    # mark row padding as nodata
+      if(actual_w < patch_size)
+         nodata_mask[i, , (actual_w + 1):patch_size] <- 0L                    # mark column padding as nodata
       
       if(i %% 500 == 0)
          message(sprintf('  Processed %d / %d patches', i, n_patches))

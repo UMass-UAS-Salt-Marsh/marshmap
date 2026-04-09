@@ -6,19 +6,26 @@
 \usage{
 do_unet_map(
   model,
-  result = "fit01",
+  site,
+  fit_result = "fit01",
+  result,
   which = "all",
   clip = NULL,
   write_probs = FALSE,
   mapid = NULL,
   fitid = NULL,
+  requirecuda = TRUE,
   rep = NULL
 )
 }
 \arguments{
 \item{model}{The model name (base name of the prep \code{.yml})}
 
-\item{result}{The training result subdirectory (e.g., \code{'fit01'})}
+\item{site}{Three letter site code}
+
+\item{fit_result}{The training result subdirectory (e.g., \code{'fit01'})}
+
+\item{result}{Output filename base (without \code{.tif}), from \code{map()}}
 
 \item{which}{Which model(s) to use: \code{'all'}, \code{'full'}, or integer 1-5}
 
@@ -26,14 +33,17 @@ do_unet_map(
 
 \item{write_probs}{If TRUE, write probability layers}
 
-\item{mapid}{Map database id (if called from \code{map()})}
+\item{mapid}{Map database id}
 
 \item{fitid}{Fit database id (for reference / logging)}
+
+\item{requirecuda}{If TRUE (default), abort immediately if CUDA is not available rather than
+silently falling back to CPU. Set to FALSE only for testing without a GPU.}
 
 \item{rep}{Throwaway argument for slurmcollie}
 }
 \description{
 Orchestrates the full mapping pipeline: prep patches, predict with GPU,
-assemble into GeoTIFF. Typically called as a batch job by \code{unet_map()} or
-dispatched from \code{map()}.
+assemble into GeoTIFF. Called as a batch job by \code{map()} when the fit
+method is \code{'unet'}.
 }
