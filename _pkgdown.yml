@@ -19,7 +19,6 @@ reference:
   - fit
   - map
   - unet_prep_map
-  - unet_map
   - mosaic
   
 - title: Reporting  and management functions
@@ -84,6 +83,8 @@ reference:
   - spatial_holdout
   - train_finish
   - write_train_summary
+  - do_unet_map
+  - do_unet_prep_map
   - unet_assemble_map
   - the
   - .onLoad

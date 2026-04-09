@@ -55,8 +55,10 @@
 #' @param result Name for this training run's result subdirectory. If NULL (default), automatically
 #'    increments to the next available `fitNN` name (e.g. `"fit01"`, `"fit02"`). Specify explicitly
 #'    to overwrite an existing run.
+#' @param requirecuda If TRUE (default), abort immediately if CUDA is not available rather than
+#'    silently falling back to CPU. Set to FALSE only for testing without a GPU.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}. These take priority
-#'    over the function's defaults. **Note that this function requires GPUs**. By default, it 
+#'    over the function's defaults. **Note that this function requires GPUs**. By default, it
 #'    requests 1 L40S (preferred), but will accept V100 or RTX 2080 Ti. To specify only L40S, use
 #'    `resources = list(constraint = 'l40s')`.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
@@ -70,7 +72,7 @@
 #' @export
 
 
-train <- function(model, train = 'train', result = NULL, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
+train <- function(model, train = 'train', result = NULL, requirecuda = TRUE, resources = NULL, local = FALSE, trap = TRUE, comment = NULL) {
 
 
    resources <- get_resources(resources, list(
@@ -78,6 +80,7 @@ train <- function(model, train = 'train', result = NULL, resources = NULL, local
       ngpus = 1,
       prefer_gpu = 'l40s',                         # L40S is best, but not worth waiting for
       constraint = 'x86_64&[l40s|v100|2080ti]',    # alternative GPUs: V100 or RTX 2080 Ti
+      exclude = 'gypsum-gpu171',                   # TEMPORARY until it's fixed ***********************************************************
       partition.gpu = 'gpu-preempt,gpu',           # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
       memory = 180,
       walltime = '02:00:00'
@@ -140,7 +143,7 @@ train <- function(model, train = 'train', result = NULL, resources = NULL, local
    save_database('fdb')
 
 
-   launch('do_train', reps = model, repname = 'model', moreargs = list(train = train, result = result, fitid = the$fdb$id[i]),
+   launch('do_train', reps = model, repname = 'model', moreargs = list(train = train, result = result, fitid = the$fdb$id[i], requirecuda = requirecuda),
           finish = 'train_finish', callerid = the$fdb$id[i],
           local = local, trap = trap, resources = resources, comment = comment)
 }
