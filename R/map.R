@@ -22,6 +22,8 @@
 #'   model), or an integer CV fold number. Ignored for RF/AdaBoost models.
 #' @param write_probs For U-Net models: if TRUE, write per-class probability
 #'   layers alongside the classification. Ignored for RF/AdaBoost models.
+#' @param requirecuda If TRUE (default), abort immediately if CUDA is not available rather than
+#'   silently falling back to CPU. Set to FALSE only for testing without a GPU.
 #' @param resources Slurm launch resources. See \link[slurmcollie]{launch}.
 #'   These take priority over the function's defaults.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
@@ -37,7 +39,7 @@
 
 
 map <- function(fit, site = NULL, clip = NULL, result = NULL,
-                which = 'all', write_probs = FALSE,
+                which = 'all', write_probs = FALSE, requirecuda = TRUE,
                 resources = NULL, local = FALSE, trap = FALSE, comment = NULL) {
 
 
@@ -201,6 +203,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
              moreargs = list(site = site, fit_result = unet_fit_result,
                              result = result, which = which, clip = clip,
                              write_probs = write_probs, fitid = fitid,
+                             requirecuda = requirecuda,
                              mapid = the$mdb$mapid[i]),
              finish = 'map_finish', callerid = the$mdb$mapid[i],
              local = local, trap = trap, resources = resources, comment = comment)

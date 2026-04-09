@@ -14,6 +14,7 @@ do_unet_map(
   write_probs = FALSE,
   mapid = NULL,
   fitid = NULL,
+  requirecuda = TRUE,
   rep = NULL
 )
 }
@@ -35,6 +36,9 @@ do_unet_map(
 \item{mapid}{Map database id}
 
 \item{fitid}{Fit database id (for reference / logging)}
+
+\item{requirecuda}{If TRUE (default), abort immediately if CUDA is not available rather than
+silently falling back to CPU. Set to FALSE only for testing without a GPU.}
 
 \item{rep}{Throwaway argument for slurmcollie}
 }

@@ -57,6 +57,8 @@
 #' @param result Name of the fit subdirectory within `<model>/` where this training run's results
 #'    are stored (default `"fit"`). Use different names (e.g. `"fit01"`, `"fit02"`) to store
 #'    multiple training runs on the same source patches.
+#' @param requirecuda If TRUE (default), abort immediately if CUDA is not available rather than
+#'    silently falling back to CPU. Set to FALSE only for testing without a GPU.
 #' @param local If TRUE, run locally; otherwise, spawn a batch run on Unity
 #' @param trap If TRUE, trap errors in local mode; if FALSE, use normal R error handling. Use this
 #'    for debugging. If you get unrecovered errors, the job won't be added to the jobs database. Has
@@ -68,7 +70,7 @@
 #' @export
 
 
-do_train <- function(model, train, result = 'fit', fitid = NULL) {
+do_train <- function(model, train, result = 'fit', fitid = NULL, requirecuda = TRUE) {
 
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))       # read parameters from model
@@ -113,7 +115,8 @@ do_train <- function(model, train, result = 'fit', fitid = NULL) {
          n_epochs              = as.integer(config$n_epochs),
          batch_size            = as.integer(config$batch_size),
          gradient_clip_max_norm = config$gradient_clip_max_norm,
-         test_interval         = as.integer(if (!is.null(config$test_interval)) config$test_interval else 1L)
+         test_interval         = as.integer(if (!is.null(config$test_interval)) config$test_interval else 1L),
+         requirecuda           = requirecuda
       )
 
       # Read metrics CSV for later plotting

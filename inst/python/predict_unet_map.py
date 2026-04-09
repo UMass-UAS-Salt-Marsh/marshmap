@@ -45,7 +45,7 @@ def corn_probabilities(logits):
     return probs
 
 
-def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64):
+def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64, requirecuda=True):
     """
     Predict on map patches and save probabilities.
 
@@ -67,7 +67,12 @@ def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64):
     with open(config_path, 'r') as f:
         config = json.load(f)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    cuda_available = torch.cuda.is_available()
+    print(f'CUDA available: {cuda_available}')
+    if requirecuda and not cuda_available:
+        raise RuntimeError("CUDA is not available but requirecuda=True. "
+                           "Check GPU allocation and driver/module setup.")
+    device = torch.device('cuda' if cuda_available else 'cpu')
     print(f'Using device: {device}')
 
     use_ordinal = config.get('use_ordinal', False)

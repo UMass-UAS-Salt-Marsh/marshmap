@@ -11,6 +11,7 @@ map(
   result = NULL,
   which = "all",
   write_probs = FALSE,
+  requirecuda = TRUE,
   resources = NULL,
   local = FALSE,
   trap = FALSE,
@@ -41,6 +42,9 @@ model), or an integer CV fold number. Ignored for RF/AdaBoost models.}
 
 \item{write_probs}{For U-Net models: if TRUE, write per-class probability
 layers alongside the classification. Ignored for RF/AdaBoost models.}
+
+\item{requirecuda}{If TRUE (default), abort immediately if CUDA is not available rather than
+silently falling back to CPU. Set to FALSE only for testing without a GPU.}
 
 \item{resources}{Slurm launch resources. See \link[slurmcollie]{launch}.
 These take priority over the function's defaults.}

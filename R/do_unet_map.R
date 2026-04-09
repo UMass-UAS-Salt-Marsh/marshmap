@@ -13,6 +13,8 @@
 #' @param write_probs If TRUE, write probability layers
 #' @param mapid Map database id
 #' @param fitid Fit database id (for reference / logging)
+#' @param requirecuda If TRUE (default), abort immediately if CUDA is not available rather than
+#'    silently falling back to CPU. Set to FALSE only for testing without a GPU.
 #' @param rep Throwaway argument for slurmcollie
 #' @importFrom yaml read_yaml
 #' @importFrom reticulate source_python
@@ -23,7 +25,7 @@
 do_unet_map <- function(model, site, fit_result = 'fit01', result,
                         which = 'all', clip = NULL,
                         write_probs = FALSE, mapid = NULL, fitid = NULL,
-                        rep = NULL) {
+                        requirecuda = TRUE, rep = NULL) {
 
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
@@ -99,7 +101,8 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
       patches_dir = patches_dir,
       model_weights = weights,                                                 # single path or vector of paths
       config_path = config_json,
-      batch_size = 64L
+      batch_size = 64L,
+      requirecuda = requirecuda
    )
 
 
