@@ -34,6 +34,15 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
    fit_dir <- file.path(model_dir, fit_result)
 
 
+   # ── CUDA check (fail fast before any slow prep work) ──────────────────────
+   if(requirecuda) {
+      torch <- reticulate::import('torch')
+      if(!torch$cuda$is_available())
+         stop('CUDA is not available but requirecuda = TRUE. Aborting before prep.')
+      message('CUDA available: TRUE')
+   }
+
+
    # ── Step 1: Prep map patches ───────────────────────────────────────────────
    message('\n=== STEP 1: Preparing map patches ===')
    do_unet_prep_map(model = model, clip = clip)                                # skips if already done
