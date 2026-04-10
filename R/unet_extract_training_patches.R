@@ -95,10 +95,11 @@ unet_extract_training_patches <- function(input_stack, transects, train_ids, val
          patch_array <- padded
       }
       
+      patch_array <- aperm(patch_array, c(2, 1, 3))                                        # fix H/W swap: array(values(...)) fills column-major but raster is row-major
       patches[i, , , ] <- patch_array
-      
-      # NEW: Check which pixels have valid data (no NA in any channel)
-      # patch_array is [H, W, C], check across channel dimension
+
+      # Check which pixels have valid data (no NA in any channel)
+      # patch_array is now correctly [H, W, C]
       has_data <- apply(patch_array, c(1, 2), function(x) !any(is.na(x)))
       
       # Create template

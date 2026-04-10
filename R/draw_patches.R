@@ -35,7 +35,7 @@ draw_patches <- function(data_dir, site, dataset = 'train', n = 5, patchno = NUL
    patches <- as.array(np$load(file.path(data_dir, paste0(site, '_', dataset, '_patches.npy'))))
    labels  <- as.array(np$load(file.path(data_dir, paste0(site, '_', dataset, '_labels.npy'))))
    masks   <- as.array(np$load(file.path(data_dir, paste0(site, '_', dataset, '_masks.npy'))))
-   
+
    n_patches <- dim(patches)[1]
    patch_h <- dim(patches)[2]
    patch_w <- dim(patches)[3]
@@ -97,12 +97,11 @@ draw_patches <- function(data_dir, site, dataset = 'train', n = 5, patchno = NUL
    for (j in seq_along(idx)) {
       i <- idx[j]
       
-      # Extract RGB channels and transpose to match terra's column-major order.
-      # Numpy arrays are [H, W] (row-major); terra::values() fills column-major,
-      # so we transpose to get correct spatial orientation.
-      r <- t(patches[i, , , rgb_channels[1]])
-      g <- t(patches[i, , , rgb_channels[2]])
-      b <- t(patches[i, , , rgb_channels[3]])
+      # Extract RGB channels. patches are [N, H, W, C]; indexing one patch+channel gives [H, W].
+ 
+      r <- patches[i, , , rgb_channels[1]]
+      g <- patches[i, , , rgb_channels[2]]
+      b <- patches[i, , , rgb_channels[3]]
       
       # Percentile stretch for display
       stretch <- function(band) {
@@ -133,9 +132,9 @@ draw_patches <- function(data_dir, site, dataset = 'train', n = 5, patchno = NUL
       }
       
       # Stack into 3-band raster and write.
-      # After transpose, dims are [W, H]; terra expects values in column-major
-      # order which matches our transposed layout.
-      rgb_array <- array(c(r, g, b), dim = c(patch_w, patch_h, 3))
+      # patches are now [H, W, C]; transpose each band so c() reads in raster
+      # row-major order, which is what terra::values<- expects.
+      rgb_array <- array(c(t(r), t(g), t(b)), dim = c(patch_w, patch_h, 3))
       
       rast_out <- terra::rast(nrows = patch_h, ncols = patch_w, nlyrs = 3,
                               xmin = 0, xmax = patch_w, ymin = 0, ymax = patch_h)

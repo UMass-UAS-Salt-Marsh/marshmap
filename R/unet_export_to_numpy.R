@@ -45,18 +45,18 @@ unet_export_to_numpy <- function(patches, output_dir, site, class_mapping, set) 
    
    # Train data
    train_patches <- patches$patches[train_idx, , , ]
-   train_labels <- t(patches$labels[train_idx, , ])                              # ******************** TRANSPOSE AS A TEST ********************
-   train_masks <- t(patches$train_masks[train_idx, , ])
+   train_labels <- patches$labels[train_idx, , ]                              
+   train_masks <- patches$train_masks[train_idx, , ]
    
    # Val data
    validate_patches <- patches$patches[val_idx, , , ]
-   validate_labels <- t(patches$labels[val_idx, , ])                             # ******************** TRANSPOSE AS A TEST ********************
-   validate_masks <- t(patches$val_masks[val_idx, , ])
-   
+   validate_labels <- patches$labels[val_idx, , ]
+   validate_masks <- patches$val_masks[val_idx, , ]
+
    # Test data
    test_patches <- patches$patches[test_idx, , , ]
-   test_labels <- t(patches$labels[test_idx, , ])                                # ******************** TRANSPOSE AS A TEST ******************** 
-   test_masks <- t(patches$test_masks[test_idx, , ])
+   test_labels <- patches$labels[test_idx, , ]
+   test_masks <- patches$test_masks[test_idx, , ]
    
    
    # Replace NA
