@@ -86,6 +86,7 @@ reference:
   - write_train_summary
   - do_unet_map
   - do_unet_prep_map
+  - draw_patches
   - unet_assemble_map
   - parse_summary
   - describe_channels
