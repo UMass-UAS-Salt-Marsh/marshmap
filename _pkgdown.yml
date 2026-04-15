@@ -36,6 +36,7 @@ reference:
   - flightinfo
   - fieldinfo
   - sampleinfo
+  - compare
   
 - title: Utility functions
   desc: Uncommonly-used utility functions.
@@ -86,5 +87,8 @@ reference:
   - do_unet_map
   - do_unet_prep_map
   - unet_assemble_map
+  - parse_summary
+  - describe_channels
+  - parse_image_filename
   - the
   - .onLoad

@@ -150,8 +150,11 @@ do_unet_prep_map <- function(model, clip = NULL) {
    # ----- Save -----
    message('Saving patches to ', output_dir, '...')
    
-   np$save(file.path(output_dir, paste0(toupper(config$site), '_map_patches.npy')), patches)
+   np$save(file.path(output_dir, paste0(toupper(config$site), '_map_patches.npy')),
+           np$array(patches, dtype = np$float32))                               # float32 halves file size vs R's default float64
    np$save(file.path(output_dir, paste0(toupper(config$site), '_map_nodata.npy')), nodata_mask)
+   rm(patches, nodata_mask)
+   gc()                                                                          # return memory to OS before returning to caller
    
    write.csv(origins, origins_file, row.names = FALSE)
    

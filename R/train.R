@@ -83,7 +83,7 @@ train <- function(model, train = 'train', result = NULL, requirecuda = TRUE, res
       exclude = 'gypsum-gpu171',                   # TEMPORARY until it's fixed ***********************************************************
       partition.gpu = 'gpu-preempt,gpu',           # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
       memory = 180,
-      walltime = '02:00:00'
+      walltime = '04:00:00'
    ))
 
 

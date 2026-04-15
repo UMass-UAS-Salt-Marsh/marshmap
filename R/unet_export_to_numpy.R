@@ -107,18 +107,18 @@ unet_export_to_numpy <- function(patches, output_dir, site, class_mapping, set) 
    jsonlite::write_json(metadata, file.path(output_dir, paste0(site, '_metadata.json')), auto_unbox = TRUE)
    message('in_channels: ', in_channels)
 
-   # Save
-   np$save(file.path(output_dir, paste0(site, '_train_patches.npy')), train_patches)
-   np$save(file.path(output_dir, paste0(site, '_train_labels.npy')), train_labels)
-   np$save(file.path(output_dir, paste0(site, '_train_masks.npy')), train_masks)
-   
-   np$save(file.path(output_dir, paste0(site, '_validate_patches.npy')), validate_patches)
-   np$save(file.path(output_dir, paste0(site, '_validate_labels.npy')), validate_labels)
-   np$save(file.path(output_dir, paste0(site, '_validate_masks.npy')), validate_masks)
-   
-   np$save(file.path(output_dir, paste0(site, '_test_patches.npy')), test_patches)
-   np$save(file.path(output_dir, paste0(site, '_test_labels.npy')), test_labels)
-   np$save(file.path(output_dir, paste0(site, '_test_masks.npy')), test_masks)
+   # Save — patches as float32 (R defaults to float64; float32 halves file size with no loss of useful precision)
+   np$save(file.path(output_dir, paste0(site, '_train_patches.npy')),    np$array(train_patches,    dtype = np$float32))
+   np$save(file.path(output_dir, paste0(site, '_train_labels.npy')),     train_labels)
+   np$save(file.path(output_dir, paste0(site, '_train_masks.npy')),      train_masks)
+
+   np$save(file.path(output_dir, paste0(site, '_validate_patches.npy')), np$array(validate_patches, dtype = np$float32))
+   np$save(file.path(output_dir, paste0(site, '_validate_labels.npy')),  validate_labels)
+   np$save(file.path(output_dir, paste0(site, '_validate_masks.npy')),   validate_masks)
+
+   np$save(file.path(output_dir, paste0(site, '_test_patches.npy')),     np$array(test_patches,     dtype = np$float32))
+   np$save(file.path(output_dir, paste0(site, '_test_labels.npy')),      test_labels)
+   np$save(file.path(output_dir, paste0(site, '_test_masks.npy')),       test_masks)
    
    
    message('\nExported to: ', output_dir)

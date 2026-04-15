@@ -72,6 +72,9 @@
 
 do_train <- function(model, train, result = 'fit', fitid = NULL, requirecuda = TRUE) {
 
+   
+   cuda_check(requirecuda)                                                          # make sure CUDA is available
+   
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))       # read parameters from model
    if(!is.null(train)) {                                                            # and train, which takes priority

@@ -42,7 +42,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
                 which = 'all', write_probs = FALSE, requirecuda = TRUE,
                 resources = NULL, local = FALSE, trap = FALSE, comment = NULL) {
 
-
+   
    # ----- Resolve fit -----
    if(is.list(fit)) {                                                                  # if fit is a list, it's (1) fit object,
       fitid <- NULL
@@ -151,7 +151,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
          constraint = 'x86_64&[l40s|v100|2080ti]',
          partition.gpu = 'gpu-preempt,gpu',
          memory = 180,
-         walltime = '02:00:00'
+         walltime = '05:00:00'
       ))
    }
    else {

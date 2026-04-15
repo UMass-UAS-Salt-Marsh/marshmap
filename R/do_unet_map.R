@@ -27,20 +27,14 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
                         write_probs = FALSE, mapid = NULL, fitid = NULL,
                         requirecuda = TRUE, rep = NULL) {
 
-
+   
+   cuda_check(requirecuda)                                                          # make sure CUDA is available
+   
+   
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
    if(is.null(config$cv)) config$cv <- 5
    model_dir <- file.path(resolve_dir(the$unetdir, site), model)
    fit_dir <- file.path(model_dir, fit_result)
-
-
-   # ── CUDA check (fail fast before any slow prep work) ──────────────────────
-   if(requirecuda) {
-      torch <- reticulate::import('torch')
-      if(!torch$cuda$is_available())
-         stop('CUDA is not available but requirecuda = TRUE. Aborting before prep.')
-      message('CUDA available: TRUE')
-   }
 
 
    # ── Step 1: Prep map patches ───────────────────────────────────────────────
@@ -58,6 +52,8 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
       patches_dir <- file.path(model_dir, 'map_patches')
    }
 
+
+   gc()                                                                          # release R heap before Python loads patches
 
    # ── Step 2: Resolve model weights ──────────────────────────────────────────
    site_upper <- toupper(site)
