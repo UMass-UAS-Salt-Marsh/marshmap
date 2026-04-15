@@ -4,7 +4,7 @@
 \alias{cuda_check}
 \title{Make sure CUDA is available for GPU jobs}
 \usage{
-cuda_check(requirecuda, test = TRUE)
+cuda_check(requirecuda, test = FALSE)
 }
 \arguments{
 \item{requirecuda}{If TRUE, job expects a GPU, so do the test. If FALSE, just return.}
