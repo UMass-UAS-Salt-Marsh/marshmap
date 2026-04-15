@@ -61,6 +61,8 @@ These functions report data and model status.
   : Summarize number of field-sampled polys and pixels by class and year
 - [`sampleinfo()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/sampleinfo.md)
   : Give summary of sample data file
+- [`compare()`](https://umass-uas-salt-marsh.github.io/marshmap/reference/compare.md)
+  : Compare U-Net training runs
 
 ## Utility functions
 

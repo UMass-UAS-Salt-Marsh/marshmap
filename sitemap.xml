@@ -9,9 +9,12 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/build_flights_db.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/center_zoom.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/check_files.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/compare.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/create_py_env.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/cuda_check.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/db_purge.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/derive.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/describe_channels.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_derive.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_fit.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_gather.html</loc></url>
@@ -24,6 +27,7 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_unet_prep_map.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_upscale_more.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/dot-onLoad.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/draw_patches.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/drive_walk_path.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/extent_area.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/fieldinfo.html</loc></url>
@@ -61,6 +65,8 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/mosaic.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/new_db.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/overlaps.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/parse_image_filename.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/parse_summary.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/pick.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/pickvars.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/plot_predict.html</loc></url>
