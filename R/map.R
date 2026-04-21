@@ -150,7 +150,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
          prefer_gpu = 'l40s',
          constraint = 'x86_64&[l40s|v100|2080ti]',
          partition.gpu = 'gpu-preempt,gpu',
-         memory = 180,
+         memory = 400,
          walltime = '05:00:00'
       ))
    }

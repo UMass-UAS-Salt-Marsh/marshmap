@@ -118,17 +118,21 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    
    # ----- Color table and VAT -----
    classes <- read_pars_table('classes')
-   
+
+   # Determine which class column to use (subclass, or reclassified e.g. ICS_V5)
+   class_col <- if(!is.null(config$reclass) && nzchar(config$reclass)) config$reclass else 'subclass'
+   name_col  <- paste0(class_col, '_name')
+   color_col <- paste0(class_col, '_color')
+
+   # Build a deduplicated lookup table for the relevant class column
+   class_lookup <- unique(classes[, c(class_col, name_col, color_col)])
+   class_lookup <- class_lookup[!is.na(class_lookup[[class_col]]), ]
+   names(class_lookup) <- c('subclass', 'name', 'color')
+
    # Build VAT from our predicted classes
    pred_classes <- sort(unique(as.vector(pred_original[!is.na(pred_original)])))
-   vat <- data.frame(
-      value = pred_classes,
-      subclass = as.integer(pred_classes)
-   )
-   vat <- merge(vat, classes[, c('subclass', 'subclass_name', 'subclass_color')],
-                by = 'subclass', sort = TRUE)
-   vat <- vat[, c('value', 'subclass', 'subclass_name', 'subclass_color')]
-   names(vat) <- c('value', 'subclass', 'name', 'color')
+   vat <- data.frame(value = pred_classes, subclass = as.integer(pred_classes))
+   vat <- merge(vat, class_lookup, by = 'subclass', sort = TRUE)
    
    vat2 <- data.frame(
       value = vat$value,
