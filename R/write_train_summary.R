@@ -9,9 +9,9 @@
 #' @keywords internal
 
 
-write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
+write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr, fitid = NULL) {
 
-   
+
    classes    <- as.character(config$classes)
    overall_ccr <- cm$overall['Accuracy'] * 100
    kappa      <- cm$overall['Kappa']
@@ -26,37 +26,44 @@ write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
    class_ccr  <- diag(tbl) / colSums(tbl) * 100   # sensitivity = per-class CCR
    class_npix <- colSums(tbl)                       # reference pixels per class
 
-   # Poly counts (saved by do_unet_prep; use set 1 as representative)
-   patches_dir    <- file.path(dirname(fit_dir), 'patches')
+   # Poly and pixel counts (saved by do_unet_prep; use set 1 as representative)
+   patches_dir      <- file.path(dirname(fit_dir), 'patches')
    poly_counts_path <- file.path(patches_dir, 'set1', 'poly_counts.rds')
-   poly_line <- NULL
+   pix_counts_path  <- file.path(patches_dir, 'set1', 'pixel_counts.rds')
+   pc  <- NULL
+   pxc <- NULL
    if (file.exists(poly_counts_path)) {
       pc <- readRDS(poly_counts_path)
+   } else {
+      message('poly_counts.rds not found at ', poly_counts_path, '; poly counts omitted from summary')
+   }
+   if (file.exists(pix_counts_path)) {
+      pxc <- readRDS(pix_counts_path)
+   } else {
+      message('pixel_counts.rds not found at ', pix_counts_path, '; patch pixel counts omitted from summary')
+   }
+
+   # Summary polys line (aggregate, kept for quick reference)
+   if (!is.null(pc)) {
       fmt_counts <- function(tbl) paste(as.integer(tbl[classes]), collapse = '/')
       poly_line <- sprintf('   - polys: %s (train: %s, test: %s)',
                            fmt_counts(pc$total), fmt_counts(pc$train), fmt_counts(pc$test))
    } else {
-      message('poly_counts.rds not found at ', poly_counts_path, '; polys line omitted from summary')
+      poly_line <- NULL
    }
 
    # Header
-   header <- model
-   if (!is.null(train))
-      header <- paste(header, '/', train)
-   lines <- c(
-      paste(header, fit_dir),
-      ''
-   )
-   
-   
-   m <- paste0('Model: ', model)          # model name & info
-   dashes <- strrep('-', nchar(m))
-   lines <- c(dashes, m, dashes, '')
+   m      <- paste0('Model: ', model)
+   id_ln  <- if (!is.null(fitid)) paste0('fitid: ', fitid) else NULL
+   dashes <- strrep('-', max(nchar(m), if (!is.null(id_ln)) nchar(id_ln) else 0))
+   lines  <- c(dashes)
+   if (!is.null(id_ln))
+      lines <- c(lines, id_ln)
+   lines <- c(lines, m, dashes, '')
    if (!is.null(train))
       lines <- c(lines, paste0('Train: ', train))
    lines <- c(lines, paste0('Result: ', fit_dir), '')
- 
-   
+
    # Site / classes / years / polys
    lines <- c(lines,
       sprintf('   - site: %s',         toupper(config$site)),
@@ -74,12 +81,36 @@ write_train_summary <- function(model, train, fit_dir, config, cm, cv_ccr) {
       ''
    )
 
-   # Per-class CCR
-   lines <- c(lines, '   - Per-class CCR:')
-   for (k in seq_along(classes))
-      lines <- c(lines,
-         sprintf('      Class %s: %.2f%% (%s pixels)',
-                 classes[k], class_ccr[k], format(class_npix[k], big.mark = ',')))
+   # Per-class: CCR, F1, confusion-matrix pixels, and (if available) polys + patch pixels
+   get_poly <- function(cls, split) {
+      if (is.null(pc)) return(NA_integer_)
+      v <- pc[[split]][cls]
+      if (is.na(v)) 0L else as.integer(v)
+   }
+   get_pix <- function(cls, split) {
+      if (is.null(pxc)) return(NA_integer_)
+      v <- pxc[[split]][cls]
+      if (is.na(v)) 0L else as.integer(v)
+   }
+
+   lines <- c(lines, '   - Per-class:')
+   for (k in seq_along(classes)) {
+      cls <- classes[k]
+      tr_poly <- get_poly(cls, 'train');  te_poly <- get_poly(cls, 'test')
+      tr_pix  <- get_pix(cls,  'train');  te_pix  <- get_pix(cls,  'test')
+
+      extra <- if (!is.null(pc) && !is.null(pxc)) {
+         sprintf(' (%s/%s polys, %s/%s pix)',
+                 tr_poly, te_poly,
+                 format(tr_pix, big.mark = ','), format(te_pix, big.mark = ','))
+      } else if (!is.null(pc)) {
+         sprintf(' (%s/%s polys)', tr_poly, te_poly)
+      } else ''
+
+      lines <- c(lines, sprintf('      Class %s: %.2f%%, F1 = %.2f, n = %s%s',
+                                cls, class_ccr[k], f1[k],
+                                format(class_npix[k], big.mark = ','), extra))
+   }
 
    # CCR per cross-validation
    lines <- c(lines, '', '   - CCR per cross-validation:')

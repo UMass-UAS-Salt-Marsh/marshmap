@@ -1,15 +1,17 @@
 #' Compare U-Net training runs
 #'
-#' Scrapes summary.txt files for the given fit IDs and produces a concise 
-#' side-by-side comparison of U-Net models. Hyperparameters common to all runs are listed 
+#' Scrapes summary.txt files for the given fit IDs and produces a concise
+#' side-by-side comparison of U-Net models. Hyperparameters common to all runs are listed
 #' once at the top; those that differ are listed per run.
 #'
 #' @param fits Vector of fit IDs to compare
+#' @param md Logical; if TRUE, emit Markdown with bold formatting on key lines. Default FALSE.
+#' @param key Logical; if TRUE, prepend a legend explaining the output format. Default FALSE.
 #' @returns Invisible character vector of the output lines
 #' @export
 
 
-compare <- function(fits) {
+compare <- function(fits, md = FALSE, key = FALSE) {
    
    
    # ---- Read and parse all summary files ----
@@ -59,18 +61,51 @@ compare <- function(fits) {
    # ---- Output ----
    lines <- character()
    ln <- function(...) lines <<- c(lines, paste0(...))
-   
+   b  <- if (md) function(x) paste0('**', x, '**') else identity   # bold helper
+
+   # Optional key
+   if (key) {
+      ln(b('Model summary key'))
+      ln('')
+      ln(b('fit id   model nickname   model path   site abbreviation   [classes]   field data year'))
+      ln('   class set')
+      ln('number of x variables:   flight year   flight season - tide stage  (bands), ...')
+      ln(paste0('   ', b('CCR = % correct   (range across 5 cross-validations), Kappa')))
+      ln('   class   class CCR,   class F1,   n pixels in class   (n polys train / test)   class name')
+      ln('   ...')
+      ln('')
+   }
+
    # Common parameters header
    if (length(common_params) > 0) {
-      ln('Common parameters: ', 
+      ln('Common parameters: ',
          paste(names(common_params), unlist(common_params), sep = '=', collapse = ', '))
       ln('')
    }
-   
+
+   # Load classes table for name lookup
+   classes_tbl <- tryCatch(read_pars_table('classes'), error = function(e) NULL)
+
    # Each run
    for (fit in fits) {
       r <- runs[[as.character(fit)]]
-      
+
+      # Look up class names for this run's class column
+      class_names <- rep('', length(r$class_ids))
+      if (!is.null(classes_tbl)) {
+         reclass <- r$params[['reclass']]
+         class_col <- if (!is.null(reclass) && reclass != 'NULL' && nzchar(reclass)) reclass else 'subclass'
+         name_col  <- paste0(class_col, '_name')
+         if (name_col %in% names(classes_tbl)) {
+            class_names <- sapply(r$class_ids, function(cls_id) {
+               idx <- which(classes_tbl[[class_col]] == as.numeric(cls_id))
+               if (length(idx) == 0) return('')
+               nm <- trimws(classes_tbl[[name_col]][idx[1]])
+               tolower(nm)
+            })
+         }
+      }
+
       # Header line: fitid model/fitname site [classes] years + differing params
       diff_str <- ''
       if (length(diff_params) > 0) {
@@ -81,26 +116,37 @@ compare <- function(fits) {
          diffs <- unlist(diffs[!sapply(diffs, is.null)])
          if (length(diffs) > 0) diff_str <- paste0(' ', paste(diffs, collapse = ', '))
       }
-      
-      ln(fit, ' ', r$model, '/', r$fitname, ' ', r$site, ' ', r$classes_str, ' ', 
-         r$train_years, diff_str)
-      
+
+      ln(b(paste0(fit, ' ', r$model, '/', r$fitname, ' ', r$site, ' ', r$classes_str, ' ',
+                  r$train_years, diff_str)))
+
       # Channel description
       ln(r$channel_desc)
-      
+
       # Transects if present
       if (!is.null(r$params$transects))
          ln('transects: ', r$params$transects)
-      
+
       # Overall stats
-      ln('\tCCR = ', r$ccr, '% (', r$ccr_range, '), Kappa = ', r$kappa)
-      
-      # Per-class
-      for (j in seq_along(r$class_ids)) {
-         ln('\t', r$class_ids[j], ' ', r$class_ccr[j], '%, F1 = ', r$class_f1[j],
-            ', n = ', r$class_npix[j], ' (', r$class_polys[j], ')')
+      ln(b(paste0('\tCCR = ', r$ccr, '% (', r$ccr_range, '), Kappa = ', r$kappa)))
+
+      # Per-class lines: build without class name first, then pad and append
+      per_class_lines <- vapply(seq_along(r$class_ids), function(j) {
+         paste0('\t', r$class_ids[j], ' ', r$class_ccr[j], '%, F1 = ', r$class_f1[j],
+                ', n = ', r$class_npix[j], ' (', r$class_polys[j], ')')
+      }, character(1))
+
+      if (any(nzchar(class_names))) {
+         max_w <- max(nchar(per_class_lines))
+         for (j in seq_along(per_class_lines)) {
+            padding <- strrep(' ', max_w - nchar(per_class_lines[j]) + 4)
+            ln(per_class_lines[j], padding, class_names[j])
+         }
+      } else {
+         for (j in seq_along(per_class_lines))
+            ln(per_class_lines[j])
       }
-      
+
       ln('')
    }
    
@@ -158,23 +204,6 @@ parse_summary <- function(lines, fit) {
    polys_line <- grep('^\\s+- polys:', lines, value = TRUE)
    r$polys_str <- if (length(polys_line)) trimws(sub('.*polys:\\s*', '', polys_line[1])) else ''
    
-   # Parse poly counts per class: "36/223/217/577 (train: 28/178/173/461, test: 8/45/44/116)"
-   if (nchar(r$polys_str) > 0) {
-      # Extract train and test counts
-      train_match <- regmatches(r$polys_str, regexpr('train: [0-9/]+', r$polys_str))
-      test_match <- regmatches(r$polys_str, regexpr('test: [0-9/]+', r$polys_str))
-      
-      if (length(train_match) && length(test_match)) {
-         train_counts <- strsplit(sub('train: ', '', train_match), '/')[[1]]
-         test_counts <- strsplit(sub('test: ', '', test_match), '/')[[1]]
-         r$class_polys <- paste0(train_counts, '/', test_counts)
-      } else {
-         r$class_polys <- rep('?/?', length(r$class_ids))
-      }
-   } else {
-      r$class_polys <- rep('?/?', length(r$class_ids))
-   }
-   
    # CCR, range, kappa
    ccr_line <- grep('^\\s+- CCR =', lines, value = TRUE)
    if (length(ccr_line)) {
@@ -186,27 +215,62 @@ parse_summary <- function(lines, fit) {
       r$kappa <- if (length(kappa_match)) sub('Kappa = ', '', kappa_match) else ''
    }
    
-   # F1 scores
-   f1_line <- grep('^\\s+- F1 for', lines, value = TRUE)
-   if (length(f1_line)) {
-      f1_vals <- regmatches(f1_line, gregexpr('[0-9]+\\.[0-9]+', f1_line))[[1]]
-      r$class_f1 <- f1_vals
-   } else {
-      r$class_f1 <- rep('?', length(r$class_ids))
-   }
-   
-   # Per-class CCR and pixel counts
+   # Per-class CCR, F1, pixel counts, and polys — all parsed from per-class lines
    class_ccr_lines <- grep('^\\s+Class\\s+\\d+:', lines, value = TRUE)
-   r$class_ccr <- character()
-   r$class_npix <- character()
+   r$class_ccr   <- character()
+   r$class_npix  <- character()
+   r$class_f1    <- character()
+   r$class_polys <- character()
    for (cl in class_ccr_lines) {
+      # CCR
       ccr_val <- regmatches(cl, regexpr('[0-9]+\\.[0-9]+%', cl))
       r$class_ccr <- c(r$class_ccr, sub('%', '', ccr_val))
-      npix_match <- regmatches(cl, regexpr('\\([0-9,]+ pixels\\)', cl))
-      npix <- if (length(npix_match)) gsub('[^0-9,]', '', npix_match) else '?'
+
+      # n = pixels (new format) or (X pixels) (old format)
+      n_match <- regmatches(cl, regexpr('n = [0-9,]+', cl))
+      if (length(n_match)) {
+         npix <- sub('n = ', '', n_match)
+      } else {
+         pix_match <- regmatches(cl, regexpr('\\([0-9,]+ pixels\\)', cl))
+         npix <- if (length(pix_match)) gsub('[^0-9,]', '', pix_match) else '?'
+      }
       r$class_npix <- c(r$class_npix, npix)
+
+      # F1 (new format only; old format didn't include per-class F1)
+      f1_match <- regmatches(cl, regexpr('F1 = [0-9.]+', cl))
+      f1_val <- if (length(f1_match)) sub('F1 = ', '', f1_match) else '?'
+      r$class_f1 <- c(r$class_f1, f1_val)
+
+      # Polys: first (N/M) pair inside parens
+      poly_match <- regmatches(cl, regexpr('\\([0-9]+/[0-9]+', cl))
+      poly_val <- if (length(poly_match)) sub('\\(', '', poly_match) else '?/?'
+      r$class_polys <- c(r$class_polys, poly_val)
    }
-   
+
+   # Fall back to summary F1 line when per-class lines lack it (old summary.txt)
+   if (all(r$class_f1 == '?')) {
+      f1_line <- grep('^\\s+- F1 for', lines, value = TRUE)
+      if (length(f1_line)) {
+         f1_vals <- regmatches(f1_line, gregexpr('[0-9]+\\.[0-9]+', f1_line))[[1]]
+         r$class_f1 <- f1_vals
+      }
+   }
+
+   # Fall back to aggregate polys: line when per-class lines lack it (old summary.txt)
+   if (length(r$class_polys) == 0 || all(r$class_polys == '?/?')) {
+      if (nchar(r$polys_str) > 0) {
+         train_match <- regmatches(r$polys_str, regexpr('train: [0-9/]+', r$polys_str))
+         test_match  <- regmatches(r$polys_str, regexpr('test: [0-9/]+',  r$polys_str))
+         if (length(train_match) && length(test_match)) {
+            train_counts <- strsplit(sub('train: ', '', train_match), '/')[[1]]
+            test_counts  <- strsplit(sub('test: ',  '', test_match),  '/')[[1]]
+            r$class_polys <- paste0(train_counts, '/', test_counts)
+         }
+      }
+      if (length(r$class_polys) == 0)
+         r$class_polys <- rep('?/?', length(r$class_ids))
+   }
+
    # Images
    img_start <- grep('^\\s+- images:', lines)
    r$images <- character()

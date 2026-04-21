@@ -157,7 +157,7 @@ do_train <- function(model, train, result = 'fit', fitid = NULL, requirecuda = T
    saveRDS(cm, cm_path)
    message('Confusion matrix saved to: ', cm_path)
 
-   write_train_summary(model, train, fit_dir, config, cm, cv_ccr)
+   write_train_summary(model, train, fit_dir, config, cm, cv_ccr, fitid = fitid)
 
 
    # ── Plots ─────────────────────────────────────────────────────────────────────

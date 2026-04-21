@@ -193,6 +193,22 @@ do_unet_prep <- function(model, save_gis) {
       )
       saveRDS(poly_counts, file.path(output_dir, paste0('set', i), 'poly_counts.rds'))
 
+      # Save per-class pixel counts for summary.txt (labeled pixels in train/test patches)
+      orig_cls   <- as.integer(names(config$class_mapping))
+      train_idx  <- which(patches$has_train)
+      test_idx   <- which(patches$has_test)
+      count_pix  <- function(idx, masks) {
+         sapply(orig_cls, function(cls) {
+            remapped <- as.integer(config$class_mapping[[as.character(cls)]])
+            sum(patches$labels[idx,,] == remapped & masks[idx,,] == 1, na.rm = TRUE)
+         })
+      }
+      pixel_counts <- list(
+         train = setNames(count_pix(train_idx, patches$train_masks), orig_cls),
+         test  = setNames(count_pix(test_idx,  patches$test_masks),  orig_cls)
+      )
+      saveRDS(pixel_counts, file.path(output_dir, paste0('set', i), 'pixel_counts.rds'))
+
       message('')
    }
    
