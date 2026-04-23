@@ -56,6 +56,7 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
    gc()                                                                          # release R heap before Python loads patches
 
    # ── Step 2: Resolve model weights ──────────────────────────────────────────
+   message('\n=== STEP 2: Resolving model weights ===')
    site_upper <- toupper(site)
 
    if(is.numeric(which)) {
@@ -104,12 +105,14 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
 
    predict_unet_map(
       patches_dir = patches_dir,
-      model_weights = weights,                                                 # single path or vector of paths
+      model_weights = weights,                                                # single path or vector of paths
       config_path = config_json,
       batch_size = 64L,
       requirecuda = requirecuda
    )
 
+   reticulate::py_run_string("import gc; gc.collect()")                       # clean up memory
+   
 
    # ── Step 4: Assemble ───────────────────────────────────────────────────────
    message('\n=== STEP 4: Assembling map ===')

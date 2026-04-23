@@ -11,12 +11,25 @@
 #'   multi-band GeoTIFF alongside the classification
 #' @importFrom terra rast ext crs values writeRaster
 #' @importFrom reticulate import
-#' @importFrom rasterPrep addColorTable makeNiceTif addVat
+#' @importFrom rasterPrep addColorTable makeNiceTif addVat rasterPrepOptions
+#' @importFrom peakRAM peakRAM
 #' @keywords internal
 
 
 unet_assemble_map <- function(patches_dir, output_file, config, 
                               write_probs = FALSE) {
+   
+   
+   gc_info <- function(x) {
+      cat(x, '\n\n', sep = '')
+      print(Sys.time())
+      gc(reset = TRUE)
+      print(gc())
+      cat('\n\n\n')
+   }
+
+   
+   gc_info('Initial state')
    
    
    np <- import('numpy')
@@ -46,11 +59,19 @@ unet_assemble_map <- function(patches_dir, output_file, config,
                    n_patches, n_cols, n_rows, n_classes))
    
    
+   gc_info('Startup and loading')
+   
+   
+   
    # ----- Allocate accumulator matrices -----
    # Using plain matrices to avoid terra overhead during accumulation
    prob_accum <- array(0, dim = c(n_rows, n_cols, n_classes))                  # summed probabilities
    count <- matrix(0L, nrow = n_rows, ncol = n_cols)                           # number of contributing patches
    nodata_accum <- matrix(0L, nrow = n_rows, ncol = n_cols)                    # nodata pixel count
+   
+   
+   gc_info('Allocate accumulator matrices')
+   
    
    
    # ----- Accumulate -----
@@ -78,7 +99,12 @@ unet_assemble_map <- function(patches_dir, output_file, config,
          message(sprintf('  Processed %d / %d patches', i, n_patches))
    }
    
+   gc_info('Accumulate')
+   
    rm(probs, nodata)                                                           # free memory
+   
+   gc_info('Accumulate (after rm)')
+   
    
    
    # ----- Average probabilities -----
@@ -86,8 +112,14 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    is_nodata <- count == 0
    count[is_nodata] <- 1                                                       # avoid division by zero
    
+   cat('\n\nAverage probs peakRAM:\n')
+   print(peakRAM({
    for(k in seq_len(n_classes))
       prob_accum[, , k] <- prob_accum[, , k] / count
+   }))
+   
+   gc_info('Average probabilities')
+   
    
    
    # ----- Argmax to get predicted class -----
@@ -100,6 +132,9 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    pred_original[is_nodata] <- NA                                              # set nodata pixels to NA
    
    
+   gc_info('Argmax')
+   
+   
    # ----- Create georeferenced raster -----
    message('Writing GeoTIFF...')
    template <- rast(nrows = n_rows, ncols = n_cols,
@@ -110,11 +145,15 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    result_rast <- setValues(template, as.vector(t(pred_original)))             # terra expects column-major, t() to match
    
    
+   gc_info('Create raster')
+   
    # ----- Preliminary save -----
    dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
    f0 <- paste0(output_file, '.tmp.tif')
    writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT1U')
    
+   
+   gc_info('Save raster')
    
    # ----- Color table and VAT -----
    classes <- read_pars_table('classes')
@@ -141,6 +180,12 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    )
    
    vrt_file <- addColorTable(f0, table = vat2)
+   
+   message('makeNiceTif call:')
+   message('source = ', vrt_file)
+   message('destination = ', output_file)
+   
+   rasterPrepOptions(verbose = TRUE)                                           # *** temporary, to catch bug 
    makeNiceTif(source = vrt_file, destination = output_file, overwrite = TRUE,
                overviewResample = 'nearest', stats = FALSE, vat = TRUE)
    addVat(output_file, attributes = vat)

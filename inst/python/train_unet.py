@@ -561,9 +561,13 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     print("\n" + "="*60)
     print("Starting training...")
     print("="*60)
-    
+
     has_val  = len(validate_loader) > 0
     has_test = len(test_loader) > 0
+
+    os.makedirs(output_dir, exist_ok=True)
+    progress_path = os.path.join(output_dir, 'progress.txt')
+    progress_file = open(progress_path, 'w')
 
     for epoch in range(n_epochs):
         # Train
@@ -589,6 +593,9 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
 
         # Print progress
         if has_val:
+            line = f"Epoch {epoch+1}/{n_epochs} | train loss: {train_loss:.4f} | val CCR: {validate_acc:.2%}"
+            if run_test:
+                line += f" | test CCR: {test_acc:.2%}"
             print(f"\nEpoch {epoch+1}/{n_epochs}")
             print(f"  Train Loss: {train_loss:.4f}")
             print(f"  Validate Loss:   {validate_loss:.4f}")
@@ -605,7 +612,10 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
             if run_test:
                 line += f" | test CCR: {test_acc:.2%}"
             print(line, flush=True)
-        
+        progress_file.write(line + '\n')
+        progress_file.flush()
+
+    progress_file.close()
 
     # Compute best CCR summaries from history
     if has_val and history['val_ccr']:

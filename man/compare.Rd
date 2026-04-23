@@ -4,10 +4,14 @@
 \alias{compare}
 \title{Compare U-Net training runs}
 \usage{
-compare(fits)
+compare(fits, md = FALSE, key = FALSE)
 }
 \arguments{
 \item{fits}{Vector of fit IDs to compare}
+
+\item{md}{Logical; if TRUE, emit Markdown with bold formatting on key lines. Default FALSE.}
+
+\item{key}{Logical; if TRUE, prepend a legend explaining the output format. Default FALSE.}
 }
 \value{
 Invisible character vector of the output lines

@@ -78,12 +78,14 @@ train <- function(model, train = 'train', result = NULL, requirecuda = TRUE, res
    resources <- get_resources(resources, list(
       ncpus = 1,
       ngpus = 1,
-      prefer_gpu = 'l40s',                         # L40S is best, but not worth waiting for
-      constraint = 'x86_64&[l40s|v100|2080ti]',    # alternative GPUs: V100 or RTX 2080 Ti
-      exclude = 'gypsum-gpu171',                   # TEMPORARY until it's fixed ***********************************************************
-      partition.gpu = 'gpu-preempt,gpu',           # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
+      constraint = 'l40s',                            # this can take a long time on alternative GPUs, so stick with l40s unless it queues forever
+      # prefer_gpu = 'l40s',                          # L40S is best, but not worth waiting for
+      # constraint = 'x86_64&[l40s|v100|2080ti]',     # alternative GPUs: V100 or RTX 2080 Ti
+      # exclude = 'gypsum-gpu171',                    # TEMPORARY until it's fixed ***********************************************************
+      partition.gpu = 'gpu-preempt,gpu',              # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
+      # partition.gpu = 'gpu',                        # gpu-preempt times out in 4 hours!
       memory = 180,
-      walltime = '04:00:00'
+      walltime = '04:00:00'                           # if setting >4 hrs, exclude gpu-preempt!
    ))
 
 

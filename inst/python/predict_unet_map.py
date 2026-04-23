@@ -93,7 +93,7 @@ def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64, req
     # Load patches
     patches_path = os.path.join(patches_dir, f'{site}_map_patches.npy')
     print(f'Loading patches from {patches_path}...')
-    patches = np.load(patches_path)                            # (n_patches, H, W, C)
+    patches = np.load(patches_path)                             # (n_patches, H, W, C)
     n_patches = patches.shape[0]
     print(f'  {n_patches} patches, shape {patches.shape}')
 
@@ -109,14 +109,22 @@ def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64, req
     all_probs = np.zeros((n_patches, num_classes, patch_size, patch_size),
                          dtype=np.float32)
 
+
+    os.makedirs(patches_dir, exist_ok=True)
+    progress_path = os.path.join(patches_dir, 'progress.txt')
+    progress_file = open(progress_path, 'w')
+    
     for m_idx, weights_path in enumerate(model_weights):
-        print(f'\n--- Model {m_idx + 1} / {n_models}: {os.path.basename(weights_path)} ---')
+        msg = f'Model {m_idx + 1} / {n_models}: {os.path.basename(weights_path)}'
+        print(f'\n--- {msg} ---')
+        progress_file.write(msg + '\n')
+        progress_file.flush()
 
         # Build model — ordinal uses K-1 output channels
         model_classes = num_classes - 1 if use_ordinal else num_classes
         model = smp.Unet(
             encoder_name=config['encoder_name'],
-            encoder_weights=None,                              # weights loaded from file
+            encoder_weights=None,                               # weights loaded from file
             in_channels=config['in_channels'],
             classes=model_classes
         )
@@ -141,7 +149,7 @@ def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64, req
                 if use_ordinal:
                     probs = corn_probabilities(logits)          # (batch, K, H, W)
                 else:
-                    probs = torch.softmax(logits, dim=1)       # (batch, K, H, W)
+                    probs = torch.softmax(logits, dim=1)        # (batch, K, H, W)
 
                 all_probs[start:end] += probs.cpu().numpy()
 
@@ -150,6 +158,11 @@ def predict_unet_map(patches_dir, model_weights, config_path, batch_size=64, req
 
         del model
         torch.cuda.empty_cache()
+
+
+    del patches
+    import gc
+    gc.collect()                                            # clean up memory
 
     # Average across models
     all_probs /= n_models

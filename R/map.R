@@ -147,11 +147,15 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
       resources <- get_resources(resources, list(
          ncpus = 1,
          ngpus = 1,
-         prefer_gpu = 'l40s',
-         constraint = 'x86_64&[l40s|v100|2080ti]',
-         partition.gpu = 'gpu-preempt,gpu',
-         memory = 400,
-         walltime = '05:00:00'
+         constraint = 'l40s',                            # this can take a long time on alternative GPUs, so stick with l40s unless it queues forever
+         
+        # prefer_gpu = 'l40s',
+        # constraint = 'x86_64&[l40s|v100|2080ti]',
+        partition.gpu = 'gpu-preempt,gpu',               # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
+        # partition.gpu = 'gpu',                         # gpu-preempt times out in 4 hours!
+        memory = 800,
+         walltime = '04:00:00'                           # if setting >4 hrs, exclude gpu-preempt!
+         
       ))
    }
    else {

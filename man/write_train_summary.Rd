@@ -4,7 +4,7 @@
 \alias{write_train_summary}
 \title{Write summary.txt for a training run}
 \usage{
-write_train_summary(model, train, fit_dir, config, cm, cv_ccr)
+write_train_summary(model, train, fit_dir, config, cm, cv_ccr, fitid = NULL)
 }
 \arguments{
 \item{model}{Model name (base name of the .yml file)}
