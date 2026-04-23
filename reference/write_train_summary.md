@@ -5,7 +5,7 @@ Write summary.txt for a training run
 ## Usage
 
 ``` r
-write_train_summary(model, train, fit_dir, config, cm, cv_ccr)
+write_train_summary(model, train, fit_dir, config, cm, cv_ccr, fitid = NULL)
 ```
 
 ## Arguments

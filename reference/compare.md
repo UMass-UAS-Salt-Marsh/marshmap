@@ -7,7 +7,7 @@ runs are listed once at the top; those that differ are listed per run.
 ## Usage
 
 ``` r
-compare(fits)
+compare(fits, md = FALSE, key = FALSE)
 ```
 
 ## Arguments
@@ -15,6 +15,16 @@ compare(fits)
 - fits:
 
   Vector of fit IDs to compare
+
+- md:
+
+  Logical; if TRUE, emit Markdown with bold formatting on key lines.
+  Default FALSE.
+
+- key:
+
+  Logical; if TRUE, prepend a legend explaining the output format.
+  Default FALSE.
 
 ## Value
 
