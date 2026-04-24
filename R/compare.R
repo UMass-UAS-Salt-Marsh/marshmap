@@ -14,6 +14,12 @@
 compare <- function(fits, md = FALSE, key = FALSE) {
    
    
+   insert_stars <- function(x) {
+      x <- sub('^(\\s*)(\\S)', '\\1**\\2', x, perl = TRUE)
+      sub('(?=\\s*$)', '**', x, perl = TRUE)
+   }
+   
+   
    # ---- Read and parse all summary files ----
    
    load_database('fdb')                                  # Get fit database
@@ -61,7 +67,7 @@ compare <- function(fits, md = FALSE, key = FALSE) {
    # ---- Output ----
    lines <- character()
    ln <- function(...) lines <<- c(lines, paste0(...))
-   b  <- if (md) function(x) paste0('**', x, '**') else identity   # bold helper
+   b  <- if (md) function(x) insert_stars(x) else identity   # bold helper
 
    # Optional key
    if (key) {
@@ -166,7 +172,7 @@ parse_summary <- function(lines, fit) {
    
    r <- list()
    
-   # Model name: line starting with "Model: "
+   # Model name: line starting with 'Model: '
    model_line <- grep('^Model:', lines, value = TRUE)
    if (length(model_line) == 0) stop('No Model: line in summary for fit ', fit)
    r$model <- trimws(sub('^Model:', '', model_line[1]))
@@ -207,7 +213,7 @@ parse_summary <- function(lines, fit) {
    # CCR, range, kappa
    ccr_line <- grep('^\\s+- CCR =', lines, value = TRUE)
    if (length(ccr_line)) {
-      # "CCR = 69.7, range = 56–80%, Kappa = 0.53"
+      # 'CCR = 69.7, range = 56–80%, Kappa = 0.53'
       r$ccr <- regmatches(ccr_line, regexpr('[0-9]+\\.?[0-9]*', ccr_line))
       range_match <- regmatches(ccr_line, regexpr('\\d+[^,]*%', ccr_line))
       r$ccr_range <- if (length(range_match)) range_match else ''
@@ -306,7 +312,7 @@ parse_summary <- function(lines, fit) {
 
 #' Describe channels from image filenames
 #' @param images Character vector of image filenames
-#' @returns Character string like "26 channels: 2023 summer-mid (mica,DEM,NDVI,NDRE,NDWIg), post-mid (mica,NDVI,NDRE)"
+#' @returns Character string like '26 channels: 2023 summer-mid (mica,DEM,NDVI,NDRE,NDWIg), post-mid (mica,NDVI,NDRE)'
 #' @keywords internal
 
 describe_channels <- function(images) {
@@ -353,8 +359,8 @@ describe_channels <- function(images) {
 
 
 #' Parse an image filename into components
-#' @param filename Image filename like "01Sep23_NOR_Mid_Mica_Ortho.tif" or 
-#'   "01Sep23_NOR_Mid_Mica_Ortho__NDVI.tif" or "01Sep23_NOR_Mid_Mica_DEM.tif"
+#' @param filename Image filename like '01Sep23_NOR_Mid_Mica_Ortho.tif' or 
+#'   '01Sep23_NOR_Mid_Mica_Ortho__NDVI.tif' or '01Sep23_NOR_Mid_Mica_DEM.tif'
 #' @returns List with date, site, tide, sensor, layer_type
 #' @keywords internal
 
