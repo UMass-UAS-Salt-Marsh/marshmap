@@ -3,6 +3,11 @@
 #' Console command to launch a prediction run, typically as a batch job on Unity.
 #' Dispatches to `do_map` for RF/AdaBoost models or `do_unet_map` for U-Net models,
 #' determined automatically from the fits database.
+#' 
+#' **Note**: if you're running this in local mode, multiple runs in a row in the 
+#' same R session may blow out memory, thanks to R/Python memory shenanigans. If
+#' you run out of memory in this situation, restart R between runs. This does not
+#' apply to batch runs on Unity.
 #'
 #' @param fit Fit id in the fits database, fit object, or path to a .RDS with a
 #'   fit object. U-Net models must be specified by fit id.
@@ -153,7 +158,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
         # constraint = 'x86_64&[l40s|v100|2080ti]',
         partition.gpu = 'gpu-preempt,gpu',               # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
         # partition.gpu = 'gpu',                         # gpu-preempt times out in 4 hours!
-        memory = 800,
+        memory = 400,
          walltime = '04:00:00'                           # if setting >4 hrs, exclude gpu-preempt!
          
       ))

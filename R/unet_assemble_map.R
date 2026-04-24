@@ -149,7 +149,7 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    
    # ----- Preliminary save -----
    dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
-   f0 <- paste0(output_file, '.tmp.tif')
+   f0 <- file.path(dirname(output_file), paste0('zz_', basename(output_file), '_0'))
    writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT1U')
    
    
