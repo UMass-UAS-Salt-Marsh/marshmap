@@ -32,6 +32,8 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
    
    
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
+   config$site <- tolower(config$site)                   # we want to use lowercase for site names
+   
    if(is.null(config$cv)) config$cv <- 5
    model_dir <- file.path(resolve_dir(the$unetdir, site), model)
    fit_dir <- file.path(model_dir, fit_result)

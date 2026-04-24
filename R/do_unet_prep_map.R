@@ -20,6 +20,8 @@ do_unet_prep_map <- function(model, clip = NULL) {
    
    
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
+   config$site <- tolower(config$site)                   # we want to use lowercase for site names
+   
    MAP_OVERLAP <- if(!is.null(config$mapping_overlap)) config$mapping_overlap else 0.5
    
    config$fpath <- resolve_dir(the$flightsdir, config$site)

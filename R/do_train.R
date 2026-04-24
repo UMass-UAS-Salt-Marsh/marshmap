@@ -77,6 +77,8 @@ do_train <- function(model, train, result = 'fit', fitid = NULL, requirecuda = T
    
 
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))       # read parameters from model
+   config$site <- tolower(config$site)                   # we want to use lowercase for site names
+   
    if(!is.null(train)) {                                                            # and train, which takes priority
       config <- modifyList(config,
                            read_yaml(file.path(the$parsdir, 'unet', paste0(train, '.yml'))))

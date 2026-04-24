@@ -21,6 +21,8 @@ unet_prep_finish <- function(jobid, status) {
       return(invisible())
 
    config    <- read_yaml(config_file)
+   config$site <- tolower(config$site)                   # we want to use lowercase for site names
+   
    model_dir <- file.path(resolve_dir(the$unetdir, config$site), model)
 
    if(!dir.exists(model_dir))
