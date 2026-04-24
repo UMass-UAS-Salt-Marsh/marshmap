@@ -16,5 +16,5 @@ describe_channels(images)
 
 ## Value
 
-Character string like "26 channels: 2023 summer-mid
-(mica,DEM,NDVI,NDRE,NDWIg), post-mid (mica,NDVI,NDRE)"
+Character string like '26 channels: 2023 summer-mid
+(mica,DEM,NDVI,NDRE,NDWIg), post-mid (mica,NDVI,NDRE)'

@@ -7,7 +7,7 @@ runs are listed once at the top; those that differ are listed per run.
 ## Usage
 
 ``` r
-compare(fits, md = FALSE, key = FALSE)
+compare(fits, md = FALSE, key = FALSE, common = TRUE)
 ```
 
 ## Arguments
@@ -18,13 +18,16 @@ compare(fits, md = FALSE, key = FALSE)
 
 - md:
 
-  Logical; if TRUE, emit Markdown with bold formatting on key lines.
-  Default FALSE.
+  If TRUE, emit Markdown with bold formatting on key lines. Default
+  FALSE.
 
 - key:
 
-  Logical; if TRUE, prepend a legend explaining the output format.
-  Default FALSE.
+  If TRUE, prepend a legend explaining the output format. Default FALSE.
+
+- common:
+
+  If TRUE, display common parameters. Default TRUE.
 
 ## Value
 

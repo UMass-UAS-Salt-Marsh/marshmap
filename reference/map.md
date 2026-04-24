@@ -14,6 +14,7 @@ map(
   result = NULL,
   which = "all",
   write_probs = FALSE,
+  use_distance_weights = TRUE,
   requirecuda = TRUE,
   resources = NULL,
   local = FALSE,
@@ -59,6 +60,13 @@ map(
 
   For U-Net models: if TRUE, write per-class probability layers
   alongside the classification. Ignored for RF/AdaBoost models.
+
+- use_distance_weights:
+
+  For U-Net models: if TRUE (default), weight patch contributions by
+  distance to the nearest patch edge when averaging overlapping
+  predictions, reducing visible tile seams. Set FALSE for uniform
+  averaging. Ignored for RF/AdaBoost models.
 
 - requirecuda:
 

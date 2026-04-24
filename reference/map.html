@@ -51,6 +51,7 @@ determined automatically from the fits database.</p>
 <span>  result <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  which <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  write_probs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  use_distance_weights <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  requirecuda <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  local <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -97,6 +98,13 @@ model), or an integer CV fold number. Ignored for RF/AdaBoost models.</p></dd>
 <dt id="arg-write-probs">write_probs<a class="anchor" aria-label="anchor" href="#arg-write-probs"></a></dt>
 <dd><p>For U-Net models: if TRUE, write per-class probability
 layers alongside the classification. Ignored for RF/AdaBoost models.</p></dd>
+
+
+<dt id="arg-use-distance-weights">use_distance_weights<a class="anchor" aria-label="anchor" href="#arg-use-distance-weights"></a></dt>
+<dd><p>For U-Net models: if TRUE (default), weight
+patch contributions by distance to the nearest patch edge when averaging
+overlapping predictions, reducing visible tile seams. Set FALSE for
+uniform averaging. Ignored for RF/AdaBoost models.</p></dd>
 
 
 <dt id="arg-requirecuda">requirecuda<a class="anchor" aria-label="anchor" href="#arg-requirecuda"></a></dt>

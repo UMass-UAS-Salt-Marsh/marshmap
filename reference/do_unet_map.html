@@ -52,6 +52,7 @@ method is <code>'unet'</code>.</p>
 <span>  which <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  clip <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  write_probs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  use_distance_weights <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  mapid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fitid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  requirecuda <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -89,6 +90,12 @@ method is <code>'unet'</code>.</p>
 
 <dt id="arg-write-probs">write_probs<a class="anchor" aria-label="anchor" href="#arg-write-probs"></a></dt>
 <dd><p>If TRUE, write probability layers</p></dd>
+
+
+<dt id="arg-use-distance-weights">use_distance_weights<a class="anchor" aria-label="anchor" href="#arg-use-distance-weights"></a></dt>
+<dd><p>If TRUE (default), weight patch contributions by
+distance to the nearest patch edge when averaging overlapping predictions.
+Reduces visible tile seams. Set FALSE for uniform averaging.</p></dd>
 
 
 <dt id="arg-mapid">mapid<a class="anchor" aria-label="anchor" href="#arg-mapid"></a></dt>

@@ -44,7 +44,13 @@ with a color table matching the project classes.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unet_assemble_map</span><span class="op">(</span><span class="va">patches_dir</span>, <span class="va">output_file</span>, <span class="va">config</span>, write_probs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unet_assemble_map</span><span class="op">(</span></span>
+<span>  <span class="va">patches_dir</span>,</span>
+<span>  <span class="va">output_file</span>,</span>
+<span>  <span class="va">config</span>,</span>
+<span>  write_probs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  use_distance_weights <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,6 +72,13 @@ with a color table matching the project classes.</p>
 <dt id="arg-write-probs">write_probs<a class="anchor" aria-label="anchor" href="#arg-write-probs"></a></dt>
 <dd><p>If TRUE, also write per-class probability layers as a
 multi-band GeoTIFF alongside the classification</p></dd>
+
+
+<dt id="arg-use-distance-weights">use_distance_weights<a class="anchor" aria-label="anchor" href="#arg-use-distance-weights"></a></dt>
+<dd><p>If TRUE (default), weight pixel contributes
+by distance to the nearest patch edge during averaging. This reduces
+visible tile artifacts at patch boundaries. Set FALSE for uniform
+averaging (faster, but may show seams with low overlap).</p></dd>
 
 </dl></div>
 
