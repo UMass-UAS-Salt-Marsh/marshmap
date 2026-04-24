@@ -73,6 +73,7 @@ compare <- function(fits, md = FALSE, key = FALSE) {
    if (key) {
       ln(b('Model summary key'))
       ln('')
+      if(md) ln('')
       ln(b('fit id   model nickname   model path   site abbreviation   [classes]   field data year'))
       ln('   class set')
       ln('number of x variables:   flight year   flight season - tide stage  (bands), ...')
@@ -80,6 +81,7 @@ compare <- function(fits, md = FALSE, key = FALSE) {
       ln('   class   class CCR,   class F1,   n pixels in class   (n polys train / test)   class name')
       ln('   ...')
       ln('')
+      if(md) ln('')
    }
 
    # Common parameters header
@@ -87,6 +89,7 @@ compare <- function(fits, md = FALSE, key = FALSE) {
       ln('Common parameters: ',
          paste(names(common_params), unlist(common_params), sep = '=', collapse = ', '))
       ln('')
+      if(md) ln('')
    }
 
    # Load classes table for name lookup
@@ -154,6 +157,7 @@ compare <- function(fits, md = FALSE, key = FALSE) {
       }
 
       ln('')
+      if(md) ln('')
    }
    
    out <- paste(lines, collapse = '\n')
