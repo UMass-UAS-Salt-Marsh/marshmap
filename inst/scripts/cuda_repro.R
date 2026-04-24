@@ -5,7 +5,7 @@ reg$cluster.functions <- makeClusterFunctionsSlurm("inst/scripts/slurm_minimal.t
 
 batchMap(function(.) {
    reticulate::use_python(
-      "/work/pi_cschweik_umass_edu/bcompton_umass_edu/marshmap_env/bin/python3",
+      "/work/pi_bcompton_umass_edu/bcompton_umass_edu/marshmap_env/bin/python3",
       required = TRUE
    )
    torch <- reticulate::import("torch")

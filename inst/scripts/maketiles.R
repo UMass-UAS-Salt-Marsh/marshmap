@@ -4,10 +4,10 @@
 library(sf)
 
 
-rpath <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/peg/blocks/'
+rpath <- '/work/pi_bcompton_umass_edu/marsh_mapping/data/peg/blocks/'
 result <- 'tiles50.shp'
 
-ground <- st_read(file.path('/work/pi_cschweik_umass_edu/marsh_mapping/data/peg/shapefiles/Peg_Site_Polygon_Layer.shp'))
+ground <- st_read(file.path('/work/pi_bcompton_umass_edu/marsh_mapping/data/peg/shapefiles/Peg_Site_Polygon_Layer.shp'))
 
 
 ground_m <- st_transform(ground, crs = 26986)

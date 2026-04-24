@@ -30,11 +30,11 @@ lines(peg$Group.2, peg$x, col = 'orange')
 # x$tile <- as.numeric(x$tile)
 # x$ccr <- as.numeric(str_extract(x$CCR, '\\d*\\.\\d'))
 # 
-# saveRDS(x, '/work/pi_cschweik_umass_edu/marsh_mapping/rds/tilesearch.RDS')
+# saveRDS(x, '/work/pi_bcompton_umass_edu/marsh_mapping/rds/tilesearch.RDS')
 
 
 
-x <- readRDS('/work/pi_cschweik_umass_edu/marsh_mapping/rds/tilesearch.RDS')
+x <- readRDS('/work/pi_bcompton_umass_edu/marsh_mapping/rds/tilesearch.RDS')
 y <- aggreg(x$ccr, by = list(x$site, x$tile), FUN = 'mean', drop_by = FALSE)
 
 

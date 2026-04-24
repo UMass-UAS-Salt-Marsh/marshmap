@@ -7,8 +7,8 @@
 library(sf)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-INPUT   <- "/work/pi_cschweik_umass_edu/marsh_mapping/data/nor/shapefiles/NOR_transects.shp"
-OUTPUT  <- "/work/pi_cschweik_umass_edu/marsh_mapping/data/nor/shapefiles/NOR_circles.shp"
+INPUT   <- "/work/pi_bcompton_umass_edu/marsh_mapping/data/nor/shapefiles/NOR_transects.shp"
+OUTPUT  <- "/work/pi_bcompton_umass_edu/marsh_mapping/data/nor/shapefiles/NOR_circles.shp"
 RADIUS  <- 1                              # 1 m radius = 2 m diameter
 TOL     <- 0.1                            # tolerance (m) for field-measured transects slightly under 2 m wide
 INHERIT <- c("year", "subclass", "poly", "reject", "reject_why")

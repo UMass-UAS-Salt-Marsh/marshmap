@@ -14,8 +14,8 @@
 #   is sufficient to show the pattern
 
 
-venv  <- "/work/pi_cschweik_umass_edu/bcompton_umass_edu/marshmap_env_rocker"
-tmpdir <- "/work/pi_cschweik_umass_edu/bcompton_umass_edu/tmp"
+venv  <- "/work/pi_bcompton_umass_edu/bcompton_umass_edu/marshmap_env_rocker"
+tmpdir <- "/work/pi_bcompton_umass_edu/bcompton_umass_edu/tmp"
 
 dir.create(tmpdir, recursive = TRUE, showWarnings = FALSE)
 

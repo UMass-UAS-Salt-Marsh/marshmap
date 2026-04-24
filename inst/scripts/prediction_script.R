@@ -18,7 +18,7 @@ if(FALSE) {
 #   fit('oth', years = 2018:2021, reread = TRUE, vars = rownames(the$fit$import$importance)[1:20])
 #   
 #   
- #  the$fit <- readRDS('/work/pi_cschweik_umass_edu/marsh_mapping/models/fit_oth_2025-Apr-28_13-54.RDS')   # read fit for 2018-2021
+ #  the$fit <- readRDS('/work/pi_bcompton_umass_edu/marsh_mapping/models/fit_oth_2025-Apr-28_13-54.RDS')   # read fit for 2018-2021
    
    the$fit <- readRDS('c:/work/etc/saltmarsh/models/fit_oth_2025-May-05_15-53.RDS')                           ############# FOR TESTING
    the$site <- 'oth'
@@ -28,15 +28,15 @@ if(FALSE) {
    
 ###   fit('oth', reread = TRUE)
    # fit('oth', vars = pickvars(40))
-   # the$fit <- readRDS('/work/pi_cschweik_umass_edu/marsh_mapping/models/fit_2025-Apr-24_16-08')
+   # the$fit <- readRDS('/work/pi_bcompton_umass_edu/marsh_mapping/models/fit_2025-Apr-24_16-08')
    
    
-   #the$fit <- readRDS('/work/pi_cschweik_umass_edu/marsh_mapping/models/fit_oth_2025-Apr-27_18-13.RDS')
+   #the$fit <- readRDS('/work/pi_bcompton_umass_edu/marsh_mapping/models/fit_oth_2025-Apr-27_18-13.RDS')
    
    
    
-   path <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/flights'
-   rpath <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/oth/predicted'
+   path <- '/work/pi_bcompton_umass_edu/marsh_mapping/data/oth/flights'
+   rpath <- '/work/pi_bcompton_umass_edu/marsh_mapping/data/oth/predicted'
    
    
    path <- 'C:/Work/etc/saltmarsh/data/oth/flights'                                                        ############## for testing

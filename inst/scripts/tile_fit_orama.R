@@ -408,7 +408,7 @@ vars <- 'dem_mica_fall_2020_mid + ortho_swir_summer_2022_high + dem_mica_fall_20
 library(terra)
 library(stringr)
 
-path <- '/work/pi_cschweik_umass_edu/marsh_mapping/data/peg/flights/'
+path <- '/work/pi_bcompton_umass_edu/marsh_mapping/data/peg/flights/'
 toflip <- find_orthos('peg', vars)$file
 flipped <- do.call(paste0, list('flipped', 1:10, '.tif'))
 flippedvars <- paste(str_extract(flipped, '(.*)(.tif$)', group = 1), collapse = ' + ')
