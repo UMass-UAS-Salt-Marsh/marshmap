@@ -86,3 +86,10 @@ map(
 - comment:
 
   Optional launch / slurmcollie comment
+
+## Details
+
+**Note**: if you're running this in local mode, multiple runs in a row
+in the same R session may blow out memory, thanks to R/Python memory
+shenanigans. If you run out of memory in this situation, restart R
+between runs. This does not apply to batch runs on Unity.
