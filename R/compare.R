@@ -5,13 +5,14 @@
 #' once at the top; those that differ are listed per run.
 #'
 #' @param fits Vector of fit IDs to compare
-#' @param md Logical; if TRUE, emit Markdown with bold formatting on key lines. Default FALSE.
-#' @param key Logical; if TRUE, prepend a legend explaining the output format. Default FALSE.
+#' @param md If TRUE, emit Markdown with bold formatting on key lines. Default FALSE.
+#' @param key If TRUE, prepend a legend explaining the output format. Default FALSE.
+#' @param common If TRUE, display common parameters. Default TRUE.
 #' @returns Invisible character vector of the output lines
 #' @export
 
 
-compare <- function(fits, md = FALSE, key = FALSE) {
+compare <- function(fits, md = FALSE, key = FALSE, common = TRUE) {
    
    
    insert_stars <- function(x) {
@@ -83,7 +84,7 @@ compare <- function(fits, md = FALSE, key = FALSE) {
    }
 
    # Common parameters header
-   if (length(common_params) > 0) {
+   if (length(common_params) > 0 & common) {
       ln('Common parameters: ',
          paste(names(common_params), unlist(common_params), sep = '=', collapse = ', '))
       ln('')
