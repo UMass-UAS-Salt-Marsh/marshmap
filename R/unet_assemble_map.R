@@ -9,6 +9,10 @@
 #' @param config Config list (from prep yaml, with `classes` and `site`)
 #' @param write_probs If TRUE, also write per-class probability layers as a
 #'   multi-band GeoTIFF alongside the classification
+#' @param use_distance_weights If TRUE (default), weight pixel contributes
+#'   by distance to the nearest patch edge during averaging. This reduces
+#'   visible tile artifacts at patch boundaries. Set FALSE for uniform
+#'   averaging (faster, but may show seams with low overlap).
 #' @importFrom terra rast ext crs values writeRaster
 #' @importFrom reticulate import
 #' @importFrom rasterPrep addColorTable makeNiceTif addVat
@@ -17,10 +21,10 @@
 
 
 unet_assemble_map <- function(patches_dir, output_file, config, 
-                              write_probs = FALSE) {
+                              write_probs = FALSE, use_distance_weights = TRUE) {
    
    
-    np <- import('numpy')
+   np <- import('numpy')
    
    site <- toupper(config$site)
    
@@ -49,9 +53,24 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    
    # ----- Allocate accumulator matrices -----
    # Using plain matrices to avoid terra overhead during accumulation
-   prob_accum <- array(0, dim = c(n_rows, n_cols, n_classes))                  # summed probabilities
-   count <- matrix(0L, nrow = n_rows, ncol = n_cols)                           # number of contributing patches
-   nodata_accum <- matrix(0L, nrow = n_rows, ncol = n_cols)                    # nodata pixel count
+   prob_accum <- array(0, dim = c(n_rows, n_cols, n_classes))                 # summed probabilities
+   count <- matrix(0, nrow = n_rows, ncol = n_cols)                           # sum of weights from contributing patches
+   nodata_accum <- matrix(0L, nrow = n_rows, ncol = n_cols)                   # nodata pixel count
+   
+   
+   # ----- Build distance-to-edge weight matrix -----
+   # Weight = distance to nearest patch edge, normalized.
+   # Center pixels get weight 1, edge pixels approach (but never reach) 0.
+   # No zero weights ensures every pixel contributes something at raster boundaries.
+   if(use_distance_weights) {
+      if(patch_size %% 2 != 0)
+         stop('patch_size must be even for distance weighting (got ', patch_size, ')')
+      half <- patch_size / 2
+      ramp <- c(seq_len(half), rev(seq_len(half))) / half     # 1/half, 2/half, ..., 1, 1, ..., 2/half, 1/half
+      edge_weight <- outer(ramp, ramp, pmin)                  # 2D pyramid: weight = distance to nearest edge
+   } else {
+      edge_weight <- matrix(1, nrow = patch_size, ncol = patch_size)
+   }
    
    
    # ----- Accumulate -----
@@ -66,21 +85,22 @@ unet_assemble_map <- function(patches_dir, output_file, config,
       actual_w <- c1 - c0 + 1
       
       nd_patch <- nodata[i, 1:actual_h, 1:actual_w]                           # nodata mask for this patch
+      w_patch <- edge_weight[1:actual_h, 1:actual_w] * nd_patch               # combined edge weight + nodata mask
       
       for(k in seq_len(n_classes))
          prob_accum[r0:r1, c0:c1, k] <- prob_accum[r0:r1, c0:c1, k] + 
-            probs[i, k, 1:actual_h, 1:actual_w] * nd_patch                    # only accumulate valid pixels
+         probs[i, k, 1:actual_h, 1:actual_w] * w_patch                        # weighted accumulation
       
-      count[r0:r1, c0:c1] <- count[r0:r1, c0:c1] + nd_patch
+      count[r0:r1, c0:c1] <- count[r0:r1, c0:c1] + w_patch                    # sum of weights (now float, not integer)
       nodata_accum[r0:r1, c0:c1] <- nodata_accum[r0:r1, c0:c1] + 
          as.integer(nd_patch == 0)
       
       if(i %% 500 == 0)
          message(sprintf('  Processed %d / %d patches', i, n_patches))
    }
-
+   
    rm(probs, nodata)                                                           # free memory
- 
+   
    
    # ----- Average probabilities -----
    message('Averaging overlapping predictions...')
@@ -89,8 +109,8 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    
    cat('\n\nAverage probs peakRAM:\n')
    print(peakRAM({
-   for(k in seq_len(n_classes))
-      prob_accum[, , k] <- prob_accum[, , k] / count
+      for(k in seq_len(n_classes))
+         prob_accum[, , k] <- prob_accum[, , k] / count
    }))
    
    
@@ -113,26 +133,26 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    
    result_rast <- setValues(template, as.vector(t(pred_original)))             # terra expects column-major, t() to match
    
- 
+   
    # ----- Preliminary save -----
    dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
    f0 <- file.path(dirname(output_file), paste0('zz_', basename(output_file), '_0'))
    writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT1U')
    
-
+   
    # ----- Color table and VAT -----
    classes <- read_pars_table('classes')
-
+   
    # Determine which class column to use (subclass, or reclassified e.g. ICS_V5)
    class_col <- if(!is.null(config$reclass) && nzchar(config$reclass)) config$reclass else 'subclass'
    name_col  <- paste0(class_col, '_name')
    color_col <- paste0(class_col, '_color')
-
+   
    # Build a deduplicated lookup table for the relevant class column
    class_lookup <- unique(classes[, c(class_col, name_col, color_col)])
    class_lookup <- class_lookup[!is.na(class_lookup[[class_col]]), ]
    names(class_lookup) <- c('subclass', 'name', 'color')
-
+   
    # Build VAT from our predicted classes
    pred_classes <- sort(unique(as.vector(pred_original[!is.na(pred_original)])))
    vat <- data.frame(value = pred_classes, subclass = as.integer(pred_classes))
@@ -145,7 +165,7 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    )
    
    vrt_file <- addColorTable(f0, table = vat2)
-
+   
    makeNiceTif(source = vrt_file, destination = output_file, overwrite = TRUE,
                overviewResample = 'nearest', stats = FALSE, vat = TRUE)
    addVat(output_file, attributes = vat)

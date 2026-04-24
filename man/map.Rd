@@ -11,6 +11,7 @@ map(
   result = NULL,
   which = "all",
   write_probs = FALSE,
+  use_distance_weights = TRUE,
   requirecuda = TRUE,
   resources = NULL,
   local = FALSE,
@@ -42,6 +43,11 @@ model), or an integer CV fold number. Ignored for RF/AdaBoost models.}
 
 \item{write_probs}{For U-Net models: if TRUE, write per-class probability
 layers alongside the classification. Ignored for RF/AdaBoost models.}
+
+\item{use_distance_weights}{For U-Net models: if TRUE (default), weight
+patch contributions by distance to the nearest patch edge when averaging
+overlapping predictions, reducing visible tile seams. Set FALSE for
+uniform averaging. Ignored for RF/AdaBoost models.}
 
 \item{requirecuda}{If TRUE (default), abort immediately if CUDA is not available rather than
 silently falling back to CPU. Set to FALSE only for testing without a GPU.}

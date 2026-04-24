@@ -11,6 +11,9 @@
 #' @param which Which model(s) to use: `'all'`, `'full'`, or integer 1-5
 #' @param clip Optional clip extent
 #' @param write_probs If TRUE, write probability layers
+#' @param use_distance_weights If TRUE (default), weight patch contributions by
+#'    distance to the nearest patch edge when averaging overlapping predictions.
+#'    Reduces visible tile seams. Set FALSE for uniform averaging.
 #' @param mapid Map database id
 #' @param fitid Fit database id (for reference / logging)
 #' @param requirecuda If TRUE (default), abort immediately if CUDA is not available rather than
@@ -24,7 +27,8 @@
 
 do_unet_map <- function(model, site, fit_result = 'fit01', result,
                         which = 'all', clip = NULL,
-                        write_probs = FALSE, mapid = NULL, fitid = NULL,
+                        write_probs = FALSE, use_distance_weights = TRUE,
+                        mapid = NULL, fitid = NULL,
                         requirecuda = TRUE, rep = NULL) {
 
    
@@ -130,7 +134,8 @@ do_unet_map <- function(model, site, fit_result = 'fit01', result,
       patches_dir = patches_dir,
       output_file = output_file,
       config = config,
-      write_probs = write_probs
+      write_probs = write_probs,
+      use_distance_weights = use_distance_weights
    )
 
 

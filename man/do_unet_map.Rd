@@ -12,6 +12,7 @@ do_unet_map(
   which = "all",
   clip = NULL,
   write_probs = FALSE,
+  use_distance_weights = TRUE,
   mapid = NULL,
   fitid = NULL,
   requirecuda = TRUE,
@@ -32,6 +33,10 @@ do_unet_map(
 \item{clip}{Optional clip extent}
 
 \item{write_probs}{If TRUE, write probability layers}
+
+\item{use_distance_weights}{If TRUE (default), weight patch contributions by
+distance to the nearest patch edge when averaging overlapping predictions.
+Reduces visible tile seams. Set FALSE for uniform averaging.}
 
 \item{mapid}{Map database id}
 

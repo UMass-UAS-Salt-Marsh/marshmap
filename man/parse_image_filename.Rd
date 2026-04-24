@@ -7,8 +7,8 @@
 parse_image_filename(filename)
 }
 \arguments{
-\item{filename}{Image filename like "01Sep23_NOR_Mid_Mica_Ortho.tif" or
-"01Sep23_NOR_Mid_Mica_Ortho__NDVI.tif" or "01Sep23_NOR_Mid_Mica_DEM.tif"}
+\item{filename}{Image filename like '01Sep23_NOR_Mid_Mica_Ortho.tif' or
+'01Sep23_NOR_Mid_Mica_Ortho__NDVI.tif' or '01Sep23_NOR_Mid_Mica_DEM.tif'}
 }
 \value{
 List with date, site, tide, sensor, layer_type

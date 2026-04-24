@@ -10,7 +10,7 @@ describe_channels(images)
 \item{images}{Character vector of image filenames}
 }
 \value{
-Character string like "26 channels: 2023 summer-mid (mica,DEM,NDVI,NDRE,NDWIg), post-mid (mica,NDVI,NDRE)"
+Character string like '26 channels: 2023 summer-mid (mica,DEM,NDVI,NDRE,NDWIg), post-mid (mica,NDVI,NDRE)'
 }
 \description{
 Describe channels from image filenames
