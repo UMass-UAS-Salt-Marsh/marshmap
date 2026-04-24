@@ -62,3 +62,9 @@ Console command to launch a prediction run, typically as a batch job on Unity.
 Dispatches to \code{do_map} for RF/AdaBoost models or \code{do_unet_map} for U-Net models,
 determined automatically from the fits database.
 }
+\details{
+\strong{Note}: if you're running this in local mode, multiple runs in a row in the
+same R session may blow out memory, thanks to R/Python memory shenanigans. If
+you run out of memory in this situation, restart R between runs. This does not
+apply to batch runs on Unity.
+}
