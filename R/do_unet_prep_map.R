@@ -56,6 +56,7 @@ do_unet_prep_map <- function(model, clip = NULL) {
    meta_file <- file.path(output_dir, 'map_metadata.json')
    if(file.exists(origins_file)) {
       reason <- NULL
+      fmt <- function(x) if(length(x) == 0) '<missing>' else paste(as.character(x), collapse = ', ')
       if(!file.exists(meta_file)) {
          reason <- 'no metadata (predates change-detection)'
       } else {
@@ -63,11 +64,11 @@ do_unet_prep_map <- function(model, clip = NULL) {
          current_clip <- if(is.null(clip)) 'none' else clip
          prior_clip <- if(is.list(prior$clip)) unlist(prior$clip) else prior$clip
          if(!isTRUE(all.equal(prior$mapping_overlap, MAP_OVERLAP)))
-            reason <- sprintf('mapping_overlap changed (%s -> %s)',
-                              prior$mapping_overlap, MAP_OVERLAP)
+            reason <- paste0('mapping_overlap changed (', fmt(prior$mapping_overlap),
+                             ' -> ', fmt(MAP_OVERLAP), ')')
          else if(!identical(as.integer(prior$patch_size), as.integer(config$patch)))
-            reason <- sprintf('patch_size changed (%s -> %s)',
-                              prior$patch_size, config$patch)
+            reason <- paste0('patch_size changed (', fmt(prior$patch_size),
+                             ' -> ', fmt(config$patch), ')')
          else if(!identical(as.character(unlist(prior$orthos)), as.character(config$orthos)))
             reason <- 'orthos list changed'
          else if(!isTRUE(all.equal(prior_clip, current_clip)))
