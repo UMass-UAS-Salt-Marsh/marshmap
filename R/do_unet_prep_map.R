@@ -50,10 +50,36 @@ do_unet_prep_map <- function(model, clip = NULL) {
    
    
    # ----- Check if already done -----
+   # Reuse existing patches only if all generation parameters match. When in
+   # doubt (e.g. no metadata from a pre-check version), rebuild.
    origins_file <- file.path(output_dir, 'patch_origins.csv')
+   meta_file <- file.path(output_dir, 'map_metadata.json')
    if(file.exists(origins_file)) {
-      message('Map patches already exist at ', output_dir, '; skipping prep.')
-      return(invisible(output_dir))
+      reason <- NULL
+      if(!file.exists(meta_file)) {
+         reason <- 'no metadata (predates change-detection)'
+      } else {
+         prior <- jsonlite::read_json(meta_file)
+         current_clip <- if(is.null(clip)) 'none' else clip
+         prior_clip <- if(is.list(prior$clip)) unlist(prior$clip) else prior$clip
+         if(!isTRUE(all.equal(prior$mapping_overlap, MAP_OVERLAP)))
+            reason <- sprintf('mapping_overlap changed (%s -> %s)',
+                              prior$mapping_overlap, MAP_OVERLAP)
+         else if(!identical(as.integer(prior$patch_size), as.integer(config$patch)))
+            reason <- sprintf('patch_size changed (%s -> %s)',
+                              prior$patch_size, config$patch)
+         else if(!identical(as.character(unlist(prior$orthos)), as.character(config$orthos)))
+            reason <- 'orthos list changed'
+         else if(!isTRUE(all.equal(prior_clip, current_clip)))
+            reason <- 'clip changed'
+      }
+      if(is.null(reason)) {
+         message('Map patches already exist at ', output_dir, '; skipping prep.')
+         return(invisible(output_dir))
+      }
+      message('Rebuilding map patches: ', reason)
+      unlink(output_dir, recursive = TRUE)
+      dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
    }
    
    dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)

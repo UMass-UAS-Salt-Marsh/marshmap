@@ -163,7 +163,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
         # constraint = 'x86_64&[l40s|v100|2080ti]',
         partition.gpu = 'gpu-preempt,gpu',               # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
         # partition.gpu = 'gpu',                         # gpu-preempt times out in 4 hours!
-        memory = 400,
+        memory = 200,
          walltime = '04:00:00'                           # if setting >4 hrs, exclude gpu-preempt!
          
       ))
