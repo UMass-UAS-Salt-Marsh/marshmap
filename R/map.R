@@ -4,6 +4,10 @@
 #' Dispatches to `do_map` for RF/AdaBoost models or `do_unet_map` for U-Net models,
 #' determined automatically from the fits database.
 #' 
+#' **Note**: When making U-Net maps, you may want to run `unet_prep_map` first to
+#' build patches, as that step (automatic if they don't exist yet) doesn't require
+#' a GPU node.
+#' 
 #' **Note**: if you're running this in local mode, multiple runs in a row in the 
 #' same R session may blow out memory, thanks to R/Python memory shenanigans. If
 #' you run out of memory in this situation, restart R between runs. This does not
@@ -163,7 +167,7 @@ map <- function(fit, site = NULL, clip = NULL, result = NULL,
         # constraint = 'x86_64&[l40s|v100|2080ti]',
         partition.gpu = 'gpu-preempt,gpu',               # GPUs for training. I'll start with 1, then move to 2; probably not worth using more
         # partition.gpu = 'gpu',                         # gpu-preempt times out in 4 hours!
-        memory = 200,
+        memory = 400,
          walltime = '04:00:00'                           # if setting >4 hrs, exclude gpu-preempt!
          
       ))

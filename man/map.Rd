@@ -69,6 +69,10 @@ Dispatches to \code{do_map} for RF/AdaBoost models or \code{do_unet_map} for U-N
 determined automatically from the fits database.
 }
 \details{
+\strong{Note}: When making U-Net maps, you may want to run \code{unet_prep_map} first to
+build patches, as that step (automatic if they don't exist yet) doesn't require
+a GPU node.
+
 \strong{Note}: if you're running this in local mode, multiple runs in a row in the
 same R session may blow out memory, thanks to R/Python memory shenanigans. If
 you run out of memory in this situation, restart R between runs. This does not
