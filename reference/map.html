@@ -133,7 +133,10 @@ won't be added to the jobs database. Has no effect if local = FALSE.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><strong>Note</strong>: if you're running this in local mode, multiple runs in a row in the
+    <p><strong>Note</strong>: When making U-Net maps, you may want to run <code>unet_prep_map</code> first to
+build patches, as that step (automatic if they don't exist yet) doesn't require
+a GPU node.</p>
+<p><strong>Note</strong>: if you're running this in local mode, multiple runs in a row in the
 same R session may blow out memory, thanks to R/Python memory shenanigans. If
 you run out of memory in this situation, restart R between runs. This does not
 apply to batch runs on Unity.</p>
