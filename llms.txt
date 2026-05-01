@@ -145,15 +145,15 @@ The portable names for canopy height models are simply:
 
 Here are examples of file names and portable names
 
-| File name                                                | Portable name                    |
-|----------------------------------------------------------|----------------------------------|
-| `19Aug22_OTH_Mid_SWIR_Ortho.tif`                         | `ortho_swir_summer_2022_mid`     |
-| `14Oct20_OTH_Low_Mica_DEM.tif`                           | `dem_mica_fall_2020_low`         |
-| `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif`              | `chm_summer_2022`                |
-| `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif`                  | `ndvi_mica_spring_2022_mid`      |
-| `x01Aug20_OTH_MidOut_Mica_Ortho.tif`                     | `ortho_mica_summer_2020_mid.out` |
-| `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif`              | `chm_lidar_2022`                 |
-| `x26May22_RR_Low_Mica_DEM__x19Aug22_RR_Low_Mica_DEM.tif` | `chm_delta_2022`                 |
+| File name | Portable name |
+|----|----|
+| `19Aug22_OTH_Mid_SWIR_Ortho.tif` | `ortho_swir_summer_2022_mid` |
+| `14Oct20_OTH_Low_Mica_DEM.tif` | `dem_mica_fall_2020_low` |
+| `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_summer_2022` |
+| `x20Jun22_OTH_Mid_Mica_Ortho__NDVI.tif` | `ndvi_mica_spring_2022_mid` |
+| `x01Aug20_OTH_MidOut_Mica_Ortho.tif` | `ortho_mica_summer_2020_mid.out` |
+| `OTH_Aug2022_CHM_NoThin_5cmTriNN_NAD83.tif` | `chm_lidar_2022` |
+| `x26May22_RR_Low_Mica_DEM__x19Aug22_RR_Low_Mica_DEM.tif` | `chm_delta_2022` |
 
 Portable names are used for variable names in data files created by
 `sample`, and they’re the names you’ll see in model assessments. You can
