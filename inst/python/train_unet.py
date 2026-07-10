@@ -323,7 +323,8 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001,
     weight_decay=1e-4, class_weighting = 'freq', n_epochs=50, batch_size=8,
     gradient_clip_max_norm=1.0, num_classes=4, in_channels=None,
-    use_ordinal=False, test_interval=5, requirecuda=True, seed=42):
+    use_ordinal=False, test_interval=5, requirecuda=True, seed=42,
+    class_weights=None):
     """
     Main training function
     
@@ -337,6 +338,11 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         learning_rate: Learning rate for optimizer
         weight_decay: L2 regularization strength
         class_weighting: weight classes by 'none', 'freq', or 'sqrt'
+        class_weights: optional explicit weight vector (length num_classes, in
+            internal 0..n-1 class order). When given, it is used directly and
+            class_weighting is ignored -- used to PIN weights across runs (e.g. the
+            pixel-degradation experiment fixes them to the full-transect frequency so
+            the loss is not radius-dependent). Default None = compute from this run.
         n_epochs: Number of training epochs
         batch_size: Batch size for training
         gradient_clip_max_norm: Gradient clipping threshold
@@ -465,17 +471,27 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
         print(f"\nWARNING: Classes {zero_classes} have ZERO training pixels!")
     
     
-    match class_weighting:
-        case 'none':
-            class_weights = np.ones(num_classes)
-        case 'freq':
-            class_weights = 1.0 / (class_pixel_counts + 1e-6)
-        case 'sqrt':
-            class_weights = 1.0 / np.sqrt(class_pixel_counts + 1e-6)
-        case _:
-            raise ValueError(f"class_weighting must be 'none', 'freq', or 'sqrt'; got '{class_weighting}'")
+    if class_weights is not None:
+        # Pinned weights supplied by the caller: use verbatim, do NOT recompute or
+        # renormalize (they are already normalized upstream). This fixes the loss
+        # weighting across runs (e.g. every radius in the degrade experiment shares
+        # the full-transect weights) so weighting can't confound the comparison.
+        class_weights = np.asarray(class_weights, dtype=float).ravel()
+        if class_weights.shape[0] != num_classes:
+            raise ValueError(f"class_weights has length {class_weights.shape[0]} but num_classes={num_classes}")
+        class_weighting = 'pinned'
+    else:
+        match class_weighting:
+            case 'none':
+                class_weights = np.ones(num_classes)
+            case 'freq':
+                class_weights = 1.0 / (class_pixel_counts + 1e-6)
+            case 'sqrt':
+                class_weights = 1.0 / np.sqrt(class_pixel_counts + 1e-6)
+            case _:
+                raise ValueError(f"class_weighting must be 'none', 'freq', or 'sqrt'; got '{class_weighting}'")
 
-    class_weights = class_weights / class_weights.sum() * num_classes
+        class_weights = class_weights / class_weights.sum() * num_classes
 
     # Log the computed weights + training pixel counts so callers (e.g. the
     # pixel-degradation experiment) can record how carving shifted them.

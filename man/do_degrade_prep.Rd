@@ -2,14 +2,14 @@
 % Please edit documentation in R/do_degrade_prep.R
 \name{do_degrade_prep}
 \alias{do_degrade_prep}
-\title{Prepare carved training patches for one radius of the degradation experiment}
+\title{Prepare carved training patches for one fold x radius of the degradation experiment}
 \usage{
-do_degrade_prep(rep, radii, exp, model, train, save_gis = FALSE)
+do_degrade_prep(rep, pgrid, exp, model, train, save_gis = FALSE)
 }
 \arguments{
-\item{rep}{Index into \code{radii} (supplied by slurmcollie).}
+\item{rep}{Row index into \code{pgrid} (supplied by slurmcollie).}
 
-\item{radii}{Numeric vector of plot radii (m); this job handles \code{radii[rep]}.}
+\item{pgrid}{data.frame with \code{radius}, \code{test}, \code{val} columns (the fold x radius grid).}
 
 \item{exp}{Experiment YAML base name in \verb{<pars>/unet/}.}
 
@@ -17,18 +17,22 @@ do_degrade_prep(rep, radii, exp, model, train, save_gis = FALSE)
 
 \item{train}{Training YAML base name in \verb{<pars>/unet/}, or NULL.}
 
-\item{save_gis}{If TRUE, save GIS debugging data (reserved; unused for now).}
+\item{save_gis}{If TRUE, save plot centers, clipped disks, and training polys as
+GeoPackages under \verb{f<test>/r<NNN>/gis/} for inspection.}
 }
 \description{
-Per-radius worker for \code{\link[=degrade]{degrade()}} (stage \code{'prep'}). Builds the input stack and
-prepared transects via the shared \code{\link[=unet_prep_setup]{unet_prep_setup()}}, makes one fixed 3-way
-spatial split, carves the TRAINING transects to radius-\code{r} disks around fixed
-synthetic plot centers (validation/test stay full extent), extracts patches, and
-exports numpy arrays. Centers are computed from the training extent and are
-therefore identical across radii and seeds.
+Per-cell prep worker for \code{\link[=degrade]{degrade()}} (stage \code{'prep'}). For one spatial fold (a
+test/val group pair) and one plot radius, it builds the input stack and prepared
+transects via the shared \code{\link[=unet_prep_setup]{unet_prep_setup()}}, makes the fold's fixed 3-way spatial
+split, carves the TRAINING transects to radius-\code{r} disks around fixed synthetic plot
+centers (validation/test stay full extent), extracts patches, and exports numpy
+arrays. A radius of \code{Inf} is the full-transect ANCHOR: training transects are used
+uncarved. Centers are computed from the fold's training extent and are therefore
+identical across radii and seeds within a fold.
 }
 \details{
-Writes patches to \verb{<unetdir>/<model>/degrade/r<NNN>/patches/set1/} (where
-\code{NNN = round(radius * 100)}) plus a \code{degrade_meta.rds} marker with plot count,
-pixel size, and the realized training-pixel count.
+Writes patches to \verb{<unetdir>/<model>/degrade/f<test>/r<NNN>/patches/set1/} (where
+\code{NNN = round(radius * 100)}, or \code{rfull} for the anchor) plus a \code{degrade_meta.rds}
+marker, and — once per fold — the pinned class weights \verb{f<test>/class_weights_pinned.json}
+computed from the fold's full (uncarved) training transects.
 }

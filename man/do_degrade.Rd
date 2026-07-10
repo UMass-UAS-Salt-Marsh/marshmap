@@ -4,12 +4,20 @@
 \alias{do_degrade}
 \title{Train and evaluate one cell of the pixel-degradation experiment}
 \usage{
-do_degrade(rep, grid, exp, model, train, requirecuda = TRUE)
+do_degrade(
+  rep,
+  grid,
+  exp,
+  model,
+  train,
+  requirecuda = TRUE,
+  pin_weights = FALSE
+)
 }
 \arguments{
 \item{rep}{Row index into \code{grid} (supplied by slurmcollie).}
 
-\item{grid}{data.frame with \code{radius} and \code{seed} columns (the radius x seed sweep).}
+\item{grid}{data.frame with \code{radius}, \code{seed}, \code{test}, \code{val} columns (fold x radius x seed).}
 
 \item{exp}{Experiment YAML base name in \verb{<pars>/unet/}.}
 
@@ -18,15 +26,19 @@ do_degrade(rep, grid, exp, model, train, requirecuda = TRUE)
 \item{train}{Training YAML base name in \verb{<pars>/unet/}, or NULL.}
 
 \item{requirecuda}{If TRUE (default), abort if CUDA is unavailable.}
+
+\item{pin_weights}{If TRUE, train with class weights pinned to the fold's
+full-transect frequency (read from \verb{f<test>/class_weights_pinned.json}).}
 }
 \description{
 Per-cell worker for \code{\link[=degrade]{degrade()}} (stage \code{'train'}). Trains the U-Net on the carved
-patches for one radius (prepared by \code{\link[=do_degrade_prep]{do_degrade_prep()}}) with a given random seed,
-evaluates on the full-extent test fold, and writes one tidy result row.
+patches for one fold x radius (prepared by \code{\link[=do_degrade_prep]{do_degrade_prep()}}) with a given random
+seed, evaluates on the fold's full-extent test set, and writes one tidy result row.
+A radius of \code{Inf} is the full-transect anchor.
 }
 \details{
-Reads patches from \verb{<unetdir>/<model>/degrade/r<NNN>/patches/set1/}, writes the
-fit to \verb{.../r<NNN>/s<seed>/set1/}, and appends a per-cell result file
-\verb{.../degrade/cell_r<NNN>_s<seed>.csv}. Each cell writes its own file to avoid
+Reads patches from \verb{<unetdir>/<model>/degrade/f<test>/r<NNN>/patches/set1/}, writes
+the fit to \verb{.../f<test>/r<NNN>/s<seed>/set1/}, and appends a per-cell result file
+\verb{.../degrade/cell_f<test>_r<NNN>_s<seed>.csv}. Each cell writes its own file to avoid
 concurrent-write races across the Slurm array.
 }

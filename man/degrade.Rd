@@ -15,6 +15,10 @@ degrade(
   local = FALSE,
   trap = TRUE,
   requirecuda = TRUE,
+  save_gis = FALSE,
+  folds = NULL,
+  anchor = NULL,
+  pin_weights = NULL,
   comment = NULL
 )
 }
@@ -41,6 +45,20 @@ priority over the stage defaults. \code{train} requires a GPU.}
 \item{trap}{If TRUE, trap errors in local mode (see \code{\link[=train]{train()}}).}
 
 \item{requirecuda}{If TRUE (default), abort if CUDA is unavailable (train stage).}
+
+\item{save_gis}{If TRUE (prep stage only), write plot centers, clipped disks, and
+training polys as GeoPackages under \verb{f<test>/r<NNN>/gis/} for inspection in QGIS.}
+
+\item{folds}{Optional fold spec overriding \code{config$folds}: a list of \code{c(test, val)}
+group pairs (or a data.frame with \code{test}/\code{val} columns). Defaults to the base
+config's single \code{test_group}/\code{val_group}.}
+
+\item{anchor}{If TRUE, also run the full-transect (r = Inf) anchor as an endpoint
+("r = infinity"). Defaults to \code{config$anchor}.}
+
+\item{pin_weights}{If TRUE, train every cell with class weights pinned to the fold's
+full-transect frequency, removing radius-dependent loss weighting. Defaults to
+\code{config$pin_class_weights}.}
 
 \item{comment}{Optional slurmcollie comment.}
 }

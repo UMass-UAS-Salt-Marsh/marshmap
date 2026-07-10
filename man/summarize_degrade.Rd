@@ -8,7 +8,9 @@ summarize_degrade(
   exp = "degrade",
   model = "primary_v6",
   results = NULL,
-  train = "train"
+  train = "train",
+  error = c("se", "sd", "none"),
+  pilot = FALSE
 )
 }
 \arguments{
@@ -16,16 +18,23 @@ summarize_degrade(
 
 \item{model}{Model YAML base name (to locate the results directory).}
 
-\item{results}{Optional data.frame of result rows; if NULL, reads \code{cell_*.csv}
-files from the experiment directory.}
+\item{results}{Optional data.frame of result rows; if NULL, reads the fold-tagged
+\code{cell_f*.csv} files (falling back to the legacy pilot \code{cell_r*.csv}).}
 
 \item{train}{Training YAML base name (used only to resolve the site/config).}
+
+\item{error}{Error-bar type drawn on each series: \code{'se'} (standard error of the mean
+over folds x seeds, default), \code{'sd'} (standard deviation), or \code{'none'}.}
+
+\item{pilot}{If TRUE, summarize the legacy single-fold pilot (\code{cell_r*.csv}) instead
+of the fold-tagged runs.}
 }
 \value{
-Invisibly, the aggregated data.frame.
+Invisibly, the aggregated data.frame (per-radius means, \verb{_sd}, \verb{_se}, \code{n}).
 }
 \description{
-Reads the per-cell result rows written by \code{\link[=do_degrade]{do_degrade()}}, averages over seeds,
-prints a compact table, and plots overall CCR (and per-class recall) versus plot
-radius.
+Reads the per-cell result rows written by \code{\link[=do_degrade]{do_degrade()}}, averages over folds and
+seeds, prints a compact table, and plots overall CCR (and per-class recall) versus
+plot radius. The full-transect anchor (radius = Inf) is drawn as a horizontal
+reference line rather than a point.
 }

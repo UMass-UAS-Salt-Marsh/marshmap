@@ -93,3 +93,11 @@ reference:
   - parse_image_filename
   - the
   - .onLoad
+  - build_class_lookup
+  - degrade
+  - do_degrade
+  - do_degrade_prep
+  - do_layer
+  - layer
+  - summarize_degrade
+  - write_classified_tif

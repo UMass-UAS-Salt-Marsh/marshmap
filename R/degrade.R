@@ -53,6 +53,79 @@ degrade_dir <- function(config, model) {
 
 
 # ---------------------------------------------------------------------------
+# Fold + radius naming. Experiments run over one or more spatial FOLDS (each a
+# test/val group pair) x plot RADII, where radius = Inf is the full-transect anchor.
+#   degrade_rtag(r)         -> 'r040' ... 'r125', or 'rfull' for the r=Inf anchor
+#   degrade_fold_tag(test)  -> 'f1' (or 'f1_6' for a multi-group test set)
+#   degrade_fold_dir(...)   -> <degrade_dir>/f<test>/  (patches, fits, pinned weights)
+# ---------------------------------------------------------------------------
+degrade_rtag <- function(radius)
+   if(is.infinite(radius)) 'rfull' else sprintf('r%03d', round(radius * 100))
+
+degrade_fold_tag <- function(test) paste0('f', paste(test, collapse = '_'))
+
+degrade_fold_dir <- function(config, model, test)
+   file.path(degrade_dir(config, model), degrade_fold_tag(test))
+
+
+# ---------------------------------------------------------------------------
+# degrade_folds()
+# Normalize a folds spec to a data.frame(test, val). Accepts (in priority order) the
+# `folds` argument, then config$folds (YAML), then the single test_group/val_group.
+# List form may be list(c(test, val), ...) or list(list(test=, val=), ...).
+# ---------------------------------------------------------------------------
+degrade_folds <- function(config, folds = NULL) {
+
+   if(is.null(folds)) folds <- config$folds
+   if(is.null(folds)) {                                                       # fall back to the base config's single fold
+      if(is.null(config$test_group) || is.null(config$val_group))
+         stop('no folds given: supply `folds`, config$folds, or test_group + val_group')
+      return(data.frame(test = config$test_group[1], val = config$val_group[1]))
+   }
+   if(is.data.frame(folds))
+      return(folds[, c('test', 'val')])
+   pick <- function(f, key, idx) as.integer(if(is.list(f) && !is.null(f[[key]])) f[[key]] else f[[idx]])
+   test <- vapply(folds, pick, integer(1), key = 'test', idx = 1)            # accepts c(test,val) or list(test=,val=)
+   val  <- vapply(folds, pick, integer(1), key = 'val',  idx = 2)
+   data.frame(test = test, val = val)
+}
+
+
+# ---------------------------------------------------------------------------
+# degrade_pinned_weights()
+# Class weights (internal 0..n-1 order) from the FULL uncarved training transects of a
+# fold, using train_unet.py's 'freq' formula. Pins the loss weighting so it does not
+# vary with plot radius (threat 5). do_degrade_prep writes these once per fold; every
+# cell in the fold then trains with the same vector.
+# ---------------------------------------------------------------------------
+degrade_pinned_weights <- function(input_stack, transects, train_ids, config) {
+
+   train <- transects[transects$poly %in% train_ids, ]
+   v     <- terra::vect(train)
+   tmpl  <- terra::crop(input_stack[[1]], terra::ext(v))                      # input grid over the training extent
+   r     <- terra::mask(terra::rasterize(v, tmpl, field = 'subclass'), tmpl)  # drop pixels with no imagery
+
+   vals <- terra::values(r)
+   vals <- vals[!is.na(vals)]
+   tab  <- table(vals)
+
+   orig     <- as.integer(names(config$class_mapping))                        # original class ids ...
+   internal <- as.integer(config$class_mapping)                               # ... and their internal 0..n-1 indices
+   counts   <- numeric(length(config$classes))
+   for(k in seq_along(orig)) {
+      key <- as.character(orig[k])
+      counts[internal[k] + 1] <- if(key %in% names(tab)) as.numeric(tab[[key]]) else 0
+   }
+
+   w <- 1 / (counts + 1e-6)                                                   # 'freq' weighting, normalized as in train_unet.py
+   w <- w / sum(w) * length(config$classes)
+   list(original_classes  = orig[order(internal)],
+        class_pixel_counts = counts,
+        class_weights      = w)
+}
+
+
+# ---------------------------------------------------------------------------
 # min_bbox() / rot2d()
 # Minimum-area rotated bounding box of a polygon, and a 2-D rotation. Reused from
 # inst/scripts/transects_to_circles.R. min_bbox gives each transect a local frame
@@ -248,7 +321,15 @@ degrade_combined_transects <- function(transects, disks, validate_ids, test_ids)
 #' @param trap If TRUE, trap errors in local mode (see [train()]).
 #' @param requirecuda If TRUE (default), abort if CUDA is unavailable (train stage).
 #' @param save_gis If TRUE (prep stage only), write plot centers, clipped disks, and
-#'   training polys as GeoPackages under `r<NNN>/gis/` for inspection in QGIS.
+#'   training polys as GeoPackages under `f<test>/r<NNN>/gis/` for inspection in QGIS.
+#' @param folds Optional fold spec overriding `config$folds`: a list of `c(test, val)`
+#'   group pairs (or a data.frame with `test`/`val` columns). Defaults to the base
+#'   config's single `test_group`/`val_group`.
+#' @param anchor If TRUE, also run the full-transect (r = Inf) anchor as an endpoint
+#'   ("r = infinity"). Defaults to `config$anchor`.
+#' @param pin_weights If TRUE, train every cell with class weights pinned to the fold's
+#'   full-transect frequency, removing radius-dependent loss weighting. Defaults to
+#'   `config$pin_class_weights`.
 #' @param comment Optional slurmcollie comment.
 #' @importFrom slurmcollie launch get_resources
 #' @importFrom yaml read_yaml
@@ -258,7 +339,8 @@ degrade_combined_transects <- function(transects, disks, validate_ids, test_ids)
 degrade <- function(model = 'primary_v6', train = 'train', exp = 'degrade',
                     stage = c('prep', 'train'), radii = NULL, seeds = NULL,
                     resources = NULL, local = FALSE, trap = TRUE,
-                    requirecuda = TRUE, save_gis = FALSE, comment = NULL) {
+                    requirecuda = TRUE, save_gis = FALSE, folds = NULL,
+                    anchor = NULL, pin_weights = NULL, comment = NULL) {
 
 
    stage  <- match.arg(stage)
@@ -269,6 +351,16 @@ degrade <- function(model = 'primary_v6', train = 'train', exp = 'degrade',
    if(is.null(radii) || is.null(seeds))
       stop('radii and seeds must be given in the experiment YAML (', exp, '.yml) or as arguments')
 
+   folds <- degrade_folds(config, folds)                                      # data.frame(test, val), one row per fold
+   if(is.null(anchor))      anchor      <- isTRUE(config$anchor)              # add the full-transect (r = Inf) endpoint?
+   if(is.null(pin_weights)) pin_weights <- isTRUE(config$pin_class_weights)   # pin loss weights to full-transect freq?
+   radii_all <- if(anchor) c(radii, Inf) else radii
+
+   message(nrow(folds), ' fold(s) [test/val ',
+           paste(sprintf('%s/%s', folds$test, folds$val), collapse = ', '), ']; ',
+           length(radii_all), ' radii', if(anchor) ' (incl. full-transect anchor)' else '',
+           '; pin_weights = ', pin_weights)
+
 
    if(stage == 'prep') {
 
@@ -276,8 +368,12 @@ degrade <- function(model = 'primary_v6', train = 'train', exp = 'degrade',
       if(is.null(comment))
          comment <- paste0('degrade prep ', model, ' / ', exp)
 
-      launch('do_degrade_prep', reps = seq_along(radii), repname = 'rep',
-             moreargs = list(radii = radii, exp = exp, model = model, train = train, save_gis = save_gis),
+      pgrid <- expand.grid(radius = radii_all, fold = seq_len(nrow(folds)),   # one CPU job per fold x radius
+                           KEEP.OUT.ATTRS = FALSE)
+      pgrid <- cbind(pgrid, test = folds$test[pgrid$fold], val = folds$val[pgrid$fold])
+
+      launch('do_degrade_prep', reps = seq_len(nrow(pgrid)), repname = 'rep',
+             moreargs = list(pgrid = pgrid, exp = exp, model = model, train = train, save_gis = save_gis),
              local = local, trap = trap, resources = resources, comment = comment)
 
    } else {
@@ -288,10 +384,13 @@ degrade <- function(model = 'primary_v6', train = 'train', exp = 'degrade',
       if(is.null(comment))
          comment <- paste0('degrade train ', model, ' / ', exp)
 
-      grid <- expand.grid(radius = radii, seed = seeds, KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
+      grid <- expand.grid(radius = radii_all, seed = seeds, fold = seq_len(nrow(folds)),  # one GPU job per fold x radius x seed
+                          KEEP.OUT.ATTRS = FALSE)
+      grid <- cbind(grid, test = folds$test[grid$fold], val = folds$val[grid$fold])
 
       launch('do_degrade', reps = seq_len(nrow(grid)), repname = 'rep',
-             moreargs = list(grid = grid, exp = exp, model = model, train = train, requirecuda = requirecuda),
+             moreargs = list(grid = grid, exp = exp, model = model, train = train,
+                             requirecuda = requirecuda, pin_weights = pin_weights),
              local = local, trap = trap, resources = resources, comment = comment)
    }
 }
@@ -307,77 +406,116 @@ degrade <- function(model = 'primary_v6', train = 'train', exp = 'degrade',
 # ---------------------------------------------------------------------------
 #' Summarize a pixel-degradation experiment
 #'
-#' Reads the per-cell result rows written by [do_degrade()], averages over seeds,
-#' prints a compact table, and plots overall CCR (and per-class recall) versus plot
-#' radius.
+#' Reads the per-cell result rows written by [do_degrade()], averages over folds and
+#' seeds, prints a compact table, and plots overall CCR (and per-class recall) versus
+#' plot radius. The full-transect anchor (radius = Inf) is drawn as a horizontal
+#' reference line rather than a point.
 #'
 #' @param exp Experiment YAML base name (to locate the results directory).
 #' @param model Model YAML base name (to locate the results directory).
-#' @param results Optional data.frame of result rows; if NULL, reads `cell_*.csv`
-#'   files from the experiment directory.
+#' @param results Optional data.frame of result rows; if NULL, reads the fold-tagged
+#'   `cell_f*.csv` files (falling back to the legacy pilot `cell_r*.csv`).
 #' @param train Training YAML base name (used only to resolve the site/config).
-#' @param error Error-bar type drawn on the CCR curve: `'se'` (standard error of the
-#'   mean over seeds, default), `'sd'` (between-seed standard deviation), or `'none'`.
-#' @returns Invisibly, the aggregated data.frame (with `ccr_sd`, `ccr_se`, `n_seeds`).
+#' @param error Error-bar type drawn on each series: `'se'` (standard error of the mean
+#'   over folds x seeds, default), `'sd'` (standard deviation), or `'none'`.
+#' @param pilot If TRUE, summarize the legacy single-fold pilot (`cell_r*.csv`) instead
+#'   of the fold-tagged runs.
+#' @returns Invisibly, the aggregated data.frame (per-radius means, `_sd`, `_se`, `n`).
 #' @export
 
 
 summarize_degrade <- function(exp = 'degrade', model = 'primary_v6', results = NULL, train = 'train',
-                              error = c('se', 'sd', 'none')) {
+                              error = c('se', 'sd', 'none'), pilot = FALSE) {
 
    error <- match.arg(error)
 
 
    if(is.null(results)) {
       config <- read_degrade_config(model, train, exp)
-      files  <- list.files(degrade_dir(config, model), pattern = '^cell_r.*\\.csv$', full.names = TRUE)
+      dir    <- degrade_dir(config, model)
+      files  <- list.files(dir, pattern = if(pilot) '^cell_r.*\\.csv$' else '^cell_f.*\\.csv$', full.names = TRUE)
+      if(length(files) == 0 && !pilot) {                                     # no fold-tagged runs yet -> show the legacy pilot
+         files <- list.files(dir, pattern = '^cell_r.*\\.csv$', full.names = TRUE)
+         if(length(files)) message('No fold-tagged results found; showing the legacy pilot (cell_r*.csv).')
+      }
       if(length(files) == 0)
-         stop('no result files found in ', degrade_dir(config, model))
+         stop('no result files found in ', dir)
       results <- do.call(rbind, lapply(files, read.csv, stringsAsFactors = FALSE))
    }
 
-   recall_cols <- grep('^recall_', names(results), value = TRUE)              # aggregate ccr, kappa, and each per-class recall over seeds
+   recall_cols <- grep('^recall_', names(results), value = TRUE)              # ccr, kappa, and each per-class recall
    metric_cols <- c('ccr', 'kappa', recall_cols)
 
-   agg <- aggregate(results[, metric_cols, drop = FALSE],
-                    by = list(radius_m = results$radius_m, px_per_plot = results$px_per_plot),
-                    FUN = mean)
-   agg <- agg[order(agg$radius_m), ]
+   by_r <- list(radius_m = results$radius_m)                                 # aggregate over folds x seeds, by radius
+   agg  <- aggregate(results[, metric_cols, drop = FALSE], by = by_r, FUN = mean)
+   sds  <- aggregate(results[, metric_cols, drop = FALSE], by = by_r, FUN = sd)
+   names(sds)[-1] <- paste0(metric_cols, '_sd')
+   ns   <- aggregate(list(n       = results$ccr),        by = by_r, FUN = length)
+   nf   <- aggregate(list(n_folds = results$test_group), by = by_r, FUN = function(x) length(unique(x)))
+   pp   <- aggregate(list(px_per_plot = results$px_per_plot), by = by_r, FUN = function(x) mean(x))  # NA for anchor
+   agg  <- Reduce(function(a, b) merge(a, b, by = 'radius_m'), list(agg, sds, ns, nf, pp))
+   agg  <- agg[order(agg$radius_m), ]
+   for(m in metric_cols)                                                      # standard error of each mean
+      agg[[paste0(m, '_se')]] <- agg[[paste0(m, '_sd')]] / sqrt(agg$n)
 
-   spread <- aggregate(list(ccr_sd = results$ccr, n_seeds = results$ccr),     # between-seed spread of CCR, per radius
-                       by = list(radius_m = results$radius_m),
-                       FUN = function(x) c(sd = sd(x), n = length(x)))
-   spread <- data.frame(radius_m = spread$radius_m,
-                        ccr_sd  = spread$ccr_sd[, 'sd'],
-                        n_seeds = spread$ccr_sd[, 'n'])
-   agg <- merge(agg, spread, by = 'radius_m')
-   agg <- agg[order(agg$radius_m), ]
-   agg$ccr_se <- agg$ccr_sd / sqrt(agg$n_seeds)                               # standard error of the mean CCR
+   cat('\nMean accuracy vs plot radius (averaged over folds x seeds):\n\n')
+   print(agg[, c('radius_m', 'px_per_plot', 'n_folds', 'n', metric_cols)], row.names = FALSE, digits = 3)
 
-   cat('\nMean accuracy vs plot radius (averaged over seeds):\n\n')
-   print(agg, row.names = FALSE, digits = 3)
+   anc <- agg[is.infinite(agg$radius_m), , drop = FALSE]                      # full-transect anchor -> reference line
+   agg <- agg[is.finite(agg$radius_m),  , drop = FALSE]                       # finite radii -> the curve
 
-   err <- switch(error, se = agg$ccr_se, sd = agg$ccr_sd, none = NULL)        # half-height of the CCR error bar
+   # --- series (metric, colour, symbol) drawn in this order; recall colours keyed by class ---
+   rec_pal   <- c('101' = 'darkblue', '102' = 'darkgreen', '103' = 'orange', '104' = 'lightgreen')
+   rec_class <- sub('^recall_', '', recall_cols)
+   rec_col   <- unname(rec_pal[rec_class])                                    # NA for any class not in the palette
+   if(anyNA(rec_col)) rec_col[is.na(rec_col)] <- grDevices::rainbow(sum(is.na(rec_col)))
+   names(rec_col) <- recall_cols
 
-   with(agg, plot(radius_m, ccr, type = 'b', pch = 19, ylim = c(0, 1),
-                  xlab = 'plot radius (m)', ylab = 'accuracy / recall',
-                  main = 'U-Net accuracy vs plot size'))
-   if(!is.null(err))                                                          # CCR error bars (+/- 1 SE or SD across seeds)
-      suppressWarnings(arrows(agg$radius_m, agg$ccr - err, agg$radius_m, agg$ccr + err,
-                              angle = 90, code = 3, length = 0.03, col = 'black'))
-   with(agg, lines(radius_m, kappa, type = 'b', pch = 1, lty = 2))
-   if(length(recall_cols)) {
-      cols <- seq_along(recall_cols) + 1
-      for(k in seq_along(recall_cols))
-         with(agg, lines(radius_m, agg[[recall_cols[k]]], type = 'b', pch = 2, lty = 3, col = cols[k]))
+   series_m   <- c('ccr', 'kappa', recall_cols)                              # draw / legend order
+   series_col <- c('black', 'grey40', rec_col)
+   series_pch <- c(19, 1, rep(2, length(recall_cols)))
+   series_lty <- c(1, 2, rep(3, length(recall_cols)))
+   names(series_col) <- names(series_pch) <- names(series_lty) <- series_m
+
+   K       <- length(series_m)                                              # jitter x per series so error bars don't overlap
+   gaps    <- diff(sort(unique(agg$radius_m)))
+   min_gap <- if(length(gaps)) min(gaps) else 1
+   dx      <- min_gap * 0.06
+   offs    <- (seq_len(K) - (K + 1) / 2) * dx
+   names(offs) <- series_m
+
+   ebar <- function(m) {                                                     # +/-1 SE (or SD) bar at the series' jittered x
+      e <- switch(error, se = agg[[paste0(m, '_se')]], sd = agg[[paste0(m, '_sd')]], none = NULL)
+      if(!is.null(e))
+         suppressWarnings(arrows(agg$radius_m + offs[m], agg[[m]] - e,
+                                 agg$radius_m + offs[m], agg[[m]] + e,
+                                 angle = 90, code = 3, length = 0.03, col = series_col[m]))
    }
-   ccr_lab <- if(error == 'none') 'CCR'                                       # note the error-bar convention on the CCR entry
-              else sprintf('CCR (+/-1 %s)', toupper(error))
-   legend('bottomright',
-          c(ccr_lab, 'Kappa', recall_cols),
-          pch = c(19, 1, rep(2, length(recall_cols))),
-          lty = c(1, 2, rep(3, length(recall_cols))),
-          col = c('black', 'black', seq_along(recall_cols) + 1), bty = 'n')
 
-   invisible(agg)
+   plot(agg$radius_m + offs['ccr'], agg$ccr, type = 'b', pch = 19, ylim = c(0, 1),
+        xlim = range(agg$radius_m) + c(-1, 1) * (dx * K / 2 + min_gap * 0.05),
+        xlab = 'plot radius (m)', ylab = 'accuracy / recall',
+        main = 'U-Net accuracy vs plot size', col = 'black')
+   ebar('ccr')
+   lines(agg$radius_m + offs['kappa'], agg$kappa, type = 'b', pch = 1, lty = 2, col = 'grey40')
+   for(m in recall_cols) {                                                    # each per-class recall + its own error bars
+      lines(agg$radius_m + offs[m], agg[[m]], type = 'b', pch = 2, lty = 3, col = series_col[m])
+      ebar(m)
+   }
+
+   if(nrow(anc)) {                                                            # full-transect anchor: CCR reference line
+      abline(h = anc$ccr[1], lty = 4, lwd = 1.5, col = 'red')
+      text(par('usr')[1], anc$ccr[1], sprintf(' full-transect CCR = %.3f', anc$ccr[1]),
+           adj = c(0, -0.4), cex = 0.8, col = 'red')
+   }
+
+   ccr_lab  <- if(error == 'none') 'CCR' else sprintf('CCR (+/-1 %s)', toupper(error))
+   leg_txt  <- c(ccr_lab, 'Kappa', recall_cols)
+   leg_pch  <- series_pch; leg_lty <- series_lty; leg_col <- series_col
+   if(nrow(anc)) { leg_txt <- c(leg_txt, 'full transect (CCR)')              # add anchor to the legend
+                   leg_pch <- c(leg_pch, NA); leg_lty <- c(leg_lty, 4); leg_col <- c(leg_col, 'red') }
+   legend('bottomright', leg_txt, pch = leg_pch, lty = leg_lty, col = leg_col, bty = 'n')
+
+   out <- rbind(agg, anc)                                                     # finite radii + anchor, for the caller
+   invisible(out[order(out$radius_m), ])
 }
