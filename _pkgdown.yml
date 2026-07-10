@@ -101,3 +101,6 @@ reference:
   - layer
   - summarize_degrade
   - write_classified_tif
+  - degrade_count
+  - do_degrade_count
+  
