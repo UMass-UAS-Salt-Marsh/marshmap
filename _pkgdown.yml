@@ -103,4 +103,5 @@ reference:
   - write_classified_tif
   - degrade_count
   - do_degrade_count
+  - summarize_degrade_count
   
