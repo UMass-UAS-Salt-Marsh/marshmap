@@ -323,7 +323,7 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     encoder_name="resnet18", encoder_weights=None, learning_rate=0.0001,
     weight_decay=1e-4, class_weighting = 'freq', n_epochs=50, batch_size=8,
     gradient_clip_max_norm=1.0, num_classes=4, in_channels=None,
-    use_ordinal=False, test_interval=5, requirecuda=True):
+    use_ordinal=False, test_interval=5, requirecuda=True, seed=42):
     """
     Main training function
     
@@ -389,9 +389,15 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     print(f"Class mapping: {class_names}")
     print("="*60)
     
-    # Set random seeds for reproducibility
-    torch.manual_seed(42)
-    np.random.seed(42)
+    # Set random seeds for reproducibility. `seed` varies network init and data
+    # order (used by the pixel-degradation experiment); defaults to 42 so every
+    # existing caller reproduces its previous behavior.
+    seed = int(seed)
+    print(f"Random seed: {seed}")
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
     # Set device
     cuda_available = torch.cuda.is_available()
@@ -470,7 +476,20 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
             raise ValueError(f"class_weighting must be 'none', 'freq', or 'sqrt'; got '{class_weighting}'")
 
     class_weights = class_weights / class_weights.sum() * num_classes
-    
+
+    # Log the computed weights + training pixel counts so callers (e.g. the
+    # pixel-degradation experiment) can record how carving shifted them.
+    import json
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, "class_weights.json"), "w") as _wf:
+        json.dump({
+            "seed": seed,
+            "class_weighting": class_weighting,
+            "original_classes": [int(c) for c in original_classes],
+            "class_pixel_counts": [float(x) for x in class_pixel_counts],
+            "class_weights": [float(x) for x in class_weights],
+        }, _wf, indent=2)
+
     if use_ordinal:
         print(f"\nOrdinal mode: class weights NOT used")
     else:
@@ -482,7 +501,9 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     validate_dataset = MaskedPatchDataset(validate_patches, validate_labels, validate_masks)
     test_dataset = MaskedPatchDataset(test_patches, test_labels, test_masks, augment=False)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    loader_generator = torch.Generator()                         # make shuffle order depend on `seed`
+    loader_generator.manual_seed(seed)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, generator=loader_generator)
     validate_loader = DataLoader(validate_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 

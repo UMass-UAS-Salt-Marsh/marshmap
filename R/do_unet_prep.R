@@ -43,113 +43,16 @@ do_unet_prep <- function(model, save_gis) {
    
    
    config <- read_yaml(file.path(the$parsdir, 'unet', paste0(model, '.yml')))
-   
-   config$fpath <- resolve_dir(the$flightsdir, config$site)
-   config$bands <- unlist(lapply(config$orthos, function(x) 
-      nlyr(rast(file.path(config$fpath, x)))))                                # number of bands for each ortho
-   config$n_channels <- sum(config$bands)                                     # total number of channels
-   
-   config$type <- rep('image', length(config$orthos))                         # type for each ortho
-   config$type[grep('__NDVI', config$orthos)] <- 'ndvi'
-   config$type[grep('__NDWIg', config$orthos)] <- 'ndwi'
-   config$type[grep('__NDRE', config$orthos)] <- 'ndre'
-   config$type[grep('DEM', config$orthos)] <- 'dem'
-   config$type[config$type == 'image' & config$bands == 1] <- 'scalar'        # any remaining 1-band layer (mean, sd, etc.)
-   
-   config$class_mapping <- as.list(0:(length(config$classes) - 1))            # 0:(n-1) classes for U-Net
-   names(config$class_mapping) <- config$classes                              # mapping to our class numbers
-   config$seed <- 42                                                          # random seed for repeatability
-   
-   if(is.null(config$transects))                                              # default field transects: "transects"
-      config$transects <- 'transects'
-   
-   if(is.null(config$reclass))                                                # default: no reclassifying
-      config$reclass <- ''
+   config <- unet_config_defaults(config)                                     # fill defaults + derive helper fields
 
-   if(is.null(config$upscale))                                                # default: no upscaling
-      config$upscale <- 1
-
-   if(is.null(config$smooth))                                                 # default: no smoothing
-      config$smooth <- 1
-   
-   if(is.null(config$holdout_col))                                            # default: use bypoly01
-      config$holdout_col <- 1
-   
-   if(is.null(config$cv))                                                     # default: 5 cross-validation iterations
-      config$cv <- 5
-   
-   if(is.null(config$val))                                                    # default: no validation holdouts
-      config$val <- NULL
-   
-   if(is.null(config$test))                                                   # default: use c(1,6) for the first iteration, c(2,7) for the second, and so on
-      config$test <- c(1,6)
-   
-   if(config$cv + max(c(config$val, config$test, 0)) - 1 > 10)
-      stop('Too many cross-validation iterations given values of val and test')
-   
-   
-   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), paste0(toupper(config$site), '_', config$transects, '.shp'))
-   if(!file.exists(transect_file))
-      stop('Transects file not found: ', transect_file)
    output_dir <- file.path(resolve_dir(the$unetdir, config$site), model, 'patches')
-   
-   
-   # 1. Build input stack
-   message('Building input stack...')
-   input_stack <- unet_build_input_stack(config)                              # ----- build input stack
-   
-   
-   message('Loading transects...')
-   transects <- st_read(transect_file, 
-                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
-   
-   if(config$reclass != '') {                                                 # if reclassifying transects (for multi-stage models),
-      classes <- read_pars_table('classes')                                   #    read classes file
-      transects$subclass <- 
-         classes[match(transects$subclass, classes$subclass), config$reclass] #    and reclassify
-      message('Reclassified subclass to ', config$reclass)
-   }
-   
-   
-   transects <- transects[transects$subclass %in% config$classes, ]           # filter to target classes
-   if(!is.null(transects$year))
-      transects <- transects[transects$year %in% config$years, ]              # and to years (if column exists)
-   transects <- overlaps(transects, 'subclass', all = TRUE)                   # remove overlapping polys, whether or not they agree
-   message(nrow(transects), ' polys in transects for classes ', paste(config$classes, collapse = ', '), ' in ', paste(config$years, collapse = ', '))
-   if(nrow(transects) == 0)
-      stop('No transect data for these classes')
-   
-   transects <- st_make_valid(transects)                                      # fix any invalid geometries
-   transects <- st_buffer(transects, dist = 0)                                # may fix topology issues
-   
-   if(!is.null(transects$reject))                                             # if there's a reject column,
-      transects <- transects[is.na(transects$reject) | 
-                                transects$reject == 0, ]                      #    DROP rejected rows
-   
-   
-   invalid_geoms <- !st_is_valid(transects)                                   # remove any remaining invalid geometries
-   if (any(invalid_geoms)) {
-      message('Removing ', sum(invalid_geoms), ' invalid transect geometries')
-      transects <- transects[!invalid_geoms, ]
-   }
-   
 
-   message('Assigning spatially distributed holdout sets...')
-   transects <- spatial_holdout(transects)                                    # Now assign holdout sequence to bypoly00
-   
-   
-   if(config$smooth > 1) {                                                    # ----- smooth training data
-      message('   ======= Smoothing with ', config$smooth, 'x', config$smooth, ' moving window =====')
-      input_stack <- focal(input_stack, w = matrix(1/config$smooth^2, config$smooth, config$smooth), fun = 'mean', na.rm = TRUE)
-   }
-   
-   
-   if(config$upscale > 1) {                                                   # ----- upscale training data
-      message('   ======= Upscaling to ', config$upscale, 'x', config$upscale, ' =====')
-      input_stack <- aggregate(input_stack, fact = config$upscale, fun = mean)
-   }
-   
-   
+
+   setup       <- unet_prep_setup(config)                                     # ----- input stack + prepared transects
+   input_stack <- setup$input_stack
+   transects   <- setup$transects
+
+
    for(i in seq_len(config$cv)) {                                             # ----- For each cross-validation iteration,
       message('======== Iteration ', i, ' of ', config$cv, ' ========')
       message('   Creating train/validate/test split...')
