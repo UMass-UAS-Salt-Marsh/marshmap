@@ -16,9 +16,11 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/cuda_check.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/db_purge.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/degrade.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/degrade_count.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/derive.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/describe_channels.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_degrade.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_degrade_count.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_degrade_prep.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_derive.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/do_fit.html</loc></url>
@@ -101,6 +103,7 @@
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/set_up_google_drive.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/spatial_holdout.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/summarize_degrade.html</loc></url>
+<url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/summarize_degrade_count.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/the.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/train.html</loc></url>
 <url><loc>https://umass-uas-salt-marsh.github.io/marshmap/reference/train_finish.html</loc></url>
