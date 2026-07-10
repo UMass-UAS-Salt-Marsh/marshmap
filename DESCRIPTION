@@ -25,7 +25,6 @@ Imports:
     pROC,
     paletteer,
     rasterPrep,
-    peakRAM,
     slurmcollie,
     shiny, 
     shinyjs,

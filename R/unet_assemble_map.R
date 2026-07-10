@@ -16,7 +16,6 @@
 #' @importFrom terra rast ext crs values writeRaster
 #' @importFrom reticulate import
 #' @importFrom rasterPrep addColorTable makeNiceTif addVat
-#' @importFrom peakRAM peakRAM
 #' @keywords internal
 
 
@@ -107,93 +106,90 @@ unet_assemble_map <- function(patches_dir, output_file, config,
    is_nodata <- count == 0
    count[is_nodata] <- 1                                                       # avoid division by zero
    
-   cat('\n\nAverage probs peakRAM:\n')
-   print(peakRAM({
-      for(k in seq_len(n_classes))
-         prob_accum[, , k] <- prob_accum[, , k] / count
-   }))
+   for(k in seq_len(n_classes))
+      prob_accum[, , k] <- prob_accum[, , k] / count
+
+
+# ----- Argmax to get predicted class -----
+message('Computing class predictions...')
+pred_internal <- apply(prob_accum, c(1, 2), which.max) - 1L                 # 0-indexed internal class
+
+# Map to original class numbers
+pred_original <- matrix(original_classes[pred_internal + 1], 
+                        nrow = n_rows, ncol = n_cols)
+pred_original[is_nodata] <- NA                                              # set nodata pixels to NA
+
+
+# ----- Create georeferenced raster -----
+message('Writing GeoTIFF...')
+template <- rast(nrows = n_rows, ncols = n_cols,
+                 xmin = meta$rast_xmin, xmax = meta$rast_xmax,
+                 ymin = meta$rast_ymin, ymax = meta$rast_ymax,
+                 crs = meta$crs)
+
+result_rast <- setValues(template, as.vector(t(pred_original)))             # terra expects column-major, t() to match
+
+
+# ----- Preliminary save -----
+dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
+f0 <- file.path(dirname(output_file), paste0('zz_', sub('\\.tif$', '', basename(output_file)), '_0.tif'))
+writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT1U')
+
+
+# ----- Color table and VAT -----
+classes <- read_pars_table('classes')
+
+# Determine which class column to use (subclass, or reclassified e.g. ICS_V5)
+class_col <- if(!is.null(config$reclass) && nzchar(config$reclass)) config$reclass else 'subclass'
+name_col  <- paste0(class_col, '_name')
+color_col <- paste0(class_col, '_color')
+
+# Build a deduplicated lookup table for the relevant class column
+class_lookup <- unique(classes[, c(class_col, name_col, color_col)])
+class_lookup <- class_lookup[!is.na(class_lookup[[class_col]]), ]
+names(class_lookup) <- c('subclass', 'name', 'color')
+
+# Build VAT from our predicted classes
+pred_classes <- sort(unique(as.vector(pred_original[!is.na(pred_original)])))
+vat <- data.frame(value = pred_classes, subclass = as.integer(pred_classes))
+vat <- merge(vat, class_lookup, by = 'subclass', sort = TRUE)
+
+vat2 <- data.frame(
+   value = vat$value,
+   color = vat$color,
+   category = paste0('[', vat$subclass, '] ', vat$name)
+)
+
+vrt_file <- addColorTable(f0, table = vat2)
+
+makeNiceTif(source = vrt_file, destination = output_file, overwrite = TRUE,
+            overviewResample = 'nearest', stats = FALSE, vat = TRUE)
+addVat(output_file, attributes = vat)
+
+unlink(f0)                                                                  # delete temp file
+unlink(paste0(f0, '*'))                                                     # and any sidecars
+
+
+# ----- Optional probability layers -----
+if(write_probs) {
+   message('Writing probability layers...')
+   prob_file <- sub('\\.tif$', '_probs.tif', output_file)
+   prob_stack <- rast(replicate(n_classes, template))
+   names(prob_stack) <- paste0('prob_', original_classes)
    
-   
-   # ----- Argmax to get predicted class -----
-   message('Computing class predictions...')
-   pred_internal <- apply(prob_accum, c(1, 2), which.max) - 1L                 # 0-indexed internal class
-   
-   # Map to original class numbers
-   pred_original <- matrix(original_classes[pred_internal + 1], 
-                           nrow = n_rows, ncol = n_cols)
-   pred_original[is_nodata] <- NA                                              # set nodata pixels to NA
-   
-   
-   # ----- Create georeferenced raster -----
-   message('Writing GeoTIFF...')
-   template <- rast(nrows = n_rows, ncols = n_cols,
-                    xmin = meta$rast_xmin, xmax = meta$rast_xmax,
-                    ymin = meta$rast_ymin, ymax = meta$rast_ymax,
-                    crs = meta$crs)
-   
-   result_rast <- setValues(template, as.vector(t(pred_original)))             # terra expects column-major, t() to match
-   
-   
-   # ----- Preliminary save -----
-   dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
-   f0 <- file.path(dirname(output_file), paste0('zz_', sub('\\.tif$', '', basename(output_file)), '_0.tif'))
-   writeRaster(result_rast, f0, overwrite = TRUE, datatype = 'INT1U')
-   
-   
-   # ----- Color table and VAT -----
-   classes <- read_pars_table('classes')
-   
-   # Determine which class column to use (subclass, or reclassified e.g. ICS_V5)
-   class_col <- if(!is.null(config$reclass) && nzchar(config$reclass)) config$reclass else 'subclass'
-   name_col  <- paste0(class_col, '_name')
-   color_col <- paste0(class_col, '_color')
-   
-   # Build a deduplicated lookup table for the relevant class column
-   class_lookup <- unique(classes[, c(class_col, name_col, color_col)])
-   class_lookup <- class_lookup[!is.na(class_lookup[[class_col]]), ]
-   names(class_lookup) <- c('subclass', 'name', 'color')
-   
-   # Build VAT from our predicted classes
-   pred_classes <- sort(unique(as.vector(pred_original[!is.na(pred_original)])))
-   vat <- data.frame(value = pred_classes, subclass = as.integer(pred_classes))
-   vat <- merge(vat, class_lookup, by = 'subclass', sort = TRUE)
-   
-   vat2 <- data.frame(
-      value = vat$value,
-      color = vat$color,
-      category = paste0('[', vat$subclass, '] ', vat$name)
-   )
-   
-   vrt_file <- addColorTable(f0, table = vat2)
-   
-   makeNiceTif(source = vrt_file, destination = output_file, overwrite = TRUE,
-               overviewResample = 'nearest', stats = FALSE, vat = TRUE)
-   addVat(output_file, attributes = vat)
-   
-   unlink(f0)                                                                  # delete temp file
-   unlink(paste0(f0, '*'))                                                     # and any sidecars
-   
-   
-   # ----- Optional probability layers -----
-   if(write_probs) {
-      message('Writing probability layers...')
-      prob_file <- sub('\\.tif$', '_probs.tif', output_file)
-      prob_stack <- rast(replicate(n_classes, template))
-      names(prob_stack) <- paste0('prob_', original_classes)
-      
-      for(k in seq_len(n_classes)) {
-         prob_layer <- prob_accum[, , k]
-         prob_layer[is_nodata] <- NA
-         values(prob_stack[[k]]) <- as.vector(t(prob_layer))
-      }
-      
-      writeRaster(prob_stack, prob_file, overwrite = TRUE, datatype = 'FLT4S')
-      message('Probability layers saved to: ', prob_file)
+   for(k in seq_len(n_classes)) {
+      prob_layer <- prob_accum[, , k]
+      prob_layer[is_nodata] <- NA
+      values(prob_stack[[k]]) <- as.vector(t(prob_layer))
    }
    
-   
-   mpix <- sum(!is_nodata) / 1e6
-   message(sprintf('Map assembled: %s (%.1f M valid pixels)', output_file, mpix))
-   
-   invisible(list(output_file = output_file, mpix = mpix))
+   writeRaster(prob_stack, prob_file, overwrite = TRUE, datatype = 'FLT4S')
+   message('Probability layers saved to: ', prob_file)
+}
+
+
+mpix <- sum(!is_nodata) / 1e6
+message(sprintf('Map assembled: %s (%.1f M valid pixels)', output_file, mpix))
+
+invisible(list(output_file = output_file, mpix = mpix))
 }

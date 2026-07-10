@@ -24,7 +24,6 @@
 #' @param result Result file name
 #' @param mapid Id in maps database
 #' @param rep Throwaway argument to make `slurmcollie` happy
-#' @importFrom peakRAM peakRAM
 #' @importFrom terra ext predict levels writeRaster values
 #' @importFrom rasterPrep addColorTable makeNiceTif addVat
 #' @importFrom lubridate as.duration seconds
