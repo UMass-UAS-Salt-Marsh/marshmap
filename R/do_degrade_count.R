@@ -100,7 +100,7 @@ do_degrade_count <- function(rep, grid, exp, model, train, radius = 0.5,
       site_ids <- train_ids
    } else {
       set.seed(seed)
-      perm     <- sample(train_ids)
+      perm     <- train_ids[sample.int(length(train_ids))]                   # base sample.int (marshmap masks base::sample); safe for length 1
       site_ids <- perm[seq_len(min(count, length(train_ids)))]
    }
    n_sites <- length(site_ids)
