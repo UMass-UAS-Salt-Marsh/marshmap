@@ -451,8 +451,19 @@ def train_unet(site, data_dir, output_dir="models", original_classes=None,
     unique_labels = np.unique(train_labels)
     print(f"\nUnique label values: {unique_labels}")
     
-    actual_classes = len(np.unique(train_labels[train_labels != 255]))
-    assert actual_classes == num_classes, f"Found {actual_classes} classes but expected {num_classes}"
+    present = np.unique(train_labels[train_labels != 255])
+    # Guard against OUT-OF-RANGE labels (a real bug), not a missing class. Subsampling
+    # sites (degrade_count) can legitimately drop a class entirely from the training set;
+    # the network keeps all num_classes output channels, the absent class just gets no
+    # training signal (its test recall falls accordingly, which is the measured effect).
+    bad = present[(present < 0) | (present >= num_classes)]
+    assert bad.size == 0, (f"Out-of-range label(s) {bad.tolist()}; expected internal "
+                           f"classes 0..{num_classes - 1} (+255 ignore)")
+    present_ints = set(int(x) for x in present)
+    if len(present_ints) < num_classes:
+        missing = [int(original_classes[i]) for i in range(num_classes) if i not in present_ints]
+        print(f"\nWARNING: only {len(present_ints)}/{num_classes} classes present in "
+              f"training; missing {missing} (absent after site subsampling)")
     
     # Calculate class weights (not used in ordinal mode)
     print("\nCalculating class weights...")
