@@ -6,7 +6,7 @@ Read a predict grid and plot it nicely
 
 ``` r
 plot_predict(
-  tiff = "C:/Work/etc/saltmarsh/data/oth/predicted/predict_oth_2025-Apr-28_13-54.tif",
+  tiff = "C:/Work/saltmarsh/data/oth/predicted/predict_oth_2025-Apr-28_13-54.tif",
   pal = "ggsci::category20b_d3"
 )
 ```
