@@ -41,27 +41,27 @@ library(marshmap)
 -->
 
 ### New version (September 2026)
-This version brings in the new GeoPackage created by Rahim Mian (1 Sep 2026). This version incorporates data edits and uses
-code to produce a single .gpkg. MUs and Transects are represented as points and lines, so need to be filled out:
+This version brings in the new GeoPackage created by Rahim Mian (1 Sep 2026), which incorporates data edits and uses
+code to produce a single .gpkg. MUs and transects are represented as points and lines, respectively, so need to be filled out:
 
 - MU points are buffered 1 m, to produce a 2 m diameter circle
-- Transect lines are clipped back 1 m at each end (collapsing to a point for lines <2 m), then buffered 1 m, such that
-  the final transect polygons are 2 m wide with rounded ends that extend to the length of the line (except for lines <2 m).
-  This better represents the field transects than the old approach, which did square buffers that extended the lines 1 m
+- Transect lines are clipped back 1 m at each end, then buffered 1 m, such that
+  the final transect polygons are 2 m wide with rounded ends that extend to the length of the line. Lines <2 m are treated as an MU.
+  This better represents the field transects than the old approach, which used square buffers that extended the lines 1 m
   at each end.
 
 #### Notes
-- Number of cells are estimated based on dividing the polygons by 8 cm cells, so it won't be exact. These estimates 
+- The number of cells are estimated based on dividing the polygon areas by 8^2 cm, so it won't be exact. These estimates 
   don't drop overlaps.
 - The PI-based water polygons that Angel did in late 2025 have been dropped.
 
 #### Fall 2026 modeling plans
 - Reassess orthophoto availability (as there are additional orthos since Jan 2026)
 - Select 5 sites for EPA report. Pick the ones with the best-looking data, preferring sites with processed hydro.
+- Create water samples from high-tide NIR threshold, sampling random points with MU clipped to NIR threshold.
 - Use U-Net to run the `primary` model for each, combining all years of field data and selecting solid orthos as close to
   the middle years (2021 or 2022) as possible.
 - Make a map for each (as .png with legend, scalebar, and locator)
-- Create water samples from high-tide NIR threshold, sampling random points with MU clipped to NIR threshold.
 
 
 # OTH (Old Town Hill)
