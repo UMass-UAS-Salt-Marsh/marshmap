@@ -27,9 +27,9 @@ seed <- 42
 
 
 # ---- Load data ----
-x <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/water_polys_split.shp')
-raw <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/raw_water_polys.shp')
-boundary <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/NOR_footprint.shp')
+x <- st_read('C:/Work/saltmarsh/data/nor_unet/water_polys_split.shp')
+raw <- st_read('C:/Work/saltmarsh/data/nor_unet/raw_water_polys.shp')
+boundary <- st_read('C:/Work/saltmarsh/data/nor_unet/NOR_footprint.shp')
 
 
 # ---- Additional inward buffer on creeks and pools ----
@@ -82,7 +82,7 @@ water_and_bg <- do.call(rbind, lapply(split(water_and_bg, water_and_bg$subclass)
 
 water_and_bg$poly <- seq_len(nrow(water_and_bg))
 
-st_write(water_and_bg, 'C:/Work/etc/saltmarsh/data/nor_unet/water_polys_final.shp', 
+st_write(water_and_bg, 'C:/Work/saltmarsh/data/nor_unet/water_polys_final.shp', 
          append = FALSE)
 
 

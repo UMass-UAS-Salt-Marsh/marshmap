@@ -36,7 +36,7 @@ db_purge <- function(which, db_name, id_name, rows, failed, undo) {
    # -------- helper functions --------
    
    running <- function(x) {                                                               # --- TRUE for ids that are still running
-      z <- suppressMessages(info(list(callerid = x), cols = c('callerid', 'status'),
+      z <- suppressMessages(info(list(callerid = x), columns = c('callerid', 'status'),
                                  table = FALSE, summary = FALSE))
       if(is.null(z)) return(rep(FALSE, length(x)))
       x %in% z$callerid[z$status %in% c('pending', 'queued', 'running')]

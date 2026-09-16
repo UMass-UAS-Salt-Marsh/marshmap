@@ -3,7 +3,7 @@
 # 16 Jun 2025
 
 
-f <- 'c:/Work/etc/saltmarsh/docs/Orthophoto summary.txt'
+f <- 'c:/Work/saltmarsh/docs/Orthophoto summary.txt'
 x <- readLines(f)
 x <- grep('.tif$', x, value = TRUE)
 x <- grep('bad_', x, invert = TRUE, value = TRUE)

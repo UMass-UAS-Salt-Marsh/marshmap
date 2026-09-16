@@ -16,10 +16,10 @@ library(sf)
 library(terra)
 library(lwgeom)
 
-#r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho__NDWIg.tif')     # NDWI does poorly with shadows and sun, and this image was taken early in the morning of a bright day
+#r <- rast('C:/Work/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho__NDWIg.tif')     # NDWI does poorly with shadows and sun, and this image was taken early in the morning of a bright day
 #r <- r > -0.5
 
-r <- rast('C:/Work/etc/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho.tif')             # instead, use a threshold on NIR. Works way better.
+r <- rast('C:/Work/saltmarsh/data/nor_unet/11Aug23_NOR_High_Mica_Ortho.tif')             # instead, use a threshold on NIR. Works way better.
 r <- r[[5]] < 3000
 
 r[r == 0] <- NA
@@ -28,7 +28,7 @@ names(x)[1] <- 'water'
 x <- suppressWarnings(st_cast(x, 'POLYGON'))
 x <- x[as.numeric(st_area(x)) >= 1, ]                          # minimum mapping unit: 1 m^2
 
-st_write(x, 'C:/Work/etc/saltmarsh/data/nor_unet/raw_water_polys.shp')   # save raw unbuffered water polys
+st_write(x, 'C:/Work/saltmarsh/data/nor_unet/raw_water_polys.shp')   # save raw unbuffered water polys
 
 # --- Light inward buffer (0.1 m) before splitting ---
 #     We'll buffer in some more for creeks and ponds in the 2nd phase; this is what we'll get for ditches
@@ -40,7 +40,7 @@ x <- x[as.numeric(st_area(x)) >= 1, ]                          # enforce 1 m MMU
 
 
 # --- Split by hand-drawn lines ---
-splits <- st_read('C:/Work/etc/saltmarsh/data/nor_unet/nor_water_splits.shp')
+splits <- st_read('C:/Work/saltmarsh/data/nor_unet/nor_water_splits.shp')
 splits <- st_combine(splits)                                   # merge all lines into one geometry
 
 split_polys <- lapply(seq_len(nrow(x)), function(i) {
@@ -58,6 +58,6 @@ x <- do.call(rbind, split_polys)
 
 x$subclass <- 0L                                               # for labeling in GIS
 
-st_write(x, 'C:/Work/etc/saltmarsh/data/nor_unet/water_polys_split.shp', append = FALSE)
+st_write(x, 'C:/Work/saltmarsh/data/nor_unet/water_polys_split.shp', append = FALSE)
 
 print('Now label the polygons in GIS, then run finish_water_polygons')

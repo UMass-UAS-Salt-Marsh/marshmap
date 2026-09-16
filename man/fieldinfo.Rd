@@ -4,11 +4,45 @@
 \alias{fieldinfo}
 \title{Summarize number of field-sampled polys and pixels by class and year}
 \usage{
-fieldinfo(site)
+fieldinfo(
+  site,
+  onefile = TRUE,
+  file = "C:/Work/saltmarsh/data/all_EPA_field/shapes_output.gpkg",
+  buffer = 1
+)
 }
 \arguments{
 \item{site}{Three letter site code}
+
+\item{onefile}{If TRUE, read raw field data for all sites from the GeoPackage \code{file}; if FALSE,
+use the site's \code{transects.tif} and transects shapefile}
+
+\item{file}{GeoPackage with raw field data for all sites, used when \code{onefile = TRUE}}
+
+\item{buffer}{Buffer radius in m for points and lines, and the distance lines are shortened at
+each end, used when \code{onefile = TRUE}}
 }
 \description{
-Summarize number of field-sampled polys and pixels by class and year
+Produces a table for \code{site} with subclass in the rows and year in the columns, and the number of
+8 cm cells and the number of separate polys (in parentheses) in each cell, with row and column
+totals. There are two sources of field data, selected by \code{onefile}.
+}
+\details{
+With \code{onefile = TRUE}, field data for all sites come from a single GeoPackage (\code{file}) holding
+raw field geometry in three layers. As these data haven't been buffered, we do it here:
+\itemize{
+\item points are buffered by \code{buffer}, giving 2 m circles;
+\item lines are shortened by \code{buffer} at each end and then buffered by \code{buffer}, giving 2 m wide
+transects with rounded ends that reach the ends of the original line. Lines too short to
+shorten collapse to their midpoint, giving a 2 m circle;
+\item polygons are used as drawn.
+}
+
+Cell counts are then areas divided by the area of an 8 cm cell, so they're close but not exact:
+cells aren't actually laid on a grid, and overlapping polys are counted for each poly they fall
+in. Note that years are taken as given, unlike the \code{onefile = FALSE} case, which falls back on
+\code{targetyear} and uses year 0 for polys with no year at all.
+
+With \code{onefile = FALSE}, data come from the site's rasterized field transects (\code{transects.tif})
+and the site's transects shapefile, both built by \code{gather}, and cells are counted exactly.
 }
