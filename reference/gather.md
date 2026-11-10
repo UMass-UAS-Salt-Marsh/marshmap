@@ -16,7 +16,9 @@ gather(
   pattern = "",
   update = TRUE,
   check = FALSE,
+  drone = TRUE,
   field = TRUE,
+  field_rasters = FALSE,
   ignore_bad_classes = FALSE,
   replace_ground_truth = FALSE,
   replace_caches = FALSE,
@@ -57,11 +59,24 @@ gather(
   If TRUE, just check to see that source directories and files exist,
   but don't cache or process anything
 
+- drone:
+
+  If TRUE, gather and process drone imagery (geoTIFFs) and run
+  `flights_prep`. If FALSE, imagery source directories aren't even
+  listed, so a field-only run is quick.
+
 - field:
 
   If TRUE, download and process the field transects if they don't
-  already exist. The shapefile is downloaded for reference, and a raster
-  corresponding to `standard` is created.
+  already exist. The processed shapefile is saved to the shapefiles
+  directory.
+
+- field_rasters:
+
+  If TRUE, also make rasters from field transects (`transects.tif`) and
+  from blocks shapefiles, aligned to `standard`. These are only used for
+  random forest models (`sample`, `fit`); U-Net works directly from the
+  transects shapefile, so default is FALSE.
 
 - ignore_bad_classes:
 
@@ -124,7 +139,33 @@ Additional parameters, set in the `gather` block in `pars.yml` (see
   a site name, e.g., `<site> Share/Photogrammetry DEMs`. WARNING: paths
   on the Google Drive are case-sensitive!
 
-- `transects` directory with field transect shapefile
+- `field_style` format of the field data (default `old_transects`):
+
+  - `old_transects` - one shapefile of buffered polygons per site, named
+    in the `transects` column of `sites.txt` (deprecated)
+
+  - `transects` - one GeoPackage for all sites with raw points, lines,
+    and polygons (legacy data through 2025). Points and lines are
+    buffered by `field_buffer`; lines are first shortened by
+    `field_buffer` at each end. Polygons (photo-interpreted water) are
+    used as drawn.
+
+  - `plots` - one GeoPackage for all sites with a circular plot for each
+    sample (2026 on). Points are buffered by `field_buffer`; polygons
+    are used as is.
+
+- `transects` for `old_transects`, the directory with field transect
+  shapefiles; for `transects` and `plots`, the path to the GeoPackage.
+  Relative to `sourcedir`.
+
+- `field_buffer` buffer radius in m for field points and lines (default
+  1). Use 1 for `transects` and 0.7 for `plots`.
+
+- `crs` target projection for all results (default `EPSG:26986`, Mass
+  State Plane, for the legacy data). Use `EPSG:6491+5703` (NAD83(2011) /
+  Massachusetts Mainland + NAVD88 height) for the 2026 data. Only the
+  horizontal component is compared, so sources in `EPSG:6491` aren't
+  reprojected.
 
 - `exclude` list of geoTIFFs to exclude, for whatever reasons. Note that
   files beginning with `bad` are also excluded
@@ -149,17 +190,19 @@ Results:
 
 - models/gather_data.log
 
-All source data will be reprojected to Massachusetts State Plane
-(mainland, NAD83), `EPSG:26986`.
+All source data not already in the target projection (`crs` in
+`pars.yml`) will be reprojected to it.
 
 `sites.txt` must include the name of the footprint shapefile for each
-site, a field transect shapefile, and a standard geoTIFF for each site.
-The footprint is used for clipping and must be present. The transect
-contains ground truth data, and must be present if `field = TRUE`. The
-standard must be present. It is used as the standard for grain and
-alignment; all rasters will be resampled to match. Standards MUST be in
-the standard projection, `EPSG:4326`. Best to use a Mica
-\*\*\*\*\*\*\*\*\*\*\*\*\* orthophoto, with ~9 cm resolution.
+site and a standard geoTIFF for each site. For
+`field_style = old_transects`, it must also name the site's field
+transect shapefile (needed if `field = TRUE`). For the GeoPackage
+styles, field data are matched to sites by the `site` field in the
+GeoPackage. The footprint is used for clipping and must be present. The
+standard must be present if `drone = TRUE` or `field_rasters = TRUE`. It
+is used as the standard for grain and alignment; all rasters will be
+resampled to match. Best to use a Mica orthophoto, with ~9 cm
+resolution.
 
 Note that adding to an existing stack using a different standard will
 lead to sorrow. **BEST PRACTICE**: don't change the standards in

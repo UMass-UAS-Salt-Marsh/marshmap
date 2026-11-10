@@ -13,7 +13,8 @@ check_files(files, gd, sourcedir, resultdir)
 
 - files:
 
-  Vector of files to check
+  Vector of source files to check (paths as listed by
+  [get_dir](https://umass-uas-salt-marsh.github.io/marshmap/reference/get_dir.md))
 
 - gd:
 
@@ -28,7 +29,7 @@ check_files(files, gd, sourcedir, resultdir)
 
 - sourcedir:
 
-  Origin directory of files
+  Origin directory of files (unused; files carry their paths)
 
 - resultdir:
 

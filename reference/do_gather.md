@@ -11,7 +11,9 @@ do_gather(
   pattern = "",
   update,
   check,
+  drone = TRUE,
   field,
+  field_rasters = FALSE,
   ignore_bad_classes,
   replace_ground_truth,
   replace_caches
@@ -46,12 +48,23 @@ do_gather(
   If TRUE, just check to see that source directories and files exist,
   but don't cache or process anything
 
+- drone:
+
+  If TRUE, gather and process drone imagery (geoTIFFs) and run
+  `flights_prep`
+
 - field:
 
   If TRUE, download and process the field transects if they don't
-  already exist. Deal with overlaps in the shapefile–those with more
-  than one subclass will be erased. The shapefile is downloaded for
-  reference, and a raster corresponding to `standard` is created.
+  already exist. The processed shapefile is saved to the shapefiles
+  directory.
+
+- field_rasters:
+
+  If TRUE, also rasterize field transects (`transects.tif`) and blocks
+  shapefiles to match `standard`. Overlaps in the shapefile with more
+  than one subclass are erased for the transects raster. Only used for
+  random forest models.
 
 - ignore_bad_classes:
 
