@@ -9,7 +9,9 @@ gather(
   pattern = "",
   update = TRUE,
   check = FALSE,
+  drone = TRUE,
   field = TRUE,
+  field_rasters = FALSE,
   ignore_bad_classes = FALSE,
   replace_ground_truth = FALSE,
   replace_caches = FALSE,
@@ -38,8 +40,15 @@ process all files and replace existing ones.}
 \item{check}{If TRUE, just check to see that source directories and files exist, but don't
 cache or process anything}
 
+\item{drone}{If TRUE, gather and process drone imagery (geoTIFFs) and run \code{flights_prep}. If
+FALSE, imagery source directories aren't even listed, so a field-only run is quick.}
+
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
-The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
+The processed shapefile is saved to the shapefiles directory.}
+
+\item{field_rasters}{If TRUE, also make rasters from field transects (\code{transects.tif}) and from
+blocks shapefiles, aligned to \code{standard}. These are only used for random forest models
+(\code{sample}, \code{fit}); U-Net works directly from the transects shapefile, so default is FALSE.}
 
 \item{ignore_bad_classes}{If TRUE, don't throw an error if there are classes in the ground
 truth shapefile that don't occur in \code{classes.txt}. Only use this if you're paying careful
@@ -81,7 +90,24 @@ and cache it locally. Must set \code{cachedir} option.
 \item \code{subdirs} subdirectories to search, ending with slash. Default = orthos, DEMs, and canopy height models (okay
 to include empty or nonexistent directories). Use \verb{<site>} in subdirectories that include a site name, e.g.,
 \verb{<site> Share/Photogrammetry DEMs}. WARNING: paths on the Google Drive are case-sensitive!
-\item \code{transects} directory with field transect shapefile
+\item \code{field_style} format of the field data (default \code{old_transects}):
+\itemize{
+\item \code{old_transects} - one shapefile of buffered polygons per site, named in the \code{transects}
+column of \code{sites.txt} (deprecated)
+\item \code{transects} - one GeoPackage for all sites with raw points, lines, and polygons (legacy
+data through 2025). Points and lines are buffered by \code{field_buffer}; lines are first
+shortened by \code{field_buffer} at each end. Polygons (photo-interpreted water) are used as drawn.
+\item \code{plots} - one GeoPackage for all sites with a circular plot for each sample (2026 on).
+Points are buffered by \code{field_buffer}; polygons are used as is.
+}
+\item \code{transects} for \code{old_transects}, the directory with field transect shapefiles; for
+\code{transects} and \code{plots}, the path to the GeoPackage. Relative to \code{sourcedir}.
+\item \code{field_buffer} buffer radius in m for field points and lines (default 1). Use 1 for
+\code{transects} and 0.7 for \code{plots}.
+\item \code{crs} target projection for all results (default \code{EPSG:26986}, Mass State Plane, for the
+legacy data). Use \code{EPSG:6491+5703} (NAD83(2011) / Massachusetts Mainland + NAVD88 height)
+for the 2026 data. Only the horizontal component is compared, so sources in \code{EPSG:6491}
+aren't reprojected.
 \item \code{exclude} list of geoTIFFs to exclude, for whatever reasons. Note that files beginning with \code{bad} are also
 excluded
 \item \code{sftp} \verb{list(url = <address of site>, user = <credentials>)}. Credentials are either \code{username:password} or
@@ -103,14 +129,16 @@ point to these before running!}}
 \item models/gather_data.log
 }
 
-All source data will be reprojected to Massachusetts State Plane (mainland, NAD83), \code{EPSG:26986}.
+All source data not already in the target projection (\code{crs} in \code{pars.yml}) will be reprojected
+to it.
 
-\code{sites.txt} must include the name of the footprint shapefile for each site, a field transect
-shapefile, and a standard geoTIFF for each site. The footprint is used for clipping and must be
-present. The transect contains ground truth data, and must be present if \code{field = TRUE}. The
-standard must be present. It is used as the standard for grain and alignment; all rasters will be
-resampled to match. Standards MUST be in the standard projection, \code{EPSG:4326}. Best to use a Mica          *************
-orthophoto, with ~9 cm resolution.
+\code{sites.txt} must include the name of the footprint shapefile for each site and a standard
+geoTIFF for each site. For \code{field_style = old_transects}, it must also name the site's field
+transect shapefile (needed if \code{field = TRUE}). For the GeoPackage styles, field data are matched
+to sites by the \code{site} field in the GeoPackage. The footprint is used for clipping and must be
+present. The standard must be present if \code{drone = TRUE} or \code{field_rasters = TRUE}. It is used
+as the standard for grain and alignment; all rasters will be resampled to match. Best to use a
+Mica orthophoto, with ~9 cm resolution.
 
 Note that adding to an existing stack using a different standard will lead to sorrow. \strong{BEST
 PRACTICE}: don't change the standards in \code{standards.txt}; if you must change them, clear the

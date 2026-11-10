@@ -105,27 +105,8 @@ field_from_gpkg <- function(file, site, buffer) {
 
    cellsize <- 0.08                                                              # we're counting 8 cm cells
 
-   get <- function(layer) {                                                      # read one layer, keeping just this site
-      z <- st_read(file, layer = layer, promote_to_multi = FALSE, quiet = TRUE)
-      z <- st_zm(z, drop = TRUE)                                                 #    we don't want Z values!
-      names(z) <- tolower(names(z))
-      z[!is.na(z$site) & toupper(z$site) == toupper(site), c('year', 'subclass')]
-   }
-
-
-   pts <- get('shapes_points')                                                   # points: buffer to 2 m circles
-   st_geometry(pts) <- st_buffer(st_geometry(pts), buffer)
-
-   lns <- get('shapes_lines')                                                    # lines: shorten at both ends and then buffer,
-   g <- st_geometry(lns)                                                         #    giving 2 m wide transects with rounded ends
-   if(length(g) > 0)                                                             #    reaching the ends of the original line
-      g <- st_sfc(lapply(g, shorten_line, d = buffer), crs = st_crs(g))
-   st_geometry(lns) <- st_buffer(g, buffer)
-
-   pol <- st_make_valid(get('shapes_polygons'))                                  # polygons: use as drawn, once repaired
-
-
-   x <- rbind(pts, lns, pol)
+   x <- buffer_field_shapes(file, site, buffer, polygons = TRUE)                 # buffered points, lines, and polygons as drawn
+   x <- x[, c('year', 'subclass')]
    if(nrow(x) == 0)
       stop('No field data for site ', site, ' in ', file)
 

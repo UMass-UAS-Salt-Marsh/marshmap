@@ -9,7 +9,9 @@ do_gather(
   pattern = "",
   update,
   check,
+  drone = TRUE,
   field,
+  field_rasters = FALSE,
   ignore_bad_classes,
   replace_ground_truth,
   replace_caches
@@ -33,9 +35,14 @@ process all files and replace existing ones.}
 \item{check}{If TRUE, just check to see that source directories and files exist, but don't
 cache or process anything}
 
+\item{drone}{If TRUE, gather and process drone imagery (geoTIFFs) and run \code{flights_prep}}
+
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
-Deal with overlaps in the shapefile--those with more than one subclass will be erased.
-The shapefile is downloaded for reference, and a raster corresponding to \code{standard} is created.}
+The processed shapefile is saved to the shapefiles directory.}
+
+\item{field_rasters}{If TRUE, also rasterize field transects (\code{transects.tif}) and blocks
+shapefiles to match \code{standard}. Overlaps in the shapefile with more than one subclass are
+erased for the transects raster. Only used for random forest models.}
 
 \item{ignore_bad_classes}{If TRUE, don't throw an error if there are classes in the ground
 truth shapefile that don't occur in \code{classes.txt}. Only use this if you're paying careful

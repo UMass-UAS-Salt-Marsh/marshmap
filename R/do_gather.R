@@ -22,9 +22,12 @@
 #'    process all files and replace existing ones. 
 #' @param check If TRUE, just check to see that source directories and files exist, but don't 
 #'    cache or process anything
-#' @param field If TRUE, download and process the field transects if they don't already exist. 
-#'    Deal with overlaps in the shapefile--those with more than one subclass will be erased.
-#'    The shapefile is downloaded for reference, and a raster corresponding to `standard` is created.
+#' @param drone If TRUE, gather and process drone imagery (geoTIFFs) and run `flights_prep`
+#' @param field If TRUE, download and process the field transects if they don't already exist.
+#'    The processed shapefile is saved to the shapefiles directory.
+#' @param field_rasters If TRUE, also rasterize field transects (`transects.tif`) and blocks
+#'    shapefiles to match `standard`. Overlaps in the shapefile with more than one subclass are
+#'    erased for the transects raster. Only used for random forest models.
 #' @param ignore_bad_classes If TRUE, don't throw an error if there are classes in the ground
 #'    truth shapefile that don't occur in `classes.txt`. Only use this if you're paying careful
 #'    attention, because bad classes will crash `do_map` down the line.
@@ -42,7 +45,8 @@
 
 
 do_gather <- function(site, pattern = '', 
-                      update, check, field, ignore_bad_classes, replace_ground_truth, replace_caches) {
+                      update, check, drone = TRUE, field, field_rasters = FALSE,
+                      ignore_bad_classes, replace_ground_truth, replace_caches) {
    
    
    shuffle <- function(x)                                                           # provide shuffled validation indices stratified by subclasses x
@@ -60,6 +64,13 @@ do_gather <- function(site, pattern = '',
    
    if(!the$gather$sourcedrive %in% c('local', 'google', 'sftp'))                    # make source sourcedrive is good
       stop('sourcedrive must be one of local, google, or sftp')
+
+   field_style <- if(is.null(the$gather$field_style)) 'old_transects' else the$gather$field_style
+   if(!field_style %in% c('old_transects', 'transects', 'plots'))
+      stop('field_style must be one of old_transects, transects, or plots')
+   field_buffer <- if(is.null(the$gather$field_buffer)) 1 else the$gather$field_buffer
+   target_crs <- if(is.null(the$gather$crs)) 'EPSG:26986' else the$gather$crs        # target projection for all results
+   message('Target projection is ', target_crs, '; field style is ', field_style)
    if(any(is.na(sites$site_name)))                                                  # check for missing sites
       stop('Bad site names: ', paste(site[is.na(sites$site_name)], collapse = ', '))
    if(any(t <- is.na(sites$footprint) | sites$footprint == ''))                     # check for missing footprints
@@ -84,8 +95,9 @@ do_gather <- function(site, pattern = '',
       message('Site ', sites$site[i])
       dir <- the$gather$sourcedir
       
-      s <- c(the$gather$subdirs, dirname(sites$standard[i]))                        #    add path to standard to subdirs in case it's not there already
-      s <- gsub('/+', '/', paste0(s, '/'))                                          #    clean up slashes
+      s <- c(if(drone) the$gather$subdirs,                                          #    imagery subdirs only if we're processing drone data,
+             if(drone | field_rasters) dirname(sites$standard[i]))                  #    plus path to standard if we need it
+      s <- if(length(s)) gsub('/+', '/', paste0(s, '/'))                            #    clean up slashes
       s <- unique(s)                                                                #    and drop likely duplicate
       
       x <- NULL
@@ -99,11 +111,20 @@ do_gather <- function(site, pattern = '',
       x <- rbind(x, t[grep('.shp$|.shx$|.prj$|.dbf$', t$name),])                    #    only want .shp, .shx, and .prj
       
       
-      if(field) {                                                                   #    if we're processing field transects,
-         tp <- file.path(the$gather$sourcedir, the$gather$transects)
-         t <- get_dir(tp, the$gather$sourcedrive, 
-                      sftp = the$gather$sftp)                                       #       get transect directory
-         x <- rbind(x, t[grep('.shp$|.shx$|.prj$|.dbf$', t$name),])                 #       only want .shp, .shx, .prj, and .dbf
+      if(field) {                                                                   #    if we're processing field data,
+         if(field_style == 'old_transects') {                                       #       one shapefile per site in transects directory
+            tp <- file.path(the$gather$sourcedir, the$gather$transects)
+            t <- get_dir(tp, the$gather$sourcedrive,
+                         sftp = the$gather$sftp)                                    #       get transect directory
+            x <- rbind(x, t[grep('.shp$|.shx$|.prj$|.dbf$', t$name),])              #       only want .shp, .shx, .prj, and .dbf
+            tname <- sites$transects[i]
+         }
+         else {                                                                     #       else, transects is the path to an all-sites GeoPackage
+            tp <- dirname(file.path(the$gather$sourcedir, the$gather$transects))
+            tname <- basename(the$gather$transects)
+            t <- get_dir(tp, the$gather$sourcedrive, sftp = the$gather$sftp)
+            x <- rbind(x, t[tolower(basename(t$name)) == tolower(tname), ])
+         }
       }
       
       
@@ -111,7 +132,7 @@ do_gather <- function(site, pattern = '',
                  cachedir = the$cachedir, sftp = the$gather$sftp)                   #    info for Google Drive or SFTP
       
       
-      files <- x$name[grep('.tif$', tolower(x$name))]                               #    only want files ending in .tif
+      files <- if(drone) x$name[grep('.tif$', tolower(x$name))] else character(0)   #    only want files ending in .tif (and none if drone = FALSE)
       files <- files[grep(tolower(pattern), tolower(files))]                        #    match user's pattern - this is our definitive list of geoTIFFs to process for this site
       files <- files[grep('^bad_', tolower(files), invert = TRUE)]                  #    BUT drop files that begin with 'bad_', as they're corrupted
       files <- files[!files %in% the$gather$exclude]                                #    also drop files listed in exclude
@@ -133,12 +154,13 @@ do_gather <- function(site, pattern = '',
             rdir <- resolve_dir(the$flightsdir, tolower(sites$site[i]))
             files <- files[!check_files(files, gd, sdir, rdir)]                     #          see which files already exist and are up to date
          }
-         
-         
-         if(check) {                                                                #       if check = TRUE, don't download or process anything
-            message('   ', files)                                                   #          but do print the source file names
-            next
-         }
+      }
+
+
+      if(check) {                                                                   #    if check = TRUE, don't download or process anything
+         if(length(files) != 0)
+            message('   ', paste(files, collapse = '\n   '))                        #       but do print the source file names
+         next
       }
       
       
@@ -161,9 +183,9 @@ do_gather <- function(site, pattern = '',
       footprint <- st_zm(footprint, drop = TRUE)                                    #    we don't want Z values!
       footprint <- st_make_valid(footprint)                                         #    fix any invalid geometries
 
-      if(paste(crs(footprint, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
-         message('         !!! Reprojecting ', basename(sites$footprint[i]), ' to Mass State Plane')
-         footprint <- st_transform(footprint, crs = 26986)
+      if(!crs_matches(footprint, target_crs)) {
+         message('         !!! Reprojecting ', basename(sites$footprint[i]), ' to ', target_crs)
+         footprint <- st_transform(footprint, crs = target_crs)
          footprint <- st_make_valid(footprint)                                      #    fix any geometries broken by reprojection
       }
       
@@ -175,33 +197,41 @@ do_gather <- function(site, pattern = '',
                file.path(sf, paste0(toupper(sites$site[i]), '_footprint.shp')),
                append = FALSE, quiet = TRUE)                                        #    save reprojected footprint
       
-      std <- file.path(rd, basename(sites$standard[i]))                             #    path to stored standard file
-      message('   Standard: ', basename(std))
-      
-      if(!file.exists(std)) {                                                       #    if we don't have the standard in our files yet,
-         r <- suppress_warnings(get_rast(
-            get_file(file.path(dir, sites$standard[i]), gd)), 
-            pattern = dumb_warning, class = 'warning')                              #       get it from the remote drive or the cache
-         if(!dir.exists(rd))
-            dir.create(rd, recursive = TRUE)
-         message('         !!! Reprojecting standard ', basename(std), ' to Mass State Plane')
-         suppress_warnings({
-            project(r$rast, 'epsg:26986') |>                                        #       reproject it to Mass State Plane
-               crop(footprint) |>
-               mask(footprint) |>
-               writeRaster(std, overwrite = TRUE, 
-                           datatype = r$type, NAflag = r$missing)                   #    save raster
-         }, 
-         pattern = dumb_warning, class = 'warning')                                 #    resample, crop, mask, and write to result directory
+      if(drone | field_rasters) {                                                   #----Standard: only needed for imagery or field rasters ----
+         std <- file.path(rd, basename(sites$standard[i]))                          #    path to stored standard file
+         message('   Standard: ', basename(std))
+
+         if(!file.exists(std)) {                                                    #    if we don't have the standard in our files yet,
+            r <- suppress_warnings(get_rast(
+               get_file(file.path(dir, sites$standard[i]), gd)),
+               pattern = dumb_warning, class = 'warning')                           #       get it from the remote drive or the cache
+            if(!dir.exists(rd))
+               dir.create(rd, recursive = TRUE)
+            g <- r$rast
+            if(!crs_matches(g, target_crs)) {
+               message('         !!! Reprojecting standard ', basename(std), ' to ', target_crs)
+               g <- suppress_warnings(project(g, target_crs),                       #       reproject it to target projection
+                                      pattern = dumb_warning, class = 'warning')
+            }
+            suppress_warnings({
+               g |>
+                  crop(footprint) |>
+                  mask(footprint) |>
+                  writeRaster(std, overwrite = TRUE,
+                              datatype = r$type, NAflag = r$missing)                #    save raster
+            },
+            pattern = dumb_warning, class = 'warning')                              #    resample, crop, mask, and write to result directory
+         }
+
+         r <-get_rast(std)                                                          #    new get the standard
+         standard <- r$rast
+         type <- r$type
+         missing <- r$missing                                                       #    *** these are fucking mess. Need to rethink how I do them--they won't be right for transects or blocks
       }
-      
-      r <-get_rast(std)                                                             #    new get the standard
-      standard <- r$rast
-      type <- r$type
-      missing <- r$missing                                                          #    *** these are fucking mess. Need to rethink how I do them--they won't be right for transects or blocks
-      
-      
-      message('   --- Processing ', length(files), ' geoTIFFs ---')
+
+
+      if(drone)
+         message('   --- Processing ', length(files), ' geoTIFFs ---')
       
       
       shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$footprint[i])))
@@ -215,36 +245,39 @@ do_gather <- function(site, pattern = '',
             dir.create(fd, recursive = TRUE)
          
          
-         if(sites$transects[i] != '')                                               #       if we have transects for this site,
-            if(!check_files(sites$transects[i], gd, tp, sf) | 
-               replace_ground_truth) {                                              #          if we don't already have transect results or they're outdated or replace_ground_truth,
-               message(' Processing field transect shapefile')
-               
-               tp <- file.path(the$gather$sourcedir, the$gather$transects)
-               
-               if(the$gather$sourcedrive %in% c('google', 'sftp'))                  #       if reading from Google Drive or SFTP,
-                  get_sidecars(tp, sites$transects[i], gd)                          #       load three sidecar files (include .dbf) for shapefile into cache
-               
-               tpath <- get_file(file.path(tp, sites$transects[i]), gd)             #       path and name of transects shapefile
-               
-               
-               shp <- st_read(tpath, promote_to_multi = FALSE, quiet = TRUE)        #       read transects shapefile
-               shp <- st_zm(shp, drop = TRUE)                                       #       we don't want Z values!
+         trpath <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
+         trname <- paste0(toupper(sites$site[i]), '_transects.shp')
+         tout <- file.path(trpath, trname)                                          #       processed transects shapefile
+
+         if(is.na(tname) || tname == '')                                            #       if we don't have transects for this site, (old_transects only)
+            message(' No field transects for site ', sites$site[i])
+         else if(!file.exists(tout) || file.mtime(tout) < source_mtime(file.path(tp, tname), gd) |
+                 replace_ground_truth |
+                 (field_rasters && !file.exists(file.path(fd, 'transects.tif')))) { #       if we don't already have transect results (or raster, if wanted) or they're outdated or replace_ground_truth,
+            message(' Processing field data (', field_style, ')')
+
+            if(field_style == 'old_transects' &&
+               the$gather$sourcedrive %in% c('google', 'sftp'))                     #       if reading a shapefile from Google Drive or SFTP,
+               get_sidecars(tp, tname, gd)                                          #       load three sidecar files (include .dbf) for shapefile into cache
+
+            tpath <- get_file(file.path(tp, tname), gd)                             #       path and name of field data file
+
+
+            shp <- read_field(tpath, field_style, sites$site[i], field_buffer)      #       read field data and buffer if need be
+            if(nrow(shp) == 0) {
+               message('*** No field data for site ', sites$site[i], ' in ', tname)
+            }
+            else {
                shp <- st_make_valid(shp)                                            #       fix any invalid geometries
                shp <- shp[st_is_valid(shp), ]                                       #       drop anything that survived invalid
-               
-               if(paste(crs(shp, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
-                  message('         !!! Reprojecting ', basename(tpath), ' to Mass State Plane')
-                  shp <- st_transform(shp, crs = 26986)
+
+               if(!crs_matches(shp, target_crs)) {
+                  message('         !!! Reprojecting ', basename(tpath), ' to ', target_crs)
+                  shp <- st_transform(shp, crs = target_crs)
                   shp <- st_make_valid(shp)                                         #       fix any geometries broken by reprojection
                   shp <- shp[st_is_valid(shp), ]                                    #       drop anything that survived invalid
                }
-               
-               names(shp) <- tolower(names(shp))                                    #       we want lowercase names in ground truth shapefile
-               
-               if(is.character(shp$subclass))                                       #       if subclass is character, turn it into damn numbers!
-                  shp$subclass <- as.numeric(shp$subclass)
-               
+
                u <- sort(unique(shp$subclass))
                bad <- u[!u %in% read_pars_table('classes')$subclass]
                if(length(bad) > 0) {
@@ -255,53 +288,51 @@ do_gather <- function(site, pattern = '',
                }
                
                shp$poly <- 1:nrow(shp)                                              #       add unique poly ids
-               
-               shp$year <- as.numeric(shp$year)
-               if(!is.null(shp$targetyear))
-                  shp$year <- ifelse(is.na(shp$year), shp$targetyear, shp$year)     #       where year is missing, use targetyear - this will fill in for PI
-               shp$year[is.na(shp$year)] <- 0                                       #       set NA years to 0
-               
+
                for(j in 1:5)                                                        #       add 5 _bypoly columns
                   shp[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(shp$subclass)
-               
-               trpath <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
-               trname <- paste0(toupper(sites$site[i]), '_transects.shp')
-               tr_rejname <- paste0(toupper(sites$site[i]), '_transects_incl_rejects.shp')
-               st_write(shp, file.path(trpath, tr_rejname), 
-                        append = FALSE, quiet = TRUE)                               #       save the processed transects shapefile with rejected columns intact
-               
-               if(!is.null(shp$reject))                                             #       if there's a reject column,
-                  shp <- shp[is.na(shp$reject) | shp$reject == 0, ]                 #          DROP rejected rows
-               
-               st_write(shp, file.path(trpath, trname), 
-                                       append = FALSE, quiet = TRUE)                #       save the processed transects shapefile 
-               
-               
-               shp <- overlaps(shp, 'subclass', all = FALSE)                        #       remove unequal overlaps for raster transects (all years) ----
-               
-               suppress_warnings(transects <-                                       #       mask gives a bogus warning that CRS do not match
-                                    rasterize(shp, standard, 
-                                              field = 'poly')$poly |>               #       convert it to raster populated with unique poly id
-                                    crop(footprint) |>                              #       crop, mask, and write
-                                    mask(footprint) |>
-                                    writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
-                                                datatype = type, NAflag = missing))
-               
-               if(all(is.na(values(transects)))) {
-                  message('*** Ground truth data are all missing!!')
-                  unlink(file.path(fd, 'transects.tif'))
+
+               shp <- shapefile_names(shp)                                          #       truncate long names so st_write doesn't mangle the rest
+
+               if(!is.null(shp$reject)) {                                           #       if there's a reject column (old_transects),
+                  tr_rejname <- paste0(toupper(sites$site[i]), '_transects_incl_rejects.shp')
+                  st_write(shp, file.path(trpath, tr_rejname),
+                           append = FALSE, quiet = TRUE)                            #          save the processed transects shapefile with rejected rows intact
+                  shp <- shp[is.na(shp$reject) | shp$reject == 0, ]                 #          and DROP rejected rows
                }
-               
-               shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$transects[i])))
-               # for(f in shps)
-               #    file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
-               # count$transect <- count$transect + 1
+
+               suppress_warnings(st_write(shp, tout, append = FALSE, quiet = TRUE), #       save the processed transects shapefile
+                                 pattern = 'abbreviated|created as String|truncated',
+                                 class = 'warning')                                 #       (we don't care that shapefiles mangle names and dates)
+               message('   ', nrow(shp), ' field polys written to ', trname)
+
+
+               count$transect <- count$transect + 1
+
+
+               if(field_rasters) {                                                  #       if making field rasters (random forest only),
+                  shp <- overlaps(shp, 'subclass', all = FALSE)                     #          remove unequal overlaps for raster transects (all years) ----
+
+                  suppress_warnings(transects <-                                    #          mask gives a bogus warning that CRS do not match
+                                       rasterize(shp, standard,
+                                                 field = 'poly')$poly |>            #          convert it to raster populated with unique poly id
+                                       crop(footprint) |>                           #          crop, mask, and write
+                                       mask(footprint) |>
+                                       writeRaster(file.path(fd, 'transects.tif'), overwrite = TRUE,
+                                                   datatype = type, NAflag = missing))
+
+                  if(all(is.na(values(transects)))) {
+                     message('*** Ground truth data are all missing!!')
+                     unlink(file.path(fd, 'transects.tif'))
+                  }
+               }
             }
+         }
       }
-      
-      
+
+
       bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                      #----Read blocks shapefiles from local drive, correct projection assumed ----
-      if(dir.exists(bd)) {                                                          #    if the blocks directory exists, have a look
+      if(field_rasters && dir.exists(bd)) {                                         #    if making field rasters and the blocks directory exists, have a look
          
          blocks <- file.path(bd, list.files(bd, pattern = '.shp$', 
                                             ignore.case = TRUE))
@@ -349,15 +380,15 @@ do_gather <- function(site, pattern = '',
             g <- g[[1]]                                                             #       it's 3 redundant bands, so just take first one
          
          
-         if(paste(crs(g, describe = TRUE)[c('authority', 'code')], collapse = ':') != 'EPSG:26986') {
-            message('         !!! Reprojecting ', j, ' to Mass State Plane')
+         if(!crs_matches(g, target_crs)) {
+            message('         !!! Reprojecting ', j, ' to ', target_crs)
             g <- suppress_warnings({
-               project(g, 'epsg:26986')
+               project(g, target_crs)
             },
             pattern = dumb_warning, class = 'warning')
          }
          else
-            terra::crs(g) <- 'EPSG:26986'                                           #    prevent warnings when CRS is but isn't EPSG:26986 (e.g., 20Jun22_OTH_High_SWIR_Ortho.tif)
+            terra::crs(g) <- terra::crs(standard)                                   #    prevent warnings when CRS is but isn't the target (e.g., 20Jun22_OTH_High_SWIR_Ortho.tif)
          
          suppress_warnings({
             resample(g, standard, method = 'bilinear', threads = TRUE) |>
@@ -370,7 +401,8 @@ do_gather <- function(site, pattern = '',
       }
       
       
-      flights_prep(site, replace_caches = replace_caches)                           #    now count missing values and cache images for screen
+      if(drone)
+         flights_prep(site, replace_caches = replace_caches)                        #    now count missing values and cache images for screen
       
       message('Finished with site ', sites$site[i])
    }
