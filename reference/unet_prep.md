@@ -33,8 +33,8 @@ unet_prep(
 
   - classes: vector of target classes
 
-  - transects: base name of field transects shapefile (default:
-    "transects")
+  - transects: base name of field transects file,
+    `<SITE>_<transects>.gpkg` (or `.shp`) (default: "transects")
 
   - holdout_col: holdout set to use (uses bypoly). Holdout sets are
     created by `gather`, numbering each poly from 1 to 10, repeating if

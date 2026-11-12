@@ -103,13 +103,13 @@ FALSE, imagery source directories aren't even listed, so a field-only run is qui
 
 <dt id="arg-field">field<a class="anchor" aria-label="anchor" href="#arg-field"></a></dt>
 <dd><p>If TRUE, download and process the field transects if they don't already exist.
-The processed shapefile is saved to the shapefiles directory.</p></dd>
+The processed transects are saved as <code>&lt;SITE&gt;_transects.gpkg</code> in the shapefiles directory.</p></dd>
 
 
 <dt id="arg-field-rasters">field_rasters<a class="anchor" aria-label="anchor" href="#arg-field-rasters"></a></dt>
 <dd><p>If TRUE, also make rasters from field transects (<code>transects.tif</code>) and from
 blocks shapefiles, aligned to <code>standard</code>. These are only used for random forest models
-(<code>sample</code>, <code>fit</code>); U-Net works directly from the transects shapefile, so default is FALSE.</p></dd>
+(<code>sample</code>, <code>fit</code>); U-Net works directly from the transects GeoPackage, so default is FALSE.</p></dd>
 
 
 <dt id="arg-ignore-bad-classes">ignore_bad_classes<a class="anchor" aria-label="anchor" href="#arg-ignore-bad-classes"></a></dt>
@@ -178,14 +178,17 @@ excluded</p></li>
 <code>*filename</code> with <code>username:password</code>. Make sure
 to include credential files in <code>.gitignore</code> and <code>.Rbuildignore</code> so it doesn't end up out in the world!</p></li>
 </ul><p>Source data:</p><ul><li><p>geoTIFFs for each site</p></li>
-<li><p><code>sites</code> file, table of site abbreviation, site name, footprint shapefile, raster standard, and transect
+<li><p><code>sites</code> file, table of site abbreviation, site name, footprint (shapefile or single-layer GeoPackage), raster standard, and transect
 shapefile.</p></li>
 </ul><p>Results:</p><ul><li><p>flights/geoTIFFs, clipped, resampled, and aligned. <em><strong>Make sure you've closed ArcGIS/QGIS projects that
 point to these before running!</strong></em></p></li>
+<li><p>shapefiles/<code>&lt;SITE&gt;_footprint.gpkg</code> and <code>&lt;SITE&gt;_transects.gpkg</code>, in the target projection.
+If one of these is locked (open in ArcGIS/QGIS), you'll be asked to close it in an
+interactive session; batch jobs throw an error.</p></li>
 <li><p>models/gather_data.log</p></li>
 </ul><p>All source data not already in the target projection (<code>crs</code> in <code>pars.yml</code>) will be reprojected
 to it.</p>
-<p><code>sites.txt</code> must include the name of the footprint shapefile for each site and a standard
+<p><code>sites.txt</code> must include the name of the footprint (shapefile or single-layer GeoPackage) for each site and a standard
 geoTIFF for each site. For <code>field_style = old_transects</code>, it must also name the site's field
 transect shapefile (needed if <code>field = TRUE</code>). For the GeoPackage styles, field data are matched
 to sites by the <code>site</code> field in the GeoPackage. The footprint is used for clipping and must be

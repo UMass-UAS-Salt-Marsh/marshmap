@@ -21,11 +21,11 @@ This documentation is a work in progress.
 
 ### Install the package and dependencies
 
-    # install.packages("devtools")
-    devtools::install_github('UMass-UAS-Salt-Marsh/marshmap')
-    devtools::install_github('UMassCDS/slurmcollie')                                    # a companion package required for running batch jobs on Unity
-    devtools::install_github('bwcompton/batchtools', ref = 'bwcompton-robust-sbatch')   # while waiting for pull request
-    devtools::install_github('ethanplunkett/rasterPrep')
+    # install.packages('pak')
+    pak::pak('UMass-UAS-Salt-Marsh/marshmap')
+    pak::pak('UMassCDS/slurmcollie')                                    # a companion package required for running batch jobs on Unity
+    pak::pak('bwcompton/batchtools', ref = 'bwcompton-robust-sbatch')   # while waiting for pull request
+    pak::pak('ethanplunkett/rasterPrep')
 
 ### Authorize Google Drive
 

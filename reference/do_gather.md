@@ -56,8 +56,8 @@ do_gather(
 - field:
 
   If TRUE, download and process the field transects if they don't
-  already exist. The processed shapefile is saved to the shapefiles
-  directory.
+  already exist. The processed transects are saved as
+  `<SITE>_transects.gpkg` in the shapefiles directory.
 
 - field_rasters:
 
