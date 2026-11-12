@@ -19,9 +19,8 @@
 unet_prep_setup <- function(config) {
 
 
-   transect_file <- file.path(resolve_dir(the$shapefilesdir, config$site), paste0(toupper(config$site), '_', config$transects, '.shp'))
-   if(!file.exists(transect_file))
-      stop('Transects file not found: ', transect_file)
+   transect_file <- vector_file(resolve_dir(the$shapefilesdir, config$site),
+                                paste0(toupper(config$site), '_', config$transects))   # GeoPackage or shapefile; error if neither
 
 
    # 1. Build input stack
@@ -30,8 +29,7 @@ unet_prep_setup <- function(config) {
 
 
    message('Loading transects...')
-   transects <- st_read(transect_file,
-                        promote_to_multi = FALSE, quiet = TRUE)               # ----- read transects
+   transects <- read_vector(transect_file, promote_to_multi = FALSE)          # ----- read transects
 
    if(config$reclass != '') {                                                 # if reclassifying transects (for multi-stage models),
       classes <- read_pars_table('classes')                                   #    read classes file

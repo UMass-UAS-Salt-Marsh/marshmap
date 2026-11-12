@@ -172,8 +172,8 @@ field_from_raster <- function(site) {
    ft <- file.path(f, 'transects.tif')
    field <- rast(ft)
 
-   tf <- paste0(toupper(site), '_transects.shp')                                 # transects shapefile
-   ts <- file.path(resolve_dir(the$shapefilesdir, site), tf)
+   ts <- vector_file(resolve_dir(the$shapefilesdir, site),
+                     paste0(toupper(site), '_transects'))                        # transects file (GeoPackage or shapefile)
    shp <- data.frame(st_read(ts, quiet = TRUE))
 
    g <- values(field)                                                            # get cell counts by poly

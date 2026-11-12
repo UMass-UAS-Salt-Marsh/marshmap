@@ -45,7 +45,7 @@ read_field <- function(path, style, site, buffer) {
                },
                transects = buffer_field_shapes(path, site, buffer, polygons = TRUE),
                plots = {
-                  z <- st_read(path, promote_to_multi = FALSE, quiet = TRUE)
+                  z <- read_vector(path, promote_to_multi = FALSE)                       # single-layer GeoPackage
                   z <- clean_field_names(st_zm(z, drop = TRUE))
                   z <- z[!is.na(z$site) & toupper(z$site) == toupper(site), ]
                   pts <- st_geometry_type(z) %in% c('POINT', 'MULTIPOINT')
@@ -130,36 +130,6 @@ clean_field_names <- function(z) {
    n <- names(z)
    k <- n != attr(z, 'sf_column')
    n[k] <- gsub('[^a-z0-9_]+', '_', tolower(n[k]))
-   names(z) <- n
-   z
-}
-
-
-
-#' Make field names safe for shapefiles
-#' 
-#' Shapefiles allow at most 10 characters in field names. If any are longer, `st_write`
-#' abbreviates *all* names, mangling ones we rely on (`subclass` becomes `subclss`). Instead, we
-#' truncate only the long ones, keeping them unique.
-#' 
-#' @param z `sf` object
-#' @returns `z` with field names of 10 characters or fewer
-#' @keywords internal
-
-
-shapefile_names <- function(z) {
-   
-   
-   n <- names(z)
-   k <- n != attr(z, 'sf_column') & nchar(n) > 10
-   n[k] <- substr(n[k], 1, 10)
-   for(j in which(k)) {                                                                 # keep them unique, still within 10 characters
-      m <- 1
-      while(sum(n == n[j]) > 1) {
-         n[j] <- paste0(substr(n[j], 1, 10 - nchar(m)), m)
-         m <- m + 1
-      }
-   }
    names(z) <- n
    z
 }

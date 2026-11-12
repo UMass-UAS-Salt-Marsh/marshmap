@@ -24,7 +24,7 @@
 #'    cache or process anything
 #' @param drone If TRUE, gather and process drone imagery (geoTIFFs) and run `flights_prep`
 #' @param field If TRUE, download and process the field transects if they don't already exist.
-#'    The processed shapefile is saved to the shapefiles directory.
+#'    The processed transects are saved as `<SITE>_transects.gpkg` in the shapefiles directory.
 #' @param field_rasters If TRUE, also rasterize field transects (`transects.tif`) and blocks
 #'    shapefiles to match `standard`. Overlaps in the shapefile with more than one subclass are
 #'    erased for the transects raster. Only used for random forest models.
@@ -107,8 +107,8 @@ do_gather <- function(site, pattern = '',
                                sftp = the$gather$sftp))                             #       get directory
       
       t <- get_dir(file.path(dir, dirname(sites$footprint[i])), 
-                   the$gather$sourcedrive, sftp = the$gather$sftp)                  #    Now get directory for footprint shapefile
-      x <- rbind(x, t[grep('.shp$|.shx$|.prj$|.dbf$', t$name),])                    #    only want .shp, .shx, and .prj
+                   the$gather$sourcedrive, sftp = the$gather$sftp)                  #    Now get directory for footprint (shapefile or GeoPackage)
+      x <- rbind(x, t[grep('\\.(shp|shx|prj|dbf|gpkg)$', tolower(t$name)),])        #    only want .shp, .shx, .prj, .dbf, and .gpkg
       
       
       if(field) {                                                                   #    if we're processing field data,
@@ -171,15 +171,16 @@ do_gather <- function(site, pattern = '',
          dir.create(rd, recursive = TRUE)
       
       
-      get_sidecars <- function(path, file, gd) {                                    #    helper function: cache shapefile sidecar files
-         for(ext in c('.shx', '.prj', '.dbf'))
-            t <- get_file(file.path(path, sub('.shp$', ext, file)), gd) 
+      get_sidecars <- function(path, file, gd) {                                    #    helper function: cache shapefile sidecar files (nothing to do for GeoPackages)
+         if(grepl('\\.shp$', file, ignore.case = TRUE))
+            for(ext in c('.shx', '.prj', '.dbf'))
+               t <- get_file(file.path(path, sub('\\.shp$', ext, file, ignore.case = TRUE)), gd)
       }
-      
+
       if(the$gather$sourcedrive %in% c('google', 'sftp'))                           #----Read footprint: if reading from Google Drive or SFTP,
-         get_sidecars(dir, sites$footprint[i], gd)                                  #       load two sidecar files for shapefile into cache
-      footprint <- st_read(get_file(file.path(dir, sites$footprint[i]), 
-                                    gd), promote_to_multi = FALSE, quiet = TRUE)    #    read footprint shapefile (we always do this 'cuz it's cheap)
+         get_sidecars(dir, sites$footprint[i], gd)                                  #       load sidecar files for shapefile into cache
+      footprint <- read_vector(get_file(file.path(dir, sites$footprint[i]), gd),
+                               promote_to_multi = FALSE)                            #    read footprint, shapefile or single-layer GeoPackage (we always do this 'cuz it's cheap)
       footprint <- st_zm(footprint, drop = TRUE)                                    #    we don't want Z values!
       footprint <- st_make_valid(footprint)                                         #    fix any invalid geometries
 
@@ -193,9 +194,8 @@ do_gather <- function(site, pattern = '',
       if(!dir.exists(sf))
          dir.create(sf, recursive = TRUE)
       
-      st_write(footprint, 
-               file.path(sf, paste0(toupper(sites$site[i]), '_footprint.shp')),
-               append = FALSE, quiet = TRUE)                                        #    save reprojected footprint
+      write_vector(footprint,
+                   file.path(sf, paste0(toupper(sites$site[i]), '_footprint.gpkg'))) #    save reprojected footprint
       
       if(drone | field_rasters) {                                                   #----Standard: only needed for imagery or field rasters ----
          std <- file.path(rd, basename(sites$standard[i]))                          #    path to stored standard file
@@ -234,11 +234,6 @@ do_gather <- function(site, pattern = '',
          message('   --- Processing ', length(files), ' geoTIFFs ---')
       
       
-      shps <- list.files(the$cachedir, pattern = tools::file_path_sans_ext(basename(sites$footprint[i])))
-      for(f in shps)
-         file.copy(file.path(the$cachedir, f), sf, overwrite = TRUE, copy.date = TRUE)
-      
-      
       if(field) {                                                                   #----if reading field transect shapefile, ----
          fd <- resolve_dir(the$fielddir, tolower(sites$site[i]))
          if(!dir.exists(fd))                                                        #       create field directory if it doesn't exist
@@ -246,8 +241,8 @@ do_gather <- function(site, pattern = '',
          
          
          trpath <- resolve_dir(the$shapefilesdir, tolower(sites$site[i]))
-         trname <- paste0(toupper(sites$site[i]), '_transects.shp')
-         tout <- file.path(trpath, trname)                                          #       processed transects shapefile
+         trname <- paste0(toupper(sites$site[i]), '_transects.gpkg')
+         tout <- file.path(trpath, trname)                                          #       processed transects GeoPackage
 
          if(is.na(tname) || tname == '')                                            #       if we don't have transects for this site, (old_transects only)
             message(' No field transects for site ', sites$site[i])
@@ -292,18 +287,13 @@ do_gather <- function(site, pattern = '',
                for(j in 1:5)                                                        #       add 5 _bypoly columns
                   shp[[paste0('bypoly', sprintf('%02d', j))]] <- shuffle(shp$subclass)
 
-               shp <- shapefile_names(shp)                                          #       truncate long names so st_write doesn't mangle the rest
-
                if(!is.null(shp$reject)) {                                           #       if there's a reject column (old_transects),
-                  tr_rejname <- paste0(toupper(sites$site[i]), '_transects_incl_rejects.shp')
-                  st_write(shp, file.path(trpath, tr_rejname),
-                           append = FALSE, quiet = TRUE)                            #          save the processed transects shapefile with rejected rows intact
+                  tr_rejname <- paste0(toupper(sites$site[i]), '_transects_incl_rejects.gpkg')
+                  write_vector(shp, file.path(trpath, tr_rejname))                 #          save the processed transects with rejected rows intact
                   shp <- shp[is.na(shp$reject) | shp$reject == 0, ]                 #          and DROP rejected rows
                }
 
-               suppress_warnings(st_write(shp, tout, append = FALSE, quiet = TRUE), #       save the processed transects shapefile
-                                 pattern = 'abbreviated|created as String|truncated',
-                                 class = 'warning')                                 #       (we don't care that shapefiles mangle names and dates)
+               write_vector(shp, tout)                                              #       save the processed transects
                message('   ', nrow(shp), ' field polys written to ', trname)
 
 
@@ -331,10 +321,10 @@ do_gather <- function(site, pattern = '',
       }
 
 
-      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                      #----Read blocks shapefiles from local drive, correct projection assumed ----
+      bd <- resolve_dir(the$blocksdir, tolower(sites$site[i]))                      #----Read blocks vector files from local drive, correct projection assumed ----
       if(field_rasters && dir.exists(bd)) {                                         #    if making field rasters and the blocks directory exists, have a look
          
-         blocks <- file.path(bd, list.files(bd, pattern = '.shp$', 
+         blocks <- file.path(bd, list.files(bd, pattern = '\\.(shp|gpkg)$',
                                             ignore.case = TRUE))
          for(block in blocks) {                                                     #    for each blocks shapefile, see if raster exists and is up to date,
             s <- file.mtime(block)
@@ -407,6 +397,6 @@ do_gather <- function(site, pattern = '',
       message('Finished with site ', sites$site[i])
    }
    d <- as.duration(interval(start, Sys.time()))
-   message('Run finished. ', count$tiff,' geoTIFFs and ', count$transect, ' transect shapefiles processed in ', round(d), ifelse(count$tiff == 0, '', paste0('; ', round(d / count$tiff), ' per geoTIFF.')))
+   message('Run finished. ', count$tiff,' geoTIFFs and ', count$transect, ' transect files processed in ', round(d), ifelse(count$tiff == 0, '', paste0('; ', round(d / count$tiff), ' per geoTIFF.')))
 }
 

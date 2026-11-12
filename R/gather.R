@@ -41,18 +41,21 @@
 #' 
 #' Source data: 
 #'   - geoTIFFs for each site
-#'   - `sites` file, table of site abbreviation, site name, footprint shapefile, raster standard, and transect 
+#'   - `sites` file, table of site abbreviation, site name, footprint (shapefile or single-layer GeoPackage), raster standard, and transect 
 #'     shapefile.
 #'
 #' Results: 
 #'   - flights/geoTIFFs, clipped, resampled, and aligned. ***Make sure you've closed ArcGIS/QGIS projects that 
 #'   point to these before running!***
+#'   - shapefiles/`<SITE>_footprint.gpkg` and `<SITE>_transects.gpkg`, in the target projection.
+#'     If one of these is locked (open in ArcGIS/QGIS), you'll be asked to close it in an
+#'     interactive session; batch jobs throw an error.
 #'   - models/gather_data.log
 #' 
 #' All source data not already in the target projection (`crs` in `pars.yml`) will be reprojected
 #' to it.
 #'
-#' `sites.txt` must include the name of the footprint shapefile for each site and a standard
+#' `sites.txt` must include the name of the footprint (shapefile or single-layer GeoPackage) for each site and a standard
 #' geoTIFF for each site. For `field_style = old_transects`, it must also name the site's field
 #' transect shapefile (needed if `field = TRUE`). For the GeoPackage styles, field data are matched
 #' to sites by the `site` field in the GeoPackage. The footprint is used for clipping and must be
@@ -106,10 +109,10 @@
 #' @param drone If TRUE, gather and process drone imagery (geoTIFFs) and run `flights_prep`. If
 #'    FALSE, imagery source directories aren't even listed, so a field-only run is quick.
 #' @param field If TRUE, download and process the field transects if they don't already exist.
-#'    The processed shapefile is saved to the shapefiles directory.
+#'    The processed transects are saved as `<SITE>_transects.gpkg` in the shapefiles directory.
 #' @param field_rasters If TRUE, also make rasters from field transects (`transects.tif`) and from
 #'    blocks shapefiles, aligned to `standard`. These are only used for random forest models
-#'    (`sample`, `fit`); U-Net works directly from the transects shapefile, so default is FALSE.
+#'    (`sample`, `fit`); U-Net works directly from the transects GeoPackage, so default is FALSE.
 #' @param ignore_bad_classes If TRUE, don't throw an error if there are classes in the ground
 #'    truth shapefile that don't occur in `classes.txt`. Only use this if you're paying careful
 #'    attention, because bad classes will crash `do_map` down the line.

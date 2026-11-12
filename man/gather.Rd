@@ -44,11 +44,11 @@ cache or process anything}
 FALSE, imagery source directories aren't even listed, so a field-only run is quick.}
 
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
-The processed shapefile is saved to the shapefiles directory.}
+The processed transects are saved as \verb{<SITE>_transects.gpkg} in the shapefiles directory.}
 
 \item{field_rasters}{If TRUE, also make rasters from field transects (\code{transects.tif}) and from
 blocks shapefiles, aligned to \code{standard}. These are only used for random forest models
-(\code{sample}, \code{fit}); U-Net works directly from the transects shapefile, so default is FALSE.}
+(\code{sample}, \code{fit}); U-Net works directly from the transects GeoPackage, so default is FALSE.}
 
 \item{ignore_bad_classes}{If TRUE, don't throw an error if there are classes in the ground
 truth shapefile that don't occur in \code{classes.txt}. Only use this if you're paying careful
@@ -118,7 +118,7 @@ to include credential files in \code{.gitignore} and \code{.Rbuildignore} so it 
 Source data:
 \itemize{
 \item geoTIFFs for each site
-\item \code{sites} file, table of site abbreviation, site name, footprint shapefile, raster standard, and transect
+\item \code{sites} file, table of site abbreviation, site name, footprint (shapefile or single-layer GeoPackage), raster standard, and transect
 shapefile.
 }
 
@@ -126,13 +126,16 @@ Results:
 \itemize{
 \item flights/geoTIFFs, clipped, resampled, and aligned. \emph{\strong{Make sure you've closed ArcGIS/QGIS projects that
 point to these before running!}}
+\item shapefiles/\verb{<SITE>_footprint.gpkg} and \verb{<SITE>_transects.gpkg}, in the target projection.
+If one of these is locked (open in ArcGIS/QGIS), you'll be asked to close it in an
+interactive session; batch jobs throw an error.
 \item models/gather_data.log
 }
 
 All source data not already in the target projection (\code{crs} in \code{pars.yml}) will be reprojected
 to it.
 
-\code{sites.txt} must include the name of the footprint shapefile for each site and a standard
+\code{sites.txt} must include the name of the footprint (shapefile or single-layer GeoPackage) for each site and a standard
 geoTIFF for each site. For \code{field_style = old_transects}, it must also name the site's field
 transect shapefile (needed if \code{field = TRUE}). For the GeoPackage styles, field data are matched
 to sites by the \code{site} field in the GeoPackage. The footprint is used for clipping and must be

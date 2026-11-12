@@ -38,7 +38,7 @@ cache or process anything}
 \item{drone}{If TRUE, gather and process drone imagery (geoTIFFs) and run \code{flights_prep}}
 
 \item{field}{If TRUE, download and process the field transects if they don't already exist.
-The processed shapefile is saved to the shapefiles directory.}
+The processed transects are saved as \verb{<SITE>_transects.gpkg} in the shapefiles directory.}
 
 \item{field_rasters}{If TRUE, also rasterize field transects (\code{transects.tif}) and blocks
 shapefiles to match \code{standard}. Overlaps in the shapefile with more than one subclass are
