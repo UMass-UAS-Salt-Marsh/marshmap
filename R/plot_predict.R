@@ -6,7 +6,7 @@
 #' @keywords internal
 
 
-plot_predict <- function(tiff = 'C:/Work/etc/saltmarsh/data/oth/predicted/predict_oth_2025-Apr-28_13-54.tif',
+plot_predict <- function(tiff = 'C:/Work/saltmarsh/data/oth/predicted/predict_oth_2025-Apr-28_13-54.tif',
                          pal = 'ggsci::category20b_d3') {
    
    

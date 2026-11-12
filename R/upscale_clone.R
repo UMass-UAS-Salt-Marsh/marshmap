@@ -78,8 +78,8 @@ upscale_clone <- function(site, newsite, cellsize) {
    message('Finished upscaling orthos')
    
    
-   tf <- paste0(toupper(site), '_transects.shp')                           # transects shapefile
-   field <- file.path(resolve_dir(the$shapefilesdir, site), tf) 
+   field <- vector_file(resolve_dir(the$shapefilesdir, site),
+                        paste0(toupper(site), '_transects'))               # transects file (GeoPackage or shapefile)
    
    fieldresult <- resolve_dir(the$fielddir, newsite)
    

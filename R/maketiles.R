@@ -1,6 +1,6 @@
 #' Create tiles with numbered blocks
 #' 
-#' Create one or more shapefiles corresponding to the named site with tiles of the
+#' Create one or more GeoPackages corresponding to the named site with tiles of the
 #' specified sizes, numbered in square blocks of 1-9. Used with the `blocks` option
 #' in `fit` to reduce the effects of spatial autocorrelation.
 #'
@@ -13,15 +13,14 @@
 maketiles <- function(site, sizes) {
    
    
-   source <- file.path(resolve_dir(the$shapefilesdir, site), 
-                       basename(get_sites(site)$footprint))
+   source <- vector_file(resolve_dir(the$shapefilesdir, site),
+                         paste0(toupper(site), '_footprint'))              # footprint written by gather (GeoPackage or shapefile)
    rpath <- resolve_dir(the$blocksdir, site)
    if(!dir.exists(rpath))
       dir.create(rpath, recursive = TRUE)
    
    
-   ground_m <- st_read(source, quiet = TRUE)                                # read site footprint, already in Mass State Plane
- #  ground_m <- st_transform(ground, crs = 26986)                           # transform the footprint to Mass State Plane so we're in meters
+   ground_m <- read_vector(source)                                         # read site footprint, already in target projection (meters)
    
    e <- st_bbox(ground_m)
    ext <- c(e$xmax - e$xmin, e$ymax - e$ymin)                              # extent of footprint in meters
@@ -31,7 +30,7 @@ maketiles <- function(site, sizes) {
       
       tiles_m <- st_make_grid(ground_m, cellsize = size, 
                               what = 'polygons', square = TRUE)            #    make tiles of specified size
-      tiles <- st_sf(geometry = st_transform(tiles_m, crs(ground)))        #    transform back to epsg:4326
+      tiles <- st_sf(geometry = tiles_m)                                   #    tiles are in the footprint's projection
       
       
       cells <- ceiling(rev(ext) / size)                                    #    rows and columns in cells
@@ -41,10 +40,9 @@ maketiles <- function(site, sizes) {
       z <- do.call(rbind, rep(list(y), blocks[1]))                         #    and repeat it across and down
       z <- z[1:cells[1], 1:cells[2]]                                       #    trim edges
       tiles$block <- as.vector(t(z[cells[1]:1, ]) )                        #    assign blocks to shapefile attribute, top to bottom
-      st_write(tiles, f <- file.path(rpath, paste0('tiles', size, '.shp')), 
-               append = FALSE, quiet = TRUE)                               #    save the shapefile
+      write_vector(tiles, f <- file.path(rpath, paste0('tiles', size, '.gpkg')))   #    save the tiles
       message(f, ' written')
    }
    
-   message('Created ', length(sizes), ' tiles shapefile', ifelse(length(sizes == 1), '', 's'), ' for site ', site)
+   message('Created ', length(sizes), ' tiles file', ifelse(length(sizes == 1), '', 's'), ' for site ', site)
 }

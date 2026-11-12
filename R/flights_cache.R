@@ -37,8 +37,8 @@ flights_cache <- function(site, replace_caches = FALSE) {
    message('   Building cached images for ', length(files), ' orthos...')
    
    sites <- read_pars_table('sites')
-   footfile <- file.path(resolve_dir(the$shapefilesdir, site), 
-                         paste0(toupper(site), '_footprint.shp'))
+   footfile <- vector_file(resolve_dir(the$shapefilesdir, site),
+                           paste0(toupper(site), '_footprint'))         # footprint (GeoPackage or shapefile)
    footprint <- st_read(footfile, quiet = TRUE)                         # read site footprint
    
    

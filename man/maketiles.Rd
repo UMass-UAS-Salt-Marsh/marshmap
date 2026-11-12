@@ -12,7 +12,7 @@ maketiles(site, sizes)
 \item{sizes}{Tile size (m); may be a vector to create several sets of tiles}
 }
 \description{
-Create one or more shapefiles corresponding to the named site with tiles of the
+Create one or more GeoPackages corresponding to the named site with tiles of the
 specified sizes, numbered in square blocks of 1-9. Used with the \code{blocks} option
 in \code{fit} to reduce the effects of spatial autocorrelation.
 }

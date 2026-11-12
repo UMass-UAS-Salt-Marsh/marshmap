@@ -12,7 +12,7 @@
 #'    - patch: size in pixels
 #'    - depth: number of of downsampling stages
 #'    - classes: vector of target classes
-#'    - transects: base name of field transects shapefile (default: "transects")
+#'    - transects: base name of field transects file, `<SITE>_<transects>.gpkg` (or `.shp`) (default: "transects")
 #'    - holdout_col: holdout set to use (uses bypoly<holdout>). Holdout sets are created by
 #'      `gather`, numbering each poly from 1 to 10, repeating if necessary. There are 5 sets to 
 #'      choose from.

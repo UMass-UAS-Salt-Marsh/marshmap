@@ -7,7 +7,7 @@
 check_files(files, gd, sourcedir, resultdir)
 }
 \arguments{
-\item{files}{Vector of files to check}
+\item{files}{Vector of source files to check (paths as listed by \link{get_dir})}
 
 \item{gd}{Source Drive info (optional), named list of
 \itemize{
@@ -16,7 +16,7 @@ check_files(files, gd, sourcedir, resultdir)
 \item \code{sftp}           \code{list(url, user)}
 }}
 
-\item{sourcedir}{Origin directory of files}
+\item{sourcedir}{Origin directory of files (unused; files carry their paths)}
 
 \item{resultdir}{Target directory of files - see if origin files are here and up to date}
 }
